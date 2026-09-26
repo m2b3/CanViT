@@ -26,9 +26,18 @@ and operate software.
 - `.github/workflows/release.yml`: PyPI release of `canvit-pytorch` on `v*`
   tags.
 
-Before adding a file, find the existing home for its kind of content; a fact,
-constant or URL lives in one place and everything else points to it (for
-example, repository and install URLs come from `canvit_pytorch.checkpoints`).
+A fact, constant or URL lives in one place and everything else points to it.
+
+Place and name things by meaning, never by convenience [author, 2026-09-26].
+A fact's home is the module whose name says what the fact is about: the path
+a reader who has never seen the code would guess before searching. When no
+such module exists, create it. The convenient alternatives (the module the
+consumers already import, the file that needs no new import, the class that
+happens to be nearby) make the edit easy and the design wrong, and every
+later reader pays for it. If the reason for a placement, a name or an API is
+about effort or about the current import graph ("already imported",
+"closest", "avoids a new file"), the reason is the defect: stop and find the
+right home.
 
 Facts about a component (a policy's abbreviation and description, a
 checkpoint's geometry) live in the component's own definition, and consumers
@@ -87,8 +96,6 @@ rather than teaching readers to remember the exception.
 - The import graph is part of the architecture. The core model depends on no
   subsystem; move a misplaced responsibility rather than reaching into another
   package's internals.
-- Tests live in `canvit-pytorch/tests/`, mirroring the package tree, so the
-  wheel carries no tests.
 - Define record vocabularies precisely (checkpoint configs, Hub model cards,
   web bundle manifests): what each field means, who writes it, and under what
   conditions.
@@ -148,7 +155,11 @@ spelling.
 - Compatibility is a requirement to justify. Released checkpoints on the
   Hugging Face Hub have external readers: a change to model configs or
   state-dict keys keeps them loading, verified by loading them.
-- Test meaningful properties and failure paths, not ritual or volume.
+- Judge everything by leverage per line, tests included [author,
+  2026-09-26]. A test earns its place by catching a plausible defect that
+  nothing else would: a paper invariant, a numerical equivalence, a released
+  checkpoint that must keep loading. Vacuous tests (restating the code) and
+  brittle ones (pinning internals) go.
 - Record enduring feedback here at the level it was given; keep specific
   constraints beside the code they constrain.
 

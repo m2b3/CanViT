@@ -7,26 +7,25 @@
 #SBATCH --output=logs/eval-clf-%A_%a.out
 #SBATCH --error=logs/eval-clf-%A_%a.err
 
-# IN1k classification eval as a SLURM array. Each task runs one shard of the
-# (filtered) job list via `canvit_pytorch.evaluate.batch --shard k/N`. Unlike the seg
-# wrapper this does NOT extract a dataset — IN1k val is read from IMAGENET_VAL
-# (network-mounted), set in .envrc. Args after the script name pass through.
+# ImageNet-1k evaluation matrix as a SLURM array: each task runs one shard of the
+# filtered job list. The validation images are read from $IMAGENET_VAL, set in
+# .envrc. Arguments after the script name go to `python -m canvit_pytorch.evaluate batch`.
 #
-# Shard count N defaults to the array size; override with SHARD_COUNT for a
-# single benchmark task over a finer partition, e.g.
+# The shard count defaults to the array size; SHARD_COUNT overrides it, e.g. to
+# run one shard of a finer partition:
 #   sbatch --account=ACCT --array=0-0 --export=ALL,SHARD_COUNT=12 \
-#     slurm/evaluate/eval_clf.sbatch --tasks in1k-clf-ablations --n-runs 1
-# Full n=1 first pass (12 variants, one task each):
+#     slurm/evaluate/eval_clf.sbatch --groups in1k_clf_ablations --num-runs 1
+# One run of every ablation, one shard each:
 #   sbatch --account=ACCT --array=0-11 slurm/evaluate/eval_clf.sbatch \
-#     --tasks in1k-clf-ablations --n-runs 1
+#     --groups in1k_clf_ablations --num-runs 1
 
-set -eu  # NOT -x: would trace secret exports (HF_TOKEN) into logs
+set -eu  # no -x: it would print the secrets .envrc exports (HF_TOKEN)
 source slurm/env.sh
 mkdir -p logs
 
 N="${SHARD_COUNT:-${SLURM_ARRAY_TASK_COUNT:?neither SHARD_COUNT nor SLURM_ARRAY_TASK_COUNT set}}"
-echo "=== CanViT IN1k clf eval: shard ${SLURM_ARRAY_TASK_ID}/${N} ==="
+echo "=== CanViT ImageNet-1k evaluation: shard ${SLURM_ARRAY_TASK_ID} of ${N} ==="
 echo "Job: ${SLURM_ARRAY_JOB_ID} task ${SLURM_ARRAY_TASK_ID} on $(hostname)"
 nvidia-smi --query-gpu=name,memory.total --format=csv
 
-exec uv run python -m canvit_pytorch.evaluate.batch --shard "${SLURM_ARRAY_TASK_ID}/${N}" "$@"
+exec uv run python -m canvit_pytorch.evaluate batch --shard-index "${SLURM_ARRAY_TASK_ID}" --shard-count "${N}" "$@"

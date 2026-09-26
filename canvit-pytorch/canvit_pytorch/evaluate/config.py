@@ -1,91 +1,54 @@
-"""Shared evaluation configuration.
+"""The paper's evaluation protocol: scene and glimpse sizes, and how CanViT views each scene."""
 
-Dataset paths resolve as env var override > known machine paths > generic
-fallback. Real runs validate the resolved paths where the data is opened so
-CLI help remains usable on machines without the datasets mounted.
-"""
-
-import functools
-import logging
-import os
 from dataclasses import dataclass
-from pathlib import Path
 
-from canvit_pytorch.checkpoints import FLAGSHIP_PRETRAIN_REPO
-from tqdm import tqdm
+from torch import Tensor
 
-from canvit_pytorch.policies import PolicyName
+from canvit_pytorch.episode import EpisodeStep, run_episode
+from canvit_pytorch.hub.repos import RELEASED_CANVAS_GRID_SIZE, RELEASED_GLIMPSE_SIZE_PX, RELEASED_SCENE_SIZE_PX
+from canvit_pytorch.model import CanViT
+from canvit_pytorch.policies import POLICIES, PolicyName, make_policy
+from canvit_pytorch.policies.entropy import CanvasLogits
 
-log = logging.getLogger(__name__)
-
-
-def progress(iterable, **kw):
-    """tqdm, silent when stderr is not a terminal.
-
-    `disable=None` is tqdm's own auto mode and is not the same as
-    `disable=False`, which is what a bare tqdm() does.
-    """
-    return tqdm(iterable, disable=None, **kw)
-
-DEFAULT_PRETRAINED_REPO = FLAGSHIP_PRETRAIN_REPO
-
-# DINOv3 teacher repos (public, third-party — no resolve wrap).
-DINOV3_VITB_REPO = "facebook/dinov3-vitb16-pretrain-lvd1689m"
-DINOV3_VITS_REPO = "facebook/dinov3-vits16-pretrain-lvd1689m"
-TEACHER_REPO = DINOV3_VITB_REPO
-
-
-def _resolve_path(env_var: str, known_paths: list[str], description: str) -> Path:
-    """Resolve a dataset path without touching the filesystem on fallback."""
-    v = os.environ.get(env_var)
-    if v is not None:
-        log.info("%s from env: %s", description, v)
-        return Path(v)
-    for p in known_paths:
-        if Path(p).is_dir():
-            log.info("%s autodetected: %s", description, p)
-            return Path(p)
-    fallback = Path(known_paths[0])
-    log.info("%s defaulting to %s; validate before use", description, fallback)
-    return fallback
-
-
-def require_existing_dir(path: Path, *, description: str, env_var: str | None = None) -> None:
-    if path.is_dir():
-        return
-    hint = f" Set {env_var} or pass the corresponding CLI path." if env_var else ""
-    raise RuntimeError(f"{description} not found at {path}.{hint}")
-
-
-@functools.cache
-def ade20k_root() -> Path:
-    return _resolve_path(
-        env_var="ADE20K_ROOT",
-        known_paths=["/datasets/ADE20k/ADEChallengeData2016"],
-        description="ADE20K root",
-    )
-
-
-@functools.cache
-def imagenet_val_dir() -> Path:
-    return _resolve_path(
-        env_var="IMAGENET_VAL",
-        known_paths=[
-            "/datasets/ILSVRC/Data/CLS-LOC/val",
-            "/datashare/imagenet/ILSVRC2012/val",
-        ],
-        description="ImageNet val dir",
-    )
+SCENE_SIZE_PX = RELEASED_SCENE_SIZE_PX
+"""Side of the square scene that ADE20K and ImageNet-1k images are resized to, as in pretraining."""
+GLIMPSE_SIZE_PX = RELEASED_GLIMPSE_SIZE_PX
+CANVAS_GRID_SIZE = RELEASED_CANVAS_GRID_SIZE
+"""The canvas grid CanViT-B was pretrained with: one canvas patch per 16 px of a 512 px scene."""
+NUM_GLIMPSES = 21
+"""Glimpses per scene: the full scene, its 4 quadrants and its 16 sixteenths under C2F."""
 
 
 @dataclass(frozen=True)
 class EpisodeConfig:
-    """How to run CanViT episodes. Shared by all CanViT-based tasks."""
+    """How CanViT views each scene: the viewing policy, the number of glimpses, the glimpse and canvas sizes."""
 
-    model_repo: str = DEFAULT_PRETRAINED_REPO
     policy: PolicyName = "coarse_to_fine"
-    n_timesteps: int = 21
-    canvas_grid: int | None = None  # None → scene_size // patch_size
-    glimpse_px: int = 128
-    min_scale: float = 0.05
-    max_scale: float = 1.0
+    num_glimpses: int = NUM_GLIMPSES
+    canvas_grid_size: int = CANVAS_GRID_SIZE
+    glimpse_size_px: int = GLIMPSE_SIZE_PX
+
+    def __post_init__(self) -> None:
+        assert self.num_glimpses >= 1, self
+        spec = POLICIES[self.policy]
+        assert spec.supports_canvas_grid(self.canvas_grid_size), (
+            f"{spec.paper_name} does not support a {self.canvas_grid_size}×{self.canvas_grid_size} canvas"
+        )
+
+    def rollout(
+        self, *, canvit: CanViT, images: Tensor, canvas_logits: CanvasLogits | None = None,
+    ) -> list[EpisodeStep]:
+        """One episode per ImageNet-normalized scene in images [B, 3, H, W], starting from an empty canvas.
+
+        canvas_logits decodes a canvas into segmentation logits; EG-C2F needs it, other policies ignore it.
+        """
+        batch_size = images.shape[0]
+        policy = make_policy(
+            self.policy, batch_size=batch_size, device=images.device, num_glimpses=self.num_glimpses,
+            canvas_grid_size=self.canvas_grid_size, canvas_logits=canvas_logits,
+        )
+        return run_episode(
+            canvit=canvit, images=images, policy=policy, num_glimpses=self.num_glimpses,
+            glimpse_size_px=self.glimpse_size_px,
+            initial_state=canvit.init_state(batch_size=batch_size, canvas_grid_size=self.canvas_grid_size),
+        )

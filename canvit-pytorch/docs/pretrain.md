@@ -1,42 +1,40 @@
 # Pretraining (`canvit_pytorch.pretrain`)
 
-Passive-to-active dense latent distillation of [CanViT](../../README.md) ([arXiv:2603.22570](https://arxiv.org/abs/2603.22570)) from [DINOv3](https://github.com/facebookresearch/dinov3) ([arXiv:2508.10104](https://arxiv.org/abs/2508.10104)).
+CanViT (the Canvas Vision Transformer) is pretrained by policy-agnostic
+passive-to-active dense latent distillation (paper, Section 5): after every
+glimpse, it predicts the frozen DINOv3 ViT-B/16 teacher's features of the whole
+512 px scene, patches from the canvas and the CLS token from its recurrent CLS
+token. The defaults of `PretrainingConfig` are CanViT-B's hyperparameters.
 
-Originally designed to run on [the Nibi SLURM cluster](https://docs.alliancecan.ca/wiki/Nibi) using its [hosted ImageNet-21k `winter21_whole` replica](https://docs.alliancecan.ca/wiki/ImageNet).
+The paper's runs used [the Nibi SLURM cluster](https://docs.alliancecan.ca/wiki/Nibi)
+and its [hosted ImageNet-21k `winter21_whole` replica](https://docs.alliancecan.ca/wiki/ImageNet).
 
 ## Setup
 
 ```bash
-cp .envrc.example .envrc && direnv allow
-# Edit .envrc to adapt to your environment.
+cp .envrc.example .envrc && direnv allow   # then set the paths for your machine
 ```
 
-Please ensure that `HF_TOKEN`, `COMET_API_KEY`, and `COMET_WORKSPACE` are set.
+`HF_TOKEN`, `COMET_API_KEY` and `COMET_WORKSPACE` must be set.
 
-## Run
-
-Export DINOv3 teacher features once:
+## 1. Precomputed teacher features
 
 ```bash
-uv run python scripts/pretrain/build_shuffled_index.py \
-  --image-root $IN21K_IMAGE_DIR --index-dir $INDEX_DIR --dataset in21k
-sbatch --array=0-99%20 slurm/pretrain/export_features.sh
+uv run python -m canvit_pytorch.pretrain.features.index \
+  --image-root $IN21K_IMAGE_DIR --out $INDEX_DIR/in21k-shuffled.parquet
+sbatch slurm/pretrain/export_features.sh
+uv run python -m canvit_pytorch.pretrain.features.check \
+  --shards-dir $FEATURES_DIR/in21k/dinov3_vitb16/512/shards --expected-images <images in the index>
 ```
 
-Pretraining:
+## 2. Pretraining
 
 ```bash
-sbatch slurm/pretrain/train.sbatch [--flag value ...]
+sbatch slurm/pretrain/train.sbatch                 # CanViT-B, 2M steps as a chain of jobs
+bash slurm/pretrain/ablation.sh no-reads           # one of the paper's ablations
+uv run python -m canvit_pytorch.pretrain --help    # every setting
 ```
 
-Ablations:
-
-```bash
-bash slurm/ablations/baseline.sh
-bash slurm/ablations/no-bptt.sh
-# ...
-```
-
-## Citation and license
-
-See the [CanViT repository README](../../README.md): one citation and one MIT license cover every package.
+Each job trains `--steps-per-job` steps and saves a checkpoint; the next job
+resumes it. Checkpoints of a run live in `$CHECKPOINTS_DIR/<run name>/`, with
+`latest.pt` pointing to the newest.

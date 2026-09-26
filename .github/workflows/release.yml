@@ -24,4 +24,7 @@ jobs:
 
       - run: uv build
 
+      - name: The wheel carries the license text
+        run: unzip -l dist/*.whl | grep -q 'dist-info/licenses/LICENSE'
+
       - run: uv publish

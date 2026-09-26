@@ -1,140 +1,123 @@
-"""Reconstruction quality: cosine similarity between CanViT canvas and DINOv3 teacher."""
+"""How closely CanViT predicts its DINOv3 teacher's features of the whole scene after every glimpse.
+
+The metric of the paper's pretraining ablations (Appendix E): cosine similarity between the
+teacher's features and CanViT's predictions of them, for the patch features decoded from the
+canvas ("scene") and the CLS token decoded from the recurrent CLS token ("cls"). "norm" compares
+in the teacher's per-position standardized space, where pretraining fits the predictions and
+the paper reports; "raw" compares the destandardized predictions with the raw features.
+Scenes are the ADE20K validation images, resized on the short side and center-cropped.
+
+Saves {"per_timestep": [{"t", "scene_cos_raw", "cls_cos_raw", "scene_cos_norm", "cls_cos_norm"}, ...],
+"n_images", "metadata"}.
+"""
 
 import logging
 import time
-from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 import torch
 import torch.nn.functional as F
-from canvit_pytorch.teacher import load_teacher
-from canvit_pytorch.preprocess import preprocess
 from PIL import Image
 from torch import Tensor
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 
-from canvit_pytorch.specialize.training.utils import collect_metadata
-
-from canvit_pytorch.evaluate.config import TEACHER_REPO, EpisodeConfig, progress, require_existing_dir
-from canvit_pytorch.evaluate.runner import eval_batches, load_model
-from canvit_pytorch.evaluate.tasks.base import TaskConfig
+from canvit_pytorch.benchmarks import ade20k
+from canvit_pytorch.evaluate.config import EpisodeConfig
+from canvit_pytorch.evaluate.tasks.task import Task
+from canvit_pytorch.hub import repos
+from canvit_pytorch.model import CanViTForPretraining
+from canvit_pytorch.model.standardizer import PositionAwareStandardizer
+from canvit_pytorch.policies import POLICIES
+from canvit_pytorch.preprocess import preprocess
+from canvit_pytorch.teacher import TEACHER_REPO, load_teacher
 
 log = logging.getLogger(__name__)
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"}
+
+METRICS = ("scene_cos_raw", "cls_cos_raw", "scene_cos_norm", "cls_cos_norm")
+
+ABLATION_EPISODE = EpisodeConfig(policy="random", num_glimpses=10)
+"""The episodes of the paper's ablation study: 10 R-IID glimpses."""
 
 
-class FlatImageDataset(Dataset):
-    def __init__(self, root: Path, transform: Callable[..., Tensor]) -> None:
-        self.paths = sorted(p for p in root.iterdir() if p.suffix.lower() in IMAGE_EXTENSIONS)
-        assert len(self.paths) > 0, f"No images in {root}"
-        self.transform = transform
+class Scenes(Dataset[Tensor]):
+    """The ADE20K validation images, without labels."""
+
+    def __init__(self, *, root: Path, size_px: int) -> None:
+        image_dir = root / "images" / "validation"
+        self.paths = sorted(image_dir.glob("*.jpg"))
+        assert self.paths, f"no images in {image_dir}"
+        self.transform = preprocess(size_px)
 
     def __len__(self) -> int:
         return len(self.paths)
 
-    def __getitem__(self, idx: int) -> tuple[Tensor]:
-        return (self.transform(Image.open(self.paths[idx]).convert("RGB")),)
+    def __getitem__(self, index: int) -> Tensor:
+        image = self.transform(Image.open(self.paths[index]).convert("RGB"))
+        assert isinstance(image, Tensor)
+        return image
 
 
-@dataclass
-class _Acc:
-    scene_raw: float = 0.0
-    cls_raw: float = 0.0
-    scene_norm: float = 0.0
-    cls_norm: float = 0.0
-    n: int = 0
+def cosine_similarities(
+    *, prediction: Tensor, raw_target: Tensor, standardizer: PositionAwareStandardizer,
+) -> tuple[float, float]:
+    """(norm, raw) mean cosine similarity of a standardized prediction [..., D] with a raw target [..., D]."""
+    norm = F.cosine_similarity(prediction, standardizer(raw_target), dim=-1).mean().item()
+    raw = F.cosine_similarity(standardizer.destandardize(prediction), raw_target, dim=-1).mean().item()
+    return norm, raw
 
 
-def _default_image_dir() -> Path:
-    from canvit_pytorch.evaluate.config import ade20k_root
-    return ade20k_root() / "images" / "validation"
+@dataclass(frozen=True, kw_only=True)
+class Reconstruction(Task):
+    """How closely CanViT predicts its DINOv3 teacher's patch and CLS features of the scene after every glimpse."""
 
-
-@dataclass(kw_only=True)
-class Config(TaskConfig):
-    model_repo: str
+    pretrained_repo: str = repos.FLAGSHIP
+    episode: EpisodeConfig = ABLATION_EPISODE
     output: Path = Path("results/recon.pt")
     batch_size: int = 16
     num_workers: int = 4
-    episode: EpisodeConfig = field(default_factory=lambda: EpisodeConfig(policy="random", n_timesteps=10))
-    image_dir: Path = field(default_factory=_default_image_dir)
-    scene_size: int = 512
-    teacher_cache: Path | None = None
 
+    def __post_init__(self) -> None:
+        spec = POLICIES[self.episode.policy]
+        assert not spec.needs_segmentation_probe, f"{spec.paper_name} decodes the canvas with an ADE20K probe"
+
+    @torch.inference_mode()
     def run(self) -> Path:
-        return evaluate(self)
-
-
-@torch.inference_mode()
-def evaluate(cfg: Config) -> Path:
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    device = torch.device(cfg.device)
-    require_existing_dir(cfg.image_dir, description="Reconstruction image directory")
-
-    model = load_model(cfg.model_repo, device)
-    canvas_grid = cfg.episode.canvas_grid or cfg.scene_size // model.backbone.patch_size_px
-    cls_std, scene_std = model.standardizers(canvas_grid)
-    assert scene_std.initialized
-
-    dataset = FlatImageDataset(cfg.image_dir, preprocess(cfg.scene_size))
-    loader = DataLoader(dataset, batch_size=cfg.batch_size, num_workers=cfg.num_workers,
-                        pin_memory=True, shuffle=False)
-
-    # Teacher features
-    teacher = load_teacher(TEACHER_REPO, device)
-    if cfg.teacher_cache is not None and cfg.teacher_cache.exists():
-        cached = torch.load(cfg.teacher_cache, map_location="cpu", weights_only=True)
-        t_patches, t_cls = cached["patches"], cached["cls"]
-    else:
-        plist, clist = [], []
-        for batch in progress(loader, desc="Teacher"):
-            feats = teacher.forward_norm_features(batch[0].to(device))
-            plist.append(feats.patches.cpu())
-            clist.append(feats.cls.cpu())
-        t_patches, t_cls = torch.cat(plist), torch.cat(clist)
-        if cfg.teacher_cache is not None:
-            cfg.teacher_cache.parent.mkdir(parents=True, exist_ok=True)
-            torch.save({"patches": t_patches, "cls": t_cls}, cfg.teacher_cache)
-    del teacher
-    torch.cuda.empty_cache()
-
-    T = cfg.episode.n_timesteps
-    accs = [_Acc() for _ in range(T)]
-    idx = 0
-    t0 = time.perf_counter()
-
-    for br in eval_batches(model=model, loader=loader, episode_cfg=cfg.episode,
-                           canvas_grid=canvas_grid, device=device, amp=cfg.amp):
-        B = br.batch[0].shape[0]
-        raw_p = t_patches[idx:idx + B].to(device).float()
-        raw_c = t_cls[idx:idx + B].to(device).float()
-        norm_p, norm_c = scene_std(raw_p), cls_std(raw_c.unsqueeze(1)).squeeze(1)
-        idx += B
-
-        for step in br.steps:
-            ps = model.predict_teacher_scene(step.state.canvas)
-            pc = model.predict_scene_teacher_cls(step.state.recurrent_cls)
-            a = accs[step.t]
-            a.scene_raw += F.cosine_similarity(ps, raw_p, dim=-1).mean().item() * B
-            a.scene_norm += F.cosine_similarity(ps, norm_p, dim=-1).mean().item() * B
-            a.cls_raw += F.cosine_similarity(pc, raw_c, dim=-1).mean().item() * B
-            a.cls_norm += F.cosine_similarity(pc, norm_c, dim=-1).mean().item() * B
-            a.n += B
-
-    elapsed = time.perf_counter() - t0
-    per_t = [{"t": t, "scene_cos_raw": a.scene_raw / a.n, "cls_cos_raw": a.cls_raw / a.n,
-              "scene_cos_norm": a.scene_norm / a.n, "cls_cos_norm": a.cls_norm / a.n}
-             for t, a in enumerate(accs)]
-
-    for p in per_t:
-        log.info("  t=%d  scene=%.4f  cls=%.4f", p["t"], p["scene_cos_norm"], p["cls_cos_norm"])
-
-    results = {
-        "per_timestep": per_t, "n_images": idx,
-        "metadata": {**collect_metadata(cfg), "elapsed_s": round(elapsed, 1)},
-    }
-    cfg.output.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(results, cfg.output)
-    log.info("Saved to %s", cfg.output)
-    return cfg.output
+        device = self.torch_device
+        root = ade20k.dataset_root()
+        model = CanViTForPretraining.from_pretrained(self.pretrained_repo).to(device).eval()
+        teacher = load_teacher(TEACHER_REPO, device)
+        assert teacher.embed_dim == model.teacher_dim, (teacher.embed_dim, model.teacher_dim)
+        assert self.episode.canvas_grid_size == model.teacher_patch_grid, (
+            f"{self.pretrained_repo} predicts a {model.teacher_patch_grid}² teacher patch grid; "
+            f"the canvas grid must match, got {self.episode.canvas_grid_size}"
+        )
+        dataset = Scenes(root=root, size_px=model.teacher_patch_grid * teacher.patch_size)
+        sums = [dict.fromkeys(METRICS, 0.0) for _ in range(self.episode.num_glimpses)]
+        start = time.monotonic()
+        with self.autocast():
+            for images in self.batches(dataset, description="Reconstruction"):
+                images = images.to(device)
+                with torch.autocast(device_type=device.type, enabled=False):
+                    target = teacher(images)
+                batch_size = images.shape[0]
+                for step in self.episode.rollout(canvit=model.canvit, images=images):
+                    scene_norm, scene_raw = cosine_similarities(
+                        prediction=model.predict_teacher_patches(step.state.canvas), raw_target=target.patches.float(),
+                        standardizer=model.teacher_patch_standardizer,
+                    )
+                    cls_norm, cls_raw = cosine_similarities(
+                        prediction=model.predict_teacher_cls(step.state.recurrent_cls), raw_target=target.cls.float(),
+                        standardizer=model.teacher_cls_standardizer,
+                    )
+                    for metric, value in zip(METRICS, (scene_raw, cls_raw, scene_norm, cls_norm), strict=True):
+                        sums[step.t][metric] += value * batch_size
+        per_timestep = [
+            {"t": t, **{metric: total / len(dataset) for metric, total in totals.items()}}
+            for t, totals in enumerate(sums)
+        ]
+        for row in per_timestep:
+            log.info("t=%d scene_cos_norm=%.4f cls_cos_norm=%.4f", row["t"], row["scene_cos_norm"], row["cls_cos_norm"])
+        return self.save(
+            {"per_timestep": per_timestep, "n_images": len(dataset)}, wall_time_seconds=time.monotonic() - start,
+        )

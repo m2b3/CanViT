@@ -1,6 +1,9 @@
-<!-- [AI-REWRITE] Claude Code, 2026-09-26: adapted from the canvit-pytorch README for the folded repository (title, venue, news, install paths, repository layout, platforms). The commit diff shows every change; the original is canvit-pytorch/README.md at 0aa97ce. -->
 # CanViT (Canvas Vision Transformer)
 
+[![Project page](https://img.shields.io/badge/Project-page-4080d0)](https://m2b3.github.io/CanViT/)
+[![arXiv](https://img.shields.io/badge/arXiv-2603.22570-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.22570)
+[![Checkpoints](https://img.shields.io/badge/Hugging%20Face-canvit-ffcc4d?logo=huggingface&logoColor=black)](https://huggingface.co/canvit)
+[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS-2026-7a2c85)](https://neurips.cc/)
 [![PyPI Downloads](https://static.pepy.tech/badge/canvit-pytorch)](https://pepy.tech/projects/canvit-pytorch)
 
 <p align="center">
@@ -14,11 +17,13 @@ _[CanViT: Toward Active-Vision Foundation Models](https://arxiv.org/abs/2603.225
 [Project page](https://m2b3.github.io/CanViT/) · [Paper](https://arxiv.org/abs/2603.22570) · [Checkpoints](https://huggingface.co/canvit)
 
 Code for CanViT, the Canvas Vision Transformer: the reference PyTorch
-implementation, pretraining, task specialization, evaluation, and the
-pipeline behind the paper's figures and tables.
+implementation, pretraining, task specialization and evaluation.
 
 ### News
 
+- **2026-09-26**: canvit-pytorch 0.2: the paper's names throughout the API, and pretraining, probe training and
+  evaluation in the package. The checkpoints on the Hub are in the 0.2 format ([Troubleshooting](#troubleshooting)
+  covers code written for 0.1).
 - **2026-09-24**: Accepted at NeurIPS 2026 (poster).
 - **2026-05-16**: Preprint v2 ([arXiv:2603.22570v2](https://arxiv.org/abs/2603.22570v2)), adding the 84.5% ImageNet-1k fine-tuning result and the effect of canvas resolution.
 - **2026-04-06**: First finetuned IN1k checkpoint: [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06), with new `CanViTForImageClassification` API.
@@ -55,19 +60,17 @@ We release checkpoints on HuggingFace under the [`canvit`](https://huggingface.c
 We recommend [`uv`](https://docs.astral.sh/uv/) for dependency management.
 
 ```bash
-uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT.git#subdirectory=canvit-pytorch"
+uv add canvit-pytorch   # or: pip install canvit-pytorch
 ```
 
-A [`canvit-pytorch`](https://pypi.org/project/canvit-pytorch/) package is also available on PyPI but is updated less often — we recommend the git version in most cases.
-
 ```python
-from canvit_pytorch import CanViTForPretrainingHFHub, Viewpoint, sample_at_viewpoint
+from canvit_pytorch import CanViTForPretraining, Viewpoint, sample_at_viewpoint
 from canvit_pytorch.preprocess import preprocess
 from PIL import Image
 import torch
 
 # CanViT is integrated with the HuggingFace Hub.
-model = CanViTForPretrainingHFHub.from_pretrained(
+model = CanViTForPretraining.from_pretrained(
     "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02"
 ).eval()
 
@@ -93,10 +96,9 @@ with torch.inference_mode():
 # the scene at any given time, and is linearly decodable 
 # into dense predictions upon token-wise LayerNorm.
 # See `demos/basic.py` for how to visualize the canvas.
-canvas_spatial = model.get_spatial(out.state.canvas)  # [1, 1024, 1024]
-canvas_spatial = canvas_spatial.unflatten(1, (32, 32))  # [1, 32, 32, 1024] — spatial feature map
+canvas_spatial = model.canvit.canvas_patch_grid(out.state.canvas)  # [1, 32, 32, 1024] — spatial feature map
 out.state.recurrent_cls  # [1, 1, 768] — global CLS token
-out.local_patches        # [1, 64, 768] — glimpse patch features
+out.glimpse_patches      # [1, 64, 768] — glimpse patch features
 
 # Now let's do a second glimpse: zoom into the top-left quadrant
 # You can do this repeatedly: CanViT is recurrent with a large but constant-size canvas.
@@ -164,9 +166,10 @@ seg = CanViTForSemanticSegmentation.from_pretrained_with_probe(
 ).eval()
 
 state = seg.init_state(batch_size=1, canvas_grid_size=64)
-logits, state = seg(glimpse=glimpse, state=state, viewpoint=vp)               # [B, n_cls, 64, 64]
-upsampled, state = seg.predict(glimpse=glimpse, state=state, viewpoint=vp,
-                               target_size=(1024, 1024))                       # [B, n_cls, 1024, 1024]
+with torch.inference_mode():
+    logits, state = seg(glimpse=glimpse, state=state, viewpoint=vp)               # [B, n_cls, 64, 64]
+    upsampled, state = seg.predict(glimpse=glimpse, state=state, viewpoint=vp,
+                                   target_size=(1024, 1024))                       # [B, n_cls, 1024, 1024]
 ```
 
 The standalone `SegmentationProbe` head is also exported from `canvit_pytorch` for use on any spatial feature map. Published probes: [canvit ADE20K segmentation probes collection](https://huggingface.co/collections/canvit/canvit-ade20k-segmentation-probes).
@@ -178,8 +181,8 @@ git clone https://github.com/m2b3/CanViT.git
 cd CanViT/canvit-pytorch
 
 # Classification with sequential glimpses
-uv run --extra demo python demos/classify.py                # finetuned checkpoint
-uv run --extra demo python demos/classify.py --mode frozen  # frozen CanViT + fused probe
+uv run --extra demo python demos/classify.py                     # finetuned checkpoint
+uv run --extra demo python demos/classify.py --classifier frozen  # frozen CanViT + fused probe
 
 # Canvas PCA visualization with two viewing strategies
 uv run --extra demo python demos/basic.py
@@ -196,16 +199,20 @@ We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/
 
 ## Repository layout
 
-[`canvit-pytorch/`](canvit-pytorch) is one Python distribution, `canvit-pytorch` (on PyPI):
+[`canvit-pytorch/`](canvit-pytorch) is the Python distribution [`canvit-pytorch`](https://pypi.org/project/canvit-pytorch/):
 
 | Module | Contents | Docs |
 |---|---|---|
 | `canvit_pytorch` | The model: architecture, checkpoint loading, viewpoints and policies, task heads | this README |
+| `canvit_pytorch.flops` | Analytic forward FLOPs of CanViT and DINOv3 | [docs/flops.md](canvit-pytorch/docs/flops.md) |
 | `canvit_pytorch.pretrain` | Pretraining: passive-to-active dense distillation from DINOv3 | [docs/pretrain.md](canvit-pytorch/docs/pretrain.md) |
 | `canvit_pytorch.specialize` | Downstream training: ADE20K segmentation probes, ImageNet-1k fine-tuning | [docs/specialize.md](canvit-pytorch/docs/specialize.md) |
 | `canvit_pytorch.evaluate` | Evaluation and benchmarking: ADE20K mIoU, ImageNet-1k top-k, DINOv3 reconstruction | [docs/evaluate.md](canvit-pytorch/docs/evaluate.md) |
+| `canvit_pytorch.viz` | Recorded rollouts and smooth viewpoint paths for the project page and slides | [docs/viz.md](canvit-pytorch/docs/viz.md) |
 
-These packages previously lived in separate repositories (CanViT-PyTorch, CanViT-pretrain, CanViT-specialize, CanViT-eval), whose histories are merged here.
+[`site/`](site) is the [project page](https://m2b3.github.io/CanViT/).
+
+Pretraining, probe training and evaluation lived in separate repositories (CanViT-pretrain, CanViT-specialize, CanViT-eval), now archived; their histories are merged here.
 
 Related repositories:
 
@@ -220,6 +227,9 @@ If you encounter errors loading pretrained checkpoints, ensure you are using the
 ```bash
 uv lock --upgrade-package canvit-pytorch && uv sync
 ```
+
+Code written for canvit-pytorch 0.1 needs `canvit-pytorch<0.2` and the checkpoints' earlier files:
+`from_pretrained(..., revision="canvit-pytorch-0.1")`.
 
 ## Citation
 

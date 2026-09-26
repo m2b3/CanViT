@@ -1,72 +1,40 @@
 #!/bin/bash
-#SBATCH --job-name=canvit-in21k-pretrain
+#SBATCH --job-name=canvit-pretrain
 #SBATCH --time=00:45:00
 #SBATCH --array=0-400%1
 #SBATCH --gres=gpu:h100:1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G
-#SBATCH --output=logs/train-%A_%a.out
-#SBATCH --error=logs/train-%A_%a.err
-#SBATCH --mail-user=me@yberreby.com
-#SBATCH --mail-type=BEGIN,END,FAIL,REQUEUE
+#SBATCH --output=logs/pretrain-%A_%a.out
+#SBATCH --error=logs/pretrain-%A_%a.err
 
-# CanViT pretraining: 401 jobs × 4992 steps ≈ 2M steps (~8 days)
+# CanViT pretraining as a chain of array tasks, one at a time: each trains 4,992
+# steps and saves; the next resumes from that checkpoint. 401 tasks cover the
+# paper's 2M steps; tasks after the last step exit at once. Run from canvit-pytorch/.
 #
-# Default (CanViT-B):
-#   sbatch slurm/pretrain/train.sbatch
+#   sbatch slurm/pretrain/train.sbatch                           CanViT-B on ImageNet-21k
+#   DATASET=in1k IMAGES_DIR=/path/to/in1k/train sbatch slurm/pretrain/train.sbatch
+#   RUN_NAME=pretrain-1234567 sbatch slurm/pretrain/train.sbatch continue that run
+#   bash slurm/pretrain/ablation.sh no-reads                     a paper ablation
 #
-# If your cluster requires an allocation account:
-#   sbatch --account=my_project_name slurm/pretrain/train.sbatch
-#
-# CanViT-S:
-#   sbatch slurm/pretrain/train.sbatch --backbone-name vits16
-#
-# Continue existing run:
-#   sbatch --array=0-99%1 slurm/pretrain/train.sbatch --run-name train-XXXXXXX
-#
-# Quick test:
-#   sbatch --array=0-2%1 --time=00:10:00 slurm/pretrain/train.sbatch --steps-per-job 10
+# Extra arguments go to `python -m canvit_pytorch.pretrain` (see its --help).
+# Add --account=... to sbatch if the cluster charges an allocation.
 
-set -eu  # NOT -x: would trace secret exports (HF_TOKEN, COMET_API_KEY) into logs
+set -eu  # not -x, which would print the secrets .envrc exports
 
-log() { echo "[$(date '+%H:%M:%S')] $*"; }
-timed() { local start=$SECONDS; "$@"; log "  ↳ $((SECONDS - start))s"; }
-
-log "=== CanViT Training ==="
-if [ -n "${SLURM_ARRAY_JOB_ID:-}" ]; then
-    log "Array Job: $SLURM_ARRAY_JOB_ID, Task: $SLURM_ARRAY_TASK_ID, Host: $(hostname)"
-    RUN_NAME="train-${SLURM_ARRAY_JOB_ID}"
-else
-    log "Job: $SLURM_JOB_ID on $(hostname)"
-    RUN_NAME=""
-fi
-log "GPU: $(nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null || echo 'N/A')"
-log "Args: $*"
-
+mkdir -p logs
 source slurm/env.sh
 
-# Dependencies
-log "Installing dependencies..."
-timed uv sync --all-extras
-
-# Ensure logs dir exists
-mkdir -p logs
-
-# Training with precomputed features (teacher loaded from HF Hub).
-# DATASET selects the feature-shard tree and is recorded in checkpoint
-# metadata; FEATURE_IMAGE_ROOT must point at the matching image tree when
-# DATASET != in21k. Both come from the submission environment, e.g.:
-#   DATASET=in1k FEATURE_IMAGE_ROOT=/path/to/in1k/train sbatch slurm/pretrain/train.sbatch
-log "Starting training..."
 DATASET=${DATASET:-in21k}
-RUN_NAME_ARG=()
-[ -n "$RUN_NAME" ] && RUN_NAME_ARG=(--run-name "$RUN_NAME")
-exec uv run python -m canvit_pytorch.pretrain.train \
-    "${RUN_NAME_ARG[@]}" \
+RUN_NAME=${RUN_NAME:-pretrain-${SLURM_ARRAY_JOB_ID:-$SLURM_JOB_ID}}
+echo "[$(date -Is)] run $RUN_NAME ($DATASET), task ${SLURM_ARRAY_TASK_ID:-none} on $(hostname)"
+nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
+
+exec uv run python -u -m canvit_pytorch.pretrain \
     --dataset "$DATASET" \
-    --feature-base-dir "$FEATURES_DIR/$DATASET" \
-    --feature-image-root "${FEATURE_IMAGE_ROOT:-$IN21K_IMAGE_DIR}" \
-    --val-dir "$IN1K_VAL_IMAGE_DIR" \
-    --train-index-dir "$INDEX_DIR" \
-    --ckpt-dir "$CHECKPOINTS_DIR" \
+    --shards-dir "$FEATURES_DIR/$DATASET/dinov3_vitb16/512/shards" \
+    --images-dir "${IMAGES_DIR:-$IN21K_IMAGE_DIR}" \
+    --validation-dir "$IMAGENET_VAL" \
+    --checkpoints-dir "$CHECKPOINTS_DIR" \
+    --run-name "$RUN_NAME" \
     "$@"

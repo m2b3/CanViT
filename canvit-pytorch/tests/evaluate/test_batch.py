@@ -1,319 +1,133 @@
-"""Pure tests for the batch eval matrix — no GPU/data needed."""
-import pytest
+"""The evaluation matrix: output names the paper pipeline parses, and the configurations behind them."""
+
+import re
 from pathlib import Path
+from typing import Any, get_args
 
-from canvit_pytorch.checkpoints import (
-    ABLATION_CHECKPOINTS,
-    ABLATION_MODEL_SHORTS,
-    PRETRAIN_CHECKPOINTS,
-    ade20k_probe_repo,
+import pytest
+
+from canvit_pytorch.evaluate.batch import IN1K_SETTINGS, Batch, EvaluationJob, Group
+from canvit_pytorch.evaluate.tasks.ade20k_segmentation import ADE20kSegmentationCanViT, ADE20kSegmentationDINOv3
+from canvit_pytorch.evaluate.tasks.imagenet_classification import (
+    FineTuned,
+    FrozenWithFusedProbe,
+    ImageNetClassification,
 )
+from canvit_pytorch.evaluate.tasks.reconstruction import Reconstruction
+from canvit_pytorch.hub import repos
+from canvit_pytorch.policies import POLICIES
+from canvit_pytorch.pretrain.ablations import ABLATIONS
 
-from canvit_pytorch.evaluate.batch import (
-    DETERMINISTIC,
-    DEFAULT_TASKS,
-    CANVAS_GRIDS,
-    EXTRA_CANVAS_GRIDS,
-    EXTRA_IN1K_RESOLUTIONS,
-    IN1K_RESOLUTIONS,
-    _apply_shard,
-    build_eval_matrix,
-    filter_jobs,
-)
+ALL_GROUPS: tuple[Group, ...] = get_args(Group)
+TIMESTAMP = r"\d{8}T\d{6}Z"
+# The file names of each output directory, as the paper's figure and table pipeline parses them.
+POLICY = rf"(?P<policy>{'|'.join(POLICIES)})_s(?P<scene>\d+)_c(?P<grid>\d+)"
+ABLATION = rf"abl-(?P<slug>{'|'.join(ABLATIONS)})"
+PRETRAINED = r"pretrain-(?P<dataset>in21k|in1k)"
+RUN = rf"_{TIMESTAMP}_r\d+"
+NAME_PATTERNS: dict[Group, list[str]] = {
+    "ade20k_seg": [
+        rf"{POLICY}{RUN}",
+        rf"(?P<variant>dv3[bs])_(?P<input>\d+)px_{TIMESTAMP}",
+        rf"canvit_s(?P<scene>\d+)_c(?P<grid>\d+)_{TIMESTAMP}",
+    ],
+    "ade20k_seg_ablations": [rf"{ABLATION}_{POLICY}{RUN}"],
+    "ade20k_seg_pretrain": [rf"{PRETRAINED}_{POLICY}{RUN}"],
+    "in1k_clf_frozen": [rf"in1k_{POLICY}{RUN}"],
+    "in1k_clf_finetuned": [rf"in1k_{POLICY}{RUN}"],
+    "in1k_clf_ablations": [rf"{ABLATION}_{POLICY}{RUN}"],
+    "in1k_clf_pretrain": [rf"{PRETRAINED}_{POLICY}{RUN}"],
+    "recon": [rf"recon_(?P<slug>{'|'.join(ABLATIONS)}){RUN}"],
+}
 
 
-def test_breadth_first_scheduling():
-    """Every r=0 runs before any r=1: an interrupted batch yields n=1 per cell."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=5, n_timesteps=21, tasks=DEFAULT_TASKS)
-    positions_by_run_idx: dict[int, list[int]] = {}
-    for i, j in enumerate(jobs):
-        positions_by_run_idx.setdefault(j.run_idx, []).append(i)
-    for r in sorted(positions_by_run_idx)[:-1]:
-        assert max(positions_by_run_idx[r]) < min(positions_by_run_idx[r + 1]), (
-            f"run_idx {r + 1} starts before run_idx {r} finishes — not breadth-first"
+def all_jobs(tmp_path: Path, **options: Any) -> list[EvaluationJob]:
+    return Batch(out_dir=tmp_path, groups=ALL_GROUPS, include_extra_grids=True, **options).jobs()
+
+
+def expected_models(fields: dict[str, str]) -> tuple[str, str]:
+    """(pretrained repo, the model name in its ADE20K probes' names) that a file name designates."""
+    if "slug" in fields:
+        ablation = next(ablation for ablation in ABLATIONS.values() if ablation.slug == fields["slug"])
+        return ablation.released_repo, ablation.probe_model_name
+    dataset = fields.get("dataset", "in21k")
+    return next(repo for name, repo in repos.PRETRAINED.items() if name == dataset), dataset
+
+
+def test_output_names_encode_each_jobs_configuration(tmp_path: Path) -> None:
+    jobs = all_jobs(tmp_path, num_runs=2)
+    assert len({job.output for job in jobs}) == len(jobs), "two jobs would write the same file"
+    for job in jobs:
+        assert job.output.parent == tmp_path / job.group and job.output.suffix == ".pt"
+        matches = [m for pattern in NAME_PATTERNS[job.group] if (m := re.fullmatch(pattern, job.output.stem))]
+        assert len(matches) == 1, job.output
+        fields = matches[0].groupdict()
+        task = job.task
+        if not isinstance(task, ADE20kSegmentationDINOv3):
+            assert fields.get("policy", task.episode.policy) == task.episode.policy, job.output
+            assert int(fields.get("grid", task.episode.canvas_grid_size)) == task.episode.canvas_grid_size, job.output
+        pretrained_repo, probe_model = expected_models(fields)
+        match task:
+            case ADE20kSegmentationCanViT():
+                assert (int(fields["scene"]), task.pretrained_repo) == (task.scene_size_px, pretrained_repo), job.output
+                assert task.probe_repo == repos.released_ade20k_probe(
+                    probe_model, scene_size_px=task.scene_size_px, canvas_grid_size=task.episode.canvas_grid_size,
+                ), job.output
+                assert task.episode.num_glimpses == (1 if job.output.stem.startswith("canvit_") else 21), job.output
+            case ADE20kSegmentationDINOv3():
+                assert fields["variant"] == repos.DINOV3_PROBE_MODEL_NAMES[task.variant], job.output
+                assert int(fields["input"]) == task.input_size_px, job.output
+            case ImageNetClassification():
+                assert int(fields["scene"]) == task.scene_size_px, job.output
+                if job.group == "in1k_clf_finetuned":
+                    fine_tuning_settings = {setting[:2] for setting in IN1K_SETTINGS}
+                    assert task.classifier == FineTuned(), job.output
+                    assert (task.scene_size_px, task.episode.canvas_grid_size) in fine_tuning_settings, job.output
+                else:
+                    assert task.classifier == FrozenWithFusedProbe(pretrained_repo=pretrained_repo), job.output
+            case Reconstruction():
+                assert task.pretrained_repo == pretrained_repo, job.output
+
+
+def test_every_configuration_runs_before_any_repeats(tmp_path: Path) -> None:
+    jobs = all_jobs(tmp_path, num_runs=3)
+    runs = [job.run_index for job in jobs]
+    assert runs == sorted(runs)
+    for job in jobs:
+        assert job.policy is None or job.run_index < (1 if POLICIES[job.policy].deterministic else 3)
+    assert {job.run_index for job in jobs if job.policy == "coarse_to_fine"} == {0, 1, 2}
+
+
+def test_shards_partition_the_jobs(tmp_path: Path) -> None:
+    def names(shard_index: int, shard_count: int) -> list[str]:
+        batch = Batch(
+            out_dir=tmp_path, groups=("recon", "in1k_clf_ablations"), shard_index=shard_index, shard_count=shard_count,
         )
+        return [re.sub(TIMESTAMP, "", job.output.name) for job in batch.jobs()]
+
+    everything = names(0, 1)
+    for count in (1, 7, len(everything) + 3):
+        shards = [names(i, count) for i in range(count)]
+        assert sorted(name for shard in shards for name in shard) == sorted(everything)
+        assert max(map(len, shards)) - min(map(len, shards)) <= 1
+    with pytest.raises(AssertionError):
+        Batch(shard_index=3, shard_count=3)
 
 
-def test_eval_job_structural_tuple_is_unique():
-    """(task, model, policy, scene_size, canvas_grid, input_px, run_idx) is the
-    skip-existing matching key — must be unique per job."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=10, n_timesteps=21, tasks=DEFAULT_TASKS,
-                             include_extra_grids=True)
-    keys = [(j.task, j.model, j.policy, j.scene_size, j.canvas_grid, j.input_px, j.run_idx)
-            for j in jobs]
-    assert len(keys) == len(set(keys))
+def test_filters_device_and_batch_size_cap(tmp_path: Path) -> None:
+    by_policy = all_jobs(tmp_path, policies=("coarse_to_fine",))
+    assert by_policy and all(job.policy == "coarse_to_fine" for job in by_policy)
+    by_grid = all_jobs(tmp_path, grids=(8,))
+    assert {job.output_grid_size for job in by_grid} == {8}
+    assert any(isinstance(job.task, ADE20kSegmentationDINOv3) for job in by_grid), "DINOv3 at 128 px: an 8² patch grid"
+    on_cpu = all_jobs(tmp_path, device="cpu", max_batch_size=4)
+    assert {(job.task.device, job.task.batch_size) for job in on_cpu} == {("cpu", 4)}
 
 
-def test_eval_job_output_path_uniqueness():
-    """Within one matrix build (single timestamp), no two jobs share an output path."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=10, n_timesteps=21, tasks=DEFAULT_TASKS,
-                             include_extra_grids=True)
-    paths = [j.output for j in jobs]
-    assert len(paths) == len(set(paths))
-
-
-def test_extra_canvas_grids_disjoint_from_canvas_grids():
-    """(512, 8) and (512, 16) are in CANVAS_GRIDS — duplicating into EXTRA_*
-    would produce identical t=0 output paths."""
-    assert set(EXTRA_CANVAS_GRIDS).isdisjoint(set(CANVAS_GRIDS))
-
-
-def test_in1k_resolutions_disjoint():
-    """Baseline vs extras must not overlap on (scene, grid)."""
-    baseline = {(s, g) for s, g, _ in IN1K_RESOLUTIONS}
-    extras = {(s, g) for s, g, _ in EXTRA_IN1K_RESOLUTIONS}
-    assert baseline.isdisjoint(extras)
-
-
-def test_entropy_c2f_skipped_on_non_power_of_two():
-    """entropy_coarse_to_fine partitions the canvas into 2x2 / 4x4 tiles; only
-    power-of-two grids align. Non-pow2 grids must be excluded; pow2 extras must
-    still get the policy."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21,
-                             tasks=["ade20k-seg"], include_extra_grids=True)
-    non_pow2 = {g for _, g in EXTRA_CANVAS_GRIDS if (g & (g - 1)) != 0}
-    leaked = [j for j in jobs if j.policy == "entropy_coarse_to_fine" and j.canvas_grid in non_pow2]
-    assert leaked == [], f"entropy_c2f leaked into non-pow2 grids: {leaked}"
-    pow2_extra = {g for _, g in EXTRA_CANVAS_GRIDS if (g & (g - 1)) == 0}
-    if pow2_extra:
-        on_pow2 = [j for j in jobs if j.policy == "entropy_coarse_to_fine" and j.canvas_grid in pow2_extra]
-        assert on_pow2, "entropy_c2f missing on power-of-2 extras"
-
-
-def test_dinov3_canvas_grid_derivation():
-    """DINOv3 jobs carry canvas_grid = input_px // 16 (patch size)."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21, tasks=["ade20k-seg"])
-    dv3 = [j for j in jobs if j.model.startswith("dinov3-")]
-    assert dv3
-    for j in dv3:
-        assert j.input_px is not None and j.canvas_grid is not None
-        assert j.canvas_grid == j.input_px // 16
-
-
-def test_in1k_filename_encodes_scene_and_grid():
-    """IN1k outputs carry s{scene}_c{grid} so the exporter can group runs."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21, tasks=["in1k-clf"])
-    in1k = [j for j in jobs if j.task == "in1k-clf"]
-    assert in1k
-    for j in in1k:
-        assert j.scene_size is not None and j.canvas_grid is not None
-        assert f"s{j.scene_size}_c{j.canvas_grid}" in j.output.name
-
-
-def test_in1k_scene_and_grid_appear_in_cli_args():
-    """--scene-size, --batch-size, --episode.canvas-grid must reach the task; without
-    them, defaults silently override (risk: OOM at large grids)."""
-    bs_lookup = {(s, g): bs for s, g, bs in IN1K_RESOLUTIONS + EXTRA_IN1K_RESOLUTIONS}
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21,
-                             tasks=["in1k-clf"], include_extra_grids=True)
-    for j in jobs:
-        if j.task != "in1k-clf":
-            continue
-        for flag, expected in [
-            ("--scene-size", str(j.scene_size)),
-            ("--episode.canvas-grid", str(j.canvas_grid)),
-            ("--batch-size", str(bs_lookup[(j.scene_size, j.canvas_grid)])),
-        ]:
-            assert flag in j.args, f"{flag} missing from {j.args}"
-            assert j.args[j.args.index(flag) + 1] == expected
-
-
-def test_in1k_extras_only_expand_frozen():
-    """Finetuned weights were specialised at one (scene, grid); extras shouldn't multiply
-    finetuned jobs."""
-    base = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21, tasks=["in1k-clf"])
-    ext = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21,
-                            tasks=["in1k-clf"], include_extra_grids=True)
-    base_frozen = [j for j in base if j.model == "canvit-frozen"]
-    ext_frozen = [j for j in ext if j.model == "canvit-frozen"]
-    base_ft = [j for j in base if j.model == "canvit-finetuned"]
-    ext_ft = [j for j in ext if j.model == "canvit-finetuned"]
-    assert len(ext_frozen) > len(base_frozen)
-    assert len(ext_ft) == len(base_ft)
-
-
-def test_filter_by_policy_drops_dinov3():
-    """DINOv3 jobs have policy=None; a policy filter must drop them."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21, tasks=["ade20k-seg"])
-    kept = filter_jobs(jobs, policies=["coarse_to_fine"])
-    assert all(j.policy == "coarse_to_fine" for j in kept)
-    assert not any(j.model.startswith("dinov3-") for j in kept)
-
-
-def test_filter_by_grid():
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21, tasks=["ade20k-seg"])
-    kept = filter_jobs(jobs, grids=[32])
-    assert all(j.canvas_grid == 32 for j in kept)
-
-
-def test_skip_existing_is_timestamp_agnostic(tmp_path):
-    """already_done() globs on the structural stem; matches any prior-run timestamp."""
-    ade_dir = tmp_path / "results" / "ade20k_seg"
-    ade_dir.mkdir(parents=True)
-    (ade_dir / "coarse_to_fine_s512_c32_20260101T000000Z_r0.pt").touch()
-
-    jobs = build_eval_matrix(tmp_path / "results", n_runs=1, n_timesteps=21, tasks=["ade20k-seg"])
-    target = next(j for j in jobs if j.policy == "coarse_to_fine"
-                  and j.scene_size == 512 and j.canvas_grid == 32 and j.run_idx == 0
-                  and j.input_px is None)
-    assert target.already_done()
-
-
-def test_skip_existing_is_per_run_idx(tmp_path):
-    """Existing r=0 must NOT satisfy r=1's check; different run_idx are independent samples."""
-    ade_dir = tmp_path / "results" / "ade20k_seg"
-    ade_dir.mkdir(parents=True)
-    (ade_dir / "coarse_to_fine_s512_c32_20260101T000000Z_r0.pt").touch()
-
-    jobs = build_eval_matrix(tmp_path / "results", n_runs=2, n_timesteps=21, tasks=["ade20k-seg"])
-    r0 = next(j for j in jobs if j.policy == "coarse_to_fine"
-              and j.canvas_grid == 32 and j.scene_size == 512 and j.run_idx == 0
-              and j.input_px is None)
-    r1 = next(j for j in jobs if j.policy == "coarse_to_fine"
-              and j.canvas_grid == 32 and j.scene_size == 512 and j.run_idx == 1
-              and j.input_px is None)
-    assert r0.already_done()
-    assert not r1.already_done()
-
-
-def test_skip_existing_respects_policy_scene_grid(tmp_path):
-    """Existing data at (c2f, s512, c32) must NOT satisfy other policies / scenes / grids."""
-    ade_dir = tmp_path / "results" / "ade20k_seg"
-    ade_dir.mkdir(parents=True)
-    (ade_dir / "coarse_to_fine_s512_c32_20260101T000000Z_r0.pt").touch()
-
-    jobs = build_eval_matrix(tmp_path / "results", n_runs=1, n_timesteps=21,
-                             tasks=["ade20k-seg"], include_extra_grids=True)
-    other_policy = next(j for j in jobs if j.policy == "fine_to_coarse"
-                        and j.canvas_grid == 32 and j.scene_size == 512)
-    other_grid = next(j for j in jobs if j.policy == "coarse_to_fine"
-                      and j.canvas_grid == 9 and j.scene_size == 512)
-    other_scene = next(j for j in jobs if j.policy == "coarse_to_fine"
-                       and j.canvas_grid == 64 and j.scene_size == 1024)
-    assert not other_policy.already_done()
-    assert not other_grid.already_done()
-    assert not other_scene.already_done()
-
-
-def test_skip_existing_fills_partial_n_runs(tmp_path):
-    """Existing r=0..2 + --n-runs 5 leaves r=0..2 in place and queues r=3, r=4."""
-    ade_dir = tmp_path / "results" / "ade20k_seg"
-    ade_dir.mkdir(parents=True)
-    for run in range(3):
-        (ade_dir / f"coarse_to_fine_s512_c32_20260101T000000Z_r{run}.pt").touch()
-
-    jobs = build_eval_matrix(tmp_path / "results", n_runs=5, n_timesteps=21, tasks=["ade20k-seg"])
-    cells = [j for j in jobs if j.policy == "coarse_to_fine"
-             and j.scene_size == 512 and j.canvas_grid == 32 and j.input_px is None]
-    assert len(cells) == 5
-    done = sorted(j.run_idx for j in cells if j.already_done())
-    pending = sorted(j.run_idx for j in cells if not j.already_done())
-    assert done == [0, 1, 2]
-    assert pending == [3, 4]
-
-
-def test_ablation_seg_pairs_model_and_probe_by_slug():
-    """The seg CLI defaults --episode.model-repo to the flagship, and most
-    ablation variants share its canvas_dim — an ablation probe against the
-    wrong model would pass the embed-dim assert and produce plausible wrong
-    numbers. Every job must pin the model explicitly and pair it with the
-    probe published for that same checkpoint."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=10, n_timesteps=21,
-                             tasks=["ade20k-seg-ablations"])
-    # 12 variants x (4 stochastic x 10 runs + 2 deterministic x 1) at (512, 32).
-    assert len(jobs) == 12 * (4 * 10 + 2)
-    for j in jobs:
-        model_repo = j.args[j.args.index("--episode.model-repo") + 1]
-        probe_repo = j.args[j.args.index("--probe-repo") + 1]
-        slug = next(s for s, r in ABLATION_CHECKPOINTS.items() if r == model_repo)
-        assert j.model == f"abl-{slug}"
-        # Published-name contract: probes live under these exact repo ids.
-        assert probe_repo.endswith(f"-abl-{slug}")
-        assert probe_repo == ade20k_probe_repo(ABLATION_MODEL_SHORTS[model_repo], scene=512, grid=32)
-        assert j.output.parent.name == "ade20k_seg_ablations"
-
-
-def test_in1k_clf_ablation_jobs_pin_model_and_use_frozen_fused_head():
-    """C2F-only, frozen mode, model pinned per variant; the IN1k head is the
-    shared fused DINOv3 probe (default --probe-repo), so model is the only thing
-    that varies. The CLI defaults the model to the flagship, so the pin matters."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=10, n_timesteps=21,
-                             tasks=["in1k-clf-ablations"])
-    assert len(jobs) == 12 * 10  # 12 variants x n=10 (C2F is stochastic)
-    for j in jobs:
-        assert j.policy == "coarse_to_fine"
-        assert "--mode" in j.args and j.args[j.args.index("--mode") + 1] == "frozen"
-        model_repo = j.args[j.args.index("--episode.model-repo") + 1]
-        slug = next(s for s, r in ABLATION_CHECKPOINTS.items() if r == model_repo)
-        assert j.model == f"abl-{slug}"
-        # No per-model probe: the shared DINOv3 probe is the task default.
-        assert "--probe-repo" not in j.args
-        assert j.output.parent.name == "in1k_clf_ablations"
-        assert j.scene_size == 512 and j.canvas_grid == 32
-
-
-def test_in1k_clf_pretrain_covers_only_in21k_and_in1k():
-    """The dataset-scale comparison (IN21k flagship vs IN1k-only) must pin exactly
-    those two pretraining checkpoints and EXCLUDE sa1b (also in PRETRAIN_CHECKPOINTS
-    but abandoned / different scene resolution). Frozen, fused shared DINOv3 probe."""
-    n = 4
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=n, n_timesteps=21,
-                             tasks=["in1k-clf-pretrain"])
-    # 2 datasets x (4 stochastic x n + 1 deterministic RFS x 1).
-    assert len(jobs) == 2 * (4 * n + 1)
-    pinned = {j.args[j.args.index("--episode.model-repo") + 1] for j in jobs}
-    assert pinned == {PRETRAIN_CHECKPOINTS["in21k"], PRETRAIN_CHECKPOINTS["in1k"]}
-    assert PRETRAIN_CHECKPOINTS["sa1b"] not in pinned  # explicit: sa1b is out of scope
-    for j in jobs:
-        assert j.args[j.args.index("--mode") + 1] == "frozen"
-        assert "--probe-repo" not in j.args  # shared DINOv3 probe is the default
-        assert j.output.parent.name == "in1k_clf_pretrain"
-        assert j.scene_size == 512 and j.canvas_grid == 32
-
-
-def test_ade20k_seg_pretrain_pairs_model_and_own_probe():
-    """Seg (unlike clf) has no shared fused head — each model needs its OWN ADE20K probe.
-    The IN21k-vs-IN1k comparison must pin each model AND probe-ade20k-40k-s512-c{grid}-{short}
-    at grids 32 and 64, and exclude sa1b."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=5, n_timesteps=21,
-                             tasks=["ade20k-seg-pretrain"])
-    assert {j.model for j in jobs} == {"pretrain-in21k", "pretrain-in1k"}
-    assert {j.canvas_grid for j in jobs} == {32, 64}
-    for j in jobs:
-        short = "in1k" if j.model == "pretrain-in1k" else "in21k"
-        model_repo = j.args[j.args.index("--episode.model-repo") + 1]
-        probe_repo = j.args[j.args.index("--probe-repo") + 1]
-        assert model_repo == PRETRAIN_CHECKPOINTS[short]
-        assert probe_repo == ade20k_probe_repo(short, scene=512, grid=j.canvas_grid)
-        assert j.output.parent.name == "ade20k_seg_pretrain"
-    assert all(PRETRAIN_CHECKPOINTS["sa1b"] not in j.args for j in jobs)
-
-
-def test_ablation_seg_deterministic_policies_run_once():
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=10, n_timesteps=21,
-                             tasks=["ade20k-seg-ablations"])
-    runs_per_cell: dict[tuple[str, str | None], int] = {}
-    for j in jobs:
-        runs_per_cell[(j.model, j.policy)] = runs_per_cell.get((j.model, j.policy), 0) + 1
-    for (_, policy), n in runs_per_cell.items():
-        assert n == (1 if policy in DETERMINISTIC else 10)
-
-
-def test_shards_partition_the_job_list():
-    """Every job lands in exactly one shard; the shards' union is the whole list."""
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=10, n_timesteps=21,
-                             tasks=["ade20k-seg-ablations"])
-    for n in (1, 3, 12, 504, 1000):
-        shards = [_apply_shard(jobs, f"{k}/{n}") for k in range(n)]
-        recombined = [j for shard in shards for j in shard]
-        assert sorted(id(j) for j in recombined) == sorted(id(j) for j in jobs)
-        # Strided partition: shard sizes differ by at most 1.
-        sizes = [len(s) for s in shards]
-        assert max(sizes) - min(sizes) <= 1
-
-
-def test_shard_rejects_bad_spec():
-    jobs = build_eval_matrix(Path("/tmp/test"), n_runs=1, n_timesteps=21, tasks=["ade20k-seg"])
-    for bad in ("3/3", "5/3", "-1/4", "0/0"):
-        with pytest.raises((AssertionError, ValueError)):
-            _apply_shard(jobs, bad)
+def test_skip_existing_matches_any_timestamp_but_not_other_runs(tmp_path: Path) -> None:
+    earlier = tmp_path / "ade20k_seg" / "coarse_to_fine_s512_c32_20260101T000000Z_r0.pt"
+    earlier.parent.mkdir()
+    earlier.touch()
+    jobs = {job.output.name: job for job in Batch(out_dir=tmp_path, num_runs=2).jobs()}
+    done = {name for name, job in jobs.items() if job.already_done()}
+    assert len(done) == 1 and re.fullmatch(rf"coarse_to_fine_s512_c32_{TIMESTAMP}_r0\.pt", done.pop())

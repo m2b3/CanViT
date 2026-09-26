@@ -1,12 +1,12 @@
 # Environment for ImageNet-1k fine-tuning on Cloud TPU
-# (canvit_pytorch/specialize/training/gcp_in1k_clf_ft/). Kept apart from the
+# (canvit_pytorch/specialize/in1k_tpu/). Kept apart from the
 # main project because torch_xla 2.9.0's ABI pins torch and torchvision exactly;
 # these are the pins that produced the paper's 84.5% fine-tuned checkpoint.
 #
 # The dependencies mirror canvit-pytorch's base dependencies plus its
 # `specialize` extra (../pyproject.toml), minus torch and torchvision; keep them
 # in step. canvit-pytorch itself is installed into this environment without
-# dependencies by gcp_in1k_clf_ft/setup_tpu.sh, because uv would otherwise
+# dependencies by in1k_tpu/setup_tpu.sh, because uv would otherwise
 # apply the main project's CUDA wheel index to torch.
 
 [project]
@@ -31,9 +31,6 @@ dependencies = [
     "pandas>=2.0.0",
     "scikit-learn>=1.4.0",
     "transformers>=4.50.0",
-    # dinov3-in1k-probes (needed by gcp_in1k_clf_ft/shared.py) pins
-    # torchvision>=0.24.1, which conflicts with the pin above; setup_tpu.sh
-    # installs it without dependencies.
 ]
 
 [tool.uv]

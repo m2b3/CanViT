@@ -7,84 +7,168 @@
   <meta name="description" content="CanViT, the Canvas Vision Transformer: a task- and policy-agnostic Active-Vision Foundation Model (NeurIPS 2026).">
   <meta property="og:title" content="CanViT: Toward Active-Vision Foundation Models">
   <meta property="og:description" content="A recurrent vision model that builds a scene-wide latent canvas from sequences of small glimpses. NeurIPS 2026.">
-  <meta property="og:image" content="assets/canvas_attention_across_scales.png">
-  <style>
-    :root {
-      --bg: #ffffff; --fg: #16181d; --muted: #4a4f5c; --rule: #e3e5ea;
-      --accent: #b3261e; --button: #16181d; --button-fg: #ffffff; --code-bg: #f4f5f7;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --bg: #111317; --fg: #eceef2; --muted: #b6bac4; --rule: #2a2e36;
-        --accent: #ff8a80; --button: #eceef2; --button-fg: #111317; --code-bg: #1b1e24;
-      }
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--fg);
-      font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    }
-    main { max-width: 900px; margin: 0 auto; padding: 48px 16px 64px; }
-    h1 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.2; margin: 0 0 20px; text-align: center; }
-    h1 .name { color: var(--accent); }
-    h2 { font-size: 1.3rem; margin: 48px 0 12px; border-bottom: 1px solid var(--rule); padding-bottom: 6px; }
-    .authors, .affiliations, .venue { text-align: center; margin: 4px 0; }
-    .authors { font-size: 1.1rem; }
-    .authors span { white-space: nowrap; margin: 0 10px; }
-    .affiliations { color: var(--muted); font-size: 0.95rem; }
-    .venue { font-weight: 600; margin-top: 12px; }
-    .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 24px 0 32px; }
-    .links a {
-      background: var(--button); color: var(--button-fg); text-decoration: none;
-      padding: 8px 18px; border-radius: 999px; font-weight: 600; font-size: 0.95rem;
-    }
-    figure { margin: 0; }
-    figure img { width: 100%; height: auto; display: block; border-radius: 6px; }
-    figcaption { color: var(--muted); font-size: 0.92rem; margin-top: 8px; }
-    p { margin: 0 0 14px; }
-    a { color: var(--accent); }
-    pre {
-      background: var(--code-bg); padding: 16px; border-radius: 6px; overflow-x: auto;
-      font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0;
-    }
-    button.copy {
-      margin-top: 8px; background: none; border: 1px solid var(--rule); color: var(--fg);
-      border-radius: 6px; padding: 4px 12px; font: inherit; font-size: 0.9rem; cursor: pointer;
-    }
-    footer { margin-top: 48px; color: var(--muted); font-size: 0.9rem; text-align: center; }
-  </style>
+  <!-- Crawlers need an absolute URL here. -->
+  <meta property="og:image" content="https://m2b3.github.io/CanViT/assets/canvas_attention_across_scales.png">
+  <script>try { const theme = localStorage.getItem("theme"); if (theme) document.documentElement.dataset.theme = theme; } catch {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200..700&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+  <link rel="stylesheet" href="css/site.css">
+  <script type="module" src="js/page.js"></script>
 </head>
 <body>
-<main>
-  <h1><span class="name">CanViT</span>: Toward Active-Vision Foundation Models</h1>
 
+<button class="theme" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+</button>
+
+<header class="hero wrap">
+  <p class="badge"><span class="logo neurips" role="img" aria-label="NeurIPS"></span>2026</p>
+  <h1>
+    <span class="name"><span class="can">Can</span><span class="vit">ViT</span></span>
+    <span class="title">Toward Active-Vision<br>Foundation Models</span>
+  </h1>
+  <p class="expansion"><b>Can</b>vas <b>Vi</b>sion <b>T</b>ransformer</p>
   <p class="authors">
-    <span>Yohaï-Eliel Berreby<sup>1,2</sup></span>
-    <span>Sabrina Du<sup>1,2</sup></span>
-    <span>Audrey Durand<sup>2,3</sup></span>
-    <span>B. Suresh Krishna<sup>1</sup></span>
+    <span class="pair"><span>Yohaï-Eliel Berreby<sup>1,2</sup></span><span>Sabrina Du<sup>1,2</sup></span></span>
+    <span class="pair"><span>Audrey Durand<sup>2,3</sup></span><span>B. Suresh Krishna<sup>1</sup></span></span>
   </p>
-  <p class="affiliations"><sup>1</sup>McGill University &nbsp; <sup>2</sup>Mila – Quebec AI Institute &nbsp; <sup>3</sup>Université Laval</p>
-  <p class="venue">NeurIPS 2026</p>
-
-  <nav class="links">
-    <a href="https://arxiv.org/abs/2603.22570">Paper</a>
-    <a href="https://github.com/m2b3/CanViT">Code</a>
-    <a href="https://huggingface.co/canvit">Checkpoints</a>
-    <a href="#citation">BibTeX</a>
+  <p class="affiliations"><span><sup>1</sup>McGill University</span> <span><sup>2</sup>Mila – Quebec AI Institute</span> <span><sup>3</sup>Université Laval</span></p>
+  <nav class="links" aria-label="Paper, code and checkpoints">
+    <a class="button" href="https://arxiv.org/abs/2603.22570"><span class="logo arxiv" aria-hidden="true"></span>Paper</a>
+    <a class="button" href="https://github.com/m2b3/CanViT"><span class="logo github" aria-hidden="true"></span>Code</a>
+    <a class="button" href="https://huggingface.co/canvit"><span class="logo huggingface" aria-hidden="true"></span>Checkpoints</a>
+    <a class="button" href="#citation">BibTeX</a>
   </nav>
+</header>
 
-  <figure>
-    <img src="assets/canvas_attention_across_scales.png" alt="Two CanViT rollouts over successive glimpses: each glimpse, the canvas region it updates, and the full canvas shown by principal component analysis, with the change caused by each glimpse.">
-    <figcaption>CanViT sees a scene through a sequence of small glimpses and integrates them into a persistent scene-wide latent workspace, the canvas.</figcaption>
+<main>
+  <figure class="wrap teaser">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="scenes" role="group" aria-label="Scene">
+          <button type="button" data-scene="data/street-path" aria-pressed="true">Street</button>
+          <button type="button" data-scene="data/shop-path" aria-pressed="false">Shop</button>
+          <button type="button" data-scene="data/ferry-path" aria-pressed="false">Ferry</button>
+        </div>
+        <span class="hint">Hover any map to name the class there · drag the slider to scrub</span>
+      </div>
+      <canvit-path id="path" src="data/street-path" autoplay></canvit-path>
+    </div>
+    <figcaption class="caption"><b>The released CanViT-B, recorded along a smooth path of viewpoints.</b> CanViT takes any center and scale whose crop lies inside the scene: each of the 300 frames is one 128&nbsp;×&nbsp;128&nbsp;px glimpse taken where the blue box stands. The middle map is decoded from the canvas carried across all glimpses so far; the right map, from the same glimpse processed from a fresh canvas. The chart counts the annotated pixels each map labels correctly. Scenes from the ADE20K validation set.</figcaption>
   </figure>
 
-  <h2>Abstract</h2>
-  <!-- The paper's abstract, verbatim, with numbers substituted from the paper's generated data; keep it identical to the published version. -->
-  <p>Active computer vision promises efficient, biologically plausible perception through sequential, localized glimpses, but lacks scalable general-purpose architectures and pretraining pipelines, leaving Active-Vision Foundation Models (AVFMs) underexplored. We introduce <strong>CanViT</strong>, the first task- and policy-agnostic AVFM. CanViT uses scene-relative RoPE to bind a retinotopic Vision Transformer backbone and a spatiotopic scene-wide latent workspace, the <em>canvas</em>. Efficient interaction with this high-capacity working memory is supported by Canvas Attention, a novel asymmetric cross-attention mechanism. We decouple <em>thinking</em> (backbone-level) and <em>memory</em> (canvas-level), eliminating canvas-side self-attention and fully-connected layers to achieve fast sequential inference and scalability to high output resolutions. We propose a label-free active vision pretraining scheme, <strong>policy-agnostic passive-to-active dense latent distillation</strong>: reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT-B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, in 166 hours on a single H100. On ADE20K segmentation, a frozen CanViT-B achieves 38.5% mIoU in a single low-resolution glimpse, outperforming the best active model's 27.6% with 20x fewer inference FLOPs as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT-B reaches 45.9% ADE20K mIoU. On ImageNet-1k classification, CanViT-B also sets a new active-vision state of the art, with 84.5% top-1 accuracy after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.</p>
+  <div class="wrap">
+    <p class="thesis rise">A <span class="glimpse-word">backbone</span> that thinks about one glimpse at a time, bound to a <span class="canvas-word">canvas</span> that remembers the whole scene.</p>
 
-  <h2 id="citation">Citation</h2>
-  <pre id="bibtex">@article{berreby2026canvit,
+    <div class="highlights rise">
+      <article class="highlight">
+        <div class="icon glimpse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 2.4"/><rect x="11" y="6" width="8" height="8" rx="1"/></svg></div>
+        <h3>Any viewpoint, any order</h3>
+        <p>Pretrained on random glimpse centers, zoom levels and sequence lengths; policies it never trained with, such as coarse-to-fine and EG-C2F, drive it without retraining.</p>
+      </article>
+      <article class="highlight">
+        <div class="icon canvas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
+        <h3>The whole scene from one glimpse</h3>
+        <p>A frozen CanViT-B reaches <span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU from a single 128&nbsp;px glimpse of the whole scene, read out by a linear probe.</p>
+      </article>
+      <article class="highlight">
+        <div class="icon canvas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7.5 3v18M12 3v18M16.5 3v18M3 7.5h18M3 12h18M3 16.5h18" stroke-width="1.1"/></svg></div>
+        <h3>Output resolution chosen at inference</h3>
+        <p>The canvas grid is set when the model runs. Trained with a 32&nbsp;×&nbsp;32 canvas, CanViT-B segments better with a 64&nbsp;×&nbsp;64 one.</p>
+      </article>
+      <article class="highlight">
+        <div class="icon glimpse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2.5v3.5M15 2.5v3.5M9 18v3.5M15 18v3.5M2.5 9h3.5M2.5 15h3.5M18 9h3.5M18 15h3.5"/></svg></div>
+        <h3>One GPU, no labels</h3>
+        <p>Pretrained from scratch on 13.2 million ImageNet-21k scenes and 1 billion glimpses, in 166 hours on one H100.</p>
+      </article>
+    </div>
+
+    <section class="section" aria-labelledby="looking">
+      <div class="section-head"><span class="index">01</span><h2 id="looking">One glimpse at a time</h2></div>
+      <figure class="plate rise">
+        <a href="assets/paper/canvit_overview.svg" title="Open the figure at full size"><img src="assets/paper/canvit_overview.svg" width="528" height="238" loading="lazy" alt="A scene with four numbered glimpse boxes of different sizes; for each glimpse, the input crop, a PCA view of the canvas and a heatmap of the canvas update."></a>
+        <figcaption class="caption"><b>A CanViT rollout</b> (from the paper). At each timestep, CanViT ingests a 128<sup>2</sup>&nbsp;px glimpse extracted at a viewpoint with center (x, y) ∈ [−1,&nbsp;1]<sup>2</sup> and scale s ∈ (0,&nbsp;1] (<b>A</b>; <b>B</b>, first row). This updates a scene-wide latent representation, the canvas, shown by Principal Component Analysis across tokens (second row), with canvas updates as cosine dissimilarity heatmaps between consecutive timesteps (third row).</figcaption>
+      </figure>
+      <ol class="points columns rise" style="margin-top: 28px">
+        <li class="glimpse"><b>Glimpse.</b> A fixed 128&nbsp;×&nbsp;128&nbsp;px crop. The pixel count never changes, so zooming out covers more of the scene and zooming in sees it in more detail.</li>
+        <li class="canvas"><b>Canvas.</b> A persistent grid of 1024-dimensional tokens tiling the scene. Linear readouts decode the whole scene from it after every glimpse, including regions not yet seen.</li>
+        <li><b>Order matters.</b> Each glimpse is processed in the context of the canvas: the same viewpoints visited coarse-to-fine or fine-to-coarse end at <span data-macro="adeCTFCSixFourTTwenty">45.9</span>% or <span data-macro="adeFTCCSixFourTTwenty">42.9</span>% ADE20K mIoU after 21 glimpses (64<sup>2</sup> canvas).</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="architecture">
+      <div class="section-head"><span class="index">02</span><h2 id="architecture">Two streams, one frame of reference</h2></div>
+      <figure class="plate narrow rise">
+          <a href="assets/paper/arch_overview.svg" title="Open the figure at full size"><img src="assets/paper/arch_overview.svg" width="509" height="465" loading="lazy" alt="Three timesteps side by side. In each, a column of twelve ViT blocks processes the glimpse; a canvas column beside it exchanges information with the blocks through alternating Read (R) and Write (W) arrows; the canvas and the CLS token pass on to the next timestep."></a>
+          <figcaption class="caption"><b>CanViT architecture</b> (from the paper): the ViT backbone (purple) processes glimpses (blue) with a recurrent CLS token (green) and a Viewpoint Encoding token (orange); the canvas (red) interacts with it through Canvas Attention reads (R) and writes (W). Both streams have register tokens (gray).</figcaption>
+      </figure>
+      <ol class="points pairs rise" style="margin-top: 28px">
+          <li class="glimpse"><b>Backbone.</b> A ViT-B/16 processes the glimpse's 64 patch tokens with a recurrent CLS token, a Viewpoint Encoding token and registers. Its patch tokens are retinotopic and discarded after each glimpse; the CLS token carries over.</li>
+          <li class="canvas"><b>Canvas.</b> Spatiotopic tokens that persist across glimpses. The grid is broadcast from one learned initial token, so its resolution is chosen at inference.</li>
+          <li><b>Scene-Relative RoPE.</b> Every token of both streams gets 2D rotary position embeddings from its scene coordinates. Glimpse patches move and spread with the viewpoint, so zoom is implicit in their spacing.</li>
+          <li><b>Canvas Attention.</b> Every two backbone blocks, glimpse tokens read from the canvas or the canvas writes from the glimpse: three Reads and three Writes per glimpse. All projections sit on the glimpse side; canvas tokens only pass through LayerNorm, RoPE and residual addition, so cost grows linearly with the canvas.</li>
+      </ol>
+      <figure class="plate rise" style="margin-top: 36px">
+        <a href="assets/paper/canvas_attention_combined.svg" title="Open the figure at full size"><img src="assets/paper/canvas_attention_combined.svg" width="528" height="288" loading="lazy" alt="Left: a Read-Write pair of Canvas Attention, with projections on the glimpse side only. Right: total inference FLOPs against the output patch grid, and the relative cost of canvas-side projections."></a>
+        <figcaption class="caption"><b>Canvas Attention</b> (from the paper). <b>A.</b> A Read-Write pair. <b>B.</b> Total inference FLOPs against the output patch grid. <b>C.</b> Relative cost of canvas-side QKVO projections, per Read/Write pair.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section" aria-labelledby="pretraining">
+      <div class="section-head"><span class="index">03</span><h2 id="pretraining">Pretraining without labels or a policy</h2></div>
+      <ol class="points columns rise">
+        <li class="canvas"><b>Dense latent distillation.</b> After every glimpse, linear heads decode the canvas into a frozen DINOv3 ViT-B's patch features of the whole 512&nbsp;×&nbsp;512&nbsp;px scene, and the recurrent CLS token into DINOv3's CLS token.</li>
+        <li class="glimpse"><b>Random viewpoints.</b> Glimpse centers and scales are drawn at random, favoring small glimpses. Each scene gets two rollouts, one starting from the full view and one from a random viewpoint, with random lengths.</li>
+        <li><b>Scale.</b> 13.2 million ImageNet-21k scenes, about 1 billion glimpses and 2 million steps at batch size 64, in 166 hours on one H100. Teacher features can be computed once and stored, or computed online.</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="unsure">
+      <div class="section-head"><span class="index">04</span><h2 id="unsure">Look where you are unsure</h2></div>
+      <div class="prose rise" style="margin-bottom: 28px">
+        <p>Because the canvas is spatial and cheap to decode, the model's own uncertainty can choose where it looks next. <span class="term">Entropy-Guided C2F (EG-C2F)</span> walks a quadtree from coarse to fine: the full scene, then 4 quadrants, then 16 tiles. Within each level, the next glimpse goes to the unvisited tile where the decoded classes have the highest mean entropy. It needs no training.</p>
+      </div>
+      <div class="stage rise">
+        <canvit-rollout src="data/street-egc2f" autoplay interval="1800">
+          <div class="panels">
+            <figure><span class="panel-title">Glimpse t<span>where the model looks</span></span><canvit-scene></canvit-scene></figure>
+            <figure><span class="panel-title">Seen so far<span>each glimpse at the resolution it was taken</span></span><canvit-mosaic></canvit-mosaic></figure>
+            <figure><span class="panel-title">Segmentation<span>decoded from the canvas</span></span><canvit-map layer="labels"></canvit-map><canvit-legend layer="labels" max="4"></canvit-legend></figure>
+            <figure><span class="panel-title">Uncertainty<span>mean per tile; outlined: glimpse t + 1</span></span><canvit-decision></canvit-decision><canvit-legend layer="entropy"></canvit-legend></figure>
+          </div>
+          <canvit-timeline></canvit-timeline>
+        </canvit-rollout>
+      </div>
+      <p class="caption"><b>EG-C2F on an ADE20K validation scene, 21 glimpses, 64&nbsp;×&nbsp;64 canvas.</b> Uncertainty is the entropy of the decoded class distribution on a fixed scale, from 0 to its maximum, log&nbsp;150. Hover or tap any panel to mark the same point in all of them.</p>
+    </section>
+
+    <section class="section" aria-labelledby="results">
+      <div class="section-head"><span class="index">05</span><h2 id="results">Results</h2></div>
+      <figure class="plate rise">
+        <a href="assets/paper/main_results.svg" title="Open the figure at full size"><img src="assets/paper/main_results.svg" width="516" height="169" loading="lazy" alt="Three line charts: ADE20K mIoU against cumulative FLOPs, with prior active models as points; ADE20K mIoU by timestep for six viewing policies; ImageNet-1k accuracy by timestep, frozen and fine-tuned."></a>
+        <figcaption class="caption"><b>Benchmark results on ADE20K and ImageNet-1k</b> (from the paper). <b>A.</b> Accuracy–efficiency frontier on ADE20K segmentation. <b>B.</b> ADE20K mIoU by viewing policy, with a 32<sup>2</sup> or 64<sup>2</sup> canvas. <b>C.</b> ImageNet-1k accuracy by viewing policy, frozen or fine-tuned. Policies: EG-C2F; coarse-to-fine (C2F) and fine-to-coarse (F2C) quadtree visits; F-IID and R-IID, random viewpoints after a full-scene or random first glimpse; RFS, the full scene repeated.</figcaption>
+      </figure>
+      <div class="stats rise">
+        <div class="stat ours"><div class="value"><span data-macro="adeSingleGlimpseMiou">38.5</span><small>% mIoU</small></div><p>ADE20K, CanViT-B frozen, one 128&nbsp;px glimpse of the whole scene</p></div>
+        <div class="stat ours"><div class="value"><span data-macro="adeCTFCSixFourTTwenty">45.9</span><small>% mIoU</small></div><p>ADE20K, CanViT-B frozen, after 21 glimpses (C2F, 64<sup>2</sup> canvas)</p></div>
+        <div class="stat ours"><div class="value"><span data-macro="inkFinetunedBest">84.5</span><small>% top-1</small></div><p>ImageNet-1k, CanViT-B fine-tuned</p></div>
+        <div class="stat"><div class="value"><span data-macro="adeBestPriorMiou">27.6</span><small>% mIoU</small></div><p>ADE20K, best prior active model, using <span data-macro="adeCheapestBeatFlopRatio">20</span>× the inference FLOPs of CanViT-B's single glimpse</p></div>
+      </div>
+    </section>
+
+    <section class="section abstract" aria-labelledby="abstract">
+      <div class="section-head"><span class="index">06</span><h2 id="abstract">Abstract</h2></div>
+      <div class="prose">
+        <!-- The paper's abstract, verbatim; keep it identical to the published version. -->
+        <p>Active computer vision promises efficient, biologically plausible perception through sequential, localized glimpses, but lacks scalable general-purpose architectures and pretraining pipelines, leaving Active-Vision Foundation Models (AVFMs) underexplored. We introduce <strong>CanViT</strong>, the first task- and policy-agnostic AVFM. CanViT uses scene-relative RoPE to bind a retinotopic Vision Transformer backbone and a spatiotopic scene-wide latent workspace, the <em>canvas</em>. Efficient interaction with this high-capacity working memory is supported by Canvas Attention, a novel asymmetric cross-attention mechanism. We decouple <em>thinking</em> (backbone-level) and <em>memory</em> (canvas-level), eliminating canvas-side self-attention and fully-connected layers to achieve fast sequential inference and scalability to high output resolutions. We propose a label-free active vision pretraining scheme, <strong>policy-agnostic passive-to-active dense latent distillation</strong>: reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT-B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, in 166 hours on a single H100. On ADE20K segmentation, a frozen CanViT-B achieves <span data-macro="adeSingleGlimpseMiou">38.5</span>% mIoU in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT-B reaches <span data-macro="adeBestMiou">45.9</span>% ADE20K mIoU. On ImageNet-1k classification, CanViT-B also sets a new active-vision state of the art, with <span data-macro="inkFinetunedBest">84.5</span>% top-1 accuracy after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="citation">
+      <div class="section-head"><span class="index">07</span><h2 id="citation">Citation</h2></div>
+      <div class="citation">
+        <pre id="bibtex">@article{berreby2026canvit,
   title={CanViT: Toward Active-Vision Foundation Models},
   author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
   year={2026},
@@ -93,9 +177,12 @@
   primaryClass={cs.CV},
   url={https://arxiv.org/abs/2603.22570}
 }</pre>
-  <button class="copy" type="button" onclick="navigator.clipboard.writeText(document.getElementById('bibtex').textContent).then(() => { this.textContent = 'Copied'; })">Copy BibTeX</button>
-
-  <footer>Code and checkpoints are MIT-licensed.</footer>
+        <button class="copy" type="button" data-copy="bibtex">Copy</button>
+      </div>
+    </section>
+  </div>
 </main>
+
+<footer class="wrap">Code and checkpoints are MIT-licensed. Demo scenes and annotations: ADE20K validation set (MIT CSAIL).</footer>
 </body>
 </html>

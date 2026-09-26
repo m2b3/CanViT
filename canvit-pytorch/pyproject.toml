@@ -6,13 +6,17 @@ build-backend = "hatchling.build"
 packages = ["canvit_pytorch"]
 
 [tool.hatch.build.targets.sdist]
-exclude = ["*.pt", "*.pt.bak", "*.pth", "throwaway/", "test_data/", "slurm/", "scripts/", "bench/", "tpu/"]
+exclude = ["*.pt", "*.pt.bak", "*.pth", "test_data/", "slurm/", "tpu/"]
+
+# The license text is the repository's LICENSE; the sdist carries a copy, from which the wheel takes it.
+[tool.hatch.build.targets.sdist.force-include]
+"../LICENSE" = "LICENSE"
 
 [project]
 name = "canvit-pytorch"
 # 0.1.10 is the last PyPI release; this development version adds the
 # pretrain, specialize and evaluate subpackages.
-version = "0.2.0.dev0"
+version = "0.2.0"
 description = "CanViT (Canvas Vision Transformer): model, pretraining, task specialization and evaluation"
 readme = "README.md"
 license = "MIT"
@@ -48,43 +52,31 @@ Checkpoints = "https://huggingface.co/canvit"
 
 [project.optional-dependencies]
 demo = [
-    "scikit-learn>=1.7.0",
-    "dinov3-in1k-probes",
     "matplotlib>=3.10.8",
-    "timm>=1.0.0",
-    "transformers>=4.50.0",
+    "pillow>=10.0.0",
     "tyro>=1.0.3",
 ]
 pretrain = [
     "torch>=2.10",
-    "dinov3",
-    "dinov3-in1k-probes",
     "transformers>=4.50.0",
     "comet-ml",
     "tyro",
-    "tqdm",
-    "rich",
-    "omegaconf",
-    "dacite",
-    "optuna",
     "pyarrow",
-    "polars",
-    "torchmetrics",
     "matplotlib",
     "xxhash",
-    "opencv-python-headless>=4.13.0.90",
 ]
 specialize = [
     "dinov3",
     "pillow>=10.0.0",
-    "timm>=1.0.0",
     "tyro>=1.0.0",
     "tqdm>=4.60.0",
     "comet-ml>=3.30.0",
     "matplotlib>=3.8.0",
-    "pandas>=2.0.0",
-    "scikit-learn>=1.4.0",
     "transformers>=4.50.0",
+]
+viz = [
+    "pillow>=10.0.0",
+    "tyro>=1.0.0",
 ]
 evaluate = [
     "canvit-pytorch[specialize]",
@@ -92,7 +84,16 @@ evaluate = [
     "tyro>=1.0.0",
     "tqdm>=4.60.0",
     "transformers>=4.50.0",
-    "statsmodels>=0.14.6",
+    "pandas>=2.0.0",
+    "pyarrow>=20.0.0",
+]
+live = [
+    "onnx>=1.23.0",
+    "onnxruntime>=1.30.0",
+    "onnxscript>=0.7.2",
+    "pillow>=10.0.0",
+    "playwright>=1.63.0",
+    "tyro>=1.0.0",
 ]
 
 [dependency-groups]
@@ -106,6 +107,7 @@ dev = [
     "pandas>=3.0.2",
     "pyarrow>=23.0.1",
     "matplotlib>=3.10.8",
+    "scikit-learn>=1.4.0",
 ]
 
 [[tool.uv.index]]
@@ -115,7 +117,6 @@ explicit = true
 
 [tool.uv.sources]
 dinov3 = { git = "https://github.com/facebookresearch/dinov3.git", rev = "54694f7627fd815f62a5dcc82944ffa6153bbb76" }
-dinov3-in1k-probes = { git = "https://github.com/m2b3/dinov3-in1k-probes.git" }
 # Linux GPU hosts take CUDA 12.8 wheels (crockett's driver predates CUDA 13);
 # macOS takes PyPI wheels (MPS).
 torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
@@ -136,16 +137,11 @@ line-length = 120
 exclude = ["throwaway", "misc"]
 
 [tool.ruff.lint]
-# Pinned to the rule set every package passed before the merge. Ruff 0.16
-# widened its defaults; adopting those rules is a separate cleanup.
-select = ["E4", "E7", "E9", "F"]
-
-[tool.ruff.lint.per-file-ignores]
-# Sets torch._functorch.config before imports (required).
-"canvit_pytorch/pretrain/train/loop.py" = ["E402"]
-# Logger setup and heavy imports are interleaved so TPU cold-start import time is logged.
-"canvit_pytorch/specialize/training/gcp_in1k_clf_ft/shared.py" = ["E402"]
-"canvit_pytorch/specialize/training/gcp_in1k_clf_ft/train_imagenet.py" = ["E402"]
+# Errors and pyflakes, plus rules that guard real properties: sorted imports,
+# no blind `except Exception` without a stated reason, no implicit string
+# concatenation (a missing comma), explicit `check` on subprocess.run, no
+# stale noqa. Ruff 0.16's other default rules flag deliberate code here.
+select = ["E4", "E7", "E9", "F", "I", "BLE", "ISC", "PLW1510", "RUF100"]
 
 [tool.basedpyright]
 typeCheckingMode = "standard"

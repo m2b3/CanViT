@@ -1,0 +1,133 @@
+// The layer vocabulary of the web bundle schema (canvit-pytorch/docs/viz.md) and
+// how each layer is colored. Every coloring decision for bundle data lives here.
+
+import { ADE20K_PALETTE } from "./ade20k.js";
+import { COLORMAPS } from "./colormaps.js";
+
+// manifest.pca.protocol (canvit-pytorch/docs/viz.md) -> how the canvas colors were set.
+const PCA_NOTES = {
+  "paper": "PCA of canvas tokens → RGB, color limits per glimpse",
+  "fixed-limits": "PCA of canvas tokens → RGB, one color scale for all glimpses",
+};
+
+/**
+ * kind: "rgb" (colored in Python; note(bundle) says how), "labels" (class index per cell) or
+ * "scalar" (a fraction in [0, 1]; quantity(bundle) names it, value(f) converts it for display).
+ * grid: sized canvas_grid × canvas_grid (else glimpse_px × glimpse_px).
+ * Scalar domains: "unit" [0, 1]; "frame" min–max of this glimpse; "bundle" min–max over all glimpses.
+ * Defaults keep one color scale across glimpses, so brightness compares across time: a per-frame
+ * range would paint a small late change as brightly as the first glimpse's rewrite.
+ */
+
+const LAYERS = {
+  crop: { kind: "rgb", grid: false, title: "Glimpse", note: () => "what the model saw" },
+  canvas: { kind: "rgb", grid: true, title: "Canvas", note: (bundle) => PCA_NOTES[bundle.manifest.pca.protocol] },
+  labels: { kind: "labels", grid: true, title: "Segmentation" },
+  entropy: {
+    kind: "scalar", grid: true, title: "Uncertainty", colormap: "viridis", domain: "unit",
+    low: "sure", high: "unsure", quantity: (bundle) => `entropy/log ${bundle.manifest.readout.num_classes}`, value: (f) => f,
+  },
+  change: {
+    kind: "scalar", grid: true, title: "Change", colormap: "magma", domain: "bundle",
+    low: "kept", high: "rewritten", quantity: () => "1 − cos", value: (f) => 2 * f,
+  },
+};
+
+export const DOMAINS = ["unit", "frame", "bundle"];
+
+/** The spec of a layer name found in a manifest; unknown names are errors, so new layers force a decision. */
+export function layerSpec(name) {
+  if (Object.hasOwn(LAYERS, name)) return LAYERS[name];
+  const write = /^write(\d+)$/.exec(name);
+  if (write) return { kind: "rgb", grid: true, title: `Write ${write[1]}`, note: () => "PCA of one Canvas Attention Write" };
+  throw new Error(`Unknown bundle layer "${name}": add it to LAYERS in js/canvit/layers.js`);
+}
+
+/** A scalar layer's fraction in [0, 1] per cell, from 8- or 16-bit samples. */
+export const fractions = (raster) => {
+  const max = raster.depth === 16 ? 65535 : 255;
+  return Float32Array.from(raster.data, (v) => v / max);
+};
+
+export function scalarDomain(bundle, t, name, domain) {
+  switch (domain) {
+    case "unit": return [0, 1];
+    case "frame": return bundle.glimpses[t].range[name];
+    case "bundle": return bundle.range[name];
+    default: throw new Error(`Unknown domain "${domain}"; expected one of ${DOMAINS.join(", ")}`);
+  }
+}
+
+/**
+ * RGBA ImageData for a layer at glimpse t.
+ * highlight: a class index whose cells stay opaque while others fade (labels only).
+ */
+export function renderLayer(bundle, t, name, { domain, highlight = null } = {}) {
+  const spec = layerSpec(name);
+  const raster = bundle.glimpses[t].layers[name];
+  const { width, height, channels, data } = raster;
+  const out = new ImageData(width, height);
+  const px = out.data;
+  const n = width * height;
+  switch (spec.kind) {
+    case "rgb":
+      for (let i = 0; i < n; i++) {
+        px[4 * i] = data[channels * i];
+        px[4 * i + 1] = data[channels * i + 1];
+        px[4 * i + 2] = data[channels * i + 2];
+        px[4 * i + 3] = 255;
+      }
+      break;
+    case "labels":
+      for (let i = 0; i < n; i++) {
+        const c = data[i];
+        px[4 * i] = ADE20K_PALETTE[3 * c];
+        px[4 * i + 1] = ADE20K_PALETTE[3 * c + 1];
+        px[4 * i + 2] = ADE20K_PALETTE[3 * c + 2];
+        px[4 * i + 3] = highlight === null || c === highlight ? 255 : 56;
+      }
+      break;
+    case "scalar": {
+      const [lo, hi] = scalarDomain(bundle, t, name, domain ?? spec.domain);
+      const lut = COLORMAPS[spec.colormap];
+      const f = raster.fractions;
+      const scale = hi > lo ? 255 / (hi - lo) : 0;
+      for (let i = 0; i < n; i++) {
+        const k = 3 * Math.round(Math.min(255, Math.max(0, (f[i] - lo) * scale)));
+        px[4 * i] = lut[k];
+        px[4 * i + 1] = lut[k + 1];
+        px[4 * i + 2] = lut[k + 2];
+        px[4 * i + 3] = 255;
+      }
+      break;
+    }
+  }
+  return out;
+}
+
+const drawn = new WeakMap();
+
+/** An offscreen canvas holding a layer at glimpse t in its default coloring, for drawImage. Cached. */
+export function layerImage(bundle, t, name) {
+  const raster = bundle.glimpses[t].layers[name];
+  if (!drawn.has(raster)) {
+    const image = renderLayer(bundle, t, name);
+    const canvas = Object.assign(document.createElement("canvas"), { width: image.width, height: image.height });
+    canvas.getContext("2d").putImageData(image, 0, 0);
+    drawn.set(raster, canvas);
+  }
+  return drawn.get(raster);
+}
+
+/** CSS gradient of a colormap, for legends. */
+export function colormapGradient(name, stops = 16) {
+  const lut = COLORMAPS[name];
+  const colors = Array.from({ length: stops }, (_, i) => {
+    const k = 3 * Math.round((i / (stops - 1)) * 255);
+    return `rgb(${lut[k]} ${lut[k + 1]} ${lut[k + 2]})`;
+  });
+  return `linear-gradient(90deg, ${colors.join(", ")})`;
+}
+
+export const paletteCss = (c) =>
+  `rgb(${ADE20K_PALETTE[3 * c]} ${ADE20K_PALETTE[3 * c + 1]} ${ADE20K_PALETTE[3 * c + 2]})`;

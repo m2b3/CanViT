@@ -9,7 +9,6 @@
 export PROJECT_STORAGE=${PROJECT_STORAGE:-$HOME/canvit-storage}
 export CHECKPOINTS_DIR=$PROJECT_STORAGE/checkpoints
 export FEATURES_DIR=$PROJECT_STORAGE/dinov3_dense_features
-export SA1B_FEATURES_DIR=$PROJECT_STORAGE/sa1b_dense_features
 export INDEX_DIR="${SCRATCH:-$PROJECT_STORAGE}/dataset_indexes"
 
 # Caches (useful on clusters with fast scratch storage)
@@ -19,23 +18,16 @@ export TORCH_COMPILE_CACHE_DIR="${SCRATCH:-$HOME}/.torch_compile_cache"
 
 # Datasets
 export IN21K_IMAGE_DIR=/path/to/imagenet21k
-export IN1K_VAL_IMAGE_DIR=/path/to/ILSVRC2012/val
-export IMAGENET_VAL=$IN1K_VAL_IMAGE_DIR  # the name canvit_pytorch.evaluate reads
+export IMAGENET_VAL=/path/to/ILSVRC2012/val  # ImageNet-1k validation images, one directory per class
 # ADE20K on local disk:
 export ADE20K_ROOT=/path/to/ADEChallengeData2016
 # ADE20K on a SLURM cluster: slurm/ade20k.sh unzips this to $SLURM_TMPDIR and
 # sets ADE20K_ROOT per job.
 export ADE20K_ZIP=$PROJECT_STORAGE/datasets/ade20k/ADEChallengeData2016.zip
-export SA1B_TAR_DIR=$PROJECT_STORAGE/datasets/sa1b/tars
-export SA1B_LINKS="scripts/pretrain/sa1b/sa1b_links.tsv"
 
-# Known checkpoints
-export DINOV3_VITB16_CKPT="$CHECKPOINTS_DIR/dinov3/dinov3_vitb16_pretrain_lvd1689m-73cec8be.pth"
-export CANVIT_FLAGSHIP_CKPT="$CHECKPOINTS_DIR/CanViT-flagship.pt"
-
-# Hugging Face organization or local checkpoint root for CanViT models and
-# probes (default: canvit).
-# export CANVIT_REPO_ROOT=canvit
+# Hugging Face organization, or a local directory laid out like one, holding
+# CanViT checkpoints and probes (default: canvit).
+# export CANVIT_HUB_ROOT=canvit
 
 # Comet experiment tracking (pretraining and probe training)
 export COMET_WORKSPACE=your-workspace

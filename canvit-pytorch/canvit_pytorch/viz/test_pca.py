@@ -14,6 +14,7 @@ def test_basis_and_projection_match_scikit_learn():
     tokens = _tokens(0)
     ours = fit_pca(tokens)
     ref = PCA(n_components=3, svd_solver="full").fit(layernorm(tokens))
+    assert ref.components_ is not None
     np.testing.assert_allclose(ours.components, ref.components_, atol=1e-10)
     np.testing.assert_allclose(project(ours, tokens), ref.transform(layernorm(tokens)), atol=1e-8)
 

@@ -12,23 +12,27 @@ Coding agents do much of the development here and are among the code's main
 readers. Design the tree, the APIs and the commands for how agents read, edit
 and operate software.
 
-## Layout: one home per thing
+## Layout
 
 - `canvit-pytorch/`: the Python distribution `canvit-pytorch` (import
   `canvit_pytorch`). The model lives at the package top level; subsystems are
   verbs: `canvit_pytorch.pretrain`, `.specialize` (probes, fine-tuning),
-  `.evaluate` (benchmarks), `.viz` (recorded rollouts for the web). Docs in
+  `.evaluate` (benchmarks), `.viz` (recorded rollouts and viewpoint paths
+  for the page and slides, and the model exported to run in the browser). Docs in
   `canvit-pytorch/docs/`; SLURM job scripts in `canvit-pytorch/slurm/`.
 - `canvit-pytorch/tpu/`: a separate uv environment for ImageNet-1k
   fine-tuning on Cloud TPU (exact torch/torch_xla pins).
-- `site/`: the project page, deployed to https://m2b3.github.io/CanViT/ by
-  `.github/workflows/pages.yml` on pushes to `main` that touch it.
+- `site/`: the project page, deployed to https://m2b3.github.io/CanViT/ when
+  `.github/workflows/pages.yml` is run by hand.
+  `site/record_bundles.sh` records its data with `canvit_pytorch.viz`;
+  `site/check_paper_numbers.py` checks its numbers against the paper's
+  generated macros. `site/AGENTS.md` holds the site's own conventions.
 - `.github/workflows/release.yml`: PyPI release of `canvit-pytorch` on `v*`
   tags.
 
 A fact, constant or URL lives in one place and everything else points to it.
 
-Place and name things by meaning, never by convenience [author, 2026-09-26].
+Place and name things by meaning, never by convenience.
 A fact's home is the module whose name says what the fact is about: the path
 a reader who has never seen the code would guess before searching. When no
 such module exists, create it. The convenient alternatives (the module the
@@ -39,15 +43,16 @@ about effort or about the current import graph ("already imported",
 "closest", "avoids a new file"), the reason is the defect: stop and find the
 right home.
 
-Facts about a component (a policy's abbreviation and description, a
-checkpoint's geometry) live in the component's own definition, and consumers
-read them from there. A dict keyed by component names in some other module is
-a second copy that goes stale without an error [author, 2026-09-26]. The same
-holds for defaults: one declaration, imported everywhere else.
+Hardcoded copies of facts violate DRY. Facts about a
+component (a policy's abbreviation and description, a checkpoint's geometry)
+live in the component's own definition, and consumers read them from there; a
+dict keyed by component names in some other module is a second copy that goes
+stale without an error. The same holds for defaults: one declaration,
+imported everywhere else.
 
-The code serves the paper, its ablations, the released checkpoints and the
-demos built on them. Code none of those need goes; git history keeps it
-[author, 2026-09-26].
+Remove obsolete code, dead code, and code that the paper and its ablations
+neither use nor reference. The released checkpoints and
+the demos built on them count as uses; git history keeps what is removed.
 
 ## Design
 
@@ -62,8 +67,8 @@ get something wrong, not avoiding powerful language features.
   Avoid both repetitive plumbing and speculative generality.
 - Challenge necessity first. Prefer deleting over simplifying, simplifying
   over optimizing, and optimizing over automating. All else equal, less code
-  is better; the structure that remains should be beautifully designed
-  [author, 2026-09-26]. Leave sound code alone.
+  is better; the structure that remains should be beautifully designed.
+  Leave sound code alone.
 - Make invalid states unrepresentable: frozen dataclasses whose construction
   establishes invariants, `Literal` or enums for closed vocabularies,
   jaxtyping or asserted shapes for tensors, and the same checks when loading
@@ -88,21 +93,33 @@ A misleading name, type, module boundary or nesting is a defect. Fix it
 rather than teaching readers to remember the exception.
 
 - Name concepts precisely and judge a name by its full import path. Brevity
-  must not erase meaning; spelled-out names beat paper symbols.
+  must not erase meaning; spelled-out names beat paper symbols. A shorter
+  name is not better: a rename must leave the name at least as
+  self-explanatory as before (`PositionAwareStandardizer`, not
+  `Standardizer`; `enable_reads`, not `reads`).
+- Code uses the paper's names for what the paper describes ("Canvas
+  Attention Read", "glimpse", "viewpoint", "canvas patches", "recurrent CLS
+  token", `q_map`/`ln_q` as in its pseudocode). Have the full paper
+  (arXiv:2603.22570, pseudocode in Appendix A) in context before editing
+  anything it describes.
 - Make ownership and dependencies clear from the file tree and public APIs.
   Group by concept and nest subpackages as the concepts require; short files
-  are fine [author, 2026-09-26]. Do not split or combine files merely to meet
+  are fine. Do not split or combine files merely to meet
   a size or directory convention.
 - Everything sits precisely where it belongs, at whatever depth that takes,
   not where it is convenient to put it. A planned module tree is provisional:
-  when understanding improves, move things and update the plan
-  [author, 2026-09-26].
+  when understanding improves, move things and update the plan.
 - The import graph is part of the architecture. The core model depends on no
   subsystem; move a misplaced responsibility rather than reaching into another
   package's internals.
 - Define record vocabularies precisely (checkpoint configs, Hub model cards,
   web bundle manifests): what each field means, who writes it, and under what
   conditions.
+- Visualizations must actually show what they purport to show; a misleading
+  visualization is the worst outcome.
+- Tag schemas and formats with unique identifiers such as UUIDs, never with
+  `v1`, `v2`: agents working independently could each create a `v1` or `v2`
+  with completely different meanings, and such labels are not searchable.
 
 ## Economy and clarity
 
@@ -122,6 +139,12 @@ spelling.
 - Write plain, direct prose. Fix false claims immediately. Avoid unsupported
   guarantees, invented distinctions, stale counts and copied defaults. Keep
   historical explanations in commit messages.
+- Say what a thing is and does; never praise its design. Phrases like "the
+  one source of", "single source of truth", "the canonical", "the one loop"
+  in docstrings, comments or docs are self-congratulation, not information.
+- Name things by what they are, without counting: a scene is "A ferry", not
+  "A ferry, one smooth path". Write "a" or "the", not "one", and give a
+  number only when the number is the point.
 - Flag doubts and unresolved issues with a localized `XXX`, `TODO` or `FIXME`
   beside the relevant code, saying what the concern is.
 
@@ -156,15 +179,27 @@ spelling.
   run, not universal behavior.
 - Favor decisive simplification over patches around a bad abstraction.
   Rename, reorganize or rewrite when justified, in small coherent commits.
-- Compatibility is a requirement to justify. Released checkpoints on the
-  Hugging Face Hub have external readers: a change to model configs or
-  state-dict keys keeps them loading, verified by loading them.
-- Judge everything by leverage per line, tests included [author,
-  2026-09-26]. A test earns its place by catching a plausible defect that
+- A file you touch leaves clean. Fix every defect you see in it, however
+  small it looks: a vague name, a comment that narrates or misleads, a
+  docstring that restates the signature, dead code. If that means rewriting
+  the file, rewrite it.
+- The code is clean for the users to come, and people already use the model:
+  where an existing user would hit a break, fail fast with an error that says
+  why things broke, and keep compatibility code off the main path. That code
+  lives in `canvit_pytorch.legacy`, reached only when a load or lookup fails.
+  Checkpoints are republished on the Hub as needed; each republished
+  checkpoint is verified by
+  loading it and comparing outputs with the old code.
+- Hub model cards and everything else published are deduplicated and
+  consistent. They are generated from the modules that
+  own their facts; a card is never edited by hand on the Hub. The main pages
+  (website, READMEs, pyproject) say that CanViT means Canvas Vision
+  Transformer.
+- Judge everything by leverage per line, tests included. A test earns its place by catching a plausible defect that
   nothing else would: a paper invariant, a numerical equivalence, a released
   checkpoint that must keep loading. Vacuous tests (restating the code) and
   brittle ones (pinning internals) go.
-- Record enduring feedback here at the level it was given; keep specific
+- Record enduring rules here at the level they apply; keep specific
   constraints beside the code they constrain.
 
 ## Commands
@@ -182,7 +217,9 @@ uv run just            # lint, typecheck, test
 - Viewpoint centers are `(row, col)` in `[-1, 1]`, matching tensor indexing,
   not Cartesian `(x, y)`; scale `s` is the crop's half side, so a glimpse
   covers `s²` of the scene.
-- Standard canvas grid: 32×32 tokens; patch size 16 px; glimpses 128 px.
+- The released models' glimpse size, scene size and canvas grid are
+  `hub.repos.RELEASED_*`; read them from there.
+- Never read out the raw canvas; always the layer-normalized canvas.
 - `torch.compile`: call `model(x)`, never `model.forward(x)`, which bypasses
   the compiled wrapper.
 - Numbers reported anywhere (README, site, papers) come from saved evaluation

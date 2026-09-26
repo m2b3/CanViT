@@ -1,49 +1,41 @@
-"""Run a CanViT episode: T glimpses sampled by a policy, recurrent state updated each step."""
+"""Rollouts: a policy chooses each viewpoint, CanViT processes the glimpse taken there."""
 
 from dataclasses import dataclass
-from typing import Protocol
 
-from canvit_pytorch import CanViTOutput, RecurrentState, Viewpoint, sample_at_viewpoint
 from torch import Tensor
 
-
-class CanViTModel(Protocol):
-    def init_state(self, *, batch_size: int, canvas_grid_size: int) -> RecurrentState: ...
-    def __call__(self, *, glimpse: Tensor, state: RecurrentState, viewpoint: Viewpoint) -> CanViTOutput: ...
-
-
-class Policy(Protocol):
-    def step(self, t: int, state: RecurrentState) -> Viewpoint: ...
+from canvit_pytorch.model.canvit import CanViT, CanViTOutput, RecurrentState
+from canvit_pytorch.policies import Policy
+from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
 
 
 @dataclass(frozen=True)
 class EpisodeStep:
     t: int
-    state: RecurrentState
-    output: CanViTOutput
     viewpoint: Viewpoint
+    output: CanViTOutput
+
+    @property
+    def state(self) -> RecurrentState:
+        return self.output.state
 
 
 def run_episode(
     *,
-    model: CanViTModel,
+    canvit: CanViT,
     images: Tensor,
     policy: Policy,
-    n_timesteps: int,
-    canvas_grid: int,
-    glimpse_px: int,
-    state: RecurrentState | None = None,
+    num_glimpses: int,
+    glimpse_size_px: int,
+    initial_state: RecurrentState,
 ) -> list[EpisodeStep]:
-    B = images.shape[0]
-    if state is None:
-        state = model.init_state(batch_size=B, canvas_grid_size=canvas_grid)
-
+    """Take num_glimpses glimpses of ImageNet-normalized images [B, 3, H, W]."""
     steps: list[EpisodeStep] = []
-    for t in range(n_timesteps):
-        vp = policy.step(t, state)
-        glimpse = sample_at_viewpoint(spatial=images, viewpoint=vp, glimpse_size_px=glimpse_px)
-        out = model(glimpse=glimpse, state=state, viewpoint=vp)
-        state = out.state
-        steps.append(EpisodeStep(t=t, state=state, output=out, viewpoint=vp))
-
+    state = initial_state
+    for t in range(num_glimpses):
+        viewpoint = policy.step(t, state)
+        glimpse = sample_at_viewpoint(spatial=images, viewpoint=viewpoint, glimpse_size_px=glimpse_size_px)
+        output = canvit(glimpse=glimpse, state=state, viewpoint=viewpoint)
+        steps.append(EpisodeStep(t=t, viewpoint=viewpoint, output=output))
+        state = output.state
     return steps

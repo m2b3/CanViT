@@ -1,0 +1,22 @@
+# Machine-specific environment variables.
+# Copy to .envrc and fill in paths for your machine.
+# .envrc is gitignored — each machine has its own.
+#
+# Example shapes:
+#   Bare-metal node:  ADE20K_ROOT=/path/to/ADEChallengeData2016
+#                     IMAGENET_VAL=/path/to/ILSVRC2012/val
+#   SLURM cluster:    ADE20K_ZIP=/path/to/ADEChallengeData2016.zip (extracted per job
+#                     to $SLURM_TMPDIR by slurm/setup.sh, which sets ADE20K_ROOT)
+#                     IMAGENET_VAL=/path/to/ILSVRC2012/val
+
+export ADE20K_ROOT=
+export IMAGENET_VAL=
+
+# SLURM only: zip extracted to node-local storage per job (slurm/setup.sh).
+export ADE20K_ZIP=
+
+# HF Hub access for model + probe downloads (read scope suffices).
+# if [ -f ~/hf_token.txt ]; then export HF_TOKEN=$(cat ~/hf_token.txt); fi
+
+# Override the CanViT HF org / local checkpoint root (default: "canvit").
+# export CANVIT_REPO_ROOT=canvit

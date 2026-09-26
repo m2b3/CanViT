@@ -1,0 +1,64 @@
+[project]
+name = "canvit-eval"
+version = "0.1.0"
+description = "Evaluation and benchmarking for CanViT"
+requires-python = ">=3.12"
+dependencies = [
+    "canvit-pytorch",
+    "canvit-specialize",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "pillow>=10.0.0",
+    "tyro>=1.0.0",
+    "tqdm>=4.60.0",
+    "huggingface-hub>=0.20.0",
+    "safetensors>=0.4.0",
+    "transformers>=4.50.0",
+    "statsmodels>=0.14.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["canvit_eval"]
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.37.2",
+    "pytest>=9.0.2",
+    "pypatree>=0.4.0",
+    "ruff>=0.14.14",
+    "pytest-cov>=7.0.0",
+    "pandas>=3.0.2",
+    "pyarrow>=23.0.1",
+    "matplotlib>=3.10.8",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+
+[tool.ruff]
+line-length = 120
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+canvit-pytorch = { git = "https://github.com/m2b3/CanViT-PyTorch.git" }
+canvit-specialize = { git = "https://github.com/m2b3/CanViT-specialize.git" }
+# Pin cu128 wheels on Linux GPU hosts. On macOS, fall
+# back to default PyPI (CPU-only wheels) for local development. This mirrors
+# canvit-specialize's pyproject — needed because cu128 torch is now a transitive
+# pin coming through canvit-specialize.
+torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]

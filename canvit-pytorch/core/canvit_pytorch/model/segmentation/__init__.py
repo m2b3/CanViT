@@ -16,6 +16,7 @@ from torch.nn import functional as F
 from canvit_pytorch.backbone import BackboneName, create_backbone
 from canvit_pytorch.model.base.config import CanViTConfig
 from canvit_pytorch.model.base.impl import CanViT, RecurrentState
+from canvit_pytorch.checkpoints import CODE_REPO_URL
 from canvit_pytorch.model.hub_mixin import SafeHubMixin
 from canvit_pytorch.model.pretraining.hub import CanViTForPretrainingHFHub
 from canvit_pytorch.probes import SegmentationProbe
@@ -29,7 +30,7 @@ class CanViTForSemanticSegmentation(
     SafeHubMixin,
     PyTorchModelHubMixin,
     library_name="canvit-pytorch",
-    repo_url="https://github.com/m2b3/CanViT-PyTorch",
+    repo_url=CODE_REPO_URL,
 ):
     """:class:`CanViT` (``self.canvit``) + :class:`SegmentationProbe` (``self.head``).
 

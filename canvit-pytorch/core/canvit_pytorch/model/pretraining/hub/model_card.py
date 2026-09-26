@@ -1,6 +1,8 @@
 """README.md generation for CanViTForPretraining Hub repos: one template fed by
 checkpoint metadata, so the data-specific facts track the weights they describe."""
 
+from canvit_pytorch.checkpoints import CODE_REPO_URL
+
 _DATASET_LABEL = {
     "in21k": "ImageNet-21k",
     "in1k": "ImageNet-1k",
@@ -42,7 +44,7 @@ pipeline_tag: image-feature-extraction
 CanViT (Canvas Vision Transformer) is a scalable recurrent architecture for fine-grained vision and the first **Active-Vision Foundation Model (AVFM)**. It processes scenes through sequences of localized glimpses, integrating observations over time into a persistent scene-wide latent workspace — the **canvas** — via **Canvas Attention**, an efficient asymmetric cross-attention mechanism.
 
 - **Paper:** [CanViT: Toward Active-Vision Foundation Models](https://arxiv.org/abs/2603.22570)
-- **Code:** [https://github.com/m2b3/CanViT-PyTorch](https://github.com/m2b3/CanViT-PyTorch)
+- **Code:** [{CODE_REPO_URL}]({CODE_REPO_URL})
 
 ## Model Description
 

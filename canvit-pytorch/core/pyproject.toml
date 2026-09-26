@@ -35,7 +35,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/m2b3/CanViT-PyTorch"
+Repository = "https://github.com/m2b3/CanViT"
 Paper = "https://arxiv.org/abs/2603.22570"
 Checkpoints = "https://huggingface.co/canvit"
 

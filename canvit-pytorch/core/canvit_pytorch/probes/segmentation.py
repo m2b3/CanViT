@@ -13,12 +13,14 @@ from huggingface_hub import PyTorchModelHubMixin
 from torch import Tensor, nn
 from torch.nn import functional as F
 
+from canvit_pytorch.checkpoints import CODE_REPO_URL
+
 
 class SegmentationProbe(
     nn.Module,
     PyTorchModelHubMixin,
     library_name="canvit-pytorch",
-    repo_url="https://github.com/m2b3/CanViT-PyTorch",
+    repo_url=CODE_REPO_URL,
 ):
     """Linear segmentation head on spatial features.
 

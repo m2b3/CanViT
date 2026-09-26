@@ -1,8 +1,9 @@
-"""Repo-id construction for CanViT-owned models and probes.
+"""Repo-id construction for CanViT-owned models and probes, and the code repository's address.
 
 Single source of truth for the CanViT checkpoint root. Every CanViT-owned
 repo-id flows through :func:`resolve_canvit_repo`; third-party repos
-(``facebook/...``, etc.) stay as bare string literals.
+(``facebook/...``, etc.) stay as bare string literals. Model cards, hub
+metadata and install hints take the code repository's URL from here.
 
 The default ``"canvit"`` resolves to Hub IDs prefixed with ``canvit/``
 (e.g. ``canvit/canvitb16-...``). Override via ``$CANVIT_REPO_ROOT`` to
@@ -18,6 +19,9 @@ takes either an HF repo-id or a local directory path.
 import os
 
 CANVIT_REPO_ROOT = os.environ.get("CANVIT_REPO_ROOT", "canvit").rstrip("/")
+
+CODE_REPO_URL = "https://github.com/m2b3/CanViT"
+GIT_INSTALL_SPEC = f"canvit-pytorch @ git+{CODE_REPO_URL}.git#subdirectory=canvit-pytorch/core"
 
 
 def resolve_canvit_repo(name: str) -> str:

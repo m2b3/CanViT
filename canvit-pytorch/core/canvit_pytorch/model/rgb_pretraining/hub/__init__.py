@@ -7,6 +7,7 @@ from huggingface_hub import PyTorchModelHubMixin
 
 from canvit_pytorch.backbone import BackboneName, create_backbone
 from canvit_pytorch.model.base.config import CanViTConfig
+from canvit_pytorch.checkpoints import CODE_REPO_URL
 from canvit_pytorch.model.hub_mixin import SafeHubMixin
 from canvit_pytorch.model.pretrain_common import (
     pretrain_repo_id_stem,
@@ -70,7 +71,7 @@ class CanViTForRGBReconstructionHFHub(
     SafeHubMixin,
     PyTorchModelHubMixin,
     library_name="canvit-pytorch",
-    repo_url="https://github.com/m2b3/CanViT-PyTorch",
+    repo_url=CODE_REPO_URL,
 ):
     """CanViTForRGBReconstruction with HuggingFace Hub integration.
 

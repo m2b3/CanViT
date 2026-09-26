@@ -10,6 +10,7 @@ from safetensors.torch import load_file
 from torch import Tensor, nn
 
 from canvit_pytorch.backbone import BackboneName, create_backbone
+from canvit_pytorch.checkpoints import CODE_REPO_URL
 from canvit_pytorch.model.hub_mixin import SafeHubMixin
 from canvit_pytorch.model.base.config import CanViTConfig
 from canvit_pytorch.model.base.impl import CanViT, RecurrentState
@@ -73,7 +74,7 @@ class CanViTForImageClassification(
     SafeHubMixin,
     PyTorchModelHubMixin,
     library_name="canvit-pytorch",
-    repo_url="https://github.com/m2b3/CanViT-PyTorch",
+    repo_url=CODE_REPO_URL,
 ):
     """:class:`CanViT` + LN → Linear classification head.
 

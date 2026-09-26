@@ -6,6 +6,8 @@ from typing import TypeVar
 from huggingface_hub import ModelHubMixin
 from torch import nn
 
+from canvit_pytorch.checkpoints import GIT_INSTALL_SPEC
+
 log = logging.getLogger(__name__)
 
 # Matches PyTorchModelHubMixin._load_as_safetensor's TypeVar so the override is
@@ -57,7 +59,7 @@ class SafeHubMixin:
                 "\n"
                 "  or:\n"
                 "\n"
-                '    uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT-PyTorch.git"\n'
+                f'    uv add "{GIT_INSTALL_SPEC}"\n'
             )
             log.warning(msg)
         return model

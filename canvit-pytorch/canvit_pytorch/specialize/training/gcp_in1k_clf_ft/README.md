@@ -16,10 +16,12 @@ Requires GCP + SkyPilot + a TPU v6e-4 quota.
 
 ## Launch
 
+From `canvit-pytorch/`, which SkyPilot ships to the VM as the working directory:
+
 ```bash
 export COMET_API_KEY=$(cat ~/.config/comet_api_key.txt)
 export HF_TOKEN=$(cat ~/.cache/huggingface/token)
-sky jobs launch canvit_pytorch.specialize/training/gcp_in1k_clf_ft/sky-train-imagenet.yaml -y \
+sky jobs launch canvit_pytorch/specialize/training/gcp_in1k_clf_ft/sky-train-imagenet.yaml -y \
   --secret COMET_API_KEY --secret HF_TOKEN \
   --env GCS_BUCKET_PREFIX=your-prefix
 ```

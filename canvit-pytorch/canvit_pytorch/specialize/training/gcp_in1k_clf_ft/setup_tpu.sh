@@ -1,5 +1,5 @@
 #!/bin/bash
-# TPU VM environment setup for canvit-specialize gcp_in1k_clf_ft training.
+# TPU VM environment setup for gcp_in1k_clf_ft training (canvit_pytorch.specialize).
 # Invoked from the SkyPilot yaml's setup: block; also safe to run manually via SSH.
 #
 # What it does (idempotent):
@@ -7,9 +7,9 @@
 #   2. Configure ldconfig for torch_xla (uv's python-build-standalone libpython).
 #   3. Install gcsfuse (apt) if missing.
 #   4. Restore uv cache from GCS (if present) to speed up the first `uv sync`.
-#   5. `uv sync --group gcp-in1k-finetune` to resolve all training deps.
+#   5. `uv sync --project tpu`, then canvit-pytorch and dinov3-in1k-probes without deps.
 #
-# Working directory: repo root (canvit-specialize).
+# Working directory: canvit-pytorch/ (the directory holding tpu/pyproject.toml).
 # Environment: TPU VM, Ubuntu 22.04.
 set -euo pipefail
 
@@ -81,13 +81,15 @@ else
     ts "uv-cache: skipped (already present or no archive accessible)"
 fi
 
-# 5) Resolve training deps (pulls torch_xla[tpu] + tfrecord via the group).
-# The `gcp-in1k-finetune` group pins torch==2.9.0 and torchvision==0.24.0 to
-# match torch_xla==2.9.0's _XLAC.so ABI. `[tool.uv.sources]` in pyproject
-# routes torch/torchvision to `https://download.pytorch.org/whl/cpu` for this
-# group on Linux, so no nvidia_* CUDA satellites are downloaded on a TPU VM.
-ts "uv sync --group gcp-in1k-finetune..."
-uv sync --group gcp-in1k-finetune
+# 5) Resolve training deps from tpu/pyproject.toml: torch==2.9.0 and
+# torchvision==0.24.0 from https://download.pytorch.org/whl/cpu (no nvidia_*
+# CUDA packages on a TPU VM) to match torch_xla==2.9.0's _XLAC.so ABI. Then
+# canvit-pytorch and dinov3-in1k-probes without their dependencies (see
+# tpu/pyproject.toml for why).
+ts "uv sync --project tpu..."
+uv sync --project tpu
+uv pip install --python tpu/.venv --no-deps -e .
+uv pip install --python tpu/.venv --no-deps "dinov3-in1k-probes @ git+https://github.com/m2b3/dinov3-in1k-probes.git"
 ts "uv sync: done"
 
 ts "Setup complete: uv $(uv --version), Python $(uv run --python 3.12 -- python --version 2>&1 | tail -1), gcsfuse $(gcsfuse --version 2>/dev/null | head -1 || echo 'N/A')"

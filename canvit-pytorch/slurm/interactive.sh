@@ -13,6 +13,6 @@ fi
 exec srun "${ACCOUNT_ARG[@]}" --gres=gpu:1 --mem="$MEM" --cpus-per-task=16 --time="$TIME" --pty bash -c "
 cd '$REPO_DIR'
 source slurm/env.sh
-uv sync
+uv sync --all-extras
 exec bash
 "

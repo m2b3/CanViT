@@ -1,7 +1,7 @@
 """Publish a finetuned CanViTForImageClassification checkpoint to HuggingFace Hub.
 
 Invocation: `uv run python scripts/specialize/push_finetuned.py --help`
-End-to-end workflow context: canvit_pytorch.specialize/training/gcp_in1k_clf_ft/README.md.
+End-to-end workflow context: canvit_pytorch/specialize/training/gcp_in1k_clf_ft/README.md.
 """
 
 import logging

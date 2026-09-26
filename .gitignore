@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[oc]
+*.egg-info/
+build/
+dist/
+wheels/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Machine-specific environment (start from canvit-pytorch/.envrc.example)
+.envrc
+.env
+
+# Local scratch
+.scratch/
+throwaway/
+*.bak
+*.log
+profile_*.json
+
+# Run outputs of the Python project
+canvit-pytorch/outputs/
+canvit-pytorch/output/
+canvit-pytorch/results/
+canvit-pytorch/logs/
+canvit-pytorch/checkpoints/
+canvit-pytorch/misc/
+canvit-pytorch/bench/pt/results/
+
+# Model and figure artifacts inside the Python project; site/ assets are tracked.
+canvit-pytorch/**/*.pt
+canvit-pytorch/**/*.pth
+canvit-pytorch/**/*.bin
+canvit-pytorch/**/*.onnx
+canvit-pytorch/**/*.onnx.data
+canvit-pytorch/**/*.png
+canvit-pytorch/**/*.svg
+canvit-pytorch/**/*.pdf
+
+# macOS
+.DS_Store
+
+# Node.js
+node_modules/

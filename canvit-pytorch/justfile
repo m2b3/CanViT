@@ -1,11 +1,12 @@
-# basedpyright gets explicit dirs: exclude = ["throwaway"] hangs it (see pyproject.toml).
+# basedpyright gets explicit directories because its `exclude = ["throwaway"]`
+# setting made it hang.
 default: lint typecheck test
 
 lint:
     uv run ruff check .
 
 typecheck:
-    uv run basedpyright canvit_pytorch tests demos
+    uv run --all-extras basedpyright canvit_pytorch tests demos
 
 test:
-    uv run pytest -q
+    uv run --all-extras pytest -q

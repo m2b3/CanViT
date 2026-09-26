@@ -5,9 +5,14 @@ on:
     tags:
       - "v*"
 
+# Publishes canvit-pytorch to PyPI (trusted publishing) when a v* tag is pushed.
+# The PyPI trusted-publisher entry must name m2b3/CanViT and this workflow file.
 jobs:
   publish:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: canvit-pytorch
     environment: pypi
     permissions:
       id-token: write

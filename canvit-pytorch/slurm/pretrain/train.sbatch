@@ -47,7 +47,7 @@ source slurm/env.sh
 
 # Dependencies
 log "Installing dependencies..."
-timed uv sync
+timed uv sync --all-extras
 
 # Ensure logs dir exists
 mkdir -p logs

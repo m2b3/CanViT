@@ -26,7 +26,7 @@ from canvit_pytorch.specialize.datasets.ade20k import (
 from torch.utils.data import DataLoader
 
 from canvit_pytorch.evaluate.config import EpisodeConfig, ade20k_root, progress, require_existing_dir
-from canvit_pytorch.evaluate.policies import is_power_of_two
+from canvit_pytorch.policies import is_power_of_two
 from canvit_pytorch.evaluate.provenance import device_info, provenance
 from canvit_pytorch.evaluate.runner import eval_batches
 from canvit_pytorch.evaluate.tasks.ade20k_obj.paths import (

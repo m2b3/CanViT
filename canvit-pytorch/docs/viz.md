@@ -15,8 +15,8 @@ released model + policy + image
 ## Principles
 
 - **Paper version first.** Policies, readouts and the PCA protocol come from
-  the code behind the paper (`canvit_pytorch.policies`, EG-C2F in
-  `canvit_pytorch.evaluate.policies`, the ADE20K probe). Anything else is an
+  the code behind the paper (`canvit_pytorch.policies`, EG-C2F included,
+  and the ADE20K probe). Anything else is an
   extension and says so in the manifest (`"origin": "extension"`).
 - **Record once, render anywhere.** The browser never recomputes model
   outputs; it colors and animates recorded ones. A bundle is generated, never
@@ -62,3 +62,14 @@ released model + policy + image
 min-max per frame, as in the paper's Figure 1) or `"fixed-limits"` (same
 basis, one set of color limits for every glimpse, so animations do not
 flicker; an extension).
+
+## Live in-browser inference (next phase)
+
+[Author request, 2026-09-26: people should be able to play with the model in
+the browser, fast.] Plan: export CanViT and the ADE20K probe to ONNX (the
+package already tests an export path, `tests/test_export.py`) and run them with
+ONNX Runtime Web on WebGPU, WebAssembly as fallback, behind the same component
+interface as recorded bundles. Constraints to design for: download size
+(about 100M parameters, roughly 200 MB in fp16; load on demand, consider
+quantization), WebGPU availability per browser, and numerical parity with
+PyTorch, checked like MPS parity before anything is shown as model output.

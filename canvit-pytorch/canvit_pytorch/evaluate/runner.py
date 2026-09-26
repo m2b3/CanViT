@@ -11,8 +11,8 @@ from torch import Tensor
 from torch.utils.data import DataLoader
 
 from canvit_pytorch.evaluate.config import EpisodeConfig, progress
-from canvit_pytorch.evaluate.episode import CanViTModel, EpisodeStep, run_episode
-from canvit_pytorch.evaluate.policies import make_policy
+from canvit_pytorch.episode import CanViTModel, EpisodeStep, run_episode
+from canvit_pytorch.policies import make_policy
 
 log = logging.getLogger(__name__)
 

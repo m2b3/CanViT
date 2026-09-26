@@ -28,7 +28,7 @@ from canvit_pytorch.checkpoints import (
 )
 
 from canvit_pytorch.evaluate.config import DINOV3_VITB_REPO, DINOV3_VITS_REPO
-from canvit_pytorch.evaluate.policies import IN1K_POLICIES, PolicyName, is_power_of_two
+from canvit_pytorch.policies import IN1K_POLICIES, PolicyName, is_power_of_two
 
 log = logging.getLogger(__name__)
 

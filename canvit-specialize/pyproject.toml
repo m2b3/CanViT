@@ -1,0 +1,113 @@
+[project]
+name = "canvit-specialize"
+version = "0.1.0"
+description = "Downstream-task training for CanViT: ADE20K probes and IN1k fine-tuning"
+requires-python = ">=3.12"
+dependencies = [
+    "canvit-pytorch",
+    "dinov3",
+    "pillow>=10.0.0",
+    "huggingface-hub>=0.20.0",
+    "safetensors>=0.4.0",
+    "timm>=1.0.0",
+    "tyro>=1.0.0",
+    "tqdm>=4.60.0",
+    "comet-ml>=3.30.0",
+    "matplotlib>=3.8.0",
+    "pandas>=2.0.0",
+    "scikit-learn>=1.4.0",
+    "transformers>=4.50.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["canvit_specialize"]
+
+# Torch lives in the `cuda` / `gcp-in1k-finetune` groups (not in base
+# dependencies): a base torch entry collapses the universal lockfile to one
+# torch variant per Linux marker, letting the TPU `+cpu` pin leak into CUDA
+# installs. Groups + `conflicts` keep the two resolutions distinct.
+[dependency-groups]
+dev = [
+    "basedpyright>=1.37.2",
+    "pypatree>=0.4.0",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.14.14",
+]
+
+# GPU/CUDA path — installed by default via `default-groups = ["cuda"]`.
+# PyPI Linux torch 2.9.0 is the CUDA-12.8 build (bit-identical to whl/cu128).
+cuda = [
+    "torch==2.9.0",
+    "torchvision==0.24.0",
+]
+
+# TPU/CPU-only path for canvit_specialize/training/gcp_in1k_clf_ft/.
+# Install on the TPU VM with: uv sync --group gcp-in1k-finetune --no-group cuda
+#
+# Pin to `+cpu` local version: whl/cpu publishes multiple variants per
+# release; without the pin, uv may pick one without a linux_x86_64
+# cpython3.12 wheel and fail install.
+gcp-in1k-finetune = [
+    "torch==2.9.0+cpu; sys_platform == 'linux'",
+    "torch==2.9.0; sys_platform != 'linux'",
+    "torchvision==0.24.0+cpu; sys_platform == 'linux'",
+    "torchvision==0.24.0; sys_platform != 'linux'",
+    "torch_xla[tpu]==2.9.0; sys_platform == 'linux'",
+    "tfrecord",
+    # dinov3-in1k-probes is needed by gcp_in1k_clf_ft/shared.py but its
+    # base pyproject pins torchvision>=0.24.1, which would conflict with
+    # the torchvision==0.24.0+cpu pin tied to torch_xla 2.9.0 ABI compat.
+    # Install it on the TPU VM separately:
+    #   uv pip install --no-deps "dinov3-in1k-probes @ git+https://github.com/m2b3/dinov3-in1k-probes.git"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+filterwarnings = ["ignore:Failed to initialize NumPy:UserWarning"]
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint.per-file-ignores]
+# These two files deliberately interleave logger setup + heavy imports so
+# the import wall-time is timed and logged (TPU cold start is slow).
+"canvit_specialize/training/gcp_in1k_clf_ft/shared.py" = ["E402"]
+"canvit_specialize/training/gcp_in1k_clf_ft/train_imagenet.py" = ["E402"]
+
+[tool.uv]
+# `cuda` in default-groups so `uv sync` (no flags) gets CUDA torch by default.
+# Swap on TPU with: --no-group cuda --group gcp-in1k-finetune.
+default-groups = ["dev", "cuda"]
+# Mark the two torch providers as mutually incompatible so uv emits separate
+# lockfile resolutions for each instead of trying to reconcile them.
+conflicts = [
+    [{ group = "cuda" }, { group = "gcp-in1k-finetune" }],
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+canvit-pytorch = { git = "https://github.com/m2b3/CanViT-PyTorch.git" }
+dinov3 = { git = "https://github.com/facebookresearch/dinov3.git", rev = "54694f7627fd815f62a5dcc82944ffa6153bbb76" }
+# For the TPU finetune group, pull torch/torchvision from whl/cpu so the
+# nvidia_* CUDA satellites never land on a GPU-less TPU VM.
+torch = [
+    { index = "pytorch-cpu", group = "gcp-in1k-finetune", marker = "sys_platform == 'linux'" },
+]
+torchvision = [
+    { index = "pytorch-cpu", group = "gcp-in1k-finetune", marker = "sys_platform == 'linux'" },
+]

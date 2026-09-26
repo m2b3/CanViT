@@ -1,0 +1,25 @@
+# Copy to .envrc and tailor: cp .envrc.example .envrc && direnv allow
+
+# Dataset (for ADE20K probe training)
+# Direct path on local disk:
+export ADE20K_ROOT=/path/to/ADEChallengeData2016
+# OR, on a SLURM cluster with a shared zip — slurm/setup.sh unzips to $SLURM_TMPDIR
+# and sets ADE20K_ROOT per-job:
+# export ADE20K_ZIP=/path/to/ADEChallengeData2016.zip
+
+# Storage
+export CHECKPOINTS_DIR=$HOME/canvit-specialize-checkpoints
+
+# Caches (optional — useful on clusters with persistent shared storage)
+# export HF_HOME="$SCRATCH/.huggingface"
+# export TORCH_HOME="$SCRATCH/.torch"
+# export TORCH_COMPILE_CACHE_DIR="$SCRATCH/.torch_compile_cache"
+
+# Comet
+export COMET_WORKSPACE=your-workspace
+export COMET_PROJECT_NAME=canvit-ade20k-probes
+
+# Credentials (optional). NOTE: every line must be safe under `set -e`.
+# A bare `cmd1 && cmd2` evaluating to false kills the shell. Use `if` or `|| true`.
+if [ -f ~/comet_api_key.txt ]; then export COMET_API_KEY=$(cat ~/comet_api_key.txt); fi
+if [ -z "$HF_TOKEN" ] && [ -f ~/.cache/huggingface/token ]; then export HF_TOKEN=$(cat ~/.cache/huggingface/token); fi

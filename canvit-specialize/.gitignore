@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Local env overlays (start from .envrc.example; block the active copy)
+.envrc
+logs/
+checkpoints/
+*.log

@@ -11,6 +11,8 @@ _[CanViT: Toward Active-Vision Foundation Models](https://arxiv.org/abs/2603.225
 
 **Yohaï-Eliel Berreby, Sabrina Du, Audrey Durand, B. Suresh Krishna**
 
+[Project page](https://m2b3.github.io/CanViT/) · [Paper](https://arxiv.org/abs/2603.22570) · [Checkpoints](https://huggingface.co/canvit)
+
 Code for CanViT, the Canvas Vision Transformer: the reference PyTorch
 implementation, pretraining, task specialization, evaluation, and the
 pipeline behind the paper's figures and tables.

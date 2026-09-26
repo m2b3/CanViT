@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[oc]
+*.egg-info/
+build/
+dist/
+wheels/
+
+# Virtual environments
+.venv/
+
+# Testing/linting
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Outputs + checkpoints + debug images
+outputs/
+checkpoints/
+*.pth
+*.pt
+*.png
+
+# macOS
+*.DS_Store
+
+# Environment (machine-specific; start from .envrc.example)
+.envrc
+
+# Misc
+throwaway/
+profile_*.json
+misc/

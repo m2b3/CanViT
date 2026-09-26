@@ -200,7 +200,6 @@ We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/
 | [`canvit-pytorch/pretrain/`](canvit-pytorch/pretrain) | Pretraining: passive-to-active dense distillation from DINOv3 |
 | [`canvit-pytorch/specialize/`](canvit-pytorch/specialize) | Downstream training: ADE20K segmentation probes, ImageNet-1k fine-tuning |
 | [`canvit-pytorch/eval/`](canvit-pytorch/eval) | Evaluation and benchmarking: ADE20K mIoU, ImageNet-1k top-k, DINOv3 reconstruction |
-| [`canvit-paper-exporter/`](canvit-paper-exporter) | The paper's figures, tables and reported numbers, produced from saved evaluation results |
 
 These packages previously lived in separate repositories (CanViT-PyTorch, CanViT-pretrain, CanViT-specialize, CanViT-eval), whose histories are merged here.
 

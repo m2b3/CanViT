@@ -1,4 +1,5 @@
-# CanViT (Canvas Vision Transformer) -- PyTorch
+<!-- [AI-REWRITE] Claude Code, 2026-09-26: adapted from the canvit-pytorch README for the folded repository (title, venue, news, install paths, repository layout, platforms). The commit diff shows every change; the original is canvit-pytorch/README.md at 0aa97ce. -->
+# CanViT (Canvas Vision Transformer)
 
 [![PyPI Downloads](https://static.pepy.tech/badge/canvit-pytorch)](https://pepy.tech/projects/canvit-pytorch)
 
@@ -6,14 +7,17 @@
   <img src="assets/canvas_attention_across_scales.png" alt="Canvas attention across scales — two example trajectories showing glimpses, canvas crops, and full canvas PCA/change maps over multiple timesteps." width="100%">
 </p>
 
-_[CanViT: Toward Active-Vision Foundation Models](https://arxiv.org/abs/2603.22570) (arXiv:2603.22570)_
+_[CanViT: Toward Active-Vision Foundation Models](https://arxiv.org/abs/2603.22570) (NeurIPS 2026; arXiv:2603.22570)_
 
 **Yohaï-Eliel Berreby, Sabrina Du, Audrey Durand, B. Suresh Krishna**
 
-Reference PyTorch implementation of CanViT, the Canvas Vision Transformer.
+Code for CanViT, the Canvas Vision Transformer: the reference PyTorch
+implementation, pretraining, task specialization, evaluation, and the
+pipeline behind the paper's figures and tables.
 
 ### News
 
+- **2026-09-24**: Accepted at NeurIPS 2026 (poster).
 - **2026-04-06**: First finetuned IN1k checkpoint: [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06), with new `CanViTForImageClassification` API.
   - 🎉 CanViT sets a new SOTA on **active-vision IN1k classification**, with **84.5% top-1 accuracy**, up from [AdaptiveNN](https://github.com/LeapLabTHU/AdaptiveNN)'s previous best of 82.2%.
 - **2026-03-23**: Preprint v1 ([arXiv:2603.22570](https://arxiv.org/abs/2603.22570)).
@@ -48,7 +52,7 @@ We release checkpoints on HuggingFace under the [`canvit`](https://huggingface.c
 We recommend [`uv`](https://docs.astral.sh/uv/) for dependency management.
 
 ```bash
-uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT-PyTorch.git"
+uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT.git#subdirectory=canvit-pytorch"
 ```
 
 A [`canvit-pytorch`](https://pypi.org/project/canvit-pytorch/) package is also available on PyPI but is updated less often — we recommend the git version in most cases.
@@ -65,7 +69,7 @@ model = CanViTForPretrainingHFHub.from_pretrained(
 ).eval()
 
 # Replace with the image of your choice
-image = Image.open("test_data/Cat03.jpg").convert("RGB")
+image = Image.open("canvit-pytorch/test_data/Cat03.jpg").convert("RGB")
 image = preprocess(512)(image)
 image = image.unsqueeze(0)  # [1, 3, 512, 512]
 
@@ -132,7 +136,7 @@ clf = CanViTForImageClassification.from_pretrained_with_probe(
 **Both have the same forward pass:**
 
 ```python
-image = preprocess(512)(Image.open("test_data/Cat03.jpg").convert("RGB")).unsqueeze(0)
+image = preprocess(512)(Image.open("canvit-pytorch/test_data/Cat03.jpg").convert("RGB")).unsqueeze(0)
 state = clf.init_state(batch_size=1, canvas_grid_size=32)
 
 with torch.inference_mode():
@@ -167,8 +171,8 @@ The standalone `SegmentationProbe` head is also exported from `canvit_pytorch` f
 ## Demos
 
 ```bash
-git clone https://github.com/m2b3/CanViT-PyTorch.git
-cd CanViT-PyTorch
+git clone https://github.com/m2b3/CanViT.git
+cd CanViT/canvit-pytorch
 
 # Classification with sequential glimpses
 uv run --extra demo python demos/classify.py                # finetuned checkpoint
@@ -182,15 +186,25 @@ uv run --extra demo python demos/basic.py
 
 - **CPU**
 - **CUDA** (tested on RTX 4090, H100 SXM 80GB)
+- **Apple Silicon** via MPS (inference, tested with torch 2.14)
 - **TPU** via [torch_xla](https://github.com/pytorch/xla) 2.9.0 (tested on TPU v6e)
 
-We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/docs/stable/user_guide/torch_compiler/export.html) and [ONNX Runtime](https://onnxruntime.ai/). Please [file an issue](https://github.com/m2b3/CanViT-PyTorch/issues) if you encounter problems.
+We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/docs/stable/user_guide/torch_compiler/export.html) and [ONNX Runtime](https://onnxruntime.ai/). Please [file an issue](https://github.com/m2b3/CanViT/issues) if you encounter problems.
 
-## See also
+## Repository layout
 
-- [CanViT-pretrain](https://github.com/m2b3/CanViT-pretrain) — pretraining harness (passive-to-active dense distillation from DINOv3)
-- [CanViT-specialize](https://github.com/m2b3/CanViT-specialize) — downstream training: ADE20K segmentation probes and IN1k classification finetuning
-- [CanViT-eval](https://github.com/m2b3/CanViT-eval) — evaluation and benchmarking (ADE20K mIoU, IN1k top-k, DINOv3 reconstruction)
+| Directory | Contents |
+|---|---|
+| [`canvit-pytorch/`](canvit-pytorch) | The model: architecture, checkpoint loading, viewpoints and policies, task heads (`canvit-pytorch` on PyPI) |
+| [`canvit-pretrain/`](canvit-pretrain) | Pretraining: passive-to-active dense distillation from DINOv3 |
+| [`canvit-specialize/`](canvit-specialize) | Downstream training: ADE20K segmentation probes, ImageNet-1k fine-tuning |
+| [`canvit-eval/`](canvit-eval) | Evaluation and benchmarking: ADE20K mIoU, ImageNet-1k top-k, DINOv3 reconstruction |
+
+These packages previously lived in separate repositories (CanViT-PyTorch, CanViT-pretrain, CanViT-specialize, CanViT-eval), whose histories are merged here.
+
+Related repositories:
+
+- [dinov3-in1k-probes](https://github.com/m2b3/dinov3-in1k-probes) — ImageNet-1k linear probes for the DINOv3 ViTs, used by CanViT's classification path
 - [CanViT-MLX](https://github.com/yberreby/CanViT-MLX) — MLX implementation for Apple Silicon (experimental)
 - [CanViT-NNX](https://github.com/yberreby/CanViT-NNX) — JAX/Flax NNX implementation (experimental)
 

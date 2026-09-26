@@ -69,7 +69,9 @@ flicker; an extension).
 the browser, fast.] Plan: export CanViT and the ADE20K probe to ONNX (the
 package already tests an export path, `tests/test_export.py`) and run them with
 ONNX Runtime Web on WebGPU, WebAssembly as fallback, behind the same component
-interface as recorded bundles. Constraints to design for: download size
-(about 100M parameters, roughly 200 MB in fp16; load on demand, consider
-quantization), WebGPU availability per browser, and numerical parity with
-PyTorch, checked like MPS parity before anything is shown as model output.
+interface as recorded bundles. Recorded bundles come first and stay the instant layer. Constraints for the
+live model: download size (about 100M parameters; a few hundred MB is
+acceptable [author, 2026-09-26]; no quantization or other lossy change
+without verification and the author's approval), WebGPU availability per
+browser, and numerical parity with PyTorch, checked like MPS parity before
+anything is shown as model output.

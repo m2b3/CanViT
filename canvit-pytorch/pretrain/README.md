@@ -1,6 +1,6 @@
-# CanViT-pretrain
+# canvit-pretrain
 
-Passive-to-active dense latent distillation of [CanViT](https://github.com/m2b3/CanViT-PyTorch) ([arXiv:2603.22570](https://arxiv.org/abs/2603.22570)) from [DINOv3](https://github.com/facebookresearch/dinov3) ([arXiv:2508.10104](https://arxiv.org/abs/2508.10104)).
+Passive-to-active dense latent distillation of [CanViT](../../README.md) ([arXiv:2603.22570](https://arxiv.org/abs/2603.22570)) from [DINOv3](https://github.com/facebookresearch/dinov3) ([arXiv:2508.10104](https://arxiv.org/abs/2508.10104)).
 
 Originally designed to run on [the Nibi SLURM cluster](https://docs.alliancecan.ca/wiki/Nibi) using its [hosted ImageNet-21k `winter21_whole` replica](https://docs.alliancecan.ca/wiki/ImageNet).
 
@@ -37,20 +37,6 @@ bash slurm/ablations/no-bptt.sh
 # ...
 ```
 
-## Citation
+## Citation and license
 
-```bibtex
-@article{berreby2026canvit,
-  title={CanViT: Toward Active-Vision Foundation Models},
-  author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
-  year={2026},
-  eprint={2603.22570},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2603.22570}
-}
-```
-
-## License
-
-MIT. See [LICENSE](LICENSE) for details.
+See the [CanViT repository README](../../README.md): one citation and one MIT license cover every package.

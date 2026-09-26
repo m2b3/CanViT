@@ -1,11 +1,11 @@
-# CanViT-eval
+# canvit-eval
 
-Evaluation and benchmarking for [CanViT](https://github.com/m2b3/CanViT-PyTorch),
+Evaluation and benchmarking for [CanViT](../../README.md),
 the Canvas Vision Transformer.
 
 ## Install
 
-Requires [`uv`](https://docs.astral.sh/uv/). From the repo root:
+Requires [`uv`](https://docs.astral.sh/uv/). From this directory:
 
 ```bash
 uv sync
@@ -98,20 +98,6 @@ uv run python bench/pt/analyze.py --pattern 'bench/pt/results/*.jsonl'     # sum
 uv run pytest
 ```
 
-## Citation
+## Citation and license
 
-```bibtex
-@article{berreby2026canvit,
-  title={CanViT: Toward Active-Vision Foundation Models},
-  author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
-  year={2026},
-  eprint={2603.22570},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2603.22570}
-}
-```
-
-## License
-
-MIT. See [LICENSE](LICENSE) for details.
+See the [CanViT repository README](../../README.md): one citation and one MIT license cover every package.

@@ -1,11 +1,11 @@
-# CanViT-specialize
+# canvit-specialize
 
-Training loops for [CanViT](https://github.com/m2b3/CanViT-PyTorch) downstream probes (ADE20K segmentation) and IN1k finetuning.
+Training loops for [CanViT](../../README.md) downstream probes (ADE20K segmentation) and IN1k finetuning.
 
 ## Install
 
 ```bash
-uv add "canvit-specialize @ git+https://github.com/m2b3/CanViT-specialize.git"
+uv add "canvit-specialize @ git+https://github.com/m2b3/CanViT.git#subdirectory=canvit-pytorch/specialize"
 ```
 
 For TPU finetuning, see [`gcp_in1k_clf_ft/README.md`](canvit_specialize/training/gcp_in1k_clf_ft/README.md).
@@ -46,20 +46,6 @@ uv run python -m canvit_specialize.training.ade20k train-dinov3-probe
 
 See [`canvit_specialize/training/gcp_in1k_clf_ft/README.md`](canvit_specialize/training/gcp_in1k_clf_ft/README.md).
 
-## Citation
+## Citation and license
 
-```bibtex
-@article{berreby2026canvit,
-  title={CanViT: Toward Active-Vision Foundation Models},
-  author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
-  year={2026},
-  eprint={2603.22570},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2603.22570}
-}
-```
-
-## License
-
-MIT. See [LICENSE](LICENSE) for details.
+See the [CanViT repository README](../../README.md): one citation and one MIT license cover every package.

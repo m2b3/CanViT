@@ -7,7 +7,6 @@ from pathlib import Path
 import pytest
 from huggingface_hub import hf_hub_download
 
-from canvit_pytorch.legacy import convert_canvit_config
 from canvit_pytorch.pretrain.ablations import ABLATIONS, AblationSlug
 from canvit_pytorch.pretrain.config import PretrainingConfig
 
@@ -27,7 +26,7 @@ def test_matches_released_recipe(slug: AblationSlug) -> None:
     recipe = history[max(history)]  # the recipe of the run's last job
     config = ablation.configure(BASE)
 
-    assert asdict(config.model) == convert_canvit_config(released["backbone_name"], released["model_config"])
+    assert asdict(config.model) == released["canvit_config"]
     assert config.rollout_policies == (
         ("full_then_random",) * recipe["n_full_start_branches"] + ("random",) * recipe["n_random_start_branches"]
     )

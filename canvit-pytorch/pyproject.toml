@@ -79,7 +79,6 @@ viz = [
     "tyro>=1.0.0",
 ]
 evaluate = [
-    "canvit-pytorch[specialize]",
     "pillow>=10.0.0",
     "tyro>=1.0.0",
     "tqdm>=4.60.0",
@@ -102,11 +101,7 @@ dev = [
     "ipython>=9.8.0",
     "pypatree>=0.4.0",
     "pytest>=9.0.2",
-    "pytest-cov>=7.0.0",
     "ruff>=0.15.0",
-    "pandas>=3.0.2",
-    "pyarrow>=23.0.1",
-    "matplotlib>=3.10.8",
     "scikit-learn>=1.4.0",
 ]
 

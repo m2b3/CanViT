@@ -31,6 +31,16 @@ viz path "${args[@]}" --keypoints -0.35 0.2 0.25  -0.7 0.25 0.2  -0.3 0.75 0.2  
 scene ADE_val_00000348 ferry-path "A ferry"
 viz path "${args[@]}" --keypoints -0.05 -0.35 0.35  -0.3 0.15 0.3  -0.55 0.2 0.2  0.3 0.6 0.35  -0.3 -0.75 0.22  0 0 1
 
-# One EG-C2F rollout, 21 glimpses.
+# F-IID rollouts, 21 glimpses: the full scene, then random viewpoints as in pretraining (seed 0).
+scene ADE_val_00001780 street-fiid "A street"
+viz rollout "${args[@]}" --policy full_then_random
+
+scene ADE_val_00000385 shop-fiid "A shop"
+viz rollout "${args[@]}" --policy full_then_random
+
+scene ADE_val_00000348 ferry-fiid "A ferry"
+viz rollout "${args[@]}" --policy full_then_random
+
+# An EG-C2F rollout, 21 glimpses.
 scene ADE_val_00001780 street-egc2f "A street, EG-C2F"
 viz rollout "${args[@]}"

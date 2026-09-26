@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="style.css">
-  <script type="module" src="js/canvit/path-player.js"></script>
+  <script type="module" src="js/canvit/episode.js"></script>
 </head>
 <body>
   <header class="hero wide">
@@ -30,16 +30,15 @@
   </header>
 
   <main>
-    <p class="tldr"><strong>TL;DR</strong> CanViT processes scenes through sequences of localized <span class="term-glimpse">glimpses</span>, integrating observations over time into a persistent scene-wide latent workspace: the <span class="term-canvas">canvas</span>.</p>
+    <p class="tldr"><strong>TL;DR</strong> CanViT is the first task- and policy-agnostic Active-Vision Foundation Model (AVFM). A Vision Transformer backbone processes localized <span class="term-glimpse">glimpses</span>, while a fine-grained, scene-wide spatio-semantic memory, the <span class="term-canvas">canvas</span>, integrates them across time. Pretrained without labels, by reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths, a frozen CanViT-B achieves <span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs.</p>
 
     <figure class="teaser wide">
-      <canvit-path-player src="data/street-path data/shop-path data/ferry-path" autoplay></canvit-path-player>
-      <p class="credit">The released CanViT-B, recorded on scenes from the ADE20K validation set.</p>
+      <canvit-episode src="data/street-fiid data/shop-fiid data/ferry-fiid" autoplay></canvit-episode>
     </figure>
 
     <section class="wide" id="active-vision">
-      <h2>Active vision</h2>
-      <p class="lead">Humans see a scene by moving their gaze across it. Active vision models do the same with sequences of localized glimpses, which promises efficient, biologically plausible perception, yet they have lagged far behind passive models, most of all on dense prediction.</p>
+      <h2>What's in an active-vision model?</h2>
+      <p class="lead">Active computer vision promises efficient, biologically plausible perception through sequential, localized glimpses. Yet active models have struggled to match their passive counterparts, most strikingly on dense prediction.</p>
       <div class="jobs">
         <article class="job" style="--accent: var(--glimpse)">
           <p class="tag">CanViT</p>

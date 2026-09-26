@@ -4,10 +4,10 @@ Scans tar headers and computes SHA256 for each tar file. Saves .idx files
 next to the tars. Run on a CPU node before training — no GPU needed.
 
 Usage:
-    uv run python sa1b/build_tar_indexes.py --tar-dir /path/to/tars
-    uv run python sa1b/build_tar_indexes.py --tar-dir /path/to/tars --workers 8
-    uv run python sa1b/build_tar_indexes.py --tar-dir /path/to/tars --verify
-    uv run python sa1b/build_tar_indexes.py --tar-dir /path/to/tars --force
+    uv run python scripts/pretrain/sa1b/build_tar_indexes.py --tar-dir /path/to/tars
+    uv run python scripts/pretrain/sa1b/build_tar_indexes.py --tar-dir /path/to/tars --workers 8
+    uv run python scripts/pretrain/sa1b/build_tar_indexes.py --tar-dir /path/to/tars --verify
+    uv run python scripts/pretrain/sa1b/build_tar_indexes.py --tar-dir /path/to/tars --force
 """
 
 import hashlib
@@ -21,7 +21,7 @@ from pathlib import Path
 import tyro
 from tqdm import tqdm
 
-from canvit_pretrain.train.data.tar_images import scan_tar_headers
+from canvit_pytorch.pretrain.train.data.tar_images import scan_tar_headers
 
 
 def _sha256(path: Path) -> str:

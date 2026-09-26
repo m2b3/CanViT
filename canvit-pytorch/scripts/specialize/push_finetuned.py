@@ -1,7 +1,7 @@
 """Publish a finetuned CanViTForImageClassification checkpoint to HuggingFace Hub.
 
-Invocation: `uv run python scripts/push_finetuned.py --help`
-End-to-end workflow context: canvit_specialize/training/gcp_in1k_clf_ft/README.md.
+Invocation: `uv run python scripts/specialize/push_finetuned.py --help`
+End-to-end workflow context: canvit_pytorch.specialize/training/gcp_in1k_clf_ft/README.md.
 """
 
 import logging
@@ -12,7 +12,7 @@ import torch
 import tyro
 from canvit_pytorch import CanViTForImageClassification, Viewpoint, sample_at_viewpoint
 
-from scripts.upload_utils import augment_hf_config_with_comet
+from scripts.specialize.upload_utils import augment_hf_config_with_comet
 
 log = logging.getLogger("push_finetuned")
 

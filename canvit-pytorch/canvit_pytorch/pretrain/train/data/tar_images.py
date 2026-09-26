@@ -6,7 +6,7 @@ via mmap slicing. Forked DataLoader workers share mmap'd pages (copy-on-write).
 scan_tar_headers(tar_path) — slow header scan; for export/bench.
 load_tar_index(tar_path)   — instant load from .idx file; for training.
 
-.idx files are produced by sa1b/build_tar_indexes.py with SHA256 + size.
+.idx files are produced by scripts/pretrain/sa1b/build_tar_indexes.py with SHA256 + size.
 """
 
 import io
@@ -47,13 +47,13 @@ def scan_tar_headers(tar_path: Path) -> TarIndex:
 def load_tar_index(tar_path: Path) -> TarIndex:
     """Load pre-built .idx file for a tar. Crashes if missing or stale.
 
-    .idx files are built by sa1b/build_tar_indexes.py. Verifies tar file
+    .idx files are built by scripts/pretrain/sa1b/build_tar_indexes.py. Verifies tar file
     size matches (instant stat() check, no full read).
     """
     idx_path = tar_path.parent / f"{tar_path.name}.idx"
     assert idx_path.exists(), (
         f"No .idx for {tar_path.name}. "
-        f"Run: uv run python sa1b/build_tar_indexes.py --tar-dir {tar_path.parent}"
+        f"Run: uv run python scripts/pretrain/sa1b/build_tar_indexes.py --tar-dir {tar_path.parent}"
     )
 
     t0 = time.perf_counter()
@@ -64,7 +64,7 @@ def load_tar_index(tar_path: Path) -> TarIndex:
     assert data["tar_size"] == actual_size, (
         f"Tar size mismatch: {tar_path.name} "
         f"(index={data['tar_size']}, actual={actual_size}). "
-        f"Re-run: uv run python sa1b/build_tar_indexes.py --tar-dir {tar_path.parent} --force"
+        f"Re-run: uv run python scripts/pretrain/sa1b/build_tar_indexes.py --tar-dir {tar_path.parent} --force"
     )
 
     index = data["index"]

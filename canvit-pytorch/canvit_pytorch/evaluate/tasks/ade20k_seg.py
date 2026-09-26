@@ -19,17 +19,17 @@ import torch.nn.functional as F
 from canvit_pytorch import CanViTForSemanticSegmentation, SegmentationProbe
 from canvit_pytorch.probes import SegmentationProbe as SegmentationProbeType
 from canvit_pytorch.teacher import load_teacher
-from canvit_specialize.datasets.ade20k import (
+from canvit_pytorch.specialize.datasets.ade20k import (
     IGNORE_LABEL, NUM_CLASSES, ADE20kDataset, ResizeMode, make_val_transforms,
 )
-from canvit_specialize.metrics import mIoUAccumulator
-from canvit_specialize.training.utils import collect_metadata
+from canvit_pytorch.specialize.metrics import mIoUAccumulator
+from canvit_pytorch.specialize.training.utils import collect_metadata
 from torch import Tensor
 from torch.utils.data import DataLoader
 
-from canvit_eval.config import EpisodeConfig, TEACHER_REPO, ade20k_root, progress, require_existing_dir
-from canvit_eval.runner import eval_batches
-from canvit_eval.tasks.base import TaskConfig
+from canvit_pytorch.evaluate.config import EpisodeConfig, TEACHER_REPO, ade20k_root, progress, require_existing_dir
+from canvit_pytorch.evaluate.runner import eval_batches
+from canvit_pytorch.evaluate.tasks.base import TaskConfig
 
 log = logging.getLogger(__name__)
 

@@ -9,7 +9,7 @@ from canvit_pytorch.checkpoints import (
     ade20k_probe_repo,
 )
 
-from canvit_eval.batch import (
+from canvit_pytorch.evaluate.batch import (
     DETERMINISTIC,
     DEFAULT_TASKS,
     CANVAS_GRIDS,

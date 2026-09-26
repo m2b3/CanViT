@@ -55,7 +55,7 @@ We release checkpoints on HuggingFace under the [`canvit`](https://huggingface.c
 We recommend [`uv`](https://docs.astral.sh/uv/) for dependency management.
 
 ```bash
-uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT.git#subdirectory=canvit-pytorch/core"
+uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT.git#subdirectory=canvit-pytorch"
 ```
 
 A [`canvit-pytorch`](https://pypi.org/project/canvit-pytorch/) package is also available on PyPI but is updated less often — we recommend the git version in most cases.
@@ -72,7 +72,7 @@ model = CanViTForPretrainingHFHub.from_pretrained(
 ).eval()
 
 # Replace with the image of your choice
-image = Image.open("canvit-pytorch/core/test_data/Cat03.jpg").convert("RGB")
+image = Image.open("canvit-pytorch/test_data/Cat03.jpg").convert("RGB")
 image = preprocess(512)(image)
 image = image.unsqueeze(0)  # [1, 3, 512, 512]
 
@@ -139,7 +139,7 @@ clf = CanViTForImageClassification.from_pretrained_with_probe(
 **Both have the same forward pass:**
 
 ```python
-image = preprocess(512)(Image.open("canvit-pytorch/core/test_data/Cat03.jpg").convert("RGB")).unsqueeze(0)
+image = preprocess(512)(Image.open("canvit-pytorch/test_data/Cat03.jpg").convert("RGB")).unsqueeze(0)
 state = clf.init_state(batch_size=1, canvas_grid_size=32)
 
 with torch.inference_mode():
@@ -175,7 +175,7 @@ The standalone `SegmentationProbe` head is also exported from `canvit_pytorch` f
 
 ```bash
 git clone https://github.com/m2b3/CanViT.git
-cd CanViT/canvit-pytorch/core
+cd CanViT/canvit-pytorch
 
 # Classification with sequential glimpses
 uv run --extra demo python demos/classify.py                # finetuned checkpoint
@@ -196,12 +196,14 @@ We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/
 
 ## Repository layout
 
-| Directory | Contents |
-|---|---|
-| [`canvit-pytorch/core/`](canvit-pytorch/core) | The model: architecture, checkpoint loading, viewpoints and policies, task heads (`canvit-pytorch` on PyPI) |
-| [`canvit-pytorch/pretrain/`](canvit-pytorch/pretrain) | Pretraining: passive-to-active dense distillation from DINOv3 |
-| [`canvit-pytorch/specialize/`](canvit-pytorch/specialize) | Downstream training: ADE20K segmentation probes, ImageNet-1k fine-tuning |
-| [`canvit-pytorch/eval/`](canvit-pytorch/eval) | Evaluation and benchmarking: ADE20K mIoU, ImageNet-1k top-k, DINOv3 reconstruction |
+[`canvit-pytorch/`](canvit-pytorch) is one Python distribution, `canvit-pytorch` (on PyPI):
+
+| Module | Contents | Docs |
+|---|---|---|
+| `canvit_pytorch` | The model: architecture, checkpoint loading, viewpoints and policies, task heads | this README |
+| `canvit_pytorch.pretrain` | Pretraining: passive-to-active dense distillation from DINOv3 | [docs/pretrain.md](canvit-pytorch/docs/pretrain.md) |
+| `canvit_pytorch.specialize` | Downstream training: ADE20K segmentation probes, ImageNet-1k fine-tuning | [docs/specialize.md](canvit-pytorch/docs/specialize.md) |
+| `canvit_pytorch.evaluate` | Evaluation and benchmarking: ADE20K mIoU, ImageNet-1k top-k, DINOv3 reconstruction | [docs/evaluate.md](canvit-pytorch/docs/evaluate.md) |
 
 These packages previously lived in separate repositories (CanViT-PyTorch, CanViT-pretrain, CanViT-specialize, CanViT-eval), whose histories are merged here.
 

@@ -19,10 +19,10 @@
 #
 # USAGE:
 #   # Submit array job (over-estimate is fine, empty jobs exit quickly)
-#   sbatch --array=0-99%20 slurm/export_features.sh
+#   sbatch --array=0-99%20 slurm/pretrain/export_features.sh
 #
 #   # If your cluster requires an allocation account:
-#   sbatch --account=my_project_name --array=0-99%20 slurm/export_features.sh
+#   sbatch --account=my_project_name --array=0-99%20 slurm/pretrain/export_features.sh
 #
 #   # IN1k VALIDATION, for held-out evaluation of a distilled arm. 50,000
 #   # images -> 13 shards -> ~79 GB, one array task. The index is the existing
@@ -32,7 +32,7 @@
 #   PARQUET=$INDEX_DIR/val.parquet \
 #   IMAGE_ROOT=$IN1K_VAL_IMAGE_DIR \
 #   OUT_DIR=$SCRATCH/dinov3_in1k_val_vitb16_512 \
-#     sbatch --array=0-0 slurm/export_features.sh
+#     sbatch --array=0-0 slurm/pretrain/export_features.sh
 #
 # MONITOR:
 #   squeue -u $USER                                    # job status
@@ -42,7 +42,7 @@
 #
 # RECOVERY:
 #   Just resubmit. Existing shards are skipped. Or submit specific tasks:
-#   sbatch --array=3,17,42 slurm/export_features.sh
+#   sbatch --array=3,17,42 slurm/pretrain/export_features.sh
 #
 # ==============================================================================
 
@@ -61,7 +61,7 @@ mkdir -p logs
 
 # Experiment-specific. DATASET + IMAGE_ROOT are overridable from the
 # submission environment for non-in21k exports, e.g.:
-#   DATASET=in1k IMAGE_ROOT=/path/to/in1k/train sbatch --array=0-8 slurm/export_features.sh
+#   DATASET=in1k IMAGE_ROOT=/path/to/in1k/train sbatch --array=0-8 slurm/pretrain/export_features.sh
 DATASET=${DATASET:-in21k}
 TEACHER_REPO_ID="facebook/dinov3-vitb16-pretrain-lvd1689m"
 IMAGE_SIZE=512
@@ -130,7 +130,7 @@ echo "========================================"
 
 START_TIME=$(date +%s)
 
-uv run python scripts/export_in21k_features.py \
+uv run python scripts/pretrain/export_in21k_features.py \
     --parquet "$PARQUET" \
     --image-root "$IMAGE_ROOT" \
     --out-dir "$OUT_DIR" \

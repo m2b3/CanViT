@@ -14,6 +14,6 @@ set -eu  # NOT -x: env.sh may contain secrets
 source slurm/env.sh
 mkdir -p logs
 
-exec uv run python sa1b/build_tar_indexes.py \
+exec uv run python scripts/pretrain/sa1b/build_tar_indexes.py \
     --tar-dir "$SA1B_TAR_DIR" \
     --workers 8

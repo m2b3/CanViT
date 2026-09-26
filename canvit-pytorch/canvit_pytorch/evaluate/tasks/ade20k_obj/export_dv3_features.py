@@ -9,12 +9,12 @@ import torch
 import torch.nn.functional as F
 import tyro
 from canvit_pytorch.teacher import load_teacher
-from canvit_specialize.datasets.ade20k import ADE20kDataset, ResizeMode, make_val_transforms
+from canvit_pytorch.specialize.datasets.ade20k import ADE20kDataset, ResizeMode, make_val_transforms
 from torch.utils.data import DataLoader
 
-from canvit_eval.config import TEACHER_REPO, ade20k_root, progress, require_existing_dir
-from canvit_eval.provenance import device_info, provenance
-from canvit_eval.tasks.ade20k_obj.paths import EXPECTED_N_VAL_IMAGES, FEATURES_DIR, features_path
+from canvit_pytorch.evaluate.config import TEACHER_REPO, ade20k_root, progress, require_existing_dir
+from canvit_pytorch.evaluate.provenance import device_info, provenance
+from canvit_pytorch.evaluate.tasks.ade20k_obj.paths import EXPECTED_N_VAL_IMAGES, FEATURES_DIR, features_path
 
 log = logging.getLogger(__name__)
 

@@ -8,10 +8,10 @@ import numpy as np
 import pytest
 import torch
 
-from canvit_eval.tasks.ade20k_obj.iou import _batch_confusion
+from canvit_pytorch.evaluate.tasks.ade20k_obj.iou import _batch_confusion
 
 try:
-    from canvit_specialize.datasets.ade20k import IGNORE_LABEL, NUM_CLASSES
+    from canvit_pytorch.specialize.datasets.ade20k import IGNORE_LABEL, NUM_CLASSES
 except ImportError:  # pragma: no cover
     IGNORE_LABEL = 255
     NUM_CLASSES = 150

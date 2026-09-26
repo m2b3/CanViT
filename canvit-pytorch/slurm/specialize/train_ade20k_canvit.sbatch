@@ -8,14 +8,14 @@
 #SBATCH --error=logs/ade20k-canvit-%j.err
 
 # If your cluster requires an allocation account:
-#   sbatch --account=my_project_name slurm/train_ade20k_canvit.sbatch
+#   sbatch --account=my_project_name slurm/specialize/train_ade20k_canvit.sbatch
 
 set -eu  # NOT -x: would trace secret exports (HF_TOKEN, etc.) into logs
-source slurm/setup.sh
+source slurm/ade20k.sh
 mkdir -p logs
 
 echo "=== ADE20K CanViT Probe Training ==="
 echo "Job: $SLURM_JOB_ID on $(hostname)"
 nvidia-smi --query-gpu=name,memory.total --format=csv
 
-exec uv run python -m canvit_specialize.training.ade20k train "$@"
+exec uv run python -m canvit_pytorch.specialize.training.ade20k train "$@"

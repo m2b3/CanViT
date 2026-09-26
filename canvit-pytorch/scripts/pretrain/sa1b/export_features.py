@@ -22,12 +22,12 @@ Shard format matches training loader expectations (shards.py):
 
 Usage:
   # Single tar (interactive)
-  uv run python sa1b/export_features.py \
+  uv run python scripts/pretrain/sa1b/export_features.py \
       --tar /path/to/sa_000020.tar \
       --out-dir /path/to/shards
 
-  # SLURM array job (see sa1b/export_features.sh)
-  sbatch --array=0-999 sa1b/export_features.sh
+  # SLURM array job (see scripts/pretrain/sa1b/export_features.sh)
+  sbatch --array=0-999 scripts/pretrain/sa1b/export_features.sh
 """
 
 import logging
@@ -49,7 +49,7 @@ from torch import Tensor
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
-from canvit_pretrain.train.data.tar_images import TarImageReader, scan_tar_headers
+from canvit_pytorch.pretrain.train.data.tar_images import TarImageReader, scan_tar_headers
 
 STORAGE_DTYPE = torch.float16
 NUMPY_DTYPE = np.float16  # Must match STORAGE_DTYPE

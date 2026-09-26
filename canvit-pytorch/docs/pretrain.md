@@ -1,4 +1,4 @@
-# canvit-pretrain
+# Pretraining (`canvit_pytorch.pretrain`)
 
 Passive-to-active dense latent distillation of [CanViT](../../README.md) ([arXiv:2603.22570](https://arxiv.org/abs/2603.22570)) from [DINOv3](https://github.com/facebookresearch/dinov3) ([arXiv:2508.10104](https://arxiv.org/abs/2508.10104)).
 
@@ -18,15 +18,15 @@ Please ensure that `HF_TOKEN`, `COMET_API_KEY`, and `COMET_WORKSPACE` are set.
 Export DINOv3 teacher features once:
 
 ```bash
-uv run python scripts/build_shuffled_index.py \
+uv run python scripts/pretrain/build_shuffled_index.py \
   --image-root $IN21K_IMAGE_DIR --index-dir $INDEX_DIR --dataset in21k
-sbatch --array=0-99%20 slurm/export_features.sh
+sbatch --array=0-99%20 slurm/pretrain/export_features.sh
 ```
 
 Pretraining:
 
 ```bash
-sbatch slurm/train.sbatch [--flag value ...]
+sbatch slurm/pretrain/train.sbatch [--flag value ...]
 ```
 
 Ablations:

@@ -3,8 +3,8 @@
 import torch.nn as nn
 from torch import Tensor
 
-from canvit_specialize.metrics import mIoUAccumulator
-from canvit_specialize.training.ade20k.loss import upsample_preds
+from canvit_pytorch.specialize.metrics import mIoUAccumulator
+from canvit_pytorch.specialize.training.ade20k.loss import upsample_preds
 
 
 def eval_probe_on_batch(

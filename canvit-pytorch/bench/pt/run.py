@@ -27,7 +27,7 @@ from canvit_pytorch.model.base import CanViT, CanViTConfig
 from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
 from canvit_pytorch.teacher import load_teacher
 
-from canvit_eval.config import DINOV3_VITB_REPO, DINOV3_VITS_REPO
+from canvit_pytorch.evaluate.config import DINOV3_VITB_REPO, DINOV3_VITS_REPO
 
 logging.basicConfig(
     level=logging.INFO,

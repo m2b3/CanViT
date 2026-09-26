@@ -4,7 +4,7 @@ Naming: {owner}/canvitb16-abl-{slug}-{YYYY-MM-DD} (date from checkpoint
 timestamp, slug from the registry below).
 
 Usage:
-    uv run python scripts/push_ablation_checkpoints.py --ckpt-dir <path> --dry-run
+    uv run python scripts/pretrain/push_ablation_checkpoints.py --ckpt-dir <path> --dry-run
 """
 
 import logging

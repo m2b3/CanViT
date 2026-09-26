@@ -1,5 +1,5 @@
 # CanViT IN1k finetuning on TPU v6e (SkyPilot managed job).
-# See canvit_specialize/training/gcp_in1k_clf_ft/README.md for launch commands,
+# See canvit_pytorch.specialize/training/gcp_in1k_clf_ft/README.md for launch commands,
 # prereqs, secrets handling, and HP override patterns.
 
 name: canvit-in1k-finetune
@@ -84,7 +84,7 @@ envs:
 
 setup: |
   cd ~/sky_workdir
-  bash canvit_specialize/training/gcp_in1k_clf_ft/setup_tpu.sh
+  bash canvit_pytorch.specialize/training/gcp_in1k_clf_ft/setup_tpu.sh
 
 run: |
   export PATH="$HOME/.local/bin:$PATH"
@@ -118,7 +118,7 @@ run: |
   ls /ckpt/    # real error if not mounted; we want to see it
 
   ts "uv run starting..."
-  uv run --no-sync --group gcp-in1k-finetune python -u -m canvit_specialize.training.gcp_in1k_clf_ft.train_imagenet \
+  uv run --no-sync --group gcp-in1k-finetune python -u -m canvit_pytorch.specialize.training.gcp_in1k_clf_ft.train_imagenet \
     --data-dir ~/gcs/datasets/imagenet \
     --batch-size $BATCH_SIZE \
     --epochs $EPOCHS \

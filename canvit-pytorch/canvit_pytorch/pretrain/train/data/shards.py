@@ -230,7 +230,7 @@ class ShardedFeatureLoader:
 
         # Load pre-built tar indexes (.idx files) in main process.
         # Workers inherit via fork COW — zero indexing during training.
-        # .idx files are created by sa1b/build_tar_indexes.py.
+        # .idx files are created by scripts/pretrain/sa1b/build_tar_indexes.py.
         self.tar_indexes: dict[str, TarIndex] = {}
         if self.tar_dir is not None:
             self._prebuild_tar_indexes(steps_per_job)

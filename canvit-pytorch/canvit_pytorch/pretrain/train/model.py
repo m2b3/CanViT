@@ -9,7 +9,7 @@ from canvit_pytorch.backbone.vit import ViTBackbone
 from canvit_pytorch.teacher import DINOv3Teacher
 from canvit_pytorch.teacher import load_teacher as _load_teacher
 
-from canvit_pretrain import CanViTForPretraining
+from canvit_pytorch.pretrain import CanViTForPretraining
 
 from .config import Config
 

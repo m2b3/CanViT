@@ -21,7 +21,7 @@ import os
 CANVIT_REPO_ROOT = os.environ.get("CANVIT_REPO_ROOT", "canvit").rstrip("/")
 
 CODE_REPO_URL = "https://github.com/m2b3/CanViT"
-GIT_INSTALL_SPEC = f"canvit-pytorch @ git+{CODE_REPO_URL}.git#subdirectory=canvit-pytorch/core"
+GIT_INSTALL_SPEC = f"canvit-pytorch @ git+{CODE_REPO_URL}.git#subdirectory=canvit-pytorch"
 
 
 def resolve_canvit_repo(name: str) -> str:
@@ -43,7 +43,7 @@ def ade20k_probe_repo(model_short: str, *, scene: int, grid: int, steps_k: int =
 
 
 # Pretraining-ablation checkpoints (slug -> repo-id). Slugs are shared with
-# canvit-eval's batch runner and the paper exporter's ablation registry.
+# canvit_pytorch.evaluate's batch runner and the paper exporter's ablation registry.
 ABLATION_CHECKPOINTS: dict[str, str] = {
     slug: resolve_canvit_repo(name)
     for slug, name in {

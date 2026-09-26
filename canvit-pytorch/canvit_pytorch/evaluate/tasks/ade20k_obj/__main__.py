@@ -5,18 +5,18 @@ import datetime as dt
 import logging
 from pathlib import Path
 
-from canvit_eval.tasks.ade20k_obj.export_dv3_features import (
+from canvit_pytorch.evaluate.tasks.ade20k_obj.export_dv3_features import (
     ExportFeaturesConfig,
     main as export_dv3_features,
 )
-from canvit_eval.tasks.ade20k_obj.iou import (
+from canvit_pytorch.evaluate.tasks.ade20k_obj.iou import (
     CANVIT_PROBE_REPOS,
     CanViTConfig,
     DINOv3Config,
     run_canvit,
     run_dinov3,
 )
-from canvit_eval.tasks.ade20k_obj.paths import (
+from canvit_pytorch.evaluate.tasks.ade20k_obj.paths import (
     CANVIT_PARQUET,
     DV3_PARQUET,
     FEATURES_DIR,

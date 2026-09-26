@@ -19,7 +19,7 @@ Requires GCP + SkyPilot + a TPU v6e-4 quota.
 ```bash
 export COMET_API_KEY=$(cat ~/.config/comet_api_key.txt)
 export HF_TOKEN=$(cat ~/.cache/huggingface/token)
-sky jobs launch canvit_specialize/training/gcp_in1k_clf_ft/sky-train-imagenet.yaml -y \
+sky jobs launch canvit_pytorch.specialize/training/gcp_in1k_clf_ft/sky-train-imagenet.yaml -y \
   --secret COMET_API_KEY --secret HF_TOKEN \
   --env GCS_BUCKET_PREFIX=your-prefix
 ```
@@ -29,5 +29,5 @@ Hyperparameters live in `sky-train-imagenet.yaml` `envs:`. Override via `--env L
 ## Publish
 
 ```bash
-uv run python scripts/push_finetuned.py --help
+uv run python scripts/specialize/push_finetuned.py --help
 ```

@@ -53,16 +53,16 @@ from canvit_pytorch import (  # noqa: E402
 )
 from canvit_pytorch.backbone.vit import NormFeatures  # noqa: E402
 
-from canvit_pretrain import CanViTForPretrainingConfig  # noqa: E402
-from canvit_pretrain.checkpoint import (  # noqa: E402
+from canvit_pytorch.pretrain import CanViTForPretrainingConfig  # noqa: E402
+from canvit_pytorch.pretrain.checkpoint import (  # noqa: E402
     CheckpointData,
     current_provenance,
     find_latest,
     load_state_dict_flexible,
     update_symlink,
 )
-from canvit_pretrain.checkpoint import load as load_checkpoint  # noqa: E402
-from canvit_pretrain.checkpoint import save as save_checkpoint  # noqa: E402
+from canvit_pytorch.pretrain.checkpoint import load as load_checkpoint  # noqa: E402
+from canvit_pytorch.pretrain.checkpoint import save as save_checkpoint  # noqa: E402
 
 from .config import Config  # noqa: E402
 from .data import ShardedFeatureLoader, create_loaders, scene_size_px  # noqa: E402

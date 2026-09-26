@@ -2,7 +2,7 @@
 count, zero failed loads (failed images carry NaN features and would train
 silently), consistent provenance across shards.
 
-    uv run python scripts/check_shard_completeness.py \
+    uv run python scripts/pretrain/check_shard_completeness.py \
         --shards-dir $FEATURES_DIR/in1k/dinov3_vitb16/512/shards \
         --expected-images 1281167
 """

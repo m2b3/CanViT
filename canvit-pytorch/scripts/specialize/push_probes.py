@@ -14,16 +14,16 @@ Every publish (single/batch):
   4. Reorders the collection so items appear smallest → largest
 
 Usage:
-    uv run python scripts/push_probes.py single \
+    uv run python scripts/specialize/push_probes.py single \
         --probe PATH --repo-id canvit/probe-ade20k-... [--public] [--dry-run]
 
-    uv run python scripts/push_probes.py batch \
+    uv run python scripts/specialize/push_probes.py batch \
         --probe-dir PATH [--match GLOB] [--owner canvit] [--public] [--dry-run]
 
-    uv run python scripts/push_probes.py retrofit \
+    uv run python scripts/specialize/push_probes.py retrofit \
         --repo-ids canvit/probe-ade20k-... [... more ...] [--dry-run]
 
-    uv run python scripts/push_probes.py reorder [--dry-run]
+    uv run python scripts/specialize/push_probes.py reorder [--dry-run]
 """
 
 import fnmatch
@@ -42,12 +42,14 @@ from huggingface_hub import HfApi, hf_hub_download
 from canvit_pytorch import CANVIT_REPO_ROOT, resolve_canvit_repo
 from canvit_pytorch.checkpoints import (
     ABLATION_MODEL_SHORTS,
+    CODE_REPO_URL,
+    GIT_INSTALL_SPEC,
     PRETRAIN_MODEL_SHORTS,
     ade20k_dinov3_probe_name,
     ade20k_probe_name,
 )
 from canvit_pytorch.probes import SegmentationProbe
-from scripts.upload_utils import (
+from scripts.specialize.upload_utils import (
     json_sanitize,
     upload_model_card,
     upload_probe_to_hub,
@@ -245,12 +247,12 @@ base_model: {base_model}
 {intro}
 
 - **Paper**: [arXiv:2603.22570](https://arxiv.org/abs/2603.22570)
-- **Training code**: [github.com/m2b3/CanViT-specialize](https://github.com/m2b3/CanViT-specialize)
+- **Training code**: [{code_url}]({code_url})
 
 ## Usage
 
 ```bash
-uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT-PyTorch.git"
+uv add "{install_spec}"
 ```
 
 ```python
@@ -274,6 +276,10 @@ Architecture: `{arch}`.
 """
 
 
+def _render_card(**fields: object) -> str:
+    return _CARD_TEMPLATE.format(code_url=CODE_REPO_URL, install_spec=GIT_INSTALL_SPEC, **fields)
+
+
 def _arch_str(use_ln: bool) -> str:
     """Describe the probe architecture (LN is optional; DINOv3 probes omit it)."""
     return "LayerNorm → Dropout → BatchNorm → Conv1×1" if use_ln else "Dropout → BatchNorm → Conv1×1"
@@ -288,7 +294,7 @@ def build_canvas_card(
 ) -> str:
     scene, grid = cfg["scene_size"], cfg["canvas_grid"]
     base_model = cfg["model_repo"]
-    return _CARD_TEMPLATE.format(
+    return _render_card(
         tags=_indent_tags(["canvit", "active-vision", "ade20k", "segmentation-probe"]),
         base_model=base_model,
         title=f"ADE20K Segmentation Probe — canvas {grid}×{grid} @ {scene}px scene",
@@ -311,7 +317,7 @@ def build_dinov3_card(
     variant = _dinov3_variant(base_model)
     res = cfg["resolution"]
     grid = res // 16  # DINOv3 patch size is 16
-    return _CARD_TEMPLATE.format(
+    return _render_card(
         tags=_indent_tags(["dinov3", "ade20k", "segmentation-probe"]),
         base_model=base_model,
         title=f"ADE20K Segmentation Probe — DINOv3 {variant} @ {res}px input",

@@ -15,8 +15,8 @@ Each tar is ~11 GB uncompressed, ~11k JPEGs + masks.
 ~50 MB/s on Nibi login nodes → ~3.5 min per tar.
 
 Usage (from repo root):
-    uv run python sa1b/download.py                # all 1000 tars
-    uv run python sa1b/download.py --limit 3      # first 3 only
+    uv run python scripts/pretrain/sa1b/download.py                # all 1000 tars
+    uv run python scripts/pretrain/sa1b/download.py --limit 3      # first 3 only
 """
 
 import csv

@@ -1,6 +1,6 @@
 """Build a deterministically-shuffled parquet index of image paths for feature export.
 
-`scripts/export_in21k_features.py` consumes `$INDEX_DIR/<dataset>-shuffled.parquet`
+`scripts/pretrain/export_in21k_features.py` consumes `$INDEX_DIR/<dataset>-shuffled.parquet`
 and processes rows in parquet order. Shuffling ensures each shard contains a
 mixed-class sample so the sequential-shard training loader does not see class
 clusters.
@@ -10,7 +10,7 @@ Idempotent: if the shuffled parquet already exists, exits without touching it
 silently replace it).
 
 Usage:
-    uv run python scripts/build_shuffled_index.py \
+    uv run python scripts/pretrain/build_shuffled_index.py \
         --image-root $IN21K_IMAGE_DIR \
         --index-dir $INDEX_DIR \
         --dataset in21k
@@ -25,7 +25,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import tyro
 
-from canvit_pretrain.datasets import IndexedImageFolder
+from canvit_pytorch.pretrain.datasets import IndexedImageFolder
 
 
 @dataclass

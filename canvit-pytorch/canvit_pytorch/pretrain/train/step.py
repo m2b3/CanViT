@@ -1,7 +1,7 @@
 """Training step with truncated BPTT and independent branches.
 
 Objective-agnostic: the per-timestep loss and the end-of-branch metrics are injected
-(see :mod:`canvit_pretrain.train.objective`). The TBPTT / independent-branch control flow
+(see :mod:`canvit_pytorch.pretrain.train.objective`). The TBPTT / independent-branch control flow
 here does not know whether it is distilling teacher features or reconstructing pixels.
 """
 

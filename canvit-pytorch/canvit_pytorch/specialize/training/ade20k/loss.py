@@ -3,7 +3,7 @@
 import torch.nn.functional as F
 from torch import Tensor
 
-from canvit_specialize.datasets.ade20k import IGNORE_LABEL
+from canvit_pytorch.specialize.datasets.ade20k import IGNORE_LABEL
 
 
 def ce_loss(logits: Tensor, masks: Tensor) -> Tensor:

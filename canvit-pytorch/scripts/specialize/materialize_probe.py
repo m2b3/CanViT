@@ -1,6 +1,6 @@
 """Turn a trained probe `.pt` into a directory `from_pretrained` can load.
 
-`canvit_eval --probe-repo` resolves either an HF repo id or a local directory,
+`canvit_pytorch.evaluate --probe-repo` resolves either an HF repo id or a local directory,
 but a local directory only works if it holds a `save_pretrained` layout
 (`config.json` + `model.safetensors`). A training run writes a single bare
 `canvas_hidden_best_t9_miou<...>_step<...>.pt`, so pointing the evaluator at the
@@ -10,7 +10,7 @@ training directory fails.
 materialization WITHOUT publishing, which is what a one-off internal evaluation
 wants: same weights, same loader, no outward-facing action.
 
-    uv run python scripts/materialize_probe.py \
+    uv run python scripts/specialize/materialize_probe.py \
         --probe  ~/projects/.../canvas_hidden_best_t9_miou0.3676_step39000.pt \
         --out-dir ~/scratch/probe_materialized/abl-baseline-c64
 
@@ -23,7 +23,7 @@ from pathlib import Path
 
 import tyro
 
-from scripts.push_probes import load_probe
+from scripts.specialize.push_probes import load_probe
 
 
 @dataclass

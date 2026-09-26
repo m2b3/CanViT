@@ -13,12 +13,12 @@ import torch
 from torch.utils.data import DataLoader
 
 from canvit_pytorch import CanViTForImageClassification, resolve_canvit_repo
-from canvit_specialize.training.utils import collect_metadata
+from canvit_pytorch.specialize.training.utils import collect_metadata
 
-from canvit_eval.config import DEFAULT_PRETRAINED_REPO, EpisodeConfig, imagenet_val_dir, require_existing_dir
-from canvit_eval.datasets.imagenet import make_in1k_dataset
-from canvit_eval.runner import eval_batches
-from canvit_eval.tasks.base import TaskConfig
+from canvit_pytorch.evaluate.config import DEFAULT_PRETRAINED_REPO, EpisodeConfig, imagenet_val_dir, require_existing_dir
+from canvit_pytorch.evaluate.datasets.imagenet import make_in1k_dataset
+from canvit_pytorch.evaluate.runner import eval_batches
+from canvit_pytorch.evaluate.tasks.base import TaskConfig
 
 log = logging.getLogger(__name__)
 TOP_K = 5

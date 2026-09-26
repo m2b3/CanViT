@@ -1,6 +1,6 @@
 #!/bin/bash
 # Submit export jobs for all tars that don't have a corresponding shard yet.
-# Usage: bash sa1b/submit_export.sh [--dry-run] [--max-concurrent N]
+# Usage: bash scripts/pretrain/sa1b/submit_export.sh [--dry-run] [--max-concurrent N]
 set -euo pipefail
 
 # Requires direnv (SA1B_TAR_DIR, SA1B_FEATURES_DIR).
@@ -45,4 +45,4 @@ if $DRY_RUN; then
     exit 0
 fi
 
-sbatch --array="$array_spec" sa1b/export_features.sh
+sbatch --array="$array_spec" scripts/pretrain/sa1b/export_features.sh

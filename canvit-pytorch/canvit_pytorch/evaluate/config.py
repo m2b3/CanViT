@@ -14,7 +14,7 @@ from pathlib import Path
 from canvit_pytorch.checkpoints import FLAGSHIP_PRETRAIN_REPO
 from tqdm import tqdm
 
-from canvit_eval.policies import PolicyName
+from canvit_pytorch.evaluate.policies import PolicyName
 
 log = logging.getLogger(__name__)
 

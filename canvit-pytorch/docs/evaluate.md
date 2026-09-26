@@ -1,4 +1,4 @@
-# canvit-eval
+# Evaluation (`canvit_pytorch.evaluate`)
 
 Evaluation and benchmarking for [CanViT](../../README.md),
 the Canvas Vision Transformer.
@@ -14,7 +14,7 @@ uv sync
 ## Datasets
 
 ADE20K (`ADEChallengeData2016/`) and ImageNet-1k (`ILSVRC2012/val/`) are
-referenced depending on the eval. Three ways to point `canvit-eval` at them:
+referenced depending on the eval. Three ways to point the evaluation at them:
 
 1. Export in your shell:
 
@@ -32,8 +32,8 @@ referenced depending on the eval. Three ways to point `canvit-eval` at them:
 ## Single eval
 
 ```bash
-uv run python -m canvit_eval --help                       # list subcommands
-uv run python -m canvit_eval ade20k-seg-canvit --help     # full flag set
+uv run python -m canvit_pytorch.evaluate --help                       # list subcommands
+uv run python -m canvit_pytorch.evaluate ade20k-seg-canvit --help     # full flag set
 ```
 
 Subcommands:
@@ -51,7 +51,7 @@ Concrete example (flagship ADE20K config: 512 px scene, 64×64 canvas,
 21 timesteps):
 
 ```bash
-uv run python -m canvit_eval ade20k-seg-canvit \
+uv run python -m canvit_pytorch.evaluate ade20k-seg-canvit \
     --probe-repo canvit/probe-ade20k-40k-s512-c64-in21k \
     --scene-size 512 --episode.canvas-grid 64 \
     --output results/ade20k_seg.pt
@@ -62,8 +62,8 @@ Saves a `.pt` with per-timestep mIoU and run metadata.
 ## Batch eval
 
 ```bash
-uv run python -m canvit_eval.batch --help
-uv run python -m canvit_eval.batch --n-runs 5
+uv run python -m canvit_pytorch.evaluate.batch --help
+uv run python -m canvit_pytorch.evaluate.batch --n-runs 5
 ```
 
 Sweeps the four subcommands above across a predefined set of
@@ -79,9 +79,9 @@ Three stages: DINOv3 feature export, DINOv3 IoU, CanViT IoU. Each stage skips
 if its output already exists.
 
 ```bash
-uv run python -m canvit_eval.tasks.ade20k_obj                              # all stages
-uv run python -m canvit_eval.tasks.ade20k_obj.export_dv3_features --help   # stage 1 alone
-uv run python -m canvit_eval.tasks.ade20k_obj.iou --help                   # stages 2 & 3
+uv run python -m canvit_pytorch.evaluate.tasks.ade20k_obj                              # all stages
+uv run python -m canvit_pytorch.evaluate.tasks.ade20k_obj.export_dv3_features --help   # stage 1 alone
+uv run python -m canvit_pytorch.evaluate.tasks.ade20k_obj.iou --help                   # stages 2 & 3
 ```
 
 ## Latency bench

@@ -10,9 +10,9 @@ from canvit_pytorch.model.pretraining.hub import CanViTForPretrainingHFHub
 from torch import Tensor
 from torch.utils.data import DataLoader
 
-from canvit_eval.config import EpisodeConfig, progress
-from canvit_eval.episode import CanViTModel, EpisodeStep, run_episode
-from canvit_eval.policies import make_policy
+from canvit_pytorch.evaluate.config import EpisodeConfig, progress
+from canvit_pytorch.evaluate.episode import CanViTModel, EpisodeStep, run_episode
+from canvit_pytorch.evaluate.policies import make_policy
 
 log = logging.getLogger(__name__)
 

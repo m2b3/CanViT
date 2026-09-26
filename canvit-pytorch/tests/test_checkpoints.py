@@ -1,6 +1,6 @@
 """Naming SSOT: published repo names and the defaults they inherit.
 
-These strings are load-bearing — probe training records them, canvit-eval
+These strings are load-bearing — probe training records them, canvit_pytorch.evaluate
 resolves them, and the HF Hub repos are already published under them.
 """
 

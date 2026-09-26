@@ -5,7 +5,7 @@ This eliminates expensive teacher inference during training.
 
 USAGE:
     # Single shard
-    uv run python scripts/export_in21k_features.py \
+    uv run python scripts/pretrain/export_in21k_features.py \
         --parquet /path/to/index.parquet \
         --image-root /path/to/images \
         --out-dir /path/to/output \
@@ -13,7 +13,7 @@ USAGE:
         --shard 0
 
     # Range of shards (for SLURM array jobs)
-    uv run python scripts/export_in21k_features.py ... --start-shard 0 --end-shard 100
+    uv run python scripts/pretrain/export_in21k_features.py ... --start-shard 0 --end-shard 100
 
 SHARD SCHEMA:
     # Data

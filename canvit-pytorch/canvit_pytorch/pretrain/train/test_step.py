@@ -13,7 +13,7 @@ import torch
 from canvit_pytorch import create_backbone
 from torch import Tensor
 
-from canvit_pretrain import CanViTForPretraining, CanViTForPretrainingConfig
+from canvit_pytorch.pretrain import CanViTForPretraining, CanViTForPretrainingConfig
 
 from .objective import distillation_branch_metrics_fn, distillation_loss_fn
 from .step import training_step
@@ -82,7 +82,7 @@ def _run_step(
                 return val
             return 1.0  # safety: stop
 
-        ctx = patch("canvit_pretrain.train.step.random.random", side_effect=controlled_random)
+        ctx = patch("canvit_pytorch.pretrain.train.step.random.random", side_effect=controlled_random)
     else:
         ctx = nullcontext()
 

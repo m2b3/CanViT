@@ -52,7 +52,7 @@ class TestSegmentationProbe:
 
     def test_state_dict_keys_stable(self):
         """Probe state_dict keys must NOT change without coordination —
-        canvit-specialize' frozen-probe HF checkpoints depend on them, and so
+        canvit_pytorch.specialize's frozen-probe HF checkpoints depend on them, and so
         does CanViTForSemanticSegmentation when copying probe weights into
         its composed head submodule."""
         probe = SegmentationProbe(embed_dim=32, num_classes=10)

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 from canvit_pytorch.preprocess import preprocess
 from torch.utils.data import DataLoader, Dataset
 
-from canvit_pretrain.datasets import IndexedImageFolder
+from canvit_pytorch.pretrain.datasets import IndexedImageFolder
 
 from .shards import ShardedFeatureLoader
 

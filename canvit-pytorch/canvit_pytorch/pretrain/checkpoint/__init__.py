@@ -17,7 +17,7 @@ import torch
 from canvit_pytorch import CanViT
 from torch import Tensor
 
-from canvit_pretrain import CanViTForPretraining, CanViTForPretrainingConfig
+from canvit_pytorch.pretrain import CanViTForPretraining, CanViTForPretrainingConfig
 
 log = logging.getLogger(__name__)
 

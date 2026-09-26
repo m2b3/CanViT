@@ -1,7 +1,7 @@
 """Tests for mIoUAccumulator — pure CPU, no dataset needed."""
 
 import torch
-from canvit_specialize.metrics import mIoUAccumulator
+from canvit_pytorch.specialize.metrics import mIoUAccumulator
 
 
 def _reference_update(num_classes: int, ignore_index: int, preds: torch.Tensor, targets: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:

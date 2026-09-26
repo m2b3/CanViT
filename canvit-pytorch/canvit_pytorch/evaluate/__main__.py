@@ -5,9 +5,9 @@ from typing import Annotated, Union
 
 import tyro
 
-from canvit_eval.tasks.ade20k_seg import CanViTConfig, DINOv3Config
-from canvit_eval.tasks.in1k_clf import Config as IN1KClfConfig
-from canvit_eval.tasks.reconstruction import Config as ReconConfig
+from canvit_pytorch.evaluate.tasks.ade20k_seg import CanViTConfig, DINOv3Config
+from canvit_pytorch.evaluate.tasks.in1k_clf import Config as IN1KClfConfig
+from canvit_pytorch.evaluate.tasks.reconstruction import Config as ReconConfig
 
 
 def main() -> None:

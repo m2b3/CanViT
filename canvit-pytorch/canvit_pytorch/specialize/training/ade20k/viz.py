@@ -12,9 +12,9 @@ from matplotlib.figure import Figure
 from sklearn.decomposition import PCA
 from torch import Tensor
 
-from canvit_specialize.datasets.ade20k import IGNORE_LABEL, NUM_CLASSES
-from canvit_specialize.training.ade20k.config import CanvasFeatureType
-from canvit_specialize.training.ade20k.features import CanvasFeatures
+from canvit_pytorch.specialize.datasets.ade20k import IGNORE_LABEL, NUM_CLASSES
+from canvit_pytorch.specialize.training.ade20k.config import CanvasFeatureType
+from canvit_pytorch.specialize.training.ade20k.features import CanvasFeatures
 from canvit_pytorch.preprocess import imagenet_denormalize
 
 

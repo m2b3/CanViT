@@ -11,10 +11,10 @@
 # ~8 min/tar on H100 (index=44s, inference=195s, save=231s for 70GB shard).
 #
 # USAGE:
-#   sbatch --array=0-999 sa1b/export_features.sh          # all 1000 tars
-#   sbatch --account=my_project_name --array=0-999 sa1b/export_features.sh
-#   sbatch --array=0-2   sa1b/export_features.sh          # first 3 tars
-#   sbatch --array=20    sa1b/export_features.sh          # single tar
+#   sbatch --array=0-999 scripts/pretrain/sa1b/export_features.sh          # all 1000 tars
+#   sbatch --account=my_project_name --array=0-999 scripts/pretrain/sa1b/export_features.sh
+#   sbatch --array=0-2   scripts/pretrain/sa1b/export_features.sh          # first 3 tars
+#   sbatch --array=20    scripts/pretrain/sa1b/export_features.sh          # single tar
 # ==============================================================================
 
 set -euo pipefail
@@ -42,7 +42,7 @@ echo "========================================"
 
 [[ -f "$TAR_PATH" ]] || { echo "FATAL: Tar not found: $TAR_PATH" >&2; exit 1; }
 
-time uv run python sa1b/export_features.py \
+time uv run python scripts/pretrain/sa1b/export_features.py \
     --tar "$TAR_PATH" \
     --out-dir "$OUT_DIR" \
     --tmp-dir "$TMPDIR" \

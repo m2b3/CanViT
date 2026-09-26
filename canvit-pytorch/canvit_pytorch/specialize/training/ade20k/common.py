@@ -7,8 +7,8 @@ from torch.optim import AdamW
 from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 
-from canvit_specialize.datasets.ade20k import ADE20kDataset, make_val_transforms
-from canvit_specialize.training.ade20k.config import ProbeTrainBase
+from canvit_pytorch.specialize.datasets.ade20k import ADE20kDataset, make_val_transforms
+from canvit_pytorch.specialize.training.ade20k.config import ProbeTrainBase
 
 
 def make_ade20k_loaders(cfg: ProbeTrainBase) -> tuple[DataLoader, DataLoader]:

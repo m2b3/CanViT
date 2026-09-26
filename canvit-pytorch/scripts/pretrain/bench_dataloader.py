@@ -2,10 +2,10 @@
 
 Run on cluster:
     source slurm/env.sh
-    uv run python scripts/bench_dataloader.py --n-batches 500 --num-workers 16
+    uv run python scripts/pretrain/bench_dataloader.py --n-batches 500 --num-workers 16
 
 For interactive exploration:
-    uv run ipython -i scripts/bench_dataloader.py -- --n-batches 100
+    uv run ipython -i scripts/pretrain/bench_dataloader.py -- --n-batches 100
 """
 
 import logging
@@ -46,7 +46,7 @@ class Config:
 
 
 def main(cfg: Config) -> None:
-    from canvit_pretrain.train.data import ShardedFeatureLoader
+    from canvit_pytorch.pretrain.train.data import ShardedFeatureLoader
 
     shards_dir = cfg.feature_base_dir / cfg.teacher_model / str(cfg.image_size) / "shards"
     log.info("=" * 60)

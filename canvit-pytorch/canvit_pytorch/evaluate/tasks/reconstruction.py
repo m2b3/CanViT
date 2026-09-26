@@ -14,11 +14,11 @@ from PIL import Image
 from torch import Tensor
 from torch.utils.data import DataLoader, Dataset
 
-from canvit_specialize.training.utils import collect_metadata
+from canvit_pytorch.specialize.training.utils import collect_metadata
 
-from canvit_eval.config import TEACHER_REPO, EpisodeConfig, progress, require_existing_dir
-from canvit_eval.runner import eval_batches, load_model
-from canvit_eval.tasks.base import TaskConfig
+from canvit_pytorch.evaluate.config import TEACHER_REPO, EpisodeConfig, progress, require_existing_dir
+from canvit_pytorch.evaluate.runner import eval_batches, load_model
+from canvit_pytorch.evaluate.tasks.base import TaskConfig
 
 log = logging.getLogger(__name__)
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"}
@@ -47,7 +47,7 @@ class _Acc:
 
 
 def _default_image_dir() -> Path:
-    from canvit_eval.config import ade20k_root
+    from canvit_pytorch.evaluate.config import ade20k_root
     return ade20k_root() / "images" / "validation"
 
 

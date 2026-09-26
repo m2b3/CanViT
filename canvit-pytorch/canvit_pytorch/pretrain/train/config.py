@@ -6,8 +6,8 @@ from typing import Literal
 
 import torch
 
-from canvit_pretrain import CanViTForPretrainingConfig
-from canvit_pretrain.train.utils import get_sensible_device
+from canvit_pytorch.pretrain import CanViTForPretrainingConfig
+from canvit_pytorch.pretrain.train.utils import get_sensible_device
 
 # Default HF repo for the teacher model
 TEACHER_REPO_ID = "facebook/dinov3-vitb16-pretrain-lvd1689m"

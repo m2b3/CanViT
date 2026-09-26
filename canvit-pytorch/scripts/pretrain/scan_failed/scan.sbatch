@@ -9,9 +9,9 @@
 # Scan feature shards for failed indices
 #
 # Usage:
-#   sbatch scripts/scan_failed/scan.sbatch
-#   sbatch --account=my_project_name scripts/scan_failed/scan.sbatch
-#   sbatch scripts/scan_failed/scan.sbatch --time=01:00:00  # more time if needed
+#   sbatch scripts/pretrain/scan_failed/scan.sbatch
+#   sbatch --account=my_project_name scripts/pretrain/scan_failed/scan.sbatch
+#   sbatch scripts/pretrain/scan_failed/scan.sbatch --time=01:00:00  # more time if needed
 
 set -eux
 

@@ -8,7 +8,7 @@ Two pretraining objectives:
   canvas. Like MAE, patches only — no CLS term.
 
 Each builder closes over the targets + model and returns callables matching the
-``LossFn`` / ``BranchMetricsFn`` contracts in :mod:`canvit_pretrain.train.step`.
+``LossFn`` / ``BranchMetricsFn`` contracts in :mod:`canvit_pytorch.pretrain.train.step`.
 """
 
 from collections.abc import Callable

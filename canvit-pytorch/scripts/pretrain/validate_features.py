@@ -2,7 +2,7 @@
 
 Usage (in interactive session):
     source slurm/env.sh
-    uv run python scripts/validate_features.py \
+    uv run python scripts/pretrain/validate_features.py \
         --shard $FEATURES_DIR/dinov3_vitb16/512/shards/00000.pt \
         --image-root $IN21K_IMAGE_DIR \
         --teacher-repo-id facebook/dinov3-vitb16-pretrain-lvd1689m \

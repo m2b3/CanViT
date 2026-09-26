@@ -5,7 +5,7 @@ generates a model card. Repo-ids for the main checkpoints live in
 canvit_pytorch.checkpoints.PRETRAIN_CHECKPOINTS.
 
 Usage:
-    uv run python scripts/push_pretrain_checkpoint.py \
+    uv run python scripts/pretrain/push_pretrain_checkpoint.py \
         --ckpt <path>/step-2001792.pt \
         --repo-id canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in1k-dv3b16-2026-06-22 \
         --public

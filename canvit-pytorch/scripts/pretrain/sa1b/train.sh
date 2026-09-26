@@ -14,14 +14,14 @@
 # Images are read directly from mmap'd tar files (no extraction step).
 #
 # First run (seed from HF Hub):
-#   sbatch sa1b/train.sh
-#   sbatch --account=my_project_name sa1b/train.sh
+#   sbatch scripts/pretrain/sa1b/train.sh
+#   sbatch --account=my_project_name scripts/pretrain/sa1b/train.sh
 #
 # Continue existing run:
-#   sbatch --array=0-99%1 sa1b/train.sh --run-name sa1b-train-XXXXXXX
+#   sbatch --array=0-99%1 scripts/pretrain/sa1b/train.sh --run-name sa1b-train-XXXXXXX
 #
 # Quick test (1 shard = 174 steps):
-#   sbatch --array=0-0%1 --time=00:20:00 sa1b/train.sh --steps-per-job 174
+#   sbatch --array=0-0%1 --time=00:20:00 scripts/pretrain/sa1b/train.sh --steps-per-job 174
 
 set -eu  # NOT -x: would trace secret exports into logs
 
@@ -66,7 +66,7 @@ mkdir -p logs
 # --hf-seed-ckpt is safe to always pass: ignored on RESUME (latest.pt takes priority).
 # Normalizer auto-detects uninitialized standardizers — no need for --reset-normalizer.
 log "Starting training..."
-exec uv run python -m canvit_pretrain.train \
+exec uv run python -m canvit_pytorch.pretrain.train \
     --run-name "$RUN_NAME" \
     --hf-seed-ckpt "$HF_SEED" \
     --feature-base-dir "$SA1B_FEATURES_DIR/sa1b" \

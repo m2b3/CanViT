@@ -20,23 +20,23 @@ import torch
 import torch.nn.functional as F
 import tyro
 from canvit_pytorch import CanViTForSemanticSegmentation, SegmentationProbe, resolve_canvit_repo
-from canvit_specialize.datasets.ade20k import (
+from canvit_pytorch.specialize.datasets.ade20k import (
     IGNORE_LABEL, NUM_CLASSES, ADE20kDataset, ResizeMode, make_val_transforms,
 )
 from torch.utils.data import DataLoader
 
-from canvit_eval.config import EpisodeConfig, ade20k_root, progress, require_existing_dir
-from canvit_eval.policies import is_power_of_two
-from canvit_eval.provenance import device_info, provenance
-from canvit_eval.runner import eval_batches
-from canvit_eval.tasks.ade20k_obj.paths import (
+from canvit_pytorch.evaluate.config import EpisodeConfig, ade20k_root, progress, require_existing_dir
+from canvit_pytorch.evaluate.policies import is_power_of_two
+from canvit_pytorch.evaluate.provenance import device_info, provenance
+from canvit_pytorch.evaluate.runner import eval_batches
+from canvit_pytorch.evaluate.tasks.ade20k_obj.paths import (
     CANVIT_PARQUET,
     DV3_PARQUET,
     EXPECTED_N_VAL_IMAGES,
     FEATURES_DIR,
     features_path,
 )
-from canvit_eval.tasks.base import TaskConfig
+from canvit_pytorch.evaluate.tasks.base import TaskConfig
 
 log = logging.getLogger(__name__)
 
@@ -165,7 +165,7 @@ def run_dinov3(cfg: DINOv3Config) -> Path:
     if not cfg.resolutions_px:
         raise ValueError(
             f"No DINOv3 features found under {cfg.exports_dir}. "
-            f"Run `python -m canvit_eval.tasks.ade20k_obj.export_dv3_features` first."
+            f"Run `python -m canvit_pytorch.evaluate.tasks.ade20k_obj.export_dv3_features` first."
         )
     for r in cfg.resolutions_px:
         assert r > 0 and isinstance(r, int), r
@@ -382,7 +382,7 @@ def _run_one_canvas(canvas_grid: int, cfg: CanViTConfig, device: torch.device) -
 
 
 def _build_subprocess_cmd(cfg: CanViTConfig, canvas_resolution: int) -> list[str]:
-    cmd = [sys.executable, "-m", "canvit_eval.tasks.ade20k_obj.iou", "canvit"]
+    cmd = [sys.executable, "-m", "canvit_pytorch.evaluate.tasks.ade20k_obj.iou", "canvit"]
     cmd += ["--canvas-resolutions", str(canvas_resolution)]
     cmd += ["--output", str(cfg.output)]
     cmd += ["--model-repo", cfg.model_repo]

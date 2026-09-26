@@ -15,8 +15,8 @@ from canvit_pytorch.viewpoint import Viewpoint as CanvitViewpoint
 from dinov3_in1k_probes import DINOv3LinearClassificationHead
 from torch import Tensor
 
-from canvit_pretrain import CanViTForPretraining
-from canvit_pretrain.train.utils import assert_shape
+from canvit_pytorch.pretrain import CanViTForPretraining
+from canvit_pytorch.pretrain.train.utils import assert_shape
 
 from ..probe import (
     compute_in1k_top1,

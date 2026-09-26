@@ -6,8 +6,8 @@ from pathlib import Path
 import torch
 from canvit_pytorch import create_backbone
 
-from canvit_pretrain import CanViTForPretraining, CanViTForPretrainingConfig
-from canvit_pretrain.checkpoint import CheckpointData, load, save
+from canvit_pytorch.pretrain import CanViTForPretraining, CanViTForPretrainingConfig
+from canvit_pytorch.pretrain.checkpoint import CheckpointData, load, save
 
 _TEACHER_REPO = "facebook/dinov3-vits16-pretrain"
 _TEACHER_NAME = "dinov3_vits16"
@@ -61,7 +61,7 @@ def test_rgb_recon_save_load_roundtrip() -> None:
     """RGB-reconstruction checkpoints round-trip with no teacher fields."""
     from canvit_pytorch import CanViTConfig, CanViTForRGBReconstruction
 
-    from canvit_pretrain.checkpoint import load_model
+    from canvit_pytorch.pretrain.checkpoint import load_model
 
     device = torch.device("cpu")
     backbone = create_backbone("vits16").to(device)

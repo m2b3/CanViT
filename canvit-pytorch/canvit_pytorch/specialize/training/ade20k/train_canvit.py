@@ -19,19 +19,19 @@ from canvit_pytorch.teacher import load_teacher
 from torch import Tensor
 from tqdm import tqdm
 
-from canvit_specialize.training.ade20k.viz import log_viz
+from canvit_pytorch.specialize.training.ade20k.viz import log_viz
 
-from canvit_specialize.datasets.ade20k import IGNORE_LABEL, NUM_CLASSES
-from canvit_specialize.training.ade20k.eval_utils import eval_probe_on_batch
+from canvit_pytorch.specialize.datasets.ade20k import IGNORE_LABEL, NUM_CLASSES
+from canvit_pytorch.specialize.training.ade20k.eval_utils import eval_probe_on_batch
 from canvit_pytorch.probes import SegmentationProbe
-from canvit_specialize.metrics import mIoUAccumulator
-from canvit_specialize.training.utils import make_viewpoints
+from canvit_pytorch.specialize.metrics import mIoUAccumulator
+from canvit_pytorch.specialize.training.utils import make_viewpoints
 
-from canvit_specialize.training.ade20k.common import make_ade20k_loaders, make_amp_ctx, make_optimizer_and_scheduler
-from canvit_specialize.training.ade20k.config import CANVAS_FEATURES, CanvasFeatureType, Config, get_feature_dims
-from canvit_specialize.training.ade20k.features import CanvasFeatures, extract_canvas_features
-from canvit_specialize.training.ade20k.loss import ce_loss, upsample_preds
-from canvit_specialize.training.ade20k.state import ProbeState
+from canvit_pytorch.specialize.training.ade20k.common import make_ade20k_loaders, make_amp_ctx, make_optimizer_and_scheduler
+from canvit_pytorch.specialize.training.ade20k.config import CANVAS_FEATURES, CanvasFeatureType, Config, get_feature_dims
+from canvit_pytorch.specialize.training.ade20k.features import CanvasFeatures, extract_canvas_features
+from canvit_pytorch.specialize.training.ade20k.loss import ce_loss, upsample_preds
+from canvit_pytorch.specialize.training.ade20k.state import ProbeState
 
 log = logging.getLogger(__name__)
 

@@ -12,14 +12,14 @@ import torch.nn.functional as F
 from canvit_pytorch.teacher import DINOv3Teacher, load_teacher
 from tqdm import tqdm
 
-from canvit_specialize.datasets.ade20k import IGNORE_LABEL, NUM_CLASSES
-from canvit_specialize.training.ade20k.eval_utils import eval_probe_on_batch
+from canvit_pytorch.specialize.datasets.ade20k import IGNORE_LABEL, NUM_CLASSES
+from canvit_pytorch.specialize.training.ade20k.eval_utils import eval_probe_on_batch
 from canvit_pytorch.probes import SegmentationProbe
-from canvit_specialize.training.ade20k.common import make_ade20k_loaders, make_amp_ctx, make_optimizer_and_scheduler
-from canvit_specialize.training.ade20k.config import ProbeTrainBase
-from canvit_specialize.training.ade20k.loss import ce_loss, upsample_preds
-from canvit_specialize.training.ade20k.viz import log_probe_viz
-from canvit_specialize.metrics import mIoUAccumulator
+from canvit_pytorch.specialize.training.ade20k.common import make_ade20k_loaders, make_amp_ctx, make_optimizer_and_scheduler
+from canvit_pytorch.specialize.training.ade20k.config import ProbeTrainBase
+from canvit_pytorch.specialize.training.ade20k.loss import ce_loss, upsample_preds
+from canvit_pytorch.specialize.training.ade20k.viz import log_probe_viz
+from canvit_pytorch.specialize.metrics import mIoUAccumulator
 
 log = logging.getLogger(__name__)
 

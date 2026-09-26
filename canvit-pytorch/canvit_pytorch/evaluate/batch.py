@@ -27,8 +27,8 @@ from canvit_pytorch.checkpoints import (
     ade20k_probe_repo,
 )
 
-from canvit_eval.config import DINOV3_VITB_REPO, DINOV3_VITS_REPO
-from canvit_eval.policies import IN1K_POLICIES, PolicyName, is_power_of_two
+from canvit_pytorch.evaluate.config import DINOV3_VITB_REPO, DINOV3_VITS_REPO
+from canvit_pytorch.evaluate.policies import IN1K_POLICIES, PolicyName, is_power_of_two
 
 log = logging.getLogger(__name__)
 
@@ -558,7 +558,7 @@ def main(args: Args) -> None:
 
     if args.dry_run:
         for job in jobs:
-            print(" ".join(["uv", "run", "python", "-m", "canvit_eval"] + job.args))
+            print(" ".join(["uv", "run", "python", "-m", "canvit_pytorch.evaluate"] + job.args))
         return
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -567,7 +567,7 @@ def main(args: Args) -> None:
     for i, job in enumerate(jobs, start=1):
         t0 = time.monotonic()
         log.info("[%d/%d] RUN  %s", i, len(jobs), job.describe())
-        result = subprocess.run([sys.executable, "-m", "canvit_eval"] + job.args)
+        result = subprocess.run([sys.executable, "-m", "canvit_pytorch.evaluate"] + job.args)
         elapsed = time.monotonic() - t0
         total_elapsed += elapsed
         if result.returncode != 0:

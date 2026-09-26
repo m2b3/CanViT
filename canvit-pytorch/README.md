@@ -8,7 +8,7 @@ Documentation, checkpoints, examples and the other CanViT packages:
 <https://github.com/m2b3/CanViT>.
 
 ```bash
-uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT.git#subdirectory=canvit-pytorch/core"
+uv add "canvit-pytorch @ git+https://github.com/m2b3/CanViT.git#subdirectory=canvit-pytorch"
 ```
 
 This package is also on PyPI (`uv add canvit-pytorch`), updated less often

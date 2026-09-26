@@ -1,21 +1,21 @@
-"""Tests for canvit_pretrain.train module."""
+"""Tests for canvit_pytorch.pretrain.train module."""
 
 import torch
 from canvit_pytorch.preprocess import preprocess
 from PIL import Image
 from torch import Tensor
 
-from canvit_pretrain.train.data import (
+from canvit_pytorch.pretrain.train.data import (
     MAX_CONSECUTIVE_FAILURES,
     InfiniteLoader,
 )
-from canvit_pretrain.train.scheduler import warmup_constant_scheduler
-from canvit_pretrain.train.viewpoint import (
+from canvit_pytorch.pretrain.train.scheduler import warmup_constant_scheduler
+from canvit_pytorch.pretrain.train.viewpoint import (
     PixelBox,
     make_eval_viewpoints,
     viewpoint_to_pixel_box,
 )
-from canvit_pretrain.train.viz import imagenet_denormalize_to_numpy, timestep_colors
+from canvit_pytorch.pretrain.train.viz import imagenet_denormalize_to_numpy, timestep_colors
 
 
 class TestPreprocess:

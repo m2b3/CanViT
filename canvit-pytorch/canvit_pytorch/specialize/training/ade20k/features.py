@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from canvit_pytorch import CanViTForPretrainingHFHub, Viewpoint, sample_at_viewpoint
 from torch import Tensor
 
-from canvit_specialize.training.ade20k.config import CanvasFeatureType
+from canvit_pytorch.specialize.training.ade20k.config import CanvasFeatureType
 
 
 @dataclass

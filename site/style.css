@@ -63,8 +63,8 @@ sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); f
   transition: background .15s, transform .15s;
 }
 .button:hover { background: #1e293b; transform: translateY(-1px); }
-.button.arxiv { background: #b31b1b; }
-.button.arxiv:hover { background: #9b1616; }
+/* arXiv's red (#b31b1b), lightened to read on the dark button. */
+.button.arxiv .icon { background: #ef3b3b; }
 .button .logo { width: 20px; height: auto; }
 .button .icon {
   width: 17px; height: 17px; background: currentColor;

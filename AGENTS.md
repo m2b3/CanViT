@@ -93,6 +93,10 @@ rather than teaching readers to remember the exception.
   Group by concept and nest subpackages as the concepts require; short files
   are fine [author, 2026-09-26]. Do not split or combine files merely to meet
   a size or directory convention.
+- Everything sits precisely where it belongs, at whatever depth that takes,
+  not where it is convenient to put it. A planned module tree is provisional:
+  when understanding improves, move things and update the plan
+  [author, 2026-09-26].
 - The import graph is part of the architecture. The core model depends on no
   subsystem; move a misplaced responsibility rather than reaching into another
   package's internals.

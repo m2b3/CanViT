@@ -1,7 +1,8 @@
 # Project page
 
-https://m2b3.github.io/CanViT/, deployed from this directory when
-`.github/workflows/pages.yml` is run by hand (`gh workflow run pages.yml --ref main`).
+https://m2b3.github.io/CanViT/, published by `bash site/deploy.sh --push`: the page's files and the
+recorded bundles become the single commit of the `gh-pages` branch. Bundles are generated
+(`record_bundles.sh`) and never committed.
 Static files only: no build step, no framework, no bundler.
 
 ```
@@ -13,7 +14,7 @@ live.html            <canvit-live> on its own page (not linked from index.html)
 .live-model/         a local export of the live model (ignored by git; see "Live model")
 css/site.css         the page's design tokens and layout
 slides/example.html  a reveal.js deck built from the same components
-assets/paper/        figures of the paper (below)
+assets/paper/        the paper's generated numbers (below)
 assets/logos/        link logos (sources below)
 ```
 
@@ -144,18 +145,14 @@ it against PyTorch as `canvit-pytorch/docs/viz.md` ("Live model") describes,
 then serve `site/` and open `live.html`. The public page needs the model
 directory hosted at a URL that sends CORS headers, set as `model`.
 
-## Paper figures
+## Paper numbers
 
-`assets/paper/*.svg` are figures of the paper, copied unmodified from the
-exports of the paper's figure pipeline (`CanViT-paper-exporter`), which also
-produce the manuscript's PDFs; the page links each one at full size.
 `assets/paper/data_macros.json` is a copy of the paper's generated number
 macros (`latex/data_macros.json` in the manuscript repository, written with
 `data.tex`). Every result number on the page sits in
 `<span data-macro="name">…</span>`, and `python3 site/check_paper_numbers.py`,
-which the Pages workflow runs before deploying, fails when one differs from
-the paper's value. Replace these files whenever the paper's figures or numbers
-change.
+which `deploy.sh` runs first, fails when one differs from
+the paper's value. Replace the file whenever the paper's numbers change.
 
 ## Logo sources
 
@@ -164,6 +161,7 @@ change.
 | `assets/logos/github.svg` | Simple Icons 16.32.0 (`icons/github.svg`, via jsDelivr); brand source https://github.com/logos | Simple Icons data is CC0; the mark is GitHub's trademark, used per https://github.com/logos |
 | `assets/logos/arxiv.svg` | Simple Icons 16.32.0 (`icons/arxiv.svg`); brand source https://arxiv.org | CC0 data; trademark of arXiv, guidelines https://arxiv.org/about/brand |
 | `assets/logos/huggingface.svg` | Simple Icons 16.32.0 (`icons/huggingface.svg`); brand source https://huggingface.co/brand | CC0 data; trademark of Hugging Face, guidelines https://huggingface.co/brand |
+| `assets/logos/huggingface-color.svg` | Hugging Face's color logo, https://huggingface.co/front/assets/huggingface_logo-noborder.svg (linked from https://huggingface.co/brand) | Trademark of Hugging Face, guidelines https://huggingface.co/brand |
 | `assets/logos/neurips.svg` | Official NeurIPS press logo, https://neurips.cc/media/Press/NeurIPS_logo.svg (linked from https://neurips.cc/Conferences/2025/Press) | The press page: "The NeurIPS Logo above may be used on presentations." |
 
 The files are unmodified downloads. The page renders them as single-color

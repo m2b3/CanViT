@@ -5,12 +5,11 @@
 // Changing `src` loads another bundle; hovering any scene-aligned panel marks the same point in all of them
 // and names the classes there.
 
-import { decodePng } from "./png.js";
+import { loadPathBundle, pointOn } from "./path-bundle.js";
 import { ADE20K_PALETTE } from "./ade20k.js";
 import { COLORMAPS } from "./colormaps.js";
 import { frameCss, sheet } from "./view.js";
 
-const SCHEMA = "canvit-path-bundle-df96391b-61d4-49cd-a1e5-5a4af9a42e77";
 const UNLABELED = 255;
 const LEGEND_CLASSES = 8;
 const READOUTS = {
@@ -68,52 +67,6 @@ const styles = sheet(`
   svg.chart .cursor { stroke: var(--canvit-glimpse, #4080d0); stroke-width: 2; }
   .error { padding: 12px; border: 1px solid #d33; border-radius: 10px; font: 13px/1.4 var(--canvit-mono, monospace); }
 `);
-
-async function fetchOk(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Could not fetch ${url}: HTTP ${response.status}`);
-  return response;
-}
-
-async function png(url) {
-  return decodePng(await (await fetchOk(url)).arrayBuffer(), url.href);
-}
-
-async function image(url) {
-  const img = new Image();
-  img.src = url.href;
-  await img.decode();
-  return img;
-}
-
-/** The viewpoint (row, col, scale) at phase in [0, 1) on the closed curve, as the Python recorder samples it. */
-export function pointOn(segments, phase) {
-  const position = phase * segments.length;
-  const index = Math.min(Math.floor(position), segments.length - 1);
-  const fraction = position - index;
-  let points = segments[index].map((p) => [...p]);
-  while (points.length > 1) points = points.slice(0, -1).map((p, i) => p.map((v, j) => v + fraction * (points[i + 1][j] - v)));
-  return points[0];
-}
-
-export async function loadPathBundle(src) {
-  const base = new URL(src.endsWith("/") ? src : `${src}/`, document.baseURI);
-  const manifest = await (await fetchOk(new URL("manifest.json", base))).json();
-  if (manifest.schema !== SCHEMA) throw new Error(`${base}manifest.json: schema ${manifest.schema}, expected ${SCHEMA}`);
-  const [scene, inputs, truth] = await Promise.all([
-    image(new URL(manifest.scene.image, base)),
-    image(new URL(manifest.inputs, base)),
-    manifest.scene.truth ? png(new URL(manifest.scene.truth, base)) : null,
-  ]);
-  const conditions = {};
-  for (const [name, entry] of Object.entries(manifest.conditions)) {
-    if (!(name in CONDITIONS)) throw new Error(`${base}manifest.json: unknown condition "${name}"`);
-    const layers = {};
-    for (const [layer, file] of Object.entries(entry.layers)) layers[layer] = await png(new URL(file, base));
-    conditions[name] = { layers, pixelAccuracy: entry.pixel_accuracy ?? null };
-  }
-  return { manifest, scene, inputs, truth, conditions, count: manifest.path.viewpoints.length };
-}
 
 const percent = (fraction) => `${(100 * fraction).toFixed(1)}%`;
 const signed = (value) => (value < 0 ? "−" : "+") + Math.abs(value).toFixed(2);

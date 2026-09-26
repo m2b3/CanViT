@@ -22,8 +22,8 @@ and operate software.
   `canvit-pytorch/docs/`; SLURM job scripts in `canvit-pytorch/slurm/`.
 - `canvit-pytorch/tpu/`: a separate uv environment for ImageNet-1k
   fine-tuning on Cloud TPU (exact torch/torch_xla pins).
-- `site/`: the project page, deployed to https://m2b3.github.io/CanViT/ when
-  `.github/workflows/pages.yml` is run by hand.
+- `site/`: the project page, published to https://m2b3.github.io/CanViT/ by
+  `site/deploy.sh` as the single commit of the `gh-pages` branch.
   `site/record_bundles.sh` records its data with `canvit_pytorch.viz`;
   `site/check_paper_numbers.py` checks its numbers against the paper's
   generated macros. `site/AGENTS.md` holds the site's own conventions.

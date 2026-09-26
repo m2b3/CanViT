@@ -30,7 +30,7 @@ canvit-pytorch/checkpoints/
 canvit-pytorch/misc/
 canvit-pytorch/bench/pt/results/
 
-# Model and figure artifacts inside the Python project; site/ assets are tracked.
+# Model and figure artifacts inside the Python project.
 canvit-pytorch/**/*.pt
 canvit-pytorch/**/*.pth
 canvit-pytorch/**/*.bin
@@ -46,7 +46,11 @@ canvit-pytorch/**/*.pdf
 # Node.js
 node_modules/
 
-# Local screenshots of the project page (site/README.md)
+# The project page's recorded bundles (site/record_bundles.sh): generated, published with the page by
+# site/deploy.sh, never committed.
+site/data/
+
+# Local screenshots of the project page
 site/.screens/
 
 # Exported live models (python -m canvit_pytorch.viz.live export): hundreds of MB, never committed

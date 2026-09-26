@@ -2,7 +2,7 @@
 
     python3 site/check_paper_numbers.py
 
-assets/paper/data_macros.json is a copy of the paper's generated macros (see README.md, "Paper figures").
+assets/paper/data_macros.json is a copy of the paper's generated macros (see README.md, "Paper numbers").
 """
 
 import json

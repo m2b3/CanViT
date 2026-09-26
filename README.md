@@ -4,7 +4,7 @@
 [![PyPI Downloads](https://static.pepy.tech/badge/canvit-pytorch)](https://pepy.tech/projects/canvit-pytorch)
 
 <p align="center">
-  <img src="assets/canvas_attention_across_scales.png" alt="Canvas attention across scales — two example trajectories showing glimpses, canvas crops, and full canvas PCA/change maps over multiple timesteps." width="100%">
+  <img src="site/assets/canvas_attention_across_scales.png" alt="Canvas attention across scales — two example trajectories showing glimpses, canvas crops, and full canvas PCA/change maps over multiple timesteps." width="100%">
 </p>
 
 _[CanViT: Toward Active-Vision Foundation Models](https://arxiv.org/abs/2603.22570) (NeurIPS 2026; arXiv:2603.22570)_

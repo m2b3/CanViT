@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CanViT: Toward Active-Vision Foundation Models</title>
+  <meta name="description" content="CanViT, the Canvas Vision Transformer: a task- and policy-agnostic Active-Vision Foundation Model (NeurIPS 2026).">
+  <meta property="og:title" content="CanViT: Toward Active-Vision Foundation Models">
+  <meta property="og:description" content="A recurrent vision model that builds a scene-wide latent canvas from sequences of small glimpses. NeurIPS 2026.">
+  <meta property="og:image" content="assets/canvas_attention_across_scales.png">
+  <style>
+    :root {
+      --bg: #ffffff; --fg: #16181d; --muted: #4a4f5c; --rule: #e3e5ea;
+      --accent: #b3261e; --button: #16181d; --button-fg: #ffffff; --code-bg: #f4f5f7;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #111317; --fg: #eceef2; --muted: #b6bac4; --rule: #2a2e36;
+        --accent: #ff8a80; --button: #eceef2; --button-fg: #111317; --code-bg: #1b1e24;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--fg);
+      font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    main { max-width: 900px; margin: 0 auto; padding: 48px 16px 64px; }
+    h1 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.2; margin: 0 0 20px; text-align: center; }
+    h1 .name { color: var(--accent); }
+    h2 { font-size: 1.3rem; margin: 48px 0 12px; border-bottom: 1px solid var(--rule); padding-bottom: 6px; }
+    .authors, .affiliations, .venue { text-align: center; margin: 4px 0; }
+    .authors { font-size: 1.1rem; }
+    .authors span { white-space: nowrap; margin: 0 10px; }
+    .affiliations { color: var(--muted); font-size: 0.95rem; }
+    .venue { font-weight: 600; margin-top: 12px; }
+    .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 24px 0 32px; }
+    .links a {
+      background: var(--button); color: var(--button-fg); text-decoration: none;
+      padding: 8px 18px; border-radius: 999px; font-weight: 600; font-size: 0.95rem;
+    }
+    figure { margin: 0; }
+    figure img { width: 100%; height: auto; display: block; border-radius: 6px; }
+    figcaption { color: var(--muted); font-size: 0.92rem; margin-top: 8px; }
+    p { margin: 0 0 14px; }
+    a { color: var(--accent); }
+    pre {
+      background: var(--code-bg); padding: 16px; border-radius: 6px; overflow-x: auto;
+      font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0;
+    }
+    button.copy {
+      margin-top: 8px; background: none; border: 1px solid var(--rule); color: var(--fg);
+      border-radius: 6px; padding: 4px 12px; font: inherit; font-size: 0.9rem; cursor: pointer;
+    }
+    footer { margin-top: 48px; color: var(--muted); font-size: 0.9rem; text-align: center; }
+  </style>
+</head>
+<body>
+<main>
+  <h1><span class="name">CanViT</span>: Toward Active-Vision Foundation Models</h1>
+
+  <p class="authors">
+    <span>Yohaï-Eliel Berreby<sup>1,2</sup></span>
+    <span>Sabrina Du<sup>1,2</sup></span>
+    <span>Audrey Durand<sup>2,3</sup></span>
+    <span>B. Suresh Krishna<sup>1</sup></span>
+  </p>
+  <p class="affiliations"><sup>1</sup>McGill University &nbsp; <sup>2</sup>Mila – Quebec AI Institute &nbsp; <sup>3</sup>Université Laval</p>
+  <p class="venue">NeurIPS 2026</p>
+
+  <nav class="links">
+    <a href="https://arxiv.org/abs/2603.22570">Paper</a>
+    <a href="https://github.com/m2b3/CanViT">Code</a>
+    <a href="https://huggingface.co/canvit">Checkpoints</a>
+    <a href="#citation">BibTeX</a>
+  </nav>
+
+  <figure>
+    <img src="assets/canvas_attention_across_scales.png" alt="Two CanViT rollouts over successive glimpses: each glimpse, the canvas region it updates, and the full canvas shown by principal component analysis, with the change caused by each glimpse.">
+    <figcaption>CanViT sees a scene through a sequence of small glimpses and integrates them into a persistent scene-wide latent workspace, the canvas.</figcaption>
+  </figure>
+
+  <h2>Abstract</h2>
+  <!-- The paper's abstract, verbatim, with numbers substituted from the paper's generated data; keep it identical to the published version. -->
+  <p>Active computer vision promises efficient, biologically plausible perception through sequential, localized glimpses, but lacks scalable general-purpose architectures and pretraining pipelines, leaving Active-Vision Foundation Models (AVFMs) underexplored. We introduce <strong>CanViT</strong>, the first task- and policy-agnostic AVFM. CanViT uses scene-relative RoPE to bind a retinotopic Vision Transformer backbone and a spatiotopic scene-wide latent workspace, the <em>canvas</em>. Efficient interaction with this high-capacity working memory is supported by Canvas Attention, a novel asymmetric cross-attention mechanism. We decouple <em>thinking</em> (backbone-level) and <em>memory</em> (canvas-level), eliminating canvas-side self-attention and fully-connected layers to achieve fast sequential inference and scalability to high output resolutions. We propose a label-free active vision pretraining scheme, <strong>policy-agnostic passive-to-active dense latent distillation</strong>: reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT-B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, in 166 hours on a single H100. On ADE20K segmentation, a frozen CanViT-B achieves 38.5% mIoU in a single low-resolution glimpse, outperforming the best active model's 27.6% with 20x fewer inference FLOPs as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT-B reaches 45.9% ADE20K mIoU. On ImageNet-1k classification, CanViT-B also sets a new active-vision state of the art, with 84.5% top-1 accuracy after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.</p>
+
+  <h2 id="citation">Citation</h2>
+  <pre id="bibtex">@article{berreby2026canvit,
+  title={CanViT: Toward Active-Vision Foundation Models},
+  author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
+  year={2026},
+  eprint={2603.22570},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2603.22570}
+}</pre>
+  <button class="copy" type="button" onclick="navigator.clipboard.writeText(document.getElementById('bibtex').textContent).then(() => { this.textContent = 'Copied'; })">Copy BibTeX</button>
+
+  <footer>Code and checkpoints are MIT-licensed.</footer>
+</main>
+</body>
+</html>

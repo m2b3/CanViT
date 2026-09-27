@@ -110,9 +110,7 @@ strong, b { color: var(--ink); font-weight: 650; }
   padding: 22px 22px 20px; border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 14px;
   background: var(--bg);
 }
-.job .tag {
-  margin: 0 0 10px; color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .02em;
-}
+.job .number { margin: 0 0 12px; color: var(--accent); font-size: 2.1rem; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
 .job h3 { margin: 0 0 6px; color: var(--ink); font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em; }
 .job p:last-child { margin: 0; color: var(--muted); font-size: .96rem; line-height: 1.55; }
 .thesis {

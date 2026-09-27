@@ -6,11 +6,11 @@
 // and names the classes there.
 
 import { loadPathBundle, pointOn } from "./path-bundle.js";
+import { UNLABELED } from "./layers.js";
 import { ADE20K_PALETTE } from "./ade20k.js";
 import { COLORMAPS } from "./colormaps.js";
 import { frameCss, sheet } from "./view.js";
 
-const UNLABELED = 255;
 const LEGEND_CLASSES = 8;
 const READOUTS = {
   labels: { title: "Segmentation" },

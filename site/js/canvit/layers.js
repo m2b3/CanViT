@@ -35,6 +35,17 @@ const LAYERS = {
 
 export const DOMAINS = ["unit", "frame", "bundle"];
 
+/** The class value of annotation cells without a label (truth.png). */
+export const UNLABELED = 255;
+
+/** Whether the class decoded at a cell matches the annotation there: light and dark, so the two differ in
+ * lightness as well as hue; unlabeled cells are neutral gray. */
+export const CORRECTNESS = {
+  correct: { label: "correct", rgb: [0x9e, 0xe6, 0xae] },
+  wrong: { label: "wrong", rgb: [0xc2, 0x41, 0x0c] },
+  unlabeled: { label: "unlabeled", rgb: [0x94, 0xa3, 0xb8] },
+};
+
 /** The spec of a layer name found in a manifest; unknown names are errors, so new layers force a decision. */
 export function layerSpec(name) {
   if (Object.hasOwn(LAYERS, name)) return LAYERS[name];
@@ -118,6 +129,27 @@ export function layerImage(bundle, t, name) {
   }
   return drawn.get(raster);
 }
+
+/** An offscreen canvas coloring each cell by whether the decoded class at glimpse t matches the annotation. */
+export function correctnessImage(bundle, t) {
+  const labels = bundle.glimpses[t].layers.labels;
+  if (!bundle.truth) throw new Error(`${bundle.url}: no annotation (truth.png) to check the segmentation against`);
+  if (!drawnCorrectness.has(labels)) {
+    const { width, height, data } = labels;
+    const image = new ImageData(width, height);
+    for (let i = 0; i < data.length; i++) {
+      const truth = bundle.truth.data[i];
+      const { rgb } = truth === UNLABELED ? CORRECTNESS.unlabeled : data[i] === truth ? CORRECTNESS.correct : CORRECTNESS.wrong;
+      image.data.set([...rgb, 255], 4 * i);
+    }
+    const canvas = Object.assign(document.createElement("canvas"), { width, height });
+    canvas.getContext("2d").putImageData(image, 0, 0);
+    drawnCorrectness.set(labels, canvas);
+  }
+  return drawnCorrectness.get(labels);
+}
+
+const drawnCorrectness = new WeakMap();
 
 /** CSS gradient of a colormap, for legends. */
 export function colormapGradient(name, stops = 16) {

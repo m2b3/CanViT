@@ -2,7 +2,7 @@
 // and every layer, decoded and checked once, shared by all elements showing it.
 
 import { decodePng } from "./png.js";
-import { layerSpec, fractions } from "./layers.js";
+import { layerSpec, fractions, UNLABELED } from "./layers.js";
 import { ADE20K_PALETTE } from "./ade20k.js";
 
 const SCHEMA = "canvit-web-bundle-70766501-fb7f-4856-8a88-bb16253c34c5";
@@ -63,6 +63,16 @@ async function load(url) {
   check(sceneImage.naturalWidth === manifest.scene.px && sceneImage.naturalHeight === manifest.scene.px,
         `${where}: scene is ${sceneImage.naturalWidth}×${sceneImage.naturalHeight}, manifest says ${manifest.scene.px}`);
 
+  // truth.png: the annotated class at each canvas cell's center, UNLABELED where the annotation has none.
+  let truth = null;
+  if (manifest.scene.truth) {
+    const file = new URL(manifest.scene.truth, url).href;
+    truth = await decodePng(await (await fetchOk(file)).arrayBuffer(), file);
+    check(truth.width === grid && truth.height === grid && truth.channels === 1,
+          `${file}: ${truth.width}×${truth.height}×${truth.channels}, expected ${grid}×${grid}×1`);
+    check(truth.data.every((c) => c < readout.num_classes || c === UNLABELED), `${file}: a class index out of range`);
+  }
+
   const decoded = await Promise.all(glimpses.map(async (g, t) => {
     check(g.t === t, `${where}: glimpse ${t} has t=${g.t}`);
     check(JSON.stringify(Object.keys(g.layers)) === JSON.stringify(layerNames),
@@ -88,7 +98,7 @@ async function load(url) {
   }
 
   return {
-    url, manifest, grid, glimpsePx, layerNames, range, sceneUrl,
+    url, manifest, grid, glimpsePx, layerNames, range, sceneUrl, truth,
     classNames: readout.class_names,
     glimpses: decoded,
   };

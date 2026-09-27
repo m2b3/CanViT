@@ -1,13 +1,18 @@
-// <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels"] [autoplay]>: a recorded rollout
-// (web bundle) played as the loop CanViT runs: the viewpoint moves on the scene, its crop becomes the glimpse,
+// <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels|correct"] [autoplay]>: a recorded rollout
+// (web bundle) played as the loop CanViT runs, with the pixel accuracy of the segmentation decoded from the canvas: the viewpoint moves on the scene, its crop becomes the glimpse,
 // the glimpse goes into CanViT, which reads its canvas and writes the glimpse into it. The first glimpses are
 // slow and later ones faster; the last state holds until Replay. Several bundles in `src` become scene tabs
 // labeled with their titles.
 
 import { loadBundle } from "./bundle.js";
-import { layerImage } from "./layers.js";
+import { CORRECTNESS, correctnessImage, layerImage } from "./layers.js";
 
-const READOUTS = { canvas: "PCA", entropy: "Uncertainty", labels: "Segmentation" };
+const READOUTS = {
+  canvas: { label: "PCA", image: (bundle, t) => layerImage(bundle, t, "canvas") },
+  entropy: { label: "Uncertainty", image: (bundle, t) => layerImage(bundle, t, "entropy") },
+  labels: { label: "Segmentation", image: (bundle, t) => layerImage(bundle, t, "labels") },
+  correct: { label: "Correct", image: correctnessImage },
+};
 const FIRST_STEP_MS = 1600;
 const STEP_RATIO = 0.74;
 const SHORTEST_STEP_MS = 170;
@@ -17,6 +22,7 @@ const PHASES = { move: [0, 0.3], crop: [0.24, 0.42], input: [0.42, 0.6], read: [
 const template = document.createElement("template");
 template.innerHTML = `
 <style>
+  [hidden] { display: none !important; }
   :host { display: block; container-type: inline-size; color: var(--canvit-ink, #0f172a);
           font: 14px/1.4 var(--canvit-sans, system-ui, sans-serif);
           --glimpse: var(--canvit-glimpse, #2d6cdf); --canvas: var(--canvit-canvas, #e0483e); }
@@ -57,6 +63,17 @@ template.innerHTML = `
           background: var(--canvit-ink, #0f172a); color: #fff; }
   .play:hover { color: #fff; opacity: .85; }
   .play svg { width: 14px; height: 14px; fill: currentColor; }
+  .meter { grid-column: 7; margin-top: 12px; font-size: 12.5px; color: var(--canvit-muted, #64748b); }
+  .meter-head { display: flex; align-items: baseline; gap: 8px; }
+  .meter-value { color: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .meter-gain { color: #15803d; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .meter-track { position: relative; height: 8px; margin-top: 6px; border-radius: 4px; background: var(--canvit-placeholder, #f1f5f9); }
+  .meter-base, .meter-gained { position: absolute; inset: 0 auto 0 0; transition: width .18s ease-out, left .18s ease-out; }
+  .meter-base { background: #475569; border-radius: 4px 0 0 4px; }
+  .meter-gained { background: #16a34a; }
+  .meter-start { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--canvit-ink, #0f172a); }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
   .error { padding: 14px; border: 1px solid #dc2626; border-radius: 10px; color: #b91c1c; font: 13px/1.5 ui-monospace, monospace; }
   @container (max-width: 760px) {
     .flow { grid-template-columns: minmax(0, 1fr); gap: 4px; justify-items: center; }
@@ -72,6 +89,7 @@ template.innerHTML = `
     .arrow svg { transform: rotate(90deg); margin: 16px 0; }
     .arrow svg.read { transform: rotate(90deg) scaleX(-1); }
     .tag { display: none; }
+    .meter { grid-column: 1; width: 100%; max-width: 420px; }
   }
 </style>
 <div class="flow">
@@ -83,6 +101,11 @@ template.innerHTML = `
   <div class="column arrow"><div class="label"></div><div class="body">
     ${arrow("write", "red")}<span class="tag">write</span>${arrow("read", "red read")}<span class="tag">read</span></div></div>
   <div class="column canvas"><div class="label canvas">Canvas</div><div class="body"><canvas class="canvas-view"></canvas></div></div>
+  <div class="meter" hidden>
+    <div class="meter-head"><span title="Share of annotated pixels whose class, decoded from the canvas, is right">Pixel accuracy</span><b class="meter-value"></b><span class="meter-gain" title="Change since the first glimpse"></span></div>
+    <div class="meter-track"><span class="meter-base"></span><span class="meter-gained"></span><span class="meter-start"></span></div>
+    <div class="legend" hidden></div>
+  </div>
 </div>
 <div class="bar">
   <div class="group"><button class="play" aria-label="Play"></button><div class="choice scenes" role="group" aria-label="Scene"></div></div>
@@ -137,6 +160,8 @@ class CanvitEpisode extends HTMLElement {
     const $ = (selector) => this.shadowRoot.querySelector(selector);
     this.$ = { scene: $(".scene-view"), glimpse: $(".glimpse-view"), canvas: $(".canvas-view"), model: $(".model"),
                step: $(".step"), play: $(".play"), scenes: $(".scenes"), readouts: $(".readouts"),
+               meter: $(".meter"), value: $(".meter-value"), gain: $(".meter-gain"), base: $(".meter-base"),
+               gained: $(".meter-gained"), start: $(".meter-start"), legend: $(".legend"),
                arrows: Object.fromEntries([...this.shadowRoot.querySelectorAll("[data-arrow]")].map((svg) =>
                  [svg.dataset.arrow, svg.querySelector(".packet")])) };
     this.$.play.addEventListener("click", () => {
@@ -146,10 +171,10 @@ class CanvitEpisode extends HTMLElement {
         this.#setPlaying(!this.#playing);
       }
     });
-    for (const [layer, label] of Object.entries(READOUTS)) {
+    for (const [readout, { label }] of Object.entries(READOUTS)) {
       const button = Object.assign(document.createElement("button"), { textContent: label });
-      button.dataset.readout = layer;
-      button.addEventListener("click", () => this.setAttribute("readout", layer));
+      button.dataset.readout = readout;
+      button.addEventListener("click", () => this.setAttribute("readout", readout));
       this.$.readouts.append(button);
     }
     new ResizeObserver(() => this.#draw()).observe(this.$.scene);
@@ -169,6 +194,8 @@ class CanvitEpisode extends HTMLElement {
   }
 
   connectedCallback() {
+    this.$.legend.innerHTML = Object.values(CORRECTNESS)
+      .map(({ label, rgb }) => `<span><i style="background: rgb(${rgb.join(" ")})"></i>${label}</span>`).join("");
     this.#showReadout();
     this.#renderPlayButton();
   }
@@ -205,6 +232,9 @@ class CanvitEpisode extends HTMLElement {
       this.#bundle = bundle;
       this.#scene = scene;
       this.#schedule = schedule(bundle.glimpses.length);
+      const annotated = bundle.truth !== null && bundle.glimpses.every((g) => g.pixelAccuracy !== null);
+      this.$.meter.hidden = !annotated;
+      this.$.readouts.querySelector('[data-readout="correct"]').hidden = !annotated;
       this.#time = this.#wantsAutoplay() ? 0 : this.#schedule.total;
       this.#renderPlayButton();
       this.#draw();
@@ -216,6 +246,7 @@ class CanvitEpisode extends HTMLElement {
 
   #showReadout() {
     for (const button of this.$.readouts.children) button.setAttribute("aria-pressed", String(button.dataset.readout === this.readout));
+    this.$.legend.hidden = this.readout !== "correct";
     this.#draw();
   }
 
@@ -271,8 +302,10 @@ class CanvitEpisode extends HTMLElement {
                        canvas: getComputedStyle(this).getPropertyValue("--canvas").trim() };
     const { t, u } = this.#position();
     this.#drawScene(t, u);
-    this.#drawLayer(this.$.glimpse, "crop", u >= PHASES.crop[1] ? t : t - 1, true);
-    this.#drawLayer(this.$.canvas, this.readout, u >= PHASES.write[1] ? t : t - 1, false);
+    const glimpseShown = u >= PHASES.crop[1] ? t : t - 1, canvasShown = u >= PHASES.write[1] ? t : t - 1;
+    this.#drawImage(this.$.glimpse, glimpseShown >= 0 ? layerImage(this.#bundle, glimpseShown, "crop") : null, true);
+    this.#drawImage(this.$.canvas, canvasShown >= 0 ? READOUTS[this.readout].image(this.#bundle, canvasShown) : null, false);
+    if (!this.$.meter.hidden) this.#drawMeter(canvasShown);
     for (const [name, packet] of Object.entries(this.$.arrows)) {
       const p = name === "read" && t === 0 ? 0 : progress(u, PHASES[name]);
       packet.setAttribute("cx", String(4 + 46 * p));
@@ -310,14 +343,29 @@ class CanvitEpisode extends HTMLElement {
     context.strokeRect(x + line / 2, y + line / 2, side - line, side - line);
   }
 
-  #drawLayer(canvas, layer, t, smooth) {
+  #drawImage(canvas, image, smooth) {
     const size = sizeToDisplay(canvas);
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, size, size);
-    if (t < 0) return;
+    if (image === null) return;
     context.imageSmoothingEnabled = smooth;
     context.imageSmoothingQuality = "high";
-    context.drawImage(layerImage(this.#bundle, t, layer), 0, 0, size, size);
+    context.drawImage(image, 0, 0, size, size);
+  }
+
+  /** Pixel accuracy after glimpse t, on a fixed 0–100% bar: the part gained since the first glimpse in green. */
+  #drawMeter(t) {
+    const percent = (fraction) => `${(100 * fraction).toFixed(1)}%`;
+    const first = this.#bundle.glimpses[0].pixelAccuracy;
+    const now = t >= 0 ? this.#bundle.glimpses[t].pixelAccuracy : 0;
+    this.$.value.textContent = t >= 0 ? percent(now) : "–";
+    const gain = 100 * (now - first);
+    this.$.gain.textContent = t >= 1 ? `${gain < 0 ? "−" : "+"}${Math.abs(gain).toFixed(1)}` : "";
+    this.$.base.style.width = percent(Math.min(now, first));
+    this.$.gained.style.left = percent(first);
+    this.$.gained.style.width = percent(Math.max(0, now - first));
+    this.$.start.style.left = percent(first);
+    this.$.start.hidden = t < 0;
   }
 }
 

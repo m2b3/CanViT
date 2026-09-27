@@ -33,12 +33,7 @@
   <main>
     <section class="prose" id="abstract">
       <h2>Abstract</h2>
-      <p>Active computer vision promises efficient, biologically plausible perception through sequential, localized <span class="term-glimpse">glimpses</span>, but lacks scalable general-purpose architectures and pretraining pipelines, leaving Active-Vision Foundation Models (AVFMs) underexplored. We introduce <strong>CanViT</strong>, the first task- and policy-agnostic AVFM. CanViT uses scene-relative RoPE to bind a retinotopic Vision Transformer backbone and a spatiotopic scene-wide latent workspace, the <em class="term-canvas">canvas</em>. Efficient interaction with this high-capacity working memory is supported by Canvas Attention, a novel asymmetric cross-attention mechanism. We decouple <em>thinking</em> (backbone-level) and <em>memory</em> (canvas-level), eliminating canvas-side self-attention and fully-connected layers to achieve fast sequential inference and scalability to high output resolutions. We propose a label-free active vision pretraining scheme, <strong>policy-agnostic passive-to-active dense latent distillation</strong>: reconstructing scene-wide <a href="https://github.com/facebookresearch/dinov3">DINOv3</a> embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT&#8209;B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, <span class="hl">in 166 hours on a single&nbsp;H100</span>. On ADE20K segmentation, a frozen CanViT&#8209;B achieves <span class="hl"><span data-macro="adeSingleGlimpseMiou">38.5</span>% mIoU</span> in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span class="hl"><span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs</span> as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT&#8209;B reaches <span data-macro="adeBestMiou">45.9</span>% ADE20K mIoU. On ImageNet-1k classification, CanViT&#8209;B also sets a new active&#8209;vision state of the art, with <span class="hl"><span data-macro="inkFinetunedBest">84.5</span>% top-1 accuracy</span> after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.</p>
-    </section>
-
-    <section class="wide" id="demo">
-      <h2>See it in action</h2>
-      <canvit-episode src="data/street-riid data/shop-riid data/ferry-riid" autoplay></canvit-episode>
+      <p><strong>Active computer vision</strong> promises efficient, biologically plausible perception through sequential, localized <span class="term-glimpse">glimpses</span>, but lacks scalable general-purpose architectures and pretraining pipelines, leaving <strong>Active-Vision Foundation Models (AVFMs)</strong> underexplored. We introduce <strong>CanViT</strong>, the first task- and policy-agnostic AVFM. CanViT uses scene-relative RoPE to bind a retinotopic Vision Transformer backbone and a spatiotopic scene-wide latent workspace, the <em class="term-canvas">canvas</em>. Efficient interaction with this high-capacity working memory is supported by <strong>Canvas Attention</strong>, a novel asymmetric cross-attention mechanism. We decouple <em>thinking</em> (backbone-level) and <em>memory</em> (canvas-level), eliminating canvas-side self-attention and fully-connected layers to achieve fast sequential inference and scalability to high output resolutions. We propose a label-free active vision pretraining scheme, <strong>policy-agnostic passive-to-active dense latent distillation</strong>: reconstructing scene-wide <a href="https://github.com/facebookresearch/dinov3">DINOv3</a> embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT&#8209;B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, <span class="hl">in 166 hours on a single&nbsp;H100</span>. On ADE20K segmentation, a frozen CanViT&#8209;B achieves <span class="hl"><span data-macro="adeSingleGlimpseMiou">38.5</span>% mIoU</span> in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span class="hl"><span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs</span> as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT&#8209;B reaches <span data-macro="adeBestMiou">45.9</span>% ADE20K mIoU. On ImageNet-1k classification, CanViT&#8209;B also sets a new active&#8209;vision state of the art, with <span class="hl"><span data-macro="inkFinetunedBest">84.5</span>% top-1 accuracy</span> after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.</p>
     </section>
 
     <section class="wide" id="active-vision">
@@ -71,7 +66,7 @@
         </div>
       </div>
       <p class="claim"><span><u>No policy</u> can make up for a poor observer.</span> <span>A general-purpose observer lets you use <u>any policy</u>.</span></p>
-      <p class="thesis">CanViT is such an observer.</p>
+      <p class="thesis"><span class="brand">CanViT</span> is such an observer.</p>
     </section>
 
     <section class="wide" id="architecture">
@@ -84,6 +79,11 @@
           <p>The canvas regularly interacts with the glimpse stream via <strong>Canvas Attention</strong>, alternating between read (R) and write (W) operations to, respectively, condition the backbone's processing on the canvas and populate the canvas. Both streams are equipped with <span class="key" style="--key: #b0b0b0">register tokens</span>.</p>
         </figcaption>
       </figure>
+    </section>
+
+    <section class="wide" id="demo">
+      <h2>See it in action</h2>
+      <canvit-episode src="data/street-riid data/shop-riid data/ferry-riid" autoplay></canvit-episode>
     </section>
 
     <section class="wide" id="results">

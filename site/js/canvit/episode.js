@@ -1,6 +1,6 @@
 // <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels|correct"] [autoplay]>: a recorded rollout
 // (web bundle) played as the loop CanViT runs: the viewpoint moves on the scene, its crop becomes the glimpse,
-// the glimpse goes into CanViT, which reads its canvas and writes the glimpse into it. Under the canvas, the
+// the glimpse goes into CanViT, at the center, which reads its canvas and writes the glimpse into it. Under the canvas, the
 // pixel accuracy of the segmentation decoded from it. The first glimpses are slow and later ones faster; the
 // last state holds until Replay. Several bundles in `src` become scene tabs labeled with their titles.
 
@@ -26,22 +26,41 @@ template.innerHTML = `
   :host { display: block; container-type: inline-size; color: var(--canvit-ink, #0f172a);
           font: 15px/1.4 var(--canvit-sans, system-ui, sans-serif);
           --glimpse: var(--canvit-glimpse, #2d6cdf); --canvas: var(--canvit-canvas, #e0483e); }
-  .flow { display: grid; align-items: stretch; gap: 0 6px;
-          grid-template-columns: minmax(0, 1fr) 58px minmax(0, .42fr) 58px minmax(0, .34fr) 58px minmax(0, 1fr); }
-  .column { display: flex; flex-direction: column; min-width: 0; }
-  .label { height: 28px; font-size: 15px; font-weight: 700; }
-  .label.glimpse { color: var(--glimpse); }
-  .label.canvas { color: var(--canvas); }
-  .body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+  /* CanViT sits at the center, between the scene and the canvas. The glimpse sits under it: the crop arrow runs
+     from the scene into the glimpse, the input arrow up from the glimpse into CanViT, and write and read between
+     CanViT and the canvas. */
+  .flow { display: grid; align-items: center; gap: 0 6px;
+          grid-template-columns: minmax(0, 1fr) 64px minmax(0, .52fr) 64px minmax(0, 1fr);
+          grid-template-areas:
+            "scene-label .    .             .     canvas-label"
+            "scene       .    model         write canvas"
+            "scene       .    input         .     canvas"
+            "scene       crop glimpse       .     canvas"
+            ".           .    glimpse-label .     meter"; }
+  .scene-label { grid-area: scene-label; } .scene { grid-area: scene; }
+  .crop { grid-area: crop; } .glimpse { grid-area: glimpse; } .glimpse-label { grid-area: glimpse-label; }
+  .input { grid-area: input; } .model-cell { grid-area: model; } .write { grid-area: write; }
+  .canvas-label { grid-area: canvas-label; } .canvas { grid-area: canvas; } .meter { grid-area: meter; }
+  .label { align-self: end; padding-bottom: 8px; font-size: 15px; font-weight: 700; }
+  .glimpse-label { align-self: start; padding: 8px 0 0; text-align: center; color: var(--glimpse); }
+  .canvas-label { color: var(--canvas); }
+  .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-width: 0; }
+  /* The scene and the canvas start level with CanViT, so write and read point into the canvas. */
+  .scene, .canvas { align-self: start; }
   canvas { display: block; width: 100%; aspect-ratio: 1; border-radius: 10px; background: var(--canvit-placeholder, #f1f5f9); }
-  .glimpse canvas { box-shadow: 0 0 0 3px var(--glimpse); }
+  .glimpse canvas { width: min(100%, 180px); box-shadow: 0 0 0 3px var(--glimpse); }
   .canvas canvas { box-shadow: 0 0 0 3px var(--canvas); image-rendering: pixelated; }
-  .model { width: 100%; aspect-ratio: 1 / 1.25; border-radius: 14px; display: grid; place-content: center; gap: 4px;
-           text-align: center; background: var(--canvit-ink, #0f172a); color: #fff; transition: box-shadow .12s; }
-  .model b { font-size: 17px; font-weight: 750; letter-spacing: -.01em; }
-  .model small { font: 13.5px ui-monospace, "JetBrains Mono", monospace; opacity: .85; }
-  .model.input { box-shadow: 0 0 0 4px color-mix(in srgb, var(--glimpse) 55%, transparent); }
-  .model.write { box-shadow: 0 0 0 4px color-mix(in srgb, var(--canvas) 55%, transparent); }
+  .input { height: 64px; }
+  .input svg { transform: rotate(-90deg); }
+  .model { display: grid; place-items: center; gap: 6px; width: 100%; padding: 22px 12px 18px; border-radius: 18px;
+           background: #fff; box-shadow: 0 0 0 1.5px #e2e8f0, 0 8px 24px rgb(15 23 42 / .08); transition: box-shadow .12s; }
+  /* The CanViT wordmark: Can(vas) in the canvas's red, ViT in the glimpse's blue. */
+  .wordmark { font-size: clamp(28px, 3.4cqi, 44px); font-weight: 800; line-height: 1; letter-spacing: -.03em;
+              background: linear-gradient(90deg, var(--canvas), var(--glimpse)); -webkit-background-clip: text;
+              background-clip: text; color: transparent; }
+  .model small { font: 14px ui-monospace, "JetBrains Mono", monospace; color: var(--canvit-muted, #475569); }
+  .model.input { box-shadow: 0 0 0 4px color-mix(in srgb, var(--glimpse) 55%, transparent), 0 8px 24px rgb(15 23 42 / .08); }
+  .model.write { box-shadow: 0 0 0 4px color-mix(in srgb, var(--canvas) 55%, transparent), 0 8px 24px rgb(15 23 42 / .08); }
   svg { width: 58px; height: 22px; overflow: visible; }
   svg line { stroke-width: 2.5; stroke-linecap: round; }
   svg .head { stroke: none; }
@@ -73,7 +92,7 @@ template.innerHTML = `
   .side { display: grid; }
   .side > * { grid-area: 1 / 1; }
   .side > .off { visibility: hidden; }
-  .meter { grid-column: 7; margin-top: 12px; font-size: 14px; color: var(--canvit-muted, #475569); }
+  .meter { align-self: start; margin-top: 12px; font-size: 14px; color: var(--canvit-muted, #475569); }
   .meter-head { display: flex; align-items: baseline; gap: 8px; }
   .meter-value { color: var(--canvit-ink, #0f172a); font-size: 17px; font-weight: 750; font-variant-numeric: tabular-nums; }
   .meter-gain { color: #15803d; font-weight: 650; font-variant-numeric: tabular-nums; }
@@ -86,35 +105,35 @@ template.innerHTML = `
             color: var(--canvit-muted, #475569); white-space: nowrap; }
   .legend i { display: inline-block; width: 11px; height: 11px; margin-right: 6px; border-radius: 3px; vertical-align: -1px; }
   .error { padding: 14px; border: 1px solid #dc2626; border-radius: 10px; color: #b91c1c; font: 13px/1.5 ui-monospace, monospace; }
+  /* Narrow: the same loop from top to bottom. */
   @container (max-width: 760px) {
-    .flow { grid-template-columns: minmax(0, 1fr); gap: 4px; justify-items: center; }
-    .column { width: 100%; align-items: center; }
-    .column > .body { width: 100%; }
-    .column.scene, .column.canvas { max-width: 420px; }
-    .column.glimpse { max-width: 200px; }
-    .column.model-column { max-width: 170px; }
-    .model { aspect-ratio: 2 / 1; }
-    .label { text-align: center; }
-    .arrow .label { display: none; }
-    .arrow .body { flex-direction: row; gap: 18px; }
-    .arrow svg { transform: rotate(90deg); margin: 16px 0; }
-    .arrow svg.read { transform: rotate(90deg) scaleX(-1); }
+    .flow { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 4px;
+            grid-template-areas: "scene-label" "scene" "crop" "glimpse" "glimpse-label" "input" "model" "write"
+                                 "canvas-label" "canvas" "meter"; }
+    .scene, .canvas, .meter { width: 100%; max-width: 420px; }
+    .scene-label, .canvas-label { text-align: center; padding-bottom: 6px; }
+    .model-cell { width: 100%; max-width: 240px; }
+    .crop svg, .input svg { transform: rotate(90deg); margin: 16px 0; }
+    .write { flex-direction: row; gap: 18px; }
+    .write svg { transform: rotate(90deg); margin: 16px 0; }
+    .write svg.read { transform: rotate(90deg) scaleX(-1); }
     .tag { display: none; }
-    .meter { grid-column: 1; width: 100%; max-width: 420px; }
   }
   @container (max-width: 480px) {
     .readouts { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
   }
 </style>
 <div class="flow">
-  <div class="column scene"><div class="label">Scene</div><div class="body"><canvas class="scene-view"></canvas></div></div>
-  <div class="column arrow"><div class="label"></div><div class="body">${arrow("crop", "blue")}<span class="tag">crop</span></div></div>
-  <div class="column glimpse"><div class="label glimpse">Glimpse</div><div class="body"><canvas class="glimpse-view"></canvas></div></div>
-  <div class="column arrow"><div class="label"></div><div class="body">${arrow("input", "blue")}</div></div>
-  <div class="column model-column"><div class="label"></div><div class="body"><div class="model"><b>CanViT</b><small class="step"></small></div></div></div>
-  <div class="column arrow"><div class="label"></div><div class="body">
-    ${arrow("write", "red")}<span class="tag">write</span>${arrow("read", "red read")}<span class="tag">read</span></div></div>
-  <div class="column canvas"><div class="label canvas">Canvas</div><div class="body"><div class="with-colorbar"><canvas class="canvas-view"></canvas><div class="side"><div class="colorbar" aria-hidden="true"><span class="colorbar-max"></span><div class="colorbar-bar"></div><span>0</span></div><div class="legend"></div></div></div></div></div>
+  <div class="label scene-label">Scene</div>
+  <div class="cell scene"><canvas class="scene-view"></canvas></div>
+  <div class="cell crop">${arrow("crop", "blue")}<span class="tag">crop</span></div>
+  <div class="cell glimpse"><canvas class="glimpse-view"></canvas></div>
+  <div class="label glimpse-label">Glimpse</div>
+  <div class="cell input">${arrow("input", "blue")}</div>
+  <div class="cell model-cell"><div class="model"><span class="wordmark">CanViT</span><small class="step"></small></div></div>
+  <div class="cell write">${arrow("write", "red")}<span class="tag">write</span>${arrow("read", "red read")}<span class="tag">read</span></div>
+  <div class="label canvas-label">Canvas</div>
+  <div class="cell canvas"><div class="with-colorbar"><canvas class="canvas-view"></canvas><div class="side"><div class="colorbar" aria-hidden="true"><span class="colorbar-max"></span><div class="colorbar-bar"></div><span>0</span></div><div class="legend"></div></div></div></div>
   <div class="meter" hidden>
     <div class="meter-head"><span title="Share of annotated pixels whose class, decoded from the canvas, is right">Pixel accuracy</span><b class="meter-value"></b><span class="meter-gain" title="Change since the first glimpse"></span></div>
     <div class="meter-track"><span class="meter-base"></span><span class="meter-gained"></span><span class="meter-start"></span></div>

@@ -171,8 +171,10 @@ strong, b { color: var(--ink); font-weight: 650; }
 .claim.shown > span + span u::after { transition-delay: .45s; }
 @media (prefers-reduced-motion: reduce) { .claim u::after { transition: none; } }
 .thesis {
-  max-width: 700px; margin: 14px auto 0; color: var(--text); font-size: 1.08rem; text-align: center; text-wrap: balance;
+  max-width: 700px; margin: 32px auto 0; color: var(--ink); font-size: clamp(1.25rem, 1rem + .8vw, 1.55rem); font-weight: 700;
+  letter-spacing: -.015em; text-align: center; text-wrap: balance;
 }
+.thesis .brand { font-weight: 800; }
 
 .architecture { margin: 0 auto; }
 .architecture img { display: block; width: min(880px, 100%); height: auto; margin: 0 auto; }

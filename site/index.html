@@ -13,12 +13,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="style.css">
   <script type="module" src="js/canvit/episode.js"></script>
+  <script type="module" src="js/canvit/frontier.js"></script>
 </head>
 <body>
   <header class="hero wide">
     <h1>CanViT: Toward Active&#8209;Vision<br>Foundation Models</h1>
     <p class="authors">
-      <span class="pair"><span class="person">Yohaï-Eliel Berreby<sup>1,2</sup></span><span class="person">Sabrina Du<sup>1,2</sup></span></span><span class="pair"><span class="person">Audrey Durand<sup>2,3</sup></span><span class="person">B. Suresh Krishna<sup>1</sup></span></span>
+      <span class="pair"><a class="person" href="https://yberreby.com">Yohaï-Eliel Berreby<sup>1,2</sup></a><a class="person" href="https://mila.quebec/en/directory/sabrina-du">Sabrina Du<sup>1,2</sup></a></span><span class="pair"><a class="person" href="https://audrey-durand.fsg.ulaval.ca/en">Audrey Durand<sup>2,3</sup></a><a class="person" href="https://m2b3.github.io/">B. Suresh Krishna<sup>1</sup></a></span>
     </p>
     <p class="affiliations"><span><sup>1</sup>McGill University</span><span><sup>2</sup>Mila – Quebec AI Institute</span><span><sup>3</sup>Université Laval</span></p>
     <p class="venue"><img src="assets/logos/neurips.svg" alt="" width="94" height="42">NeurIPS 2026</p>
@@ -39,20 +40,9 @@
     <section class="wide" id="results">
       <h2>Results</h2>
       <div class="comparisons">
-        <article class="comparison">
-          <h3>ADE20K semantic segmentation</h3>
-          <p class="metric">mIoU (%), higher is better</p>
-          <div class="bars">
-            <div class="bar ours"><span class="name">CanViT-B, 1 glimpse</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeSingleGlimpseMiou">38.5</span></span></div>
-            <div class="bar ours"><span class="name">CanViT-B, 21 glimpses</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeBestMiou">45.9</span></span></div>
-            <div class="bar"><span class="name"><span data-macro="adeBestPriorName">AME (SETR)</span>, prior best</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeBestPriorMiou">27.6</span></span></div>
-          </div>
-          <p class="metric">Inference GFLOPs, lower is better</p>
-          <div class="bars">
-            <div class="bar ours"><span class="name">CanViT-B, 1 glimpse</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeSingleGlimpseGflops">15.8</span></span></div>
-            <div class="bar"><span class="name">AME (SETR), 8 glimpses</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeBestPriorGflops">311.5</span></span></div>
-          </div>
-          <p class="callout"><span data-macro="adeCheapestBeatFlopRatio">20</span>× fewer FLOPs</p>
+        <article class="comparison frontier">
+          <h3>ADE20K segmentation: accuracy against cost</h3>
+          <canvit-frontier src="assets/paper/ade20k_seg.json"></canvit-frontier>
         </article>
         <article class="comparison">
           <h3>ImageNet-1k classification</h3>

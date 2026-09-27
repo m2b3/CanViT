@@ -48,6 +48,8 @@ sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); f
 .authors { margin: 28px 0 0; color: var(--ink); font-size: 1.12rem; font-weight: 500; }
 .authors .pair { display: inline-block; white-space: nowrap; margin: 0 .55em; }
 .authors .person + .person { margin-left: 1.1em; }
+.authors a { color: var(--glimpse); text-decoration: none; }
+.authors a:hover { text-decoration: underline; }
 .affiliations { margin: 8px 0 0; color: var(--muted); font-size: .95rem; }
 .affiliations span { display: inline-block; margin: 0 .6em; white-space: nowrap; }
 .venue { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 18px 0 0;
@@ -127,7 +129,7 @@ strong, b { color: var(--ink); font-weight: 650; }
   max-width: 700px; margin: 36px auto 0; color: var(--text); font-size: 1.08rem; text-align: center; text-wrap: balance;
 }
 
-.comparisons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; max-width: 1040px; margin: 0 auto; }
+.comparisons { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; max-width: 1040px; margin: 0 auto; }
 .comparison { padding: 26px 26px 24px; border-radius: 16px; background: var(--soft); }
 .comparison h3 { margin: 0 0 18px; color: var(--ink); font-size: 1.15rem; font-weight: 750; letter-spacing: -.01em; }
 .comparison .metric { margin: 18px 0 10px; color: var(--muted); font-size: .85rem; font-weight: 600; }
@@ -146,7 +148,6 @@ strong, b { color: var(--ink); font-weight: 650; }
 .callout { margin: 12px 0 0; color: var(--ink); font-size: 1.05rem; font-weight: 750; text-align: right; }
 .comparison .note { margin: 20px 0 0; color: var(--muted); font-size: .88rem; }
 @media (prefers-reduced-motion: reduce) { .bar .fill { transition: none; } }
-@media (max-width: 860px) { .comparisons { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 480px) { .bar { grid-template-columns: minmax(0, 8.5em) minmax(0, 1fr) 3em; } }
 
 .cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin: clamp(56px, 8vw, 80px) auto 0; padding: 0 16px; }

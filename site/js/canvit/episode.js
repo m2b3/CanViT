@@ -16,6 +16,8 @@ const READOUTS = {
 const FIRST_STEP_MS = 1600;
 const STEP_RATIO = 0.74;
 const SHORTEST_STEP_MS = 170;
+// CanViT's ring lights up for input and write only in steps at least this long; faster, it would flash.
+const HIGHLIGHT_MIN_STEP_MS = 450;
 // Within a step, as fractions of its duration: [start, end] of each movement.
 const PHASES = { move: [0, 0.3], crop: [0.24, 0.42], input: [0.42, 0.6], read: [0.52, 0.7], write: [0.7, 0.9] };
 
@@ -23,25 +25,30 @@ const template = document.createElement("template");
 template.innerHTML = `
 <style>
   [hidden] { display: none !important; }
+  *, *::before, *::after { box-sizing: border-box; }
   :host { display: block; container-type: inline-size; color: var(--canvit-ink, #0f172a);
           font: 15px/1.4 var(--canvit-sans, system-ui, sans-serif);
           --glimpse: var(--canvit-glimpse, #2d6cdf); --canvas: var(--canvit-canvas, #e0483e); }
   /* CanViT sits at the center, between the scene and the canvas. The glimpse sits under it: the crop arrow runs
      from the scene into the glimpse, the input arrow up from the glimpse into CanViT, and write and read between
      CanViT and the canvas. */
-  .flow { display: grid; align-items: center; gap: 0 6px;
-          grid-template-columns: minmax(0, 1fr) 64px minmax(0, .52fr) 64px minmax(0, 1fr);
+  /* The canvas's colorbar or legend takes a fixed slot beside it; an empty column of the same width on the scene's
+     side keeps the scene and the canvas the same size and CanViT at the center. */
+  .flow { --side: 84px; --side-gap: 8px; --column-gap: 6px;
+          --side-column: calc(var(--side) + var(--side-gap) - var(--column-gap));
+          display: grid; align-items: center; gap: 0 var(--column-gap);
+          grid-template-columns: var(--side-column) minmax(0, 1fr) 64px minmax(0, .52fr) 64px minmax(0, 1fr) var(--side-column);
           grid-template-areas:
-            "scene-label .    .             .     canvas-label"
-            "scene       .    model         write canvas"
-            "scene       .    input         .     canvas"
-            "scene       crop glimpse       .     canvas"
-            ".           .    glimpse-label .     meter"; }
+            ". scene-label .    .             .     canvas-label ."
+            ". scene       .    model         write canvas       canvas"
+            ". scene       .    input         .     canvas       canvas"
+            ". scene       crop glimpse       .     canvas       canvas"
+            ". .           .    glimpse-label .     meter        meter"; }
   .scene-label { grid-area: scene-label; } .scene { grid-area: scene; }
   .crop { grid-area: crop; } .glimpse { grid-area: glimpse; } .glimpse-label { grid-area: glimpse-label; }
   .input { grid-area: input; } .model-cell { grid-area: model; } .write { grid-area: write; }
   .canvas-label { grid-area: canvas-label; } .canvas { grid-area: canvas; } .meter { grid-area: meter; }
-  .label { align-self: end; padding-bottom: 8px; font-size: 15px; font-weight: 700; }
+  .label { align-self: end; padding-bottom: 10px; font-size: 18px; font-weight: 750; letter-spacing: -.01em; text-align: center; }
   .glimpse-label { align-self: start; padding: 8px 0 0; text-align: center; color: var(--glimpse); }
   .canvas-label { color: var(--canvas); }
   .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-width: 0; }
@@ -52,15 +59,16 @@ template.innerHTML = `
   .canvas canvas { box-shadow: 0 0 0 3px var(--canvas); image-rendering: pixelated; }
   .input { height: 64px; }
   .input svg { transform: rotate(-90deg); }
+  /* The ring keeps its width; input and write change only its color. */
   .model { display: grid; place-items: center; gap: 6px; width: 100%; padding: 22px 12px 18px; border-radius: 18px;
-           background: #fff; box-shadow: 0 0 0 1.5px #e2e8f0, 0 8px 24px rgb(15 23 42 / .08); transition: box-shadow .12s; }
+           background: #fff; box-shadow: 0 0 0 3px #e2e8f0, 0 8px 24px rgb(15 23 42 / .08); transition: box-shadow .15s; }
   /* The CanViT wordmark: Can(vas) in the canvas's red, ViT in the glimpse's blue. */
   .wordmark { font-size: clamp(28px, 3.4cqi, 44px); font-weight: 800; line-height: 1; letter-spacing: -.03em;
               background: linear-gradient(90deg, var(--canvas), var(--glimpse)); -webkit-background-clip: text;
               background-clip: text; color: transparent; }
   .model small { font: 14px ui-monospace, "JetBrains Mono", monospace; color: var(--canvit-muted, #475569); }
-  .model.input { box-shadow: 0 0 0 4px color-mix(in srgb, var(--glimpse) 55%, transparent), 0 8px 24px rgb(15 23 42 / .08); }
-  .model.write { box-shadow: 0 0 0 4px color-mix(in srgb, var(--canvas) 55%, transparent), 0 8px 24px rgb(15 23 42 / .08); }
+  .model[data-phase="input"] { box-shadow: 0 0 0 3px var(--glimpse), 0 8px 24px rgb(15 23 42 / .08); }
+  .model[data-phase="write"] { box-shadow: 0 0 0 3px var(--canvas), 0 8px 24px rgb(15 23 42 / .08); }
   svg { width: 58px; height: 22px; overflow: visible; }
   svg line { stroke-width: 2.5; stroke-linecap: round; }
   svg .head { stroke: none; }
@@ -82,14 +90,14 @@ template.innerHTML = `
           background: var(--canvit-ink, #0f172a); color: #fff; }
   .play:hover { color: #fff; opacity: .85; }
   .play svg { width: 14px; height: 14px; fill: currentColor; }
-  .with-colorbar { display: flex; gap: 8px; width: 100%; }
+  .with-colorbar { display: flex; gap: var(--side-gap); width: 100%; }
   .with-colorbar canvas { flex: 1; min-width: 0; }
   .colorbar { display: flex; flex-direction: column; align-items: center; gap: 4px; white-space: nowrap;
               font: 12.5px/1 ui-monospace, "JetBrains Mono", monospace; color: var(--canvit-muted, #475569); }
-  .colorbar-bar { flex: 1; width: 12px; border-radius: 3px; }
+  .colorbar-bar { flex: 1; width: 12px; border-radius: 3px; background: var(--colorbar-vertical); }
   /* The colorbar and the correctness legend share the slot beside the canvas, which keeps the width of the wider,
      so switching readouts moves nothing. */
-  .side { display: grid; }
+  .side { display: grid; flex: none; width: var(--side); }
   .side > * { grid-area: 1 / 1; }
   .side > .off { visibility: hidden; }
   .meter { align-self: start; margin-top: 12px; font-size: 14px; color: var(--canvit-muted, #475569); }
@@ -111,7 +119,13 @@ template.innerHTML = `
             grid-template-areas: "scene-label" "scene" "crop" "glimpse" "glimpse-label" "input" "model" "write"
                                  "canvas-label" "canvas" "meter"; }
     .scene, .canvas, .meter { width: 100%; max-width: 420px; }
-    .scene-label, .canvas-label { text-align: center; padding-bottom: 6px; }
+    /* The colorbar or legend moves under the canvas, in a row, so the scene and the canvas share the full width. */
+    .with-colorbar { flex-direction: column; }
+    .side { width: 100%; }
+    .colorbar { flex-direction: row-reverse; }
+    .colorbar-bar { height: 12px; width: auto; background: var(--colorbar-horizontal); }
+    .legend { flex-direction: row; justify-content: center; gap: 16px; }
+    .scene-label, .canvas-label { padding-bottom: 6px; }
     .model-cell { width: 100%; max-width: 240px; }
     .crop svg, .input svg { transform: rotate(90deg); margin: 16px 0; }
     .write { flex-direction: row; gap: 18px; }
@@ -194,7 +208,7 @@ class CanvitEpisode extends HTMLElement {
                step: $(".step"), play: $(".play"), scenes: $(".scenes"), readouts: $(".readouts"),
                meter: $(".meter"), value: $(".meter-value"), gain: $(".meter-gain"), base: $(".meter-base"),
                gained: $(".meter-gained"), start: $(".meter-start"), legend: $(".legend"),
-               colorbar: $(".colorbar"), colorbarMax: $(".colorbar-max"), colorbarBar: $(".colorbar-bar"),
+               colorbar: $(".colorbar"), colorbarMax: $(".colorbar-max"),
                arrows: Object.fromEntries([...this.shadowRoot.querySelectorAll("[data-arrow]")].map((svg) =>
                  [svg.dataset.arrow, svg.querySelector(".packet")])) };
     this.$.play.addEventListener("click", () => {
@@ -227,7 +241,9 @@ class CanvitEpisode extends HTMLElement {
   }
 
   connectedCallback() {
-    this.$.colorbarBar.style.background = colormapGradient(layerSpec("entropy").colormap, { angle: "0deg" });
+    const colormap = layerSpec("entropy").colormap;
+    this.$.colorbar.style.setProperty("--colorbar-vertical", colormapGradient(colormap, { angle: "0deg" }));
+    this.$.colorbar.style.setProperty("--colorbar-horizontal", colormapGradient(colormap, { angle: "90deg" }));
     this.$.legend.innerHTML = Object.values(CORRECTNESS)
       .map(({ label, rgb }) => `<span><i style="background: rgb(${rgb.join(" ")})"></i>${label}</span>`).join("");
     this.#showReadout();
@@ -348,9 +364,9 @@ class CanvitEpisode extends HTMLElement {
       packet.setAttribute("cx", String(4 + 46 * p));
       packet.style.opacity = p > 0 && p < 1 ? "1" : "0";
     }
-    const active = (phase) => u >= PHASES[phase][0] && u < PHASES[phase][1];
-    this.$.model.classList.toggle("input", active("input"));
-    this.$.model.classList.toggle("write", active("write"));
+    const lit = this.#schedule.durations[t] >= HIGHLIGHT_MIN_STEP_MS;
+    const active = (phase) => lit && u >= PHASES[phase][0] && u < PHASES[phase][1];
+    this.$.model.dataset.phase = active("input") ? "input" : active("write") ? "write" : "";
     this.$.step.textContent = `t = ${t}`;
   }
 

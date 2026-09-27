@@ -53,12 +53,21 @@ evaluation; the package is [`canvit-pytorch`](https://pypi.org/project/canvit-py
 
 ## Checkpoints
 
-We release checkpoints on Hugging Face under the [`canvit`](https://huggingface.co/canvit) namespace.
+The checkpoints are on Hugging Face under [`canvit`](https://huggingface.co/canvit); `from_pretrained` loads the
+PyTorch ones.
 
 | Checkpoint | Description |
 |------------|-------------|
-| [`canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02`](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02) | Pretrained on IN21k via dense distillation from DINOv3 |
-| [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06) | Finetuned for ImageNet-1k classification (trained on TPU v6e via [torch_xla](https://github.com/pytorch/xla)) |
+| [`canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02`](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02) | CanViT-B pretrained on ImageNet-21k by policy-agnostic passive-to-active dense latent distillation from DINOv3 ViT-B: the paper's model |
+| [`canvitb16-add-vpe-pretrain-g128px-s512px-in1k-dv3b16-2026-06-22`](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in1k-dv3b16-2026-06-22) | CanViT-B pretrained the same way on ImageNet-1k only |
+| [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06) | The ImageNet-21k model fine-tuned for ImageNet-1k classification, <span data-macro="inkFinetunedBest">84.5</span>% top-1 (trained on TPU v6e via [torch_xla](https://github.com/pytorch/xla)) |
+
+Collections:
+
+- [CanViT ADE20K segmentation probes](https://huggingface.co/collections/canvit/canvit-ade20k-segmentation-probes-pytorch) and [DINOv3 ADE20K segmentation probes](https://huggingface.co/collections/canvit/dinov3-ade20k-segmentation-probes-pytorch)
+- [DINOv3 ImageNet-1k probes](https://huggingface.co/collections/canvit/dinov3-imagenet-1k-probes-pytorch), which the frozen classification path uses
+- [CanViT pretraining ablations](https://huggingface.co/collections/canvit/canvit-pretraining-ablations-pytorch), the paper's ablation backbones
+- [JAX / Flax NNX](https://huggingface.co/collections/canvit/canvit-jax-flax-nnx) and [MLX](https://huggingface.co/collections/canvit/canvit-mlx) copies, for the ports under [Repository layout](#repository-layout)
 
 ## Quickstart
 
@@ -177,7 +186,7 @@ with torch.inference_mode():
                                    target_size=(1024, 1024))                       # [B, n_cls, 1024, 1024]
 ```
 
-The standalone `SegmentationProbe` head is also exported from `canvit_pytorch` for use on any spatial feature map. Published probes: [canvit ADE20K segmentation probes collection](https://huggingface.co/collections/canvit/canvit-ade20k-segmentation-probes).
+The standalone `SegmentationProbe` head is also exported from `canvit_pytorch` for use on any spatial feature map. The published probes are listed under [Checkpoints](#checkpoints).
 
 ## Demos
 

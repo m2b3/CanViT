@@ -31,7 +31,7 @@
   </header>
 
   <main>
-    <p class="tldr"><strong>TL;DR</strong> CanViT is the <strong>first task- and policy-agnostic Active-Vision Foundation Model</strong> (AVFM). A Vision Transformer backbone processes localized <span class="term-glimpse">glimpses</span>, while a fine-grained, scene-wide spatio-semantic memory, the <span class="term-canvas">canvas</span>, integrates them across time. <strong>Pretrained without labels</strong>, by reconstructing scene-wide <a href="https://github.com/facebookresearch/dinov3">DINOv3</a> embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths, a frozen CanViT-B achieves <strong class="hl"><span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU</strong> in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <strong class="hl"><span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer</strong> inference FLOPs.</p>
+    <p class="tldr"><strong>TL;DR</strong> CanViT is the <strong>first task- and policy-agnostic Active-Vision Foundation Model</strong> (AVFM). A Vision Transformer backbone processes localized <span class="term-glimpse">glimpses</span>, while a fine-grained, scene-wide spatio-semantic memory, the <span class="term-canvas">canvas</span>, integrates them across time. <strong>Pretrained without labels</strong>, by reconstructing scene-wide <a href="https://github.com/facebookresearch/dinov3">DINOv3</a> embeddings from sequences of glimpses with randomized locations, zoom levels, and lengths, a frozen CanViT-B achieves <strong class="hl"><span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU</strong> in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <strong class="hl"><span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer</strong> inference FLOPs.</p>
 
     <figure class="teaser wide">
       <canvit-episode src="data/street-riid data/shop-riid data/ferry-riid" autoplay></canvit-episode>
@@ -39,10 +39,10 @@
 
     <section class="wide" id="active-vision">
       <h2>What's in an active-vision model?</h2>
-      <p class="lead">An active vision model can be considered along three axes:</p>
+      <!-- <p class="lead">An active vision model can be considered along three axes:</p> -->
       <div class="axes">
         <div class="group observer">
-          <p class="group-label">Observer <span>· CanViT</span></p>
+          <p class="does">Seeing</p>
           <div class="group-cards">
             <article class="job" style="--accent: var(--glimpse)">
               <p class="number">1</p>
@@ -55,9 +55,10 @@
               <p>Updating a persistent, evolving understanding of the scene.</p>
             </article>
           </div>
+          <p class="pair"><span class="role">Observer</span><span class="value brand">CanViT</span></p>
         </div>
         <div class="group policy">
-          <p class="group-label">Policy <span>· interchangeable</span></p>
+          <p class="does">Choosing where to look</p>
           <div class="group-cards">
             <article class="job" style="--accent: var(--muted)">
               <p class="number">3</p>
@@ -65,6 +66,7 @@
               <p>Deciding where, and at what zoom level, to look next.</p>
             </article>
           </div>
+          <p class="pair"><span class="role">Policy</span><span class="value cycle" aria-live="off">Anything you want</span></p>
         </div>
       </div>
       <p class="thesis"><strong>No policy can make up for a poor observer.</strong> CanViT is the observer: pretrained without labels and without committing to a viewing policy, it works with any sequence of viewpoints.</p>
@@ -137,25 +139,6 @@
     <p>Code and model weights are released under the MIT license. Scenes from the ADE20K validation set.</p>
   </footer>
 
-  <script type="module">
-    // Each bar's length is its own printed value, relative to the largest value in its group, from zero.
-    const bars = document.querySelectorAll(".bars");
-    for (const group of bars) {
-      const rows = [...group.querySelectorAll(".bar")];
-      const values = rows.map((row) => parseFloat(row.querySelector(".num").textContent));
-      const max = Math.max(...values);
-      rows.forEach((row, i) => row.style.setProperty("--fraction", String(values[i] / max)));
-    }
-    new IntersectionObserver((entries, observer) => {
-      for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add("shown"); observer.unobserve(entry.target); }
-    }, { threshold: 0.3 }).observe(document.querySelector(".comparisons"));
-
-    const copy = document.querySelector(".copy");
-    copy.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(document.querySelector(".bibtex code").textContent);
-      copy.textContent = "Copied";
-      setTimeout(() => { copy.textContent = "Copy"; }, 1600);
-    });
-  </script>
+  <script type="module" src="js/page.js"></script>
 </body>
 </html>

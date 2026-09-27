@@ -118,6 +118,25 @@ strong, b { color: var(--ink); font-weight: 650; }
 }
 @media (max-width: 760px) { .jobs { grid-template-columns: minmax(0, 1fr); } }
 
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; max-width: 1040px; margin: 0 auto; }
+.stat { padding: 24px 22px 22px; border-radius: 16px; background: var(--soft); }
+.stat p { margin: 0; }
+.stat .value { color: var(--ink); font-size: clamp(2.2rem, 1.6rem + 1.6vw, 2.9rem); font-weight: 800; line-height: 1;
+               letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.stat .what { margin-top: 12px; color: var(--ink); font-size: .98rem; font-weight: 650; line-height: 1.35; }
+.stat .versus { margin-top: 6px; color: var(--muted); font-size: .88rem; line-height: 1.45; }
+@media (max-width: 900px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .stats { grid-template-columns: minmax(0, 1fr); } }
+
+.cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin: clamp(56px, 8vw, 80px) auto 0; padding: 0 16px; }
+.button.big { padding: 16px 28px; border-radius: 14px; font-size: 1.1rem; gap: 10px; }
+.button.big .icon { width: 20px; height: 20px; }
+.button.big .logo { width: 22px; }
+.button.secondary { background: var(--bg); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.button.secondary:hover { background: var(--soft); }
+.button.big.secondary .icon { background: var(--ink); }
+.cta .button:not(.secondary) .icon { background: #ef3b3b; }
+
 .bibtex { position: relative; border-radius: 12px; background: var(--soft); }
 .bibtex pre { margin: 0; padding: 20px 22px; overflow-x: auto; color: var(--ink); font: 13.5px/1.65 var(--mono); }
 .copy {

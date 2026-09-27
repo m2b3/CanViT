@@ -26,6 +26,14 @@ for page in sorted(SITE.rglob("*.html")):
             errors.append(f"{page}: no paper macro named {name}")
         elif text != macros[name]:
             errors.append(f"{page}: {name} reads {text!r}, the paper says {macros[name]!r}")
+# ade20k_seg.json (the ADE20K results chart's data) must be the export behind the same macros.
+ade20k = json.loads((SITE / "assets/paper/ade20k_seg.json").read_text())
+claims = ade20k["claims"]
+for macro, value in [("adeBestPriorMiou", claims["best_prior_miou_pct"]), ("adeBestMiou", claims["best_miou_pct"]),
+                     ("adeBestPriorGflops", claims["best_prior_gflops"])]:
+    checked += 1
+    if f"{value:.1f}" != macros[macro]:
+        errors.append(f"assets/paper/ade20k_seg.json: {macro} would read {value:.1f}, the paper says {macros[macro]!r}")
 if errors:
     sys.exit("\n".join(errors))
-print(f"{checked} marked numbers match the paper's macros")
+print(f"{checked} page numbers match the paper's macros")

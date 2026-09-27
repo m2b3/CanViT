@@ -33,8 +33,34 @@
     <p class="tldr"><strong>TL;DR</strong> CanViT is the first task- and policy-agnostic Active-Vision Foundation Model (AVFM). A Vision Transformer backbone processes localized <span class="term-glimpse">glimpses</span>, while a fine-grained, scene-wide spatio-semantic memory, the <span class="term-canvas">canvas</span>, integrates them across time. Pretrained without labels, by reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths, a frozen CanViT-B achieves <span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs.</p>
 
     <figure class="teaser wide">
-      <canvit-episode src="data/street-fiid data/shop-fiid data/ferry-fiid" autoplay></canvit-episode>
+      <canvit-episode src="data/street-riid data/shop-riid data/ferry-riid" autoplay></canvit-episode>
     </figure>
+
+    <section class="wide" id="results">
+      <h2>Results</h2>
+      <div class="stats">
+        <div class="stat">
+          <p class="value"><span data-macro="adeSingleGlimpseMiou">38.5</span>%</p>
+          <p class="what">ADE20K mIoU from a single glimpse</p>
+          <p class="versus">Best prior active model: <span data-macro="adeBestPriorMiou">27.6</span>%, with <span data-macro="adeCheapestBeatFlopRatio">20</span>× the FLOPs</p>
+        </div>
+        <div class="stat">
+          <p class="value"><span data-macro="adeBestMiou">45.9</span>%</p>
+          <p class="what">ADE20K mIoU with more glimpses</p>
+          <p class="versus">Frozen CanViT-B, linear probe</p>
+        </div>
+        <div class="stat">
+          <p class="value"><span data-macro="inkFinetunedBest">84.5</span>%</p>
+          <p class="what">ImageNet-1k top-1 accuracy</p>
+          <p class="versus">Best prior active model: 82.2%</p>
+        </div>
+        <div class="stat">
+          <p class="value">166 h</p>
+          <p class="what">Pretraining on a single H100</p>
+          <p class="versus">13.2M scenes, 1B glimpses, no labels</p>
+        </div>
+      </div>
+    </section>
 
     <section class="wide" id="active-vision">
       <h2>What's in an active-vision model?</h2>
@@ -65,6 +91,13 @@
       <p>We propose a label-free active vision pretraining scheme, <strong>policy-agnostic passive-to-active dense latent distillation</strong>: reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT-B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, in 166 hours on a single H100. </p>
       <p>On ADE20K segmentation, a frozen CanViT-B achieves <span data-macro="adeSingleGlimpseMiou">38.5</span>% mIoU in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT-B reaches <span data-macro="adeBestMiou">45.9</span>% ADE20K mIoU. On ImageNet-1k classification, CanViT-B also sets a new active-vision state of the art, with <span data-macro="inkFinetunedBest">84.5</span>% top-1 accuracy after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.</p>
     </section>
+
+
+    <nav class="cta" aria-label="Paper and code">
+      <a class="button big" href="https://arxiv.org/abs/2603.22570"><span class="icon" style="--icon: url(assets/logos/arxiv.svg)"></span>Read the paper</a>
+      <a class="button big secondary" href="https://github.com/m2b3/CanViT"><span class="icon" style="--icon: url(assets/logos/github.svg)"></span>Get the code</a>
+      <a class="button big secondary" href="https://huggingface.co/canvit"><img class="logo" src="assets/logos/huggingface-color.svg" alt="" width="22" height="20">Download the models</a>
+    </nav>
 
     <section class="prose" id="citation">
       <h2>Citation</h2>

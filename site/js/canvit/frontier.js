@@ -68,10 +68,14 @@ function el(name, attributes = {}, parent = null) {
   return node;
 }
 
-// A callout's arrow: a quadratic curve from a note to the point it describes, over a halo in the surface color, with
-// an arrowhead, so it reads as annotation where it crosses the data.
-function arrow(from, bend, to, parent) {
-  const d = `M${from.join(",")} Q${bend.join(",")} ${to.join(",")}`;
+// A callout's arrow: a cubic curve from a note to the point it describes, over a halo in the surface color, so it
+// reads as annotation where it crosses the data. It leaves the note along `leave` and arrives along `arrive` (unit
+// vectors); its last stretch runs straight along `arrive`, which the arrowhead, oriented by the end tangent, follows.
+function arrow(from, leave, to, arrive, parent) {
+  const reach = 0.45 * Math.hypot(to[0] - from[0], to[1] - from[1]);
+  const c1 = [from[0] + reach * leave[0], from[1] + reach * leave[1]];
+  const c2 = [to[0] - reach * arrive[0], to[1] - reach * arrive[1]];
+  const d = `M${from} C${c1} ${c2} ${to}`;
   el("path", { class: "arrow-halo", d }, parent);
   el("path", { class: "arrow", d, "marker-end": "url(#arrowhead)" }, parent);
 }
@@ -244,8 +248,9 @@ class CanvitFrontier extends HTMLElement {
       ? ["Even fine-to-coarse (F2C),", "a worse-than-random order,", "beats the best prior", `by ${glimpse}`]
       : ["Even fine-to-coarse (F2C), a worse-than-random order,", `beats the best prior model by ${glimpse}`];
     const [tx, ty] = [cx + 30, y(bestPrior.miou_pct) + 64];
-    // The arrow rises from the note, then turns left into the point, between the two F2C curves.
-    arrow([tx - 8, ty - 5], [tx - 8, cy + 2], [cx + 8, cy + 2], drawn);
+    // The arrow rises from the note and reaches the point from below right.
+    const diagonal = Math.SQRT1_2;
+    arrow([tx - 8, ty - 5], [0, -1], [cx + 6, cy + 6], [-diagonal, -diagonal], drawn);
     const text = el("text", { class: "takeaway halo", x: tx, y: ty }, drawn);
     lines.forEach((line, i) => { el("tspan", { x: tx, dy: i ? 17 : 0 }, text).textContent = line; });
 
@@ -254,7 +259,7 @@ class CanvitFrontier extends HTMLElement {
     const [fx, fy] = [x(first.cum_gflops), y(100 * first.mean)];
     const labelY = y(Y_MAX - 1.2);
     // The arrow leaves the note leftward, then turns down into the point from above, clear of the curves.
-    arrow([fx + 26, labelY - 5], [fx, labelY - 5], [fx, fy - 7], svg);
+    arrow([fx + 26, labelY - 5], [-1, 0], [fx, fy - 7], [0, 1], svg);
     el("text", { class: "callout", x: fx + 32, y: labelY }, svg).textContent =
       `${(100 * first.mean).toFixed(1)}% from a single glimpse`;
 

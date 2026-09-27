@@ -35,7 +35,9 @@ template.innerHTML = `
   .reference-label { fill: #475569; font-size: 13.5px; font-weight: 600; }
   .end-label { font-size: 13.5px; font-weight: 700; }
   .takeaway { fill: var(--canvit-ink, #0f172a); font-size: 14px; font-weight: 650; }
-  .takeaway-line { stroke: var(--canvit-ink, #0f172a); stroke-width: 1.2; }
+  .arrow { fill: none; stroke: var(--canvit-ink, #0f172a); stroke-width: 1.4; stroke-linecap: round; }
+  .arrow-halo { fill: none; stroke: var(--canvit-surface, #fff); stroke-width: 6; stroke-linecap: round; }
+  .arrowhead { fill: var(--canvit-ink, #0f172a); }
   .legend svg { width: 24px; height: 6px; }
   .frame { position: relative; }
   .chart { display: block; width: 100%; overflow: visible; }
@@ -47,7 +49,6 @@ template.innerHTML = `
   .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: 13.5px; }
   .baseline-label tspan { fill: var(--canvit-muted, #475569); }
   .callout { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 750; }
-  .callout-line { stroke: var(--canvit-ink, #0f172a); stroke-width: 1.2; }
   .focus circle { fill: #fff; stroke-width: 2.5; }
   .reveal { transition: width 1.4s cubic-bezier(.3, .6, .2, 1); }
   .tooltip { position: absolute; pointer-events: none; padding: 7px 10px; border-radius: 8px; background: var(--canvit-ink, #0f172a);
@@ -65,6 +66,14 @@ function el(name, attributes = {}, parent = null) {
   for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, String(value));
   parent?.append(node);
   return node;
+}
+
+// A callout's arrow: a quadratic curve from a note to the point it describes, over a halo in the surface color, with
+// an arrowhead, so it reads as annotation where it crosses the data.
+function arrow(from, bend, to, parent) {
+  const d = `M${from.join(",")} Q${bend.join(",")} ${to.join(",")}`;
+  el("path", { class: "arrow-halo", d }, parent);
+  el("path", { class: "arrow", d, "marker-end": "url(#arrowhead)" }, parent);
 }
 
 function marker(shape, x, y, size, color, parent) {
@@ -169,7 +178,11 @@ class CanvitFrontier extends HTMLElement {
     el("line", { class: "reference", x1: plot.left, x2: plot.right, y1: y(bestPrior.miou_pct), y2: y(bestPrior.miou_pct) }, svg);
 
     // Curves are revealed left to right by a growing clip, once the chart is in view.
-    const clip = el("clipPath", { id: "reveal" }, el("defs", {}, svg));
+    const defs = el("defs", {}, svg);
+    const head = el("marker", { id: "arrowhead", viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 8, markerHeight: 8,
+                                markerUnits: "userSpaceOnUse", orient: "auto" }, defs);
+    el("path", { class: "arrowhead", d: "M0,1 L9,5 L0,9 Z" }, head);
+    const clip = el("clipPath", { id: "reveal" }, defs);
     el("rect", { class: "reveal", x: 0, y: 0, width: this.#shown ? width : 0, height }, clip);
     const drawn = el("g", { "clip-path": "url(#reveal)" }, svg);
     this.#points = [];
@@ -230,8 +243,9 @@ class CanvitFrontier extends HTMLElement {
     const lines = narrow
       ? ["Even fine-to-coarse (F2C),", "a worse-than-random order,", "beats the best prior", `by ${glimpse}`]
       : ["Even fine-to-coarse (F2C), a worse-than-random order,", `beats the best prior model by ${glimpse}`];
-    const [tx, ty] = [cx + 18, y(bestPrior.miou_pct) + 64];
-    el("line", { class: "takeaway-line", x1: cx + 3, y1: cy + 6, x2: tx - 4, y2: ty - 16 }, drawn);
+    const [tx, ty] = [cx + 30, y(bestPrior.miou_pct) + 64];
+    // The arrow rises from the note, then turns left into the point, between the two F2C curves.
+    arrow([tx - 8, ty - 5], [tx - 8, cy + 2], [cx + 8, cy + 2], drawn);
     const text = el("text", { class: "takeaway halo", x: tx, y: ty }, drawn);
     lines.forEach((line, i) => { el("tspan", { x: tx, dy: i ? 17 : 0 }, text).textContent = line; });
 
@@ -239,8 +253,9 @@ class CanvitFrontier extends HTMLElement {
     const first = curves.find((c) => c.policy === "entropy_coarse_to_fine" && c.canvas_grid === 32).per_timestep[0];
     const [fx, fy] = [x(first.cum_gflops), y(100 * first.mean)];
     const labelY = y(Y_MAX - 1.2);
-    el("line", { class: "callout-line", x1: fx, y1: fy - 7, x2: fx, y2: labelY + 5 }, svg);
-    el("text", { class: "callout", x: fx + 6, y: labelY }, svg).textContent =
+    // The arrow leaves the note leftward, then turns down into the point from above, clear of the curves.
+    arrow([fx + 26, labelY - 5], [fx, labelY - 5], [fx, fy - 7], svg);
+    el("text", { class: "callout", x: fx + 32, y: labelY }, svg).textContent =
       `${(100 * first.mean).toFixed(1)}% from a single glimpse`;
 
     const focus = el("g", { class: "focus", visibility: "hidden" }, svg);

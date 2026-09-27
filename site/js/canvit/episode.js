@@ -1,8 +1,8 @@
 // <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels|correct"] [autoplay]>: a recorded rollout
-// (web bundle) played as the loop CanViT runs, with the pixel accuracy of the segmentation decoded from the canvas: the viewpoint moves on the scene, its crop becomes the glimpse,
-// the glimpse goes into CanViT, which reads its canvas and writes the glimpse into it. The first glimpses are
-// slow and later ones faster; the last state holds until Replay. Several bundles in `src` become scene tabs
-// labeled with their titles.
+// (web bundle) played as the loop CanViT runs: the viewpoint moves on the scene, its crop becomes the glimpse,
+// the glimpse goes into CanViT, which reads its canvas and writes the glimpse into it. Under the canvas, the
+// pixel accuracy of the segmentation decoded from it. The first glimpses are slow and later ones faster; the
+// last state holds until Replay. Several bundles in `src` become scene tabs labeled with their titles.
 
 import { loadBundle } from "./bundle.js";
 import { CORRECTNESS, colormapGradient, correctnessImage, layerImage, layerSpec } from "./layers.js";
@@ -96,6 +96,9 @@ template.innerHTML = `
     .arrow svg.read { transform: rotate(90deg) scaleX(-1); }
     .tag { display: none; }
     .meter { grid-column: 1; width: 100%; max-width: 420px; }
+  }
+  @container (max-width: 480px) {
+    .readouts { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
   }
 </style>
 <div class="flow">

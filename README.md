@@ -39,7 +39,7 @@ evaluation; the package is [`canvit-pytorch`](https://pypi.org/project/canvit-py
 
 - **2026-09-26**: canvit-pytorch 0.2, a refactoring release; updated checkpoints pushed to the Hub. Code written
   for 0.1: see [Troubleshooting](#troubleshooting).
-- **2026-09-24**: Accepted at NeurIPS 2026 (poster).
+- **2026-09-24**: 🎉 Accepted at NeurIPS 2026!
 - **2026-05-16**: Preprint v2 ([arXiv:2603.22570v2](https://arxiv.org/abs/2603.22570v2)), adding the 84.5% ImageNet-1k fine-tuning result and the effect of canvas resolution.
 - **2026-04-06**: First finetuned IN1k checkpoint: [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06), with new `CanViTForImageClassification` API.
   - 🎉 CanViT sets a new SOTA on **active-vision IN1k classification**, with **84.5% top-1 accuracy**, up from [AdaptiveNN](https://github.com/LeapLabTHU/AdaptiveNN)'s previous best of 82.2%.
@@ -61,6 +61,8 @@ PyTorch ones.
 | [`canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02`](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02) | CanViT-B pretrained on ImageNet-21k by policy-agnostic passive-to-active dense latent distillation from DINOv3 ViT-B: the paper's model |
 | [`canvitb16-add-vpe-pretrain-g128px-s512px-in1k-dv3b16-2026-06-22`](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in1k-dv3b16-2026-06-22) | CanViT-B pretrained the same way on ImageNet-1k only |
 | [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06) | The ImageNet-21k model fine-tuned for ImageNet-1k classification, <span data-macro="inkFinetunedBest">84.5</span>% top-1 (trained on TPU v6e via [torch_xla](https://github.com/pytorch/xla)) |
+| [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-07-24`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-07-24) | The ImageNet-21k model fine-tuned again with the same recipe, by a JAX/Flax NNX trainer |
+| [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-from-in1k-2026-07-24`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-from-in1k-2026-07-24) | The ImageNet-1k model fine-tuned with the same recipe, by the same trainer |
 
 Collections:
 

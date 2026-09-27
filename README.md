@@ -37,9 +37,8 @@ evaluation; the package is [`canvit-pytorch`](https://pypi.org/project/canvit-py
 
 ## News
 
-- **2026-09-26**: canvit-pytorch 0.2: the paper's names throughout the API, and pretraining, probe training and
-  evaluation in the package. The checkpoints on the Hub are in the 0.2 format ([Troubleshooting](#troubleshooting)
-  covers code written for 0.1).
+- **2026-09-26**: canvit-pytorch 0.2, a refactoring release; updated checkpoints pushed to the Hub. Code written
+  for 0.1: see [Troubleshooting](#troubleshooting).
 - **2026-09-24**: Accepted at NeurIPS 2026 (poster).
 - **2026-05-16**: Preprint v2 ([arXiv:2603.22570v2](https://arxiv.org/abs/2603.22570v2)), adding the 84.5% ImageNet-1k fine-tuning result and the effect of canvas resolution.
 - **2026-04-06**: First finetuned IN1k checkpoint: [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06), with new `CanViTForImageClassification` API.

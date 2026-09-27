@@ -68,7 +68,11 @@ template.innerHTML = `
   .colorbar { display: flex; flex-direction: column; align-items: center; gap: 4px; white-space: nowrap;
               font: 12.5px/1 ui-monospace, "JetBrains Mono", monospace; color: var(--canvit-muted, #475569); }
   .colorbar-bar { flex: 1; width: 12px; border-radius: 3px; }
-  .colorbar.off { visibility: hidden; }
+  /* The colorbar and the correctness legend share the slot beside the canvas, which keeps the width of the wider,
+     so switching readouts moves nothing. */
+  .side { display: grid; }
+  .side > * { grid-area: 1 / 1; }
+  .side > .off { visibility: hidden; }
   .meter { grid-column: 7; margin-top: 12px; font-size: 14px; color: var(--canvit-muted, #475569); }
   .meter-head { display: flex; align-items: baseline; gap: 8px; }
   .meter-value { color: var(--canvit-ink, #0f172a); font-size: 17px; font-weight: 750; font-variant-numeric: tabular-nums; }
@@ -78,8 +82,9 @@ template.innerHTML = `
   .meter-base { background: #475569; border-radius: 4px 0 0 4px; }
   .meter-gained { background: #16a34a; }
   .meter-start { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--canvit-ink, #0f172a); }
-  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; }
-  .legend i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
+  .legend { display: flex; flex-direction: column; justify-content: center; gap: 8px; font-size: 13.5px;
+            color: var(--canvit-muted, #475569); white-space: nowrap; }
+  .legend i { display: inline-block; width: 11px; height: 11px; margin-right: 6px; border-radius: 3px; vertical-align: -1px; }
   .error { padding: 14px; border: 1px solid #dc2626; border-radius: 10px; color: #b91c1c; font: 13px/1.5 ui-monospace, monospace; }
   @container (max-width: 760px) {
     .flow { grid-template-columns: minmax(0, 1fr); gap: 4px; justify-items: center; }
@@ -109,11 +114,10 @@ template.innerHTML = `
   <div class="column model-column"><div class="label"></div><div class="body"><div class="model"><b>CanViT</b><small class="step"></small></div></div></div>
   <div class="column arrow"><div class="label"></div><div class="body">
     ${arrow("write", "red")}<span class="tag">write</span>${arrow("read", "red read")}<span class="tag">read</span></div></div>
-  <div class="column canvas"><div class="label canvas">Canvas</div><div class="body"><div class="with-colorbar"><canvas class="canvas-view"></canvas><div class="colorbar" aria-hidden="true"><span class="colorbar-max"></span><div class="colorbar-bar"></div><span>0</span></div></div></div></div>
+  <div class="column canvas"><div class="label canvas">Canvas</div><div class="body"><div class="with-colorbar"><canvas class="canvas-view"></canvas><div class="side"><div class="colorbar" aria-hidden="true"><span class="colorbar-max"></span><div class="colorbar-bar"></div><span>0</span></div><div class="legend"></div></div></div></div></div>
   <div class="meter" hidden>
     <div class="meter-head"><span title="Share of annotated pixels whose class, decoded from the canvas, is right">Pixel accuracy</span><b class="meter-value"></b><span class="meter-gain" title="Change since the first glimpse"></span></div>
     <div class="meter-track"><span class="meter-base"></span><span class="meter-gained"></span><span class="meter-start"></span></div>
-    <div class="legend" hidden></div>
   </div>
 </div>
 <div class="bar">
@@ -259,7 +263,7 @@ class CanvitEpisode extends HTMLElement {
 
   #showReadout() {
     for (const button of this.$.readouts.children) button.setAttribute("aria-pressed", String(button.dataset.readout === this.readout));
-    this.$.legend.hidden = this.readout !== "correct";
+    this.$.legend.classList.toggle("off", this.readout !== "correct");
     this.$.colorbar.classList.toggle("off", this.readout !== "entropy");
     this.#draw();
   }

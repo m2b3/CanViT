@@ -237,16 +237,16 @@ class CanvitFrontier extends HTMLElement {
         .textContent = narrow ? label : `CanViT-B (${label})`;
     }
 
-    // Even the worse-than-random fine-to-coarse order passes the best prior model, from the exported claim.
+    // Where the F2C order, worse than random, first beats the best prior model (the exported claim), with the
+    // paper's sentence about it.
     const key = `fine_to_coarse_s${SCENE_SIZE}_c32`;
     const beat = this.#data.claims.beats_prior.find((claim) => claim.key === key);
     if (!beat) throw new Error(`<canvit-frontier>: no beats_prior claim for ${key}`);
     const [cx, cy] = [x(beat.first_beat_gflops), y(beat.first_beat_miou_pct)];
     el("circle", { cx, cy, r: 4.5, fill: "#fff", stroke: POLICIES.fine_to_coarse.color, "stroke-width": 2.2 }, drawn);
-    const glimpse = `glimpse ${beat.first_beat_t + 1}`;
     const lines = narrow
-      ? ["Even fine-to-coarse (F2C),", "a worse-than-random order,", "beats the best prior", `by ${glimpse}`]
-      : ["Even fine-to-coarse (F2C), a worse-than-random order,", `beats the best prior model by ${glimpse}`];
+      ? ["CanViT's advantage holds", "even with the F2C policy's", "worse-than-random", "viewing order"]
+      : ["CanViT's advantage holds even with the F2C policy's", "worse-than-random viewing order"];
     const [tx, ty] = [cx + 30, y(bestPrior.miou_pct) + 64];
     // The arrow rises from the note and reaches the point from below right.
     const diagonal = Math.SQRT1_2;
@@ -261,7 +261,7 @@ class CanvitFrontier extends HTMLElement {
     // The arrow leaves the note leftward, then turns down into the point from above, clear of the curves.
     arrow([fx + 26, labelY - 5], [-1, 0], [fx, fy - 7], [0, 1], svg);
     el("text", { class: "callout", x: fx + 32, y: labelY }, svg).textContent =
-      `${(100 * first.mean).toFixed(1)}% from a single glimpse`;
+      `${(100 * first.mean).toFixed(1)}% mIoU in a single glimpse`;
 
     const focus = el("g", { class: "focus", visibility: "hidden" }, svg);
     const focusDot = el("circle", { r: 5 }, focus);

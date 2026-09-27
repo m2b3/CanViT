@@ -109,6 +109,7 @@ strong, b { color: var(--ink); font-weight: 650; }
       background: linear-gradient(transparent 58%, var(--highlight) 58%); }
 .term-glimpse { color: var(--glimpse); font-weight: 650; }
 .term-canvas { color: var(--canvas); font-weight: 650; }
+h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
 
 .lead {
   max-width: 700px; margin: 0 auto; color: var(--text); font-size: 1.16rem; text-align: center; text-wrap: balance;

@@ -17,7 +17,7 @@
 </head>
 <body>
   <header class="hero wide">
-    <h1>CanViT: Toward Active&#8209;Vision<br>Foundation Models</h1>
+    <h1><span class="brand">CanViT</span>: Toward Active&#8209;Vision<br>Foundation Models</h1>
     <p class="authors">
       <span class="pair"><a class="person" href="https://yberreby.com">Yohaï-Eliel Berreby<sup>1,2</sup></a><a class="person" href="https://mila.quebec/en/directory/sabrina-du">Sabrina Du<sup>1,2</sup></a></span><span class="pair"><a class="person" href="https://audrey-durand.fsg.ulaval.ca/en">Audrey Durand<sup>2,3</sup></a><a class="person" href="https://m2b3.github.io/">B. Suresh Krishna<sup>1</sup></a></span>
     </p>
@@ -31,7 +31,7 @@
   </header>
 
   <main>
-    <p class="tldr"><strong>TL;DR</strong> CanViT is the <strong>first task- and policy-agnostic Active-Vision Foundation Model</strong> (AVFM). A Vision Transformer backbone processes localized <span class="term-glimpse">glimpses</span>, while a fine-grained, scene-wide spatio-semantic memory, the <span class="term-canvas">canvas</span>, integrates them across time. <strong>Pretrained without labels</strong>, by reconstructing <strong>scene-wide</strong> <a href="https://github.com/facebookresearch/dinov3">DINOv3</a> embeddings from sequences of <strong>localized</strong> glimpses at randomized locations and zoom levels, a frozen CanViT-B achieves <strong class="hl"><span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU</strong> in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <strong class="hl"><span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer</strong> inference FLOPs.</p>
+    <p class="tldr"><strong>TL;DR</strong> CanViT is the <strong>first task- and policy-agnostic Active-Vision Foundation Model</strong> (AVFM). A Vision Transformer backbone processes <span class="term-glimpse">glimpses</span>, while a fine-grained, scene-wide spatio-semantic memory, the <span class="term-canvas">canvas</span>, integrates them across time. <strong>Pretrained without labels</strong>, by reconstructing <strong>scene-wide</strong> <a href="https://github.com/facebookresearch/dinov3">DINOv3</a> embeddings from sequences of <strong>localized</strong> glimpses at randomized locations and zoom levels, a frozen CanViT-B achieves <strong class="hl"><span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU</strong> in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <strong class="hl"><span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer</strong> inference FLOPs.</p>
 
     <figure class="teaser wide">
       <canvit-episode src="data/street-riid data/shop-riid data/ferry-riid" autoplay></canvit-episode>
@@ -88,18 +88,21 @@
       <h2>Results</h2>
       <div class="comparisons">
         <article class="comparison frontier">
-          <h3>ADE20K segmentation: accuracy against cost</h3>
+          <h3>ADE20K segmentation</h3>
+          <p class="metric">mIoU (%) against inference cost</p>
           <canvit-frontier src="assets/paper/ade20k_seg.json"></canvit-frontier>
         </article>
         <article class="comparison">
           <h3>ImageNet-1k classification</h3>
-          <p class="metric">Top-1 accuracy (%), higher is better</p>
-          <div class="bars">
-            <div class="bar ours"><span class="name">CanViT-B, fine&#8209;tuned</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="inkFinetunedBest">84.5</span></span></div>
-            <div class="bar ours"><span class="name">CanViT-B, frozen</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="inkFrozenBest">81.1</span></span></div>
-            <div class="bar"><span class="name">AdaptiveNN, prior best</span><span class="track"><span class="fill"></span></span><span class="num">82.2</span></div>
+          <p class="metric">Top-1 accuracy (%)</p>
+          <div class="dots">
+            <p class="dot-group">This work</p>
+            <div class="dot-row ours"><span class="name">CanViT-B, fine&#8209;tuned</span><span class="track"><span class="dot"></span></span><span class="num"><span data-macro="inkFinetunedBest">84.5</span></span></div>
+            <div class="dot-row ours"><span class="name">CanViT-B, frozen</span><span class="track"><span class="dot"></span></span><span class="num"><span data-macro="inkFrozenBest">81.1</span></span></div>
+            <p class="dot-group">Best prior active model</p>
+            <div class="dot-row"><span class="name">AdaptiveNN</span><span class="track"><span class="dot"></span></span><span class="num">82.2</span></div>
+            <div class="dot-axis"><span></span><span class="ticks"></span><span></span></div>
           </div>
-          <p class="note">Pretrained in 166 hours on a single H100: 13.2M ImageNet-21k scenes, 1 billion glimpses, no labels.</p>
         </article>
       </div>
     </section>

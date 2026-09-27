@@ -4,9 +4,11 @@
 // paper's figure. The chart is drawn at its displayed size, so text stays legible on narrow screens; hovering
 // names the nearest point.
 
+import { POLICIES as PAPER_POLICIES } from "./policies.js";
+
 const POLICIES = {
-  entropy_coarse_to_fine: { label: "EG-C2F", color: "#2ca02c" },
-  fine_to_coarse: { label: "F2C", color: "#d62728" },
+  entropy_coarse_to_fine: PAPER_POLICIES.entropy_coarse_to_fine,
+  fine_to_coarse: PAPER_POLICIES.fine_to_coarse,
 };
 const CANVASES = { 32: { label: "32² canvas", dash: "7 5" }, 64: { label: "64² canvas", dash: "" } };
 const SCENE_SIZE = 512;
@@ -22,8 +24,18 @@ const template = document.createElement("template");
 template.innerHTML = `
 <style>
   :host { display: block; color: var(--canvit-ink, #0f172a); font: 14px/1.4 var(--canvit-sans, system-ui, sans-serif); }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-bottom: 10px; font-size: 14px; }
+  .legend { display: grid; gap: 8px; margin-top: 14px; font-size: 14px; }
+  .legend .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; }
+  .legend b { min-width: 10.5em; font-weight: 700; }
+  @media (max-width: 600px) { .legend b { flex-basis: 100%; } }
   .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend svg.marker { width: 12px; height: 12px; }
+  .halo { paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 5px; stroke-linejoin: round; }
+  .reference { stroke: #64748b; stroke-width: 1.4; stroke-dasharray: 5 5; }
+  .reference-label { fill: #475569; font-size: 13.5px; font-weight: 600; }
+  .end-label { font-size: 13.5px; font-weight: 700; }
+  .takeaway { fill: var(--canvit-ink, #0f172a); font-size: 14px; font-weight: 650; }
+  .takeaway-line { stroke: var(--canvit-ink, #0f172a); stroke-width: 1.2; }
   .legend svg { width: 24px; height: 6px; }
   .frame { position: relative; }
   .chart { display: block; width: 100%; overflow: visible; }
@@ -44,8 +56,8 @@ template.innerHTML = `
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } }
 </style>
-<div class="legend"></div>
-<div class="frame"><svg class="chart" role="img"></svg><div class="tooltip" hidden></div></div>`;
+<div class="frame"><svg class="chart" role="img"></svg><div class="tooltip" hidden></div></div>
+<div class="legend"></div>`;
 
 const NS = "http://www.w3.org/2000/svg";
 function el(name, attributes = {}, parent = null) {
@@ -85,10 +97,12 @@ class CanvitFrontier extends HTMLElement {
     this.attachShadow({ mode: "open" }).append(template.content.cloneNode(true));
     this.svg = this.shadowRoot.querySelector(".chart");
     this.tooltip = this.shadowRoot.querySelector(".tooltip");
-    this.shadowRoot.querySelector(".legend").innerHTML = [
-      ...Object.values(POLICIES).map(({ label, color }) => `<span>${lineSwatch(color, "")}${label}</span>`),
-      ...Object.values(CANVASES).map(({ label, dash }) => `<span>${lineSwatch("#475569", dash)}${label}</span>`),
-    ].join("");
+    const markerSwatch = ({ color, marker: shape }) =>
+      `<svg viewBox="-7 -7 14 14" class="marker">${shape === "triangle" ? `<polygon points="0,-7 6,4 -6,4" fill="${color}"/>` : `<polygon points="0,-7 7,0 0,7 -7,0" fill="${color}"/>`}</svg>`;
+    this.shadowRoot.querySelector(".legend").innerHTML =
+      `<div class="row"><b>CanViT-B</b>${Object.values(POLICIES).map(({ label, name, color }) => `<span>${lineSwatch(color, "")}${label} (${name})</span>`).join("")}` +
+      `${Object.values(CANVASES).map(({ label, dash }) => `<span>${lineSwatch("#475569", dash)}${label}</span>`).join("")}</div>` +
+      `<div class="row"><b>Prior active models</b>${Object.entries(BASELINES).map(([name, style]) => `<span>${markerSwatch(style)}${name}</span>`).join("")}</div>`;
     new ResizeObserver(() => {
       const width = Math.round(this.svg.clientWidth);
       if (this.#data && width > 0 && width !== this.#width) this.#render(width);
@@ -147,6 +161,13 @@ class CanvitFrontier extends HTMLElement {
     el("text", { class: "title", x: -(plot.top + plot.bottom) / 2, y: 14, transform: "rotate(-90)", "text-anchor": "middle" }, axis)
       .textContent = "ADE20K mIoU (%)";
 
+    // The best prior active model's mIoU, as a reference line under the data.
+    const bestPrior = this.#data.best_prior;
+    if (bestPrior.miou_pct !== Math.max(...baselines.map((b) => b.miou_pct))) {
+      throw new Error("<canvit-frontier>: best_prior is not the highest-mIoU baseline");
+    }
+    el("line", { class: "reference", x1: plot.left, x2: plot.right, y1: y(bestPrior.miou_pct), y2: y(bestPrior.miou_pct) }, svg);
+
     // Curves are revealed left to right by a growing clip, once the chart is in view.
     const clip = el("clipPath", { id: "reveal" }, el("defs", {}, svg));
     el("rect", { class: "reveal", x: 0, y: 0, width: this.#shown ? width : 0, height }, clip);
@@ -164,27 +185,55 @@ class CanvitFrontier extends HTMLElement {
                        stroke: color, "stroke-dasharray": canvas.dash }, drawn);
       for (const p of pts) {
         this.#points.push({ x: x(p.cum_gflops), y: y(100 * p.mean), color,
-          html: `<b>CanViT-B, ${label}</b>, ${canvas.label}<br>${p.t + 1} glimpse${p.t ? "s" : ""}: ${(100 * p.mean).toFixed(1)}% mIoU, ${p.cum_gflops.toFixed(1)} GFLOPs` });
+          html: `<b>CanViT-B</b>, ${label}, ${canvas.label}<br>${p.t + 1} glimpse${p.t ? "s" : ""}: ${(100 * p.mean).toFixed(1)}% mIoU, ${p.cum_gflops.toFixed(1)} GFLOPs` });
       }
     }
 
+    // Baselines are labeled beside their markers on wide screens; narrow screens rely on the legend. A label goes left
+    // where another baseline shares its cost or the edge is near, and above the reference line for the best prior.
     for (const b of baselines) {
       const style = BASELINES[b.name];
       if (!style) throw new Error(`<canvit-frontier>: no style for baseline "${b.name}"`);
       const [px, py] = [x(b.gflops), y(b.miou_pct)];
       marker(style.marker, px, py, 13, style.color, svg);
-      // Labels go right of the marker, or left where another baseline shares its cost or the edge is near.
-      const sharesCost = baselines.some((other) => other !== b && other.gflops === b.gflops);
-      const label = el("text", { class: "baseline-label", x: px + 11, y: py + 4 }, svg);
+      this.#points.push({ x: px, y: py, color: style.color,
+        html: `<b>${b.name}</b><br>${b.num_glimpses} glimpses: ${b.miou_pct.toFixed(1)}% mIoU, ${b.gflops.toFixed(1)} GFLOPs` });
+      if (narrow) continue;
+      const isBest = b.name === bestPrior.name && b.num_glimpses === bestPrior.num_glimpses;
+      const label = el("text", { class: "baseline-label halo", x: px + 11, y: isBest ? py - 9 : py + 4 }, svg);
       label.textContent = b.name;
-      if (!narrow) el("tspan", {}, label).textContent = `, ${b.num_glimpses} glimpses`;
+      el("tspan", {}, label).textContent = `, ${b.num_glimpses} glimpses`;
+      const sharesCost = baselines.some((other) => other !== b && other.gflops === b.gflops);
       if (sharesCost || px + 11 + label.getComputedTextLength() > width) {
         label.setAttribute("x", String(px - 11));
         label.setAttribute("text-anchor", "end");
       }
-      this.#points.push({ x: px, y: py, color: style.color,
-        html: `<b>${b.name}</b>, ${b.num_glimpses} glimpses<br>${b.miou_pct.toFixed(1)}% mIoU, ${b.gflops.toFixed(1)} GFLOPs` });
     }
+    el("text", { class: "reference-label halo", x: plot.right, y: y(bestPrior.miou_pct) - 8, "text-anchor": "end" }, svg)
+      .textContent = `${narrow ? "Best prior" : "Best prior active model"}: ${bestPrior.miou_pct.toFixed(1)}%`;
+
+    // Each 64² curve is labeled at its end as CanViT-B under its policy.
+    for (const curve of curves.filter((c) => c.canvas_grid === 64)) {
+      const last = curve.per_timestep.at(-1);
+      const { label, color } = POLICIES[curve.policy];
+      el("text", { class: "end-label halo", x: x(last.cum_gflops) + 8, y: y(100 * last.mean) + 5, fill: color }, drawn)
+        .textContent = narrow ? label : `CanViT-B (${label})`;
+    }
+
+    // Even the worse-than-random fine-to-coarse order passes the best prior model, from the exported claim.
+    const key = `fine_to_coarse_s${SCENE_SIZE}_c32`;
+    const beat = this.#data.claims.beats_prior.find((claim) => claim.key === key);
+    if (!beat) throw new Error(`<canvit-frontier>: no beats_prior claim for ${key}`);
+    const [cx, cy] = [x(beat.first_beat_gflops), y(beat.first_beat_miou_pct)];
+    el("circle", { cx, cy, r: 4.5, fill: "#fff", stroke: POLICIES.fine_to_coarse.color, "stroke-width": 2.2 }, drawn);
+    const glimpse = `glimpse ${beat.first_beat_t + 1}`;
+    const lines = narrow
+      ? ["Even fine-to-coarse (F2C),", "a worse-than-random order,", "beats the best prior", `by ${glimpse}`]
+      : ["Even fine-to-coarse (F2C), a worse-than-random order,", `beats the best prior model by ${glimpse}`];
+    const [tx, ty] = [cx + 18, y(bestPrior.miou_pct) + 64];
+    el("line", { class: "takeaway-line", x1: cx + 3, y1: cy + 6, x2: tx - 4, y2: ty - 16 }, drawn);
+    const text = el("text", { class: "takeaway halo", x: tx, y: ty }, drawn);
+    lines.forEach((line, i) => { el("tspan", { x: tx, dy: i ? 17 : 0 }, text).textContent = line; });
 
     // CanViT-B's first glimpse at the 32² canvas, the paper's single-glimpse result, labeled above the curves.
     const first = curves.find((c) => c.policy === "entropy_coarse_to_fine" && c.canvas_grid === 32).per_timestep[0];

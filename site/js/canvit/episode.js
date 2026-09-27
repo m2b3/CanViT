@@ -8,10 +8,10 @@ import { loadBundle } from "./bundle.js";
 import { CORRECTNESS, colormapGradient, correctnessImage, layerImage, layerSpec } from "./layers.js";
 
 const READOUTS = {
-  canvas: { label: "PCA", image: (bundle, t) => layerImage(bundle, t, "canvas") },
+  canvas: { label: "Features", image: (bundle, t) => layerImage(bundle, t, "canvas") },
   entropy: { label: "Uncertainty", image: (bundle, t) => layerImage(bundle, t, "entropy") },
   labels: { label: "Segmentation", image: (bundle, t) => layerImage(bundle, t, "labels") },
-  correct: { label: "Correct", image: correctnessImage },
+  correct: { label: "Correctness", image: correctnessImage },
 };
 const FIRST_STEP_MS = 1600;
 const STEP_RATIO = 0.74;

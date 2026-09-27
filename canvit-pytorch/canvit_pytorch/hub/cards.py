@@ -171,7 +171,8 @@ with torch.inference_mode():
 
 
 def classifier_card(
-    *, repo: str, pretrained_repo: str, details: list[tuple[str, str]], top1_accuracy: float, conditions: str,
+    *, repo: str, pretrained_repo: str, pretraining: PretrainingDataset, details: list[tuple[str, str]],
+    top1_accuracy: float, conditions: str,
 ) -> str:
     """conditions: how the reported accuracy was measured, e.g. "C2F, T=21, single run"."""
     usage = f"""
@@ -203,8 +204,8 @@ print(CLASS_NAMES[logits.argmax().item()])
     summary = (f"[CanViT-B](https://huggingface.co/{pretrained_repo}) fine-tuned end to end for ImageNet-1k "
                f"classification by linear probing then fine-tuning (LP-FT), as in the paper: {top1_accuracy}% "
                f"top-1 accuracy on the validation set ({conditions}).")
-    return _card(data=data, title="CanViT-B, fine-tuned for ImageNet-1k classification", summary=summary,
-                 usage=usage, details=details)
+    title = f"CanViT-B, pretrained on {DATASET_NAMES[pretraining]}, fine-tuned for ImageNet-1k classification"
+    return _card(data=data, title=title, summary=summary, usage=usage, details=details)
 
 
 def canvas_probe_card(*, repo: str, facts: CanvasProbeFacts) -> str:

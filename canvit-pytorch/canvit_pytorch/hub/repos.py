@@ -39,6 +39,12 @@ OLD_FORMAT_REVISION = "canvit-pytorch-0.1"
 # The flagship fine-tuned on ImageNet-1k classification (LP-FT, TPU).
 FINETUNED_IN1K = hub_repo("canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06")
 
+# The same LP-FT recipe run from each pretrained checkpoint with a JAX/Flax NNX trainer, exported to PyTorch.
+FINETUNED_IN1K_NNX: dict[PretrainingDataset, str] = {
+    "in21k": hub_repo("canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-07-24"),
+    "in1k": hub_repo("canvitb16-add-vpe-finetune-g128px-s512px-in1k-from-in1k-2026-07-24"),
+}
+
 # Linear ImageNet-1k probe on DINOv3 ViT-B/16's CLS token at 512 px (from m2b3/dinov3-in1k-probes);
 # fused into CanViT's CLS readout for frozen classification.
 DINOV3_VITB16_IN1K_PROBE = hub_repo("dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe")

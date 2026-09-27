@@ -20,37 +20,28 @@ import re
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal, cast, get_args
+from typing import Any, cast, get_args
 
 import torch
 import tyro
 from huggingface_hub import HfApi, hf_hub_download
-from PIL import Image
 from torch import Tensor
 
 from canvit_pytorch import legacy
 from canvit_pytorch.hub import cards
+from canvit_pytorch.hub.reference import Kind, verify
 from canvit_pytorch.hub.repos import (
     FINETUNED_IN1K,
     HUB_ROOT,
     OLD_FORMAT_REVISION,
     PRETRAINED,
-    RELEASED_CANVAS_GRID_SIZE,
-    RELEASED_GLIMPSE_SIZE_PX,
     PretrainingDataset,
 )
-from canvit_pytorch.model.classification import CanViTForImageClassification
-from canvit_pytorch.model.pretraining import CanViTForPretraining
-from canvit_pytorch.preprocess import preprocess
 from canvit_pytorch.pretrain.ablations import ABLATIONS
-from canvit_pytorch.probes import SegmentationProbe
 from canvit_pytorch.project import HUB_ORGANIZATION
 from canvit_pytorch.teacher import DINOV3_NAMES, DINOV3_PATCH_SIZE, DINOV3_REPOS, DINOv3Variant
-from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
 
 log = logging.getLogger(__name__)
-
-Kind = Literal["pretraining", "classification", "probe"]
 
 OLD_FORMAT_NOTE = f"""
 ## canvit-pytorch 0.1
@@ -58,8 +49,6 @@ OLD_FORMAT_NOTE = f"""
 This repository's files for canvit-pytorch 0.1 remain at revision `{OLD_FORMAT_REVISION}`:
 with `canvit-pytorch<0.2`, pass `revision="{OLD_FORMAT_REVISION}"` to `from_pretrained`.
 """
-REFERENCE_IMAGE = Path(__file__).parents[2] / "test_data" / "Cat03.jpg"
-REFERENCE_VIEWPOINTS = [(0.0, 0.0, 1.0), (-0.5, 0.5, 0.5), (0.3, -0.2, 0.25)]  # (row, col, scale)
 FINETUNED_TOP1 = (84.5, "C2F, T=21, single run")
 """The released classifier's top-1 accuracy and its conditions, as its 0.1 card reports them."""
 
@@ -145,43 +134,9 @@ def _classifier_card(repo: str, config: dict[str, Any]) -> str:
     ]
     top1, conditions = FINETUNED_TOP1
     return cards.classifier_card(
-        repo=repo, pretrained_repo=training["base_checkpoint"], details=details, top1_accuracy=top1,
-        conditions=conditions,
+        repo=repo, pretrained_repo=training["base_checkpoint"], pretraining="in21k", details=details,
+        top1_accuracy=top1, conditions=conditions,
     )
-
-
-def _rollout(model: CanViTForPretraining | CanViTForImageClassification, image: Tensor) -> dict[str, Tensor]:
-    state = model.init_state(batch_size=1, canvas_grid_size=RELEASED_CANVAS_GRID_SIZE)
-    outputs: dict[str, Tensor] = {}
-    for row, col, scale in REFERENCE_VIEWPOINTS:
-        viewpoint = Viewpoint(centers=torch.tensor([[row, col]]), scales=torch.tensor([scale]))
-        glimpse = sample_at_viewpoint(spatial=image, viewpoint=viewpoint, glimpse_size_px=RELEASED_GLIMPSE_SIZE_PX)
-        if isinstance(model, CanViTForImageClassification):
-            outputs["logits"], state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)
-        else:
-            state = model(glimpse=glimpse, state=state, viewpoint=viewpoint).state
-    outputs["canvas"] = state.canvas
-    if isinstance(model, CanViTForPretraining):
-        outputs |= {"cls": state.recurrent_cls, "patches": model.predict_teacher_patches(state.canvas),
-                    "cls_pred": model.predict_teacher_cls(state.recurrent_cls)}
-    return outputs
-
-
-@torch.inference_mode()
-def verify(staged: Path, kind: Kind, reference: dict[str, Tensor]) -> None:
-    """The staged checkpoint, loaded strictly by 0.2 code, reproduces the 0.1 outputs bit for bit."""
-    assert reference["kind"] == kind, (reference["kind"], kind)
-    if kind == "probe":
-        probe = SegmentationProbe.from_pretrained(str(staged)).eval()
-        outputs = {"logits": probe(reference["features"])}
-    else:
-        model_class = CanViTForPretraining if kind == "pretraining" else CanViTForImageClassification
-        model = model_class.from_pretrained(str(staged)).eval()
-        image = preprocess(512)(Image.open(REFERENCE_IMAGE).convert("RGB"))
-        assert isinstance(image, Tensor)
-        outputs = _rollout(model, image.unsqueeze(0))
-    for name, value in outputs.items():
-        assert torch.equal(value, reference[name]), f"{staged.name}: {name} differs from the 0.1 output"
 
 
 def stage(repo: str, kind: Kind, out_dir: Path) -> Path:

@@ -6,8 +6,10 @@ new private repo (made public on the Hub once reviewed).
 
     python -m canvit_pytorch.hub.publish pretrained --checkpoint RUN/step-2000000.pt --repo NAME --out-dir staging
     python -m canvit_pytorch.hub.publish probe --run-dir PROBE_RUN --out-dir staging
+    python -m canvit_pytorch.hub.publish classifier --export-dir EXPORT --reference ref.pt --repo NAME ... --out-dir staging
 """
 
+import dataclasses
 import json
 import logging
 import shutil
@@ -19,10 +21,15 @@ import torch
 import tyro
 from huggingface_hub import HfApi
 
-from canvit_pytorch.hub import cards
+from canvit_pytorch import legacy
+from canvit_pytorch.hub import cards, reference
 from canvit_pytorch.hub.repos import (
     DINOV3_PROBE_MODEL_NAMES,
+    DINOV3_VITB16_IN1K_PROBE,
     PRETRAINED,
+    RELEASED_CANVAS_GRID_SIZE,
+    RELEASED_GLIMPSE_SIZE_PX,
+    RELEASED_SCENE_SIZE_PX,
     PretrainingDataset,
     ade20k_probe_name,
     dinov3_ade20k_probe_name,
@@ -167,6 +174,81 @@ class Probe:
         _upload(staged, _hub_id(name), push=self.push)
 
 
+@dataclass(frozen=True)
+class LpftRecipe:
+    """How the classifier was fine-tuned: linear probing then fine-tuning (LP-FT) with F-IID rollouts, full BPTT and
+    cross-entropy at every glimpse, at the released geometry. The card states these values."""
+
+    trainer: str
+    """Where it was trained, e.g. "JAX/Flax NNX on Cloud TPU, exported to PyTorch"."""
+    glimpses: int
+    batch_size: int
+    total_steps: int
+    checkpoint_step: int
+    """The step of the published weights; the last checkpoint saved can precede the schedule's end."""
+    warmup_steps: int
+    learning_rate: float
+    weight_decay: float
+    grad_clip: float
+    label_smoothing: float
+    run_id: str
+
+
+@dataclass(frozen=True)
+class Classifier:
+    """An ImageNet-1k classifier exported in the canvit-pytorch 0.1 format by a trainer outside this package, as a
+    CanViTForImageClassification repo. Its 0.2 conversion must reproduce the 0.1 code's outputs, which
+    scripts/record_0_1_outputs.py records."""
+
+    export_dir: Path
+    """config.json and model.safetensors in the 0.1 format; its training record names the base checkpoint."""
+    reference: Path
+    repo: str
+    """The full Hub repo id."""
+    pretraining: PretrainingDataset
+    top1_accuracy: float
+    accuracy_conditions: str
+    """How the accuracy was measured, e.g. "C2F, T=21, mean over 11 policy seeds"."""
+    recipe: LpftRecipe
+    out_dir: Path
+    push: bool = False
+
+    def run(self) -> None:
+        recorded = torch.load(self.reference, weights_only=True)
+        assert recorded["inputs"] == reference.inputs(), "the reference was recorded on other inputs"
+        outputs = recorded["models"][str(self.export_dir.resolve())]
+        base = json.loads((self.export_dir / "config.json").read_text())["training"]["base_checkpoint"]
+        assert base == PRETRAINED[self.pretraining], (base, self.pretraining)
+        staged = self.out_dir / self.repo.split("/")[-1]
+        shutil.rmtree(staged, ignore_errors=True)
+        legacy.convert_checkpoint(str(self.export_dir), staged)
+        reference.verify(staged, "classification", outputs)
+        r = self.recipe
+        config_path = staged / "config.json"
+        config = json.loads(config_path.read_text())
+        config["training"] = {"base_checkpoint": base, "fused_probe": DINOV3_VITB16_IN1K_PROBE,
+                              "scene_size_px": RELEASED_SCENE_SIZE_PX, "glimpse_size_px": RELEASED_GLIMPSE_SIZE_PX,
+                              "canvas_grid_size": RELEASED_CANVAS_GRID_SIZE, **dataclasses.asdict(r)}
+        config_path.write_text(json.dumps(config, indent=2, sort_keys=True) + "\n")
+        details = [
+            ("Initialization", (f"[{base}](https://huggingface.co/{base}), its CLS readout fused with the DINOv3 probe "
+                                f"`{DINOV3_VITB16_IN1K_PROBE}`")),
+            ("Rollouts", (f"{r.glimpses} F-IID glimpses of {RELEASED_GLIMPSE_SIZE_PX} px on {RELEASED_SCENE_SIZE_PX} px "
+                          f"scenes, {RELEASED_CANVAS_GRID_SIZE} × {RELEASED_CANVAS_GRID_SIZE} canvas, full BPTT")),
+            ("Training", f"{r.checkpoint_step:,} of {r.total_steps:,} steps, batch size {r.batch_size}"),
+            ("Optimizer", (f"AdamW, learning rate {r.learning_rate:g}, weight decay {r.weight_decay:g}, gradient "
+                           f"clipping {r.grad_clip:g}")),
+            ("Schedule", f"{r.warmup_steps:,}-step linear warmup, then cosine decay to 0"),
+            ("Loss", f"cross-entropy at every glimpse, label smoothing {r.label_smoothing:g}"),
+            ("Trainer", r.trainer),
+        ]
+        (staged / "README.md").write_text(cards.classifier_card(
+            repo=self.repo, pretrained_repo=base, pretraining=self.pretraining, details=details,
+            top1_accuracy=self.top1_accuracy, conditions=self.accuracy_conditions,
+        ))
+        _upload(staged, self.repo, push=self.push)
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
-    tyro.extras.subcommand_cli_from_dict({"pretrained": Pretrained, "probe": Probe}).run()
+    tyro.extras.subcommand_cli_from_dict({"pretrained": Pretrained, "probe": Probe, "classifier": Classifier}).run()

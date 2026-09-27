@@ -22,7 +22,7 @@ done
 out=$(mktemp -d)
 cp -R site/index.html site/style.css site/js "$out/"
 mkdir "$out/data" && for bundle in $bundles; do cp -R "site/$bundle" "$out/data/"; done
-mkdir "$out/assets" && cp -R site/assets/logos site/assets/paper "$out/assets/"
+mkdir "$out/assets" && cp -R site/assets/logos site/assets/paper site/assets/social-preview.png "$out/assets/"
 find "$out" -type f | sed "s|^$out/||" | sort
 du -sh "$out"
 

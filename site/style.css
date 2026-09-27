@@ -8,11 +8,12 @@
   --soft: #f1f5f9;
   --underline: #94a3b8;
   --highlight: #fde68a;
-  --mark: #fbbf24;
   --glimpse: #2d6cdf;
   --canvas: #e0483e;
-  /* Blue and red mean glimpse and canvas, and nothing else. The CanViT wordmark joins them: Can(vas) in red,
-     ViT in blue. Links and highlights use neutral colors. */
+  --policy: #0d9488;
+  --mark: color-mix(in srgb, var(--policy) 45%, white);
+  /* Blue, red and teal mean glimpse, canvas and policy, and nothing else; teal marks policy phrases too. The CanViT
+     wordmark joins blue and red: Can(vas) in red, ViT in blue. Links and highlights use neutral colors. */
   --brand: linear-gradient(90deg, var(--canvas), var(--glimpse));
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
@@ -89,6 +90,8 @@ sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); f
   color: var(--text); font-size: 1.14rem; text-align: center; text-wrap: balance;
 }
 .tldr strong { color: var(--ink); }
+/* A long centered paragraph is hard to read on a phone. */
+@media (max-width: 600px) { .tldr { text-align: left; } }
 
 /* Teaser */
 .teaser { margin-block: 0; }
@@ -133,7 +136,7 @@ strong, b { color: var(--ink); font-weight: 650; }
 .cycle { color: var(--muted); }
 /* The landed text pops out, sways left and right, settles, then gets underlined. */
 .cycle.landed { align-self: center; color: var(--ink);
-                background: linear-gradient(transparent 62%, var(--highlight) 62%) center / 100% 1.15em no-repeat;
+                background: linear-gradient(transparent 62%, var(--mark) 62%) center / 100% 1.15em no-repeat;
                 animation: pop .6s ease-out, sway 1s .25s ease-in-out, sweep .7s 1.15s ease-out backwards; }
 @keyframes pop { from { scale: .6; opacity: .3; } 45% { scale: 1.22; opacity: 1; } 70% { scale: .95; } to { scale: 1; } }
 @keyframes sway {
@@ -154,8 +157,9 @@ strong, b { color: var(--ink); font-weight: 650; }
   padding: 22px 22px 20px; border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 14px;
   background: var(--bg);
 }
-.job .number { margin: 0 0 12px; color: var(--accent); font-size: 2.1rem; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
-.job h3 { margin: 0 0 6px; color: var(--ink); font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em; }
+.job h3 { display: flex; align-items: baseline; gap: .4em; margin: 0 0 8px; color: var(--accent);
+          font-size: 1.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.015em; }
+.job .number { font-size: 1.5em; line-height: 1; }
 .job p:last-child { margin: 0; color: var(--text); font-size: 1rem; line-height: 1.55; }
 .claim {
   max-width: 820px; margin: 48px auto 0; color: var(--ink); font-size: clamp(1.55rem, 1.1rem + 1.5vw, 2.2rem); font-weight: 800;

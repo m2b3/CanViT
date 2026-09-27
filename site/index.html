@@ -31,7 +31,7 @@
   </header>
 
   <main>
-    <p class="tldr"><strong>TL;DR</strong> CanViT is the <strong>first task- and policy-agnostic Active-Vision Foundation Model</strong> (AVFM). A Vision Transformer backbone processes <span class="term-glimpse">glimpses</span>, while a fine-grained, scene-wide spatio&#8209;semantic memory, the <span class="term-canvas">canvas</span>, integrates them across time. <strong>Pretrained without labels</strong>, by reconstructing <strong>scene-wide</strong> <a href="https://github.com/facebookresearch/dinov3">DINOv3</a> embeddings from sequences of <strong>localized</strong> glimpses at randomized locations and zoom levels, a frozen CanViT-B achieves <strong class="hl"><span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU</strong> in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <strong class="hl"><span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer</strong> inference FLOPs.</p>
+    <p class="tldr"><strong>TL;DR</strong> CanViT is the <strong>first task- and policy-agnostic Active-Vision Foundation Model</strong> (AVFM). A Vision Transformer backbone processes <span class="term-glimpse">glimpses</span>, while a fine-grained, scene-wide spatio&#8209;semantic memory, the <span class="term-canvas">canvas</span>, integrates them across time. <strong>Pretrained without labels</strong>, by reconstructing <strong>scene-wide</strong> <a href="https://github.com/facebookresearch/dinov3">DINOv3</a> embeddings from sequences of <strong>localized</strong> glimpses at randomized locations and zoom levels, CanViT&#8209;B trains from a random initialization on 13.2 million ImageNet-21k scenes (an order of magnitude more than previous active models) and 1 billion glimpses <strong class="hl">in 166 hours on a single&nbsp;H100</strong>. A frozen CanViT&#8209;B achieves <strong class="hl"><span data-macro="adeSingleGlimpseMiou">38.5</span>% ADE20K mIoU</strong> in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <strong><span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer</strong> inference FLOPs, as well as its FLOP- or input-matched DINOv3 teacher. On ImageNet-1k classification, CanViT&#8209;B also <strong>sets a new active&#8209;vision state of the art</strong>, with <strong class="hl"><span data-macro="inkFinetunedBest">84.5</span>% top-1 accuracy</strong> after fine-tuning.</p>
 
     <figure class="teaser wide">
       <canvit-episode src="data/street-riid data/shop-riid data/ferry-riid" autoplay></canvit-episode>
@@ -45,13 +45,11 @@
           <p class="does">Seeing</p>
           <div class="group-cards">
             <article class="job" style="--accent: var(--glimpse)">
-              <p class="number">1</p>
-              <h3>Instantaneous vision</h3>
+              <h3><span class="number">1</span>Instantaneous vision</h3>
               <p>Making sense of what it sees at a given moment.</p>
             </article>
             <article class="job" style="--accent: var(--canvas)">
-              <p class="number">2</p>
-              <h3>Memory</h3>
+              <h3><span class="number">2</span>Memory</h3>
               <p>Updating a persistent, evolving understanding of the scene.</p>
             </article>
           </div>
@@ -60,9 +58,8 @@
         <div class="group policy">
           <p class="does">Choosing where to look</p>
           <div class="group-cards">
-            <article class="job" style="--accent: var(--muted)">
-              <p class="number">3</p>
-              <h3>Action selection</h3>
+            <article class="job" style="--accent: var(--policy)">
+              <h3><span class="number">3</span>Action selection</h3>
               <p>Deciding where, and at what zoom level, to look next.</p>
             </article>
           </div>
@@ -70,7 +67,7 @@
         </div>
       </div>
       <p class="claim"><span><u>No policy</u> can make up for a poor observer.</span> <span>A general-purpose observer lets you use <u>any policy</u>.</span></p>
-      <p class="thesis">CanViT is that observer, pretrained without labels and without committing to a viewing policy.</p>
+      <p class="thesis">CanViT is such an observer.</p>
     </section>
 
     <section class="wide" id="architecture">
@@ -98,8 +95,8 @@
           <p class="metric">Top-1 accuracy (%)</p>
           <div class="dots">
             <p class="dot-group">This work</p>
-            <div class="dot-row ours"><span class="name">CanViT-B, fine&#8209;tuned</span><span class="track"><span class="dot"></span></span><span class="num"><span data-macro="inkFinetunedBest">84.5</span></span></div>
-            <div class="dot-row ours"><span class="name">CanViT-B, frozen</span><span class="track"><span class="dot"></span></span><span class="num"><span data-macro="inkFrozenBest">81.1</span></span></div>
+            <div class="dot-row ours"><span class="name">CanViT&#8209;B, fine&#8209;tuned</span><span class="track"><span class="dot"></span></span><span class="num"><span data-macro="inkFinetunedBest">84.5</span></span></div>
+            <div class="dot-row ours"><span class="name">CanViT&#8209;B, frozen</span><span class="track"><span class="dot"></span></span><span class="num"><span data-macro="inkFrozenBest">81.1</span></span></div>
             <p class="dot-group">Best prior active model</p>
             <div class="dot-row"><span class="name">AdaptiveNN</span><span class="track"><span class="dot"></span></span><span class="num">82.2</span></div>
             <div class="dot-axis"><span></span><span class="ticks"></span><span></span></div>
@@ -111,8 +108,8 @@
     <section class="prose" id="abstract">
       <h2>Abstract</h2>
       <p>Active computer vision promises efficient, biologically plausible perception through sequential, localized glimpses, but lacks scalable general-purpose architectures and pretraining pipelines, leaving Active-Vision Foundation Models (AVFMs) underexplored. We introduce <strong>CanViT</strong>, the first task- and policy-agnostic AVFM. CanViT uses scene-relative RoPE to bind a retinotopic Vision Transformer backbone and a spatiotopic scene-wide latent workspace, the <em>canvas</em>. Efficient interaction with this high-capacity working memory is supported by Canvas Attention, a novel asymmetric cross-attention mechanism. We decouple <em>thinking</em> (backbone-level) and <em>memory</em> (canvas-level), eliminating canvas-side self-attention and fully-connected layers to achieve fast sequential inference and scalability to high output resolutions. </p>
-      <p>We propose a label-free active vision pretraining scheme, <strong>policy-agnostic passive-to-active dense latent distillation</strong>: reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT-B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, in 166 hours on a single H100. </p>
-      <p>On ADE20K segmentation, a frozen CanViT-B achieves <span data-macro="adeSingleGlimpseMiou">38.5</span>% mIoU in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT-B reaches <span data-macro="adeBestMiou">45.9</span>% ADE20K mIoU. On ImageNet-1k classification, CanViT-B also sets a new active-vision state of the art, with <span data-macro="inkFinetunedBest">84.5</span>% top-1 accuracy after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.</p>
+      <p>We propose a label-free active vision pretraining scheme, <strong>policy-agnostic passive-to-active dense latent distillation</strong>: reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT&#8209;B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, in 166 hours on a single&nbsp;H100. </p>
+      <p>On ADE20K segmentation, a frozen CanViT&#8209;B achieves <span data-macro="adeSingleGlimpseMiou">38.5</span>% mIoU in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT&#8209;B reaches <span data-macro="adeBestMiou">45.9</span>% ADE20K mIoU. On ImageNet-1k classification, CanViT&#8209;B also sets a new active&#8209;vision state of the art, with <span data-macro="inkFinetunedBest">84.5</span>% top-1 accuracy after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.</p>
     </section>
 
 

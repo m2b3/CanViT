@@ -105,7 +105,17 @@ strong, b { color: var(--ink); font-weight: 650; }
 .lead {
   max-width: 700px; margin: 0 auto; color: var(--text); font-size: 1.16rem; text-align: center; text-wrap: balance;
 }
-.jobs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; max-width: 960px; margin: 40px auto 0; }
+.axes { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; max-width: 1000px; margin: 40px auto 0; }
+.group { display: flex; flex-direction: column; padding: 14px; border-radius: 20px; }
+.group.observer { background: var(--soft); }
+.group.policy { border: 1.5px dashed #cbd5e1; }
+.group-label { margin: 2px 6px 12px; color: var(--ink); font-size: .95rem; font-weight: 750; }
+.group-label span { color: var(--muted); font-weight: 500; }
+.group-cards { flex: 1; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 12px; }
+@media (max-width: 760px) {
+  .axes { grid-template-columns: minmax(0, 1fr); }
+  .group-cards { grid-auto-flow: row; }
+}
 .job {
   padding: 22px 22px 20px; border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 14px;
   background: var(--bg);
@@ -116,17 +126,28 @@ strong, b { color: var(--ink); font-weight: 650; }
 .thesis {
   max-width: 700px; margin: 36px auto 0; color: var(--text); font-size: 1.08rem; text-align: center; text-wrap: balance;
 }
-@media (max-width: 760px) { .jobs { grid-template-columns: minmax(0, 1fr); } }
 
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; max-width: 1040px; margin: 0 auto; }
-.stat { padding: 24px 22px 22px; border-radius: 16px; background: var(--soft); }
-.stat p { margin: 0; }
-.stat .value { color: var(--ink); font-size: clamp(2.2rem, 1.6rem + 1.6vw, 2.9rem); font-weight: 800; line-height: 1;
-               letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-.stat .what { margin-top: 12px; color: var(--ink); font-size: .98rem; font-weight: 650; line-height: 1.35; }
-.stat .versus { margin-top: 6px; color: var(--muted); font-size: .88rem; line-height: 1.45; }
-@media (max-width: 900px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 480px) { .stats { grid-template-columns: minmax(0, 1fr); } }
+.comparisons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; max-width: 1040px; margin: 0 auto; }
+.comparison { padding: 26px 26px 24px; border-radius: 16px; background: var(--soft); }
+.comparison h3 { margin: 0 0 18px; color: var(--ink); font-size: 1.15rem; font-weight: 750; letter-spacing: -.01em; }
+.comparison .metric { margin: 18px 0 10px; color: var(--muted); font-size: .85rem; font-weight: 600; }
+.comparison h3 + .metric { margin-top: 0; }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; grid-template-columns: minmax(0, 11.5em) minmax(0, 1fr) 3.4em; align-items: center; gap: 12px; }
+.bar .name { color: var(--text); font-size: .9rem; line-height: 1.25; }
+.bar.ours .name { color: var(--ink); font-weight: 650; }
+.bar .track { height: 22px; }
+.bar .fill { display: block; height: 100%; width: 0; border-radius: 0 6px 6px 0; background: #cbd5e1;
+             transition: width .9s cubic-bezier(.2, .7, .2, 1); }
+.bar.ours .fill { background: linear-gradient(90deg, var(--glimpse), var(--canvas)); }
+.shown .bar .fill { width: calc(var(--fraction) * 100%); }
+.bar .num { color: var(--muted); font-size: .95rem; font-weight: 650; font-variant-numeric: tabular-nums; text-align: right; }
+.bar.ours .num { color: var(--ink); font-weight: 800; }
+.callout { margin: 12px 0 0; color: var(--ink); font-size: 1.05rem; font-weight: 750; text-align: right; }
+.comparison .note { margin: 20px 0 0; color: var(--muted); font-size: .88rem; }
+@media (prefers-reduced-motion: reduce) { .bar .fill { transition: none; } }
+@media (max-width: 860px) { .comparisons { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 480px) { .bar { grid-template-columns: minmax(0, 8.5em) minmax(0, 1fr) 3em; } }
 
 .cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin: clamp(56px, 8vw, 80px) auto 0; padding: 0 16px; }
 .button.big { padding: 16px 28px; border-radius: 14px; font-size: 1.1rem; gap: 10px; }

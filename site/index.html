@@ -38,51 +38,78 @@
 
     <section class="wide" id="results">
       <h2>Results</h2>
-      <div class="stats">
-        <div class="stat">
-          <p class="value"><span data-macro="adeSingleGlimpseMiou">38.5</span>%</p>
-          <p class="what">ADE20K mIoU from a single glimpse</p>
-          <p class="versus">Best prior active model: <span data-macro="adeBestPriorMiou">27.6</span>%, with <span data-macro="adeCheapestBeatFlopRatio">20</span>× the FLOPs</p>
-        </div>
-        <div class="stat">
-          <p class="value"><span data-macro="adeBestMiou">45.9</span>%</p>
-          <p class="what">ADE20K mIoU with more glimpses</p>
-          <p class="versus">Frozen CanViT-B, linear probe</p>
-        </div>
-        <div class="stat">
-          <p class="value"><span data-macro="inkFinetunedBest">84.5</span>%</p>
-          <p class="what">ImageNet-1k top-1 accuracy</p>
-          <p class="versus">Best prior active model: 82.2%</p>
-        </div>
-        <div class="stat">
-          <p class="value">166 h</p>
-          <p class="what">Pretraining on a single H100</p>
-          <p class="versus">13.2M scenes, 1B glimpses, no labels</p>
-        </div>
+      <div class="comparisons">
+        <article class="comparison">
+          <h3>ADE20K semantic segmentation</h3>
+          <p class="metric">mIoU (%), higher is better</p>
+          <div class="bars">
+            <div class="bar ours"><span class="name">CanViT-B, 1 glimpse</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeSingleGlimpseMiou">38.5</span></span></div>
+            <div class="bar ours"><span class="name">CanViT-B, 21 glimpses</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeBestMiou">45.9</span></span></div>
+            <div class="bar"><span class="name"><span data-macro="adeBestPriorName">AME (SETR)</span>, prior best</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeBestPriorMiou">27.6</span></span></div>
+          </div>
+          <p class="metric">Inference GFLOPs, lower is better</p>
+          <div class="bars">
+            <div class="bar ours"><span class="name">CanViT-B, 1 glimpse</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeSingleGlimpseGflops">15.8</span></span></div>
+            <div class="bar"><span class="name">AME (SETR), 8 glimpses</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="adeBestPriorGflops">311.5</span></span></div>
+          </div>
+          <p class="callout"><span data-macro="adeCheapestBeatFlopRatio">20</span>× fewer FLOPs</p>
+        </article>
+        <article class="comparison">
+          <h3>ImageNet-1k classification</h3>
+          <p class="metric">Top-1 accuracy (%), higher is better</p>
+          <div class="bars">
+            <div class="bar ours"><span class="name">CanViT-B, fine&#8209;tuned</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="inkFinetunedBest">84.5</span></span></div>
+            <div class="bar ours"><span class="name">CanViT-B, frozen</span><span class="track"><span class="fill"></span></span><span class="num"><span data-macro="inkFrozenBest">81.1</span></span></div>
+            <div class="bar"><span class="name">AdaptiveNN, prior best</span><span class="track"><span class="fill"></span></span><span class="num">82.2</span></div>
+          </div>
+          <p class="note">Pretrained in 166 hours on a single H100: 13.2M ImageNet-21k scenes, 1 billion glimpses, no labels.</p>
+        </article>
       </div>
     </section>
 
     <section class="wide" id="active-vision">
       <h2>What's in an active-vision model?</h2>
-      <p class="lead">Active computer vision promises efficient, biologically plausible perception through sequential, localized glimpses. Yet active models have struggled to match their passive counterparts, most strikingly on dense prediction.</p>
-      <div class="jobs">
-        <article class="job" style="--accent: var(--glimpse)">
-          <p class="number">1</p>
-          <h3>Instantaneous vision</h3>
-          <p>Making sense of what it sees at a given moment.</p>
-        </article>
-        <article class="job" style="--accent: var(--canvas)">
-          <p class="number">2</p>
-          <h3>Memory</h3>
-          <p>Updating a persistent, evolving understanding of the scene.</p>
-        </article>
-        <article class="job" style="--accent: var(--muted)">
-          <p class="number">3</p>
-          <h3>Action selection</h3>
-          <p>Deciding where, and at what zoom level, to look next.</p>
-        </article>
+      <p class="lead">An active vision model can be considered along three axes:</p>
+      <div class="axes">
+        <div class="group observer">
+          <p class="group-label">Observer <span>· CanViT</span></p>
+          <div class="group-cards">
+            <article class="job" style="--accent: var(--glimpse)">
+              <p class="number">1</p>
+              <h3>Instantaneous vision</h3>
+              <p>Making sense of what it sees at a given moment.</p>
+            </article>
+            <article class="job" style="--accent: var(--canvas)">
+              <p class="number">2</p>
+              <h3>Memory</h3>
+              <p>Updating a persistent, evolving understanding of the scene.</p>
+            </article>
+          </div>
+        </div>
+        <div class="group policy">
+          <p class="group-label">Policy <span>· interchangeable</span></p>
+          <div class="group-cards">
+            <article class="job" style="--accent: var(--muted)">
+              <p class="number">3</p>
+              <h3>Action selection</h3>
+              <p>Deciding where, and at what zoom level, to look next.</p>
+            </article>
+          </div>
+        </div>
       </div>
       <p class="thesis"><strong>No policy can make up for a poor observer.</strong> CanViT is the observer: pretrained without labels and without committing to a viewing policy, it works with any sequence of viewpoints.</p>
+    </section>
+
+    <section class="wide" id="architecture">
+      <h2>The Canvas Vision Transformer (CanViT)</h2>
+      <figure class="architecture">
+        <img src="assets/paper/arch_overview.svg" width="509" height="465" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
+        <figcaption>
+          <p>We adopt a dual-stream structure, equipping a <span class="key" style="--key: #d0a8e0">ViT backbone</span>, which processes localized <span class="key" style="--key: #4080d0">glimpses</span>, with a <span class="key" style="--key: #e05050">canvas</span>, a fine-grained scene-wide spatio-semantic memory.</p>
+          <p>At each timestep, a glimpse is extracted from a viewpoint (<i>x</i>, <i>y</i>, <i>s</i>), patchified, and processed through the backbone, alongside a <span class="key" style="--key: #50b050">recurrent CLS token</span> and a <span class="key" style="--key: #f0a030">Viewpoint Encoding (VPE) token</span>.</p>
+          <p>The canvas regularly interacts with the glimpse stream via <strong>Canvas Attention</strong>, alternating between read (R) and write (W) operations to, respectively, condition the backbone's processing on the canvas and populate the canvas. Both streams are equipped with <span class="key" style="--key: #b0b0b0">register tokens</span>.</p>
+        </figcaption>
+      </figure>
     </section>
 
     <section class="prose" id="abstract">
@@ -121,6 +148,18 @@
   </footer>
 
   <script type="module">
+    // Each bar's length is its own printed value, relative to the largest value in its group, from zero.
+    const bars = document.querySelectorAll(".bars");
+    for (const group of bars) {
+      const rows = [...group.querySelectorAll(".bar")];
+      const values = rows.map((row) => parseFloat(row.querySelector(".num").textContent));
+      const max = Math.max(...values);
+      rows.forEach((row, i) => row.style.setProperty("--fraction", String(values[i] / max)));
+    }
+    new IntersectionObserver((entries, observer) => {
+      for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add("shown"); observer.unobserve(entry.target); }
+    }, { threshold: 0.3 }).observe(document.querySelector(".comparisons"));
+
     const copy = document.querySelector(".copy");
     copy.addEventListener("click", async () => {
       await navigator.clipboard.writeText(document.querySelector(".bibtex code").textContent);

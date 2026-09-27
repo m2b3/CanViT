@@ -5,7 +5,7 @@
 // labeled with their titles.
 
 import { loadBundle } from "./bundle.js";
-import { CORRECTNESS, correctnessImage, layerImage } from "./layers.js";
+import { CORRECTNESS, colormapGradient, correctnessImage, layerImage, layerSpec } from "./layers.js";
 
 const READOUTS = {
   canvas: { label: "PCA", image: (bundle, t) => layerImage(bundle, t, "canvas") },
@@ -63,6 +63,12 @@ template.innerHTML = `
           background: var(--canvit-ink, #0f172a); color: #fff; }
   .play:hover { color: #fff; opacity: .85; }
   .play svg { width: 14px; height: 14px; fill: currentColor; }
+  .with-colorbar { display: flex; gap: 8px; width: 100%; }
+  .with-colorbar canvas { flex: 1; min-width: 0; }
+  .colorbar { display: flex; flex-direction: column; align-items: center; gap: 4px; white-space: nowrap;
+              font: 11px/1 ui-monospace, "JetBrains Mono", monospace; color: var(--canvit-muted, #64748b); }
+  .colorbar-bar { flex: 1; width: 12px; border-radius: 3px; }
+  .colorbar.off { visibility: hidden; }
   .meter { grid-column: 7; margin-top: 12px; font-size: 12.5px; color: var(--canvit-muted, #64748b); }
   .meter-head { display: flex; align-items: baseline; gap: 8px; }
   .meter-value { color: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -100,7 +106,7 @@ template.innerHTML = `
   <div class="column model-column"><div class="label"></div><div class="body"><div class="model"><b>CanViT</b><small class="step"></small></div></div></div>
   <div class="column arrow"><div class="label"></div><div class="body">
     ${arrow("write", "red")}<span class="tag">write</span>${arrow("read", "red read")}<span class="tag">read</span></div></div>
-  <div class="column canvas"><div class="label canvas">Canvas</div><div class="body"><canvas class="canvas-view"></canvas></div></div>
+  <div class="column canvas"><div class="label canvas">Canvas</div><div class="body"><div class="with-colorbar"><canvas class="canvas-view"></canvas><div class="colorbar" aria-hidden="true"><span class="colorbar-max"></span><div class="colorbar-bar"></div><span>0</span></div></div></div></div>
   <div class="meter" hidden>
     <div class="meter-head"><span title="Share of annotated pixels whose class, decoded from the canvas, is right">Pixel accuracy</span><b class="meter-value"></b><span class="meter-gain" title="Change since the first glimpse"></span></div>
     <div class="meter-track"><span class="meter-base"></span><span class="meter-gained"></span><span class="meter-start"></span></div>
@@ -162,6 +168,7 @@ class CanvitEpisode extends HTMLElement {
                step: $(".step"), play: $(".play"), scenes: $(".scenes"), readouts: $(".readouts"),
                meter: $(".meter"), value: $(".meter-value"), gain: $(".meter-gain"), base: $(".meter-base"),
                gained: $(".meter-gained"), start: $(".meter-start"), legend: $(".legend"),
+               colorbar: $(".colorbar"), colorbarMax: $(".colorbar-max"), colorbarBar: $(".colorbar-bar"),
                arrows: Object.fromEntries([...this.shadowRoot.querySelectorAll("[data-arrow]")].map((svg) =>
                  [svg.dataset.arrow, svg.querySelector(".packet")])) };
     this.$.play.addEventListener("click", () => {
@@ -194,6 +201,7 @@ class CanvitEpisode extends HTMLElement {
   }
 
   connectedCallback() {
+    this.$.colorbarBar.style.background = colormapGradient(layerSpec("entropy").colormap, { angle: "0deg" });
     this.$.legend.innerHTML = Object.values(CORRECTNESS)
       .map(({ label, rgb }) => `<span><i style="background: rgb(${rgb.join(" ")})"></i>${label}</span>`).join("");
     this.#showReadout();
@@ -234,6 +242,8 @@ class CanvitEpisode extends HTMLElement {
       this.#schedule = schedule(bundle.glimpses.length);
       const annotated = bundle.truth !== null && bundle.glimpses.every((g) => g.pixelAccuracy !== null);
       this.$.meter.hidden = !annotated;
+      this.$.colorbarMax.textContent = `log ${bundle.manifest.readout.num_classes}`;
+      this.$.colorbar.title = `Entropy of the decoded class distribution, from 0 to its maximum, log ${bundle.manifest.readout.num_classes}`;
       this.$.readouts.querySelector('[data-readout="correct"]').hidden = !annotated;
       this.#time = this.#wantsAutoplay() ? 0 : this.#schedule.total;
       this.#renderPlayButton();
@@ -247,6 +257,7 @@ class CanvitEpisode extends HTMLElement {
   #showReadout() {
     for (const button of this.$.readouts.children) button.setAttribute("aria-pressed", String(button.dataset.readout === this.readout));
     this.$.legend.hidden = this.readout !== "correct";
+    this.$.colorbar.classList.toggle("off", this.readout !== "entropy");
     this.#draw();
   }
 

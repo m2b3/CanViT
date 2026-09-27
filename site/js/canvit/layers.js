@@ -24,7 +24,7 @@ const LAYERS = {
   canvas: { kind: "rgb", grid: true, title: "Canvas", note: (bundle) => PCA_NOTES[bundle.manifest.pca.protocol] },
   labels: { kind: "labels", grid: true, title: "Segmentation" },
   entropy: {
-    kind: "scalar", grid: true, title: "Uncertainty", colormap: "viridis", domain: "unit",
+    kind: "scalar", grid: true, title: "Uncertainty", colormap: "magma", domain: "unit",
     low: "sure", high: "unsure", quantity: (bundle) => `entropy/log ${bundle.manifest.readout.num_classes}`, value: (f) => f,
   },
   change: {
@@ -151,14 +151,14 @@ export function correctnessImage(bundle, t) {
 
 const drawnCorrectness = new WeakMap();
 
-/** CSS gradient of a colormap, for legends. */
-export function colormapGradient(name, stops = 16) {
+/** CSS gradient of a colormap, for legends, from its low end toward `angle`. */
+export function colormapGradient(name, { stops = 16, angle = "90deg" } = {}) {
   const lut = COLORMAPS[name];
   const colors = Array.from({ length: stops }, (_, i) => {
     const k = 3 * Math.round((i / (stops - 1)) * 255);
     return `rgb(${lut[k]} ${lut[k + 1]} ${lut[k + 2]})`;
   });
-  return `linear-gradient(90deg, ${colors.join(", ")})`;
+  return `linear-gradient(${angle}, ${colors.join(", ")})`;
 }
 
 export const paletteCss = (c) =>

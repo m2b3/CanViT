@@ -1,25 +1,41 @@
-# CanViT (Canvas Vision Transformer)
+<p align="center">
+  <img src="site/assets/logos/canvit-wordmark.svg" alt="CanViT" height="72">
+</p>
 
-[![Project page](https://img.shields.io/badge/Project-page-4080d0)](https://m2b3.github.io/CanViT/)
-[![arXiv](https://img.shields.io/badge/arXiv-2603.22570-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.22570)
-[![Checkpoints](https://img.shields.io/badge/Hugging%20Face-canvit-ffcc4d?logo=huggingface&logoColor=black)](https://huggingface.co/canvit)
-[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS-2026-7a2c85)](https://neurips.cc/)
-[![PyPI Downloads](https://static.pepy.tech/badge/canvit-pytorch)](https://pepy.tech/projects/canvit-pytorch)
+<h1 align="center">CanViT: Toward Active-Vision Foundation Models (NeurIPS 2026)</h1>
+
+<p align="center">
+  <a href="https://yberreby.com">Yohaï-Eliel Berreby</a><sup>1,2</sup> ·
+  <a href="https://mila.quebec/en/directory/sabrina-du">Sabrina Du</a><sup>1,2</sup> ·
+  <a href="https://audrey-durand.fsg.ulaval.ca/en">Audrey Durand</a><sup>2,3</sup> ·
+  <a href="https://m2b3.github.io/">B. Suresh Krishna</a><sup>1</sup>
+  <br>
+  <sup>1</sup>McGill University · <sup>2</sup>Mila – Quebec AI Institute · <sup>3</sup>Université Laval
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/logos/neurips-dark.svg">
+    <img src="site/assets/logos/neurips.svg" alt="NeurIPS" height="48">
+  </picture>
+</p>
+
+<p align="center">
+  <a href="https://m2b3.github.io/CanViT/"><img alt="Project page" src="https://img.shields.io/badge/Project-page-2d6cdf"></a>
+  <a href="https://arxiv.org/abs/2603.22570"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2603.22570-b31b1b?logo=arxiv&logoColor=white"></a>
+  <a href="https://huggingface.co/canvit"><img alt="Models on Hugging Face" src="https://img.shields.io/badge/Hugging%20Face-models-ffcc4d?logo=huggingface&logoColor=black"></a>
+  <a href="https://pypi.org/project/canvit-pytorch/"><img alt="PyPI" src="https://img.shields.io/pypi/v/canvit-pytorch"></a>
+  <a href="https://pepy.tech/projects/canvit-pytorch"><img alt="PyPI downloads" src="https://static.pepy.tech/badge/canvit-pytorch"></a>
+</p>
 
 <p align="center">
   <img src="site/assets/canvas_attention_across_scales.png" alt="Canvas attention across scales — two example trajectories showing glimpses, canvas crops, and full canvas PCA/change maps over multiple timesteps." width="100%">
 </p>
 
-_[CanViT: Toward Active-Vision Foundation Models](https://arxiv.org/abs/2603.22570) (NeurIPS 2026; arXiv:2603.22570)_
+This repository holds the reference PyTorch implementation of CanViT, with pretraining, task specialization and
+evaluation; the package is [`canvit-pytorch`](https://pypi.org/project/canvit-pytorch/) on PyPI.
 
-**Yohaï-Eliel Berreby, Sabrina Du, Audrey Durand, B. Suresh Krishna**
-
-[Project page](https://m2b3.github.io/CanViT/) · [Paper](https://arxiv.org/abs/2603.22570) · [Checkpoints](https://huggingface.co/canvit)
-
-Code for CanViT, the Canvas Vision Transformer: the reference PyTorch
-implementation, pretraining, task specialization and evaluation.
-
-### News
+## News
 
 - **2026-09-26**: canvit-pytorch 0.2: the paper's names throughout the API, and pretraining, probe training and
   evaluation in the package. The checkpoints on the Hub are in the 0.2 format ([Troubleshooting](#troubleshooting)
@@ -32,23 +48,13 @@ implementation, pretraining, task specialization and evaluation.
   - 🎉 CanViT sets a new SOTA on **active ADE20K segmentation**, with **45.9% ADE20K mIoU**, obtained using linear probing from frozen weights.
 - **2026-02-18**: Initial code and [first pretrained checkpoint](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02) release.
 
----
+## Abstract
 
-CanViT is a scalable recurrent architecture for fine-grained vision, and the first **Active-Vision Foundation Model (AVFM)**: a foundation model for active vision that is both task-agnostic and policy-agnostic.
-
-CanViT processes scenes through sequences of localized glimpses, integrating observations over time into a persistent scene-wide latent workspace — the **canvas** — via **Canvas Attention**, an efficient asymmetric cross-attention mechanism which is based on Scene-Relative Rotary Position Embeddings and eliminates canvas-side QKVO projections.
-
-CanViT-B is pretrained on 1 billion glimpses taken from 13.2 million ImageNet-21k scenes, via **policy-agnostic passive-to-active dense distillation** from a frozen high-resolution DINOv3 ViT-B teacher, without human annotations.
-
-CanViT's scene-wide output features at each timestep are linearly decodable into dense predictions without post-hoc upscaling; a frozen-weights CanViT-B evaluated with linear probing outperforms all prior dense active vision models by a wide margin on ADE20K scene parsing, at a fraction of the cost, while offering significantly greater flexibility.
-
-CanViT generalizes natively across policies, sequence length, glimpse size and canvas size, enabling high-resolution and long-horizon continual pretraining alongside task-specific policy learning.
-
-CanViT enables low-latency high-resolution dense vision, running at hundreds of sequential frames per second on commodity hardware.
+**Active computer vision** promises efficient, biologically plausible perception through sequential, localized glimpses, but lacks scalable general-purpose architectures and pretraining pipelines, leaving **Active-Vision Foundation Models (AVFMs)** underexplored. We introduce **CanViT**, the first task- and policy-agnostic AVFM. CanViT uses scene-relative RoPE to bind a retinotopic Vision Transformer backbone and a spatiotopic scene-wide latent workspace, the *canvas*. Efficient interaction with this high-capacity working memory is supported by **Canvas Attention**, a novel asymmetric cross-attention mechanism. We decouple *thinking* (backbone-level) and *memory* (canvas-level), eliminating canvas-side self-attention and fully-connected layers to achieve fast sequential inference and scalability to high output resolutions. We propose a label-free active vision pretraining scheme, **policy-agnostic passive-to-active dense latent distillation**: reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths. We pretrain CanViT-B from a random initialization on 13.2 million ImageNet-21k scenes—an order of magnitude more than previous active models—and 1 billion random glimpses, in 166 hours on a single H100. On ADE20K segmentation, a frozen CanViT-B achieves <span data-macro="adeSingleGlimpseMiou">38.5</span>% mIoU in a single low-resolution glimpse, outperforming the best active model's <span data-macro="adeBestPriorMiou">27.6</span>% with <span data-macro="adeCheapestBeatFlopRatio">20</span>x fewer inference FLOPs as well as its FLOP- or input-matched DINOv3 teacher. Given additional glimpses, CanViT-B reaches <span data-macro="adeBestMiou">45.9</span>% ADE20K mIoU. On ImageNet-1k classification, CanViT-B also sets a new active-vision state of the art, with <span data-macro="inkFinetunedBest">84.5</span>% top-1 accuracy after fine-tuning. CanViT generalizes to longer rollouts, larger scenes, and new policies. Our work narrows the wide gap between passive and active computer vision, demonstrating the potential of task- and policy-agnostic AVFM pretraining.
 
 ## Checkpoints
 
-We release checkpoints on HuggingFace under the [`canvit`](https://huggingface.co/canvit) namespace.
+We release checkpoints on Hugging Face under the [`canvit`](https://huggingface.co/canvit) namespace.
 
 | Checkpoint | Description |
 |------------|-------------|
@@ -199,7 +205,7 @@ We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/
 
 ## Repository layout
 
-[`canvit-pytorch/`](canvit-pytorch) is the Python distribution [`canvit-pytorch`](https://pypi.org/project/canvit-pytorch/):
+[`canvit-pytorch/`](canvit-pytorch) holds the package:
 
 | Module | Contents | Docs |
 |---|---|---|
@@ -233,7 +239,7 @@ Code written for canvit-pytorch 0.1 needs `canvit-pytorch<0.2` and the checkpoin
 
 ## Citation
 
-If you use this work, please cite our preprint:
+If you use this work, please cite our paper:
 
 ```bibtex
 @article{berreby2026canvit,

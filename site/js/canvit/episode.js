@@ -24,12 +24,12 @@ template.innerHTML = `
 <style>
   [hidden] { display: none !important; }
   :host { display: block; container-type: inline-size; color: var(--canvit-ink, #0f172a);
-          font: 14px/1.4 var(--canvit-sans, system-ui, sans-serif);
+          font: 15px/1.4 var(--canvit-sans, system-ui, sans-serif);
           --glimpse: var(--canvit-glimpse, #2d6cdf); --canvas: var(--canvit-canvas, #e0483e); }
   .flow { display: grid; align-items: stretch; gap: 0 6px;
           grid-template-columns: minmax(0, 1fr) 58px minmax(0, .42fr) 58px minmax(0, .34fr) 58px minmax(0, 1fr); }
   .column { display: flex; flex-direction: column; min-width: 0; }
-  .label { height: 26px; font-size: 13.5px; font-weight: 650; }
+  .label { height: 28px; font-size: 15px; font-weight: 700; }
   .label.glimpse { color: var(--glimpse); }
   .label.canvas { color: var(--canvas); }
   .body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
@@ -39,7 +39,7 @@ template.innerHTML = `
   .model { width: 100%; aspect-ratio: 1 / 1.25; border-radius: 14px; display: grid; place-content: center; gap: 4px;
            text-align: center; background: var(--canvit-ink, #0f172a); color: #fff; transition: box-shadow .12s; }
   .model b { font-size: 17px; font-weight: 750; letter-spacing: -.01em; }
-  .model small { font: 12px ui-monospace, "JetBrains Mono", monospace; opacity: .75; }
+  .model small { font: 13.5px ui-monospace, "JetBrains Mono", monospace; opacity: .85; }
   .model.input { box-shadow: 0 0 0 4px color-mix(in srgb, var(--glimpse) 55%, transparent); }
   .model.write { box-shadow: 0 0 0 4px color-mix(in srgb, var(--canvas) 55%, transparent); }
   svg { width: 58px; height: 22px; overflow: visible; }
@@ -49,12 +49,12 @@ template.innerHTML = `
   .blue line { stroke: var(--glimpse); } .blue .head, .blue .packet { fill: var(--glimpse); }
   .red line { stroke: var(--canvas); } .red .head, .red .packet { fill: var(--canvas); }
   .read { transform: scaleX(-1); }
-  .tag { font-size: 11.5px; color: var(--canvit-muted, #64748b); margin-top: -6px; }
+  .tag { font-size: 13px; color: var(--canvit-muted, #475569); margin-top: -6px; }
   .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; margin-top: 20px; }
   .group { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .choice { display: inline-flex; gap: 2px; padding: 3px; border-radius: 10px; background: var(--canvit-placeholder, #f1f5f9); }
-  button { font: inherit; font-size: 13.5px; font-weight: 500; border: 0; background: transparent; cursor: pointer;
-           color: var(--canvit-muted, #64748b); padding: 6px 12px; border-radius: 8px; }
+  button { font: inherit; font-size: 14.5px; font-weight: 550; border: 0; background: transparent; cursor: pointer;
+           color: var(--canvit-muted, #475569); padding: 6px 12px; border-radius: 8px; }
   button:hover { color: var(--canvit-ink, #0f172a); }
   button:focus-visible { outline: 2px solid var(--glimpse); outline-offset: 2px; }
   .choice button[aria-pressed="true"] { background: #fff; color: var(--canvit-ink, #0f172a);
@@ -66,12 +66,12 @@ template.innerHTML = `
   .with-colorbar { display: flex; gap: 8px; width: 100%; }
   .with-colorbar canvas { flex: 1; min-width: 0; }
   .colorbar { display: flex; flex-direction: column; align-items: center; gap: 4px; white-space: nowrap;
-              font: 11px/1 ui-monospace, "JetBrains Mono", monospace; color: var(--canvit-muted, #64748b); }
+              font: 12.5px/1 ui-monospace, "JetBrains Mono", monospace; color: var(--canvit-muted, #475569); }
   .colorbar-bar { flex: 1; width: 12px; border-radius: 3px; }
   .colorbar.off { visibility: hidden; }
-  .meter { grid-column: 7; margin-top: 12px; font-size: 12.5px; color: var(--canvit-muted, #64748b); }
+  .meter { grid-column: 7; margin-top: 12px; font-size: 14px; color: var(--canvit-muted, #475569); }
   .meter-head { display: flex; align-items: baseline; gap: 8px; }
-  .meter-value { color: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .meter-value { color: var(--canvit-ink, #0f172a); font-size: 17px; font-weight: 750; font-variant-numeric: tabular-nums; }
   .meter-gain { color: #15803d; font-weight: 650; font-variant-numeric: tabular-nums; }
   .meter-track { position: relative; height: 8px; margin-top: 6px; border-radius: 4px; background: var(--canvit-placeholder, #f1f5f9); }
   .meter-base, .meter-gained { position: absolute; inset: 0 auto 0 0; transition: width .18s ease-out, left .18s ease-out; }

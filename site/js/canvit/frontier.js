@@ -21,25 +21,25 @@ const NARROW_PX = 560;
 const template = document.createElement("template");
 template.innerHTML = `
 <style>
-  :host { display: block; color: var(--canvit-ink, #0f172a); font: 13px/1.4 var(--canvit-sans, system-ui, sans-serif); }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-bottom: 10px; font-size: 12.5px; }
+  :host { display: block; color: var(--canvit-ink, #0f172a); font: 14px/1.4 var(--canvit-sans, system-ui, sans-serif); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-bottom: 10px; font-size: 14px; }
   .legend span { display: inline-flex; align-items: center; gap: 8px; }
   .legend svg { width: 24px; height: 6px; }
   .frame { position: relative; }
   .chart { display: block; width: 100%; overflow: visible; }
   .grid line { stroke: #e2e8f0; }
-  .axis text { fill: var(--canvit-muted, #64748b); font-size: 12px; font-variant-numeric: tabular-nums; }
-  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: 13px; font-weight: 600; }
+  .axis text { fill: var(--canvit-muted, #475569); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: 14.5px; font-weight: 650; }
   .curve { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
   .band { opacity: .15; }
-  .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: 12px; }
-  .baseline-label tspan { fill: var(--canvit-muted, #64748b); }
-  .callout { fill: var(--canvit-ink, #0f172a); font-size: 13px; font-weight: 700; }
+  .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: 13.5px; }
+  .baseline-label tspan { fill: var(--canvit-muted, #475569); }
+  .callout { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 750; }
   .callout-line { stroke: var(--canvit-ink, #0f172a); stroke-width: 1.2; }
   .focus circle { fill: #fff; stroke-width: 2.5; }
   .reveal { transition: width 1.4s cubic-bezier(.3, .6, .2, 1); }
   .tooltip { position: absolute; pointer-events: none; padding: 7px 10px; border-radius: 8px; background: var(--canvit-ink, #0f172a);
-             color: #fff; font-size: 12.5px; line-height: 1.45; white-space: nowrap; transform: translate(-50%, calc(-100% - 12px)); }
+             color: #fff; font-size: 13.5px; line-height: 1.45; white-space: nowrap; transform: translate(-50%, calc(-100% - 12px)); }
   .tooltip b { font-weight: 650; }
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } }
@@ -87,7 +87,7 @@ class CanvitFrontier extends HTMLElement {
     this.tooltip = this.shadowRoot.querySelector(".tooltip");
     this.shadowRoot.querySelector(".legend").innerHTML = [
       ...Object.values(POLICIES).map(({ label, color }) => `<span>${lineSwatch(color, "")}${label}</span>`),
-      ...Object.values(CANVASES).map(({ label, dash }) => `<span>${lineSwatch("#64748b", dash)}${label}</span>`),
+      ...Object.values(CANVASES).map(({ label, dash }) => `<span>${lineSwatch("#475569", dash)}${label}</span>`),
     ].join("");
     new ResizeObserver(() => {
       const width = Math.round(this.svg.clientWidth);
@@ -120,7 +120,7 @@ class CanvitFrontier extends HTMLElement {
     this.#width = width;
     const narrow = width < NARROW_PX;
     const height = Math.round(Math.min(460, Math.max(300, width * 0.58)));
-    const margin = { top: 12, right: 12, bottom: 50, left: 54 };
+    const margin = { top: 14, right: 12, bottom: 54, left: 58 };
     const svg = this.svg;
     svg.replaceChildren();
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);

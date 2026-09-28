@@ -144,10 +144,12 @@ class CanvitFrontier extends HTMLElement {
   }
 
   #render(width) {
+    // A source change while hidden must invalidate the old visible width.
     this.#width = width;
+    const margin = { top: 14, right: 12, bottom: 54, left: 58 };
+    if (width <= margin.left + margin.right) return;
     const narrow = width < NARROW_PX;
     const height = Math.round(Math.min(460, Math.max(300, width * 0.58)));
-    const margin = { top: 14, right: 12, bottom: 54, left: 58 };
     const svg = this.svg;
     svg.replaceChildren();
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);

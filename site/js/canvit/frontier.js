@@ -206,8 +206,20 @@ class CanvitFrontier extends HTMLElement {
       }
     }
 
+    // Where the F2C order, worse than random, first beats the best prior model (the exported claim). Its note sits
+    // below the point and its arrow rises into it through a corridor that no baseline label may cover.
+    const key = `fine_to_coarse_s${SCENE_SIZE}_c32`;
+    const beat = this.#data.claims.beats_prior.find((claim) => claim.key === key);
+    if (!beat) throw new Error(`<canvit-frontier>: no beats_prior claim for ${key}`);
+    const [cx, cy] = [x(beat.first_beat_gflops), y(beat.first_beat_miou_pct)];
+    const [tx, ty] = [cx + 30, y(bestPrior.miou_pct) + 64];
+    const corridor = { left: cx - 12, right: tx + 4, top: cy + 2, bottom: ty - 12 }; // the arrow arrives from below
+    const inCorridor = (box) =>
+      box.x < corridor.right && box.x + box.width > corridor.left && box.y < corridor.bottom && box.y + box.height > corridor.top;
+
     // Baselines are labeled beside their markers on wide screens; narrow screens rely on the legend. A label goes left
     // where another baseline shares its cost or the edge is near, and above the reference line for the best prior.
+    // A label across the callout's corridor puts its glimpse count on a second line, which narrows it clear.
     for (const b of baselines) {
       const style = BASELINES[b.name];
       if (!style) throw new Error(`<canvit-frontier>: no style for baseline "${b.name}"`);
@@ -219,11 +231,17 @@ class CanvitFrontier extends HTMLElement {
       const isBest = b.name === bestPrior.name && b.num_glimpses === bestPrior.num_glimpses;
       const label = el("text", { class: "baseline-label halo", x: px + 11, y: isBest ? py - 9 : py + 4 }, svg);
       label.textContent = b.name;
-      el("tspan", {}, label).textContent = `, ${b.num_glimpses} glimpses`;
+      const count = el("tspan", {}, label);
+      count.textContent = `, ${b.num_glimpses} glimpses`;
       const sharesCost = baselines.some((other) => other !== b && other.gflops === b.gflops);
       if (sharesCost || px + 11 + label.getComputedTextLength() > width) {
         label.setAttribute("x", String(px - 11));
         label.setAttribute("text-anchor", "end");
+      }
+      if (inCorridor(label.getBBox())) {
+        count.textContent = `${b.num_glimpses} glimpses`;
+        count.setAttribute("x", label.getAttribute("x"));
+        count.setAttribute("dy", "1.15em");
       }
     }
     el("text", { class: "reference-label halo", x: plot.right, y: y(bestPrior.miou_pct) - 8, "text-anchor": "end" }, svg)
@@ -237,17 +255,11 @@ class CanvitFrontier extends HTMLElement {
         .textContent = narrow ? label : `CanViT-B (${label})`;
     }
 
-    // Where the F2C order, worse than random, first beats the best prior model (the exported claim), with the
-    // paper's sentence about it.
-    const key = `fine_to_coarse_s${SCENE_SIZE}_c32`;
-    const beat = this.#data.claims.beats_prior.find((claim) => claim.key === key);
-    if (!beat) throw new Error(`<canvit-frontier>: no beats_prior claim for ${key}`);
-    const [cx, cy] = [x(beat.first_beat_gflops), y(beat.first_beat_miou_pct)];
+    // The F2C callout: its point, and the paper's sentence about it.
     el("circle", { cx, cy, r: 4.5, fill: "#fff", stroke: POLICIES.fine_to_coarse.color, "stroke-width": 2.2 }, drawn);
     const lines = narrow
       ? ["CanViT's advantage holds", "even with the F2C policy's", "worse-than-random", "viewing order"]
       : ["CanViT's advantage holds even with the F2C policy's", "worse-than-random viewing order"];
-    const [tx, ty] = [cx + 30, y(bestPrior.miou_pct) + 64];
     // The arrow rises from the note and reaches the point from below right.
     const diagonal = Math.SQRT1_2;
     arrow([tx - 8, ty - 5], [0, -1], [cx + 6, cy + 6], [-diagonal, -diagonal], drawn);

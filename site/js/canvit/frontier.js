@@ -104,6 +104,7 @@ class CanvitFrontier extends HTMLElement {
   #points = [];
   #shown = false;
   #width = 0;
+  #loadVersion = 0;
 
   constructor() {
     super();
@@ -129,9 +130,14 @@ class CanvitFrontier extends HTMLElement {
   }
 
   async attributeChangedCallback() {
-    const response = await fetch(new URL(this.getAttribute("src"), document.baseURI));
-    if (!response.ok) throw new Error(`<canvit-frontier>: could not fetch ${this.getAttribute("src")}: HTTP ${response.status}`);
-    this.#data = await response.json();
+    const version = ++this.#loadVersion;
+    const src = this.getAttribute("src");
+    const response = await fetch(new URL(src, document.baseURI));
+    if (version !== this.#loadVersion) return;
+    if (!response.ok) throw new Error(`<canvit-frontier>: could not fetch ${src}: HTTP ${response.status}`);
+    const data = await response.json();
+    if (version !== this.#loadVersion) return;
+    this.#data = data;
     const curves = this.#curves();
     if (curves.length !== Object.keys(POLICIES).length * Object.keys(CANVASES).length) {
       throw new Error(`<canvit-frontier>: expected every policy at every canvas, found ${curves.length} curves`);

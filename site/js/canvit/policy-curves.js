@@ -2,8 +2,9 @@
 // accuracy under each of the paper's viewing policies, glimpse by glimpse, over a whole validation set (mean over
 // runs), from the paper's exports: ADE20K mIoU (ade20k_seg.json, policy_curves) or frozen ImageNet-1k top-1
 // (in1k_clf_frozen.json, configs). y-range fixes the vertical axis in percent, so charts of the two tasks can share a
-// span of points. Lines are drawn up to glimpse t (all without t), each in its policy's color from the paper's figures
-// and named at its head; a slide drives t to grow them in step with recorded rollouts.
+// span of points; lines are clipped to it, so a narrow range shows the end of the rollouts with the low starts
+// entering from below. Lines are drawn up to glimpse t (all without t), each in its policy's color from the paper's
+// figures and named at its head; a slide drives t to grow them in step with recorded rollouts.
 
 import { POLICIES } from "./policies.js";
 
@@ -117,7 +118,8 @@ class CanvitPolicyCurves extends HTMLElement {
     svg.setAttribute("aria-label", `${this.#task.title} of CanViT-B by viewing policy, after ${shown} glimpse${shown > 1 ? "s" : ""}`);
 
     const grid = el("g", { class: "grid" }, svg), axis = el("g", { class: "axis" }, svg);
-    for (let value = Math.ceil(low / 10) * 10; value <= high; value += 10) {
+    const tick = high - low <= 15 ? 2 : high - low <= 30 ? 5 : 10;
+    for (let value = Math.ceil(low / tick) * tick; value <= high; value += tick) {
       el("line", { x1: plot.left, x2: plot.right, y1: y(value), y2: y(value) }, grid);
       el("text", { x: plot.left - 10, y: y(value) + 5, "text-anchor": "end" }, axis).textContent = String(value);
     }
@@ -129,13 +131,17 @@ class CanvitPolicyCurves extends HTMLElement {
     el("text", { class: "title", x: -(plot.top + plot.bottom) / 2, y: 14, transform: "rotate(-90)", "text-anchor": "middle" }, axis)
       .textContent = this.#task.title;
 
+    const clip = el("clipPath", { id: "plot" }, el("defs", {}, svg));
+    el("rect", { x: plot.left, y: plot.top - 6, width: plot.right - plot.left + 8, height: plot.bottom - plot.top + 6 }, clip);
+    const lines = el("g", { "clip-path": "url(#plot)" }, svg);
     // Heads are labeled in order of height, each at least LABEL_GAP below the one above, so close lines stay legible.
     const heads = [];
     for (const curve of this.#curves) {
       const { label, color } = POLICIES[curve.policy];
       const points = curve.per_timestep.slice(0, shown).map((p) => [x(p.t), y(100 * p.mean)]);
-      el("polyline", { class: "curve", points: points.map((p) => p.join(",")).join(" "), stroke: color }, svg);
+      el("polyline", { class: "curve", points: points.map((p) => p.join(",")).join(" "), stroke: color }, lines);
       const [hx, hy] = points.at(-1);
+      if (hy > plot.bottom || hy < plot.top) continue;  // a head below the range is not drawn or named yet
       el("circle", { class: "head", cx: hx, cy: hy, r: 5.5, fill: color }, svg);
       heads.push({ hx, hy, label, color });
     }

@@ -430,16 +430,17 @@
   <!-- The paper's Figure 3B and 3C as one view [Yohaï, 2026-10-01: "show the impact of the viewing policies for IN1k and
        for ADE20K, with x axis = glimpse count (possibly log-scaled?) ... the focus / message is how the policies work
        relative to one another and across tasks, and that they matter much more for ade20k"]. Both frozen with a linear
-       probe: ImageNet-1k at the 32 x 32 canvas of its export, ADE20K at 64 x 64 (the headline's). The vertical axes
-       span the same 55 points, so the spreads compare; one task after the other. -->
+       probe: ImageNet-1k at the 32 x 32 canvas of its export, ADE20K at 64 x 64 (the headline's). Both vertical axes
+       span the same 12 points around where the rollouts end, so the spreads compare; lines starting lower enter from
+       below [Yohaï: "need axis cutoffs intelligently for visual storytelling"]. One task after the other. -->
   <div class="charts">
     <figure class="in1k"><figcaption>ImageNet-1k classification</figcaption>
-      <canvit-policy-curves src="../../assets/paper/in1k_clf_frozen.json" task="in1k" canvas-grid="32" y-range="30 85" x-scale="log"></canvit-policy-curves></figure>
+      <canvit-policy-curves src="../../assets/paper/in1k_clf_frozen.json" task="in1k" canvas-grid="32" y-range="70 82" x-scale="log"></canvit-policy-curves></figure>
     <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption>
-      <canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" y-range="0 55" x-scale="log"></canvit-policy-curves></figure>
+      <canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" y-range="35 47" x-scale="log"></canvit-policy-curves></figure>
   </div>
   <span class="fragment step-marker" data-shows="ade20k"></span>
-  <aside class="notes">How much does the viewing policy matter, and for which task? The same frozen model, the same policies, glimpse by glimpse, on a log scale. ImageNet first. The policies that start from the whole scene start high; fine-to-coarse, starting from the finest detail, starts low. But give them a few glimpses and they all end up together: by the end, within about a point of each other, except the full scene repeated. [click] Now segmentation, on the same span of points. Here the policies stay apart, and they keep climbing all the way: coarse-to-fine reaches <span data-macro="adeBestMiou">45.9</span>, the random policies and fine-to-coarse end about three points lower. For classification, where you look matters early on; for segmentation, it keeps mattering.</aside>
+  <aside class="notes">How much does the viewing policy matter, and for which task? The same frozen model, the same policies, glimpse by glimpse, on a log scale. ImageNet first. The policies that start from the whole scene start high; fine-to-coarse, starting from the finest detail, starts low. But give them a few glimpses and they all end up together: by the end, within about a point of each other, except the full scene repeated. [click] Now segmentation, on a window of the same height. Here the policies stay apart, and they keep climbing all the way: coarse-to-fine reaches <span data-macro="adeBestMiou">45.9</span>, the random policies and fine-to-coarse end about three points lower. For classification, where you look matters early on; for segmentation, it keeps mattering.</aside>
 </section>
 
 <section id="frontier" data-status="draft">

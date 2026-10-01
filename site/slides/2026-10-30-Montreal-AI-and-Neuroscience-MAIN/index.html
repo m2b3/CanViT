@@ -553,6 +553,16 @@
   <aside class="notes">The canvas talks to the glimpse stream through Canvas Attention. In a write, the canvas queries the glimpse; in a read, the glimpse queries the canvas. Here's the trick: it's asymmetric. Every learned projection, the queries, keys, values and outputs, sits on the glimpse side. The canvas side only gets a LayerNorm and its position. The canvas never goes through a learned layer: no MLP, no self-attention, no projection. So the memory is dumb, on purpose. But not too dumb. Just dumb enough that I could interact with it cheaply, while leaving it flexible enough to reconstruct unseen things from world-knowledge priors, like the table. That's what lets the canvas be large and fine-grained, and read after every glimpse. Previous dense models had a cheap encoder and a massive decoder. Here, a read and a write on a 64 by 64 canvas cost <span data-macro="cSixFourAsymRwPairGf">2.8</span> gigaflops; with projections on both sides it would be <span data-macro="cSixFourFullRwPairGf">37.3</span>.</aside>
 </section>
 
+<section id="teacher" data-status="draft">
+  <hgroup><h2>CanViT-B and its DINOv3 teacher</h2><p>ADE20K accuracy v. inference compute</p></hgroup>
+  <!-- For "isn't it just DINOv3?" (AGENTS.md, "Questions to anticipate"): the paper's Figure 4C view. DINOv3 ViT-B/16
+       sees the whole scene at 128 to 512 px (the export's probe_table), then CanViT-B under EG-C2F, glimpse by glimpse,
+       at 32 x 32 and 64 x 64 canvases. -->
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="dinov3" height="460" x-scale="log" y-range="25 50"></canvit-frontier></div>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="dinov3 egc2f-32 egc2f-64"></span>
+  <aside class="notes">Isn't it just DINOv3? Here is DINOv3 itself, the teacher, seeing the whole scene, at more and more pixels: from 128 to 512, its accuracy against what it costs to run. [click] And CanViT-B, from one glimpse of the whole scene at 128 pixels, then more glimpses. At a small budget, CanViT-B is ahead of its own teacher: <span data-macro="adeSingleGlimpseMiou">38.5</span> percent from one glimpse, where DINOv3 at the same compute gets <span data-macro="teacherFlopMatchedMiou">33.2</span>. With the whole scene at 512 pixels, the teacher still ends higher: it sees everything, at full resolution, all at once.</aside>
+</section>
+
 <section id="live" data-status="draft">
   <h2>Live demo</h2>
   <div class="live-stage" data-no-advance>

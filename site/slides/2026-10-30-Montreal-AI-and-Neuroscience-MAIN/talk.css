@@ -270,7 +270,7 @@
 .reveal .class-legend span::before { content: ""; display: inline-block; width: .8em; height: .8em; margin-right: .4em;
                                      border-radius: 3px; background: var(--chip); vertical-align: -.05em; }
 
-#frontier .chart { width: 1040px; margin: 0 auto; padding: 14px 20px 10px; font-size: 14px; }
+:is(#frontier, #teacher) .chart { width: 1040px; margin: 0 auto; padding: 14px 20px 10px; font-size: 14px; }
 
 #live .live-stage { width: 1100px; margin: 0 auto; font-size: 15px; zoom: .8; }
 

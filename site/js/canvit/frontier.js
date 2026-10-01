@@ -5,9 +5,12 @@
 // models and the passive DINOv3 ViT-B/16 teacher at input resolutions from 128 to 512 px (the export's probe_table,
 // the paper's Figure 5C), on the same axes. The chart is drawn at its displayed size, so text stays legible on
 // narrow screens; hovering names the nearest point. series, for a talk's step-by-step build, names what to draw:
-// policy-canvas keys (f2c-32, f2c-64, egc2f-32, egc2f-64) and prior (the prior active models); each curve is then
+// policy-canvas keys (f2c-32, f2c-64, egc2f-32, egc2f-64), prior (the prior active models) and dinov3 (the passive
+// teacher over input resolutions, as in show="prior"); each curve is then
 // labeled at its end (the legend and the best-prior reference line are then left out), the cost axis fits what is shown, and a change of series first
 // glides the axis to its new range, then draws the new curves in. height (px) fixes the chart's height.
+// x-scale="log" spaces the cost axis logarithmically, so the low budgets get room; y-range="LO HI" (mIoU, %) narrows
+// the vertical axis, curves clipped to it.
 
 import { POLICIES as PAPER_POLICIES } from "./policies.js";
 
@@ -113,7 +116,7 @@ const lineSwatch = (color, dash) =>
   `<svg viewBox="0 0 24 6"><line x1="1" x2="23" y1="3" y2="3" stroke="${color}" stroke-width="2.6" stroke-dasharray="${dash}"/></svg>`;
 
 class CanvitFrontier extends HTMLElement {
-  static observedAttributes = ["src", "show", "series", "height"];
+  static observedAttributes = ["src", "show", "series", "height", "x-scale", "y-range"];
   #data = null;
   #xMax = null; // the cost axis's current end, which a change of series glides
   #drawnSeries = new Set(); // what the last finished render showed, so a new series can be drawn in
@@ -151,17 +154,41 @@ class CanvitFrontier extends HTMLElement {
     const value = this.getAttribute("series");
     if (value === null) return new Set([...Object.keys(SERIES), "prior"]);
     const keys = value.split(/\s+/).filter(Boolean);
-    for (const key of keys) if (!(key in SERIES) && key !== "prior") throw new Error(`<canvit-frontier>: unknown series "${key}"`);
+    for (const key of keys) if (!(key in SERIES) && key !== "prior" && key !== "dinov3") throw new Error(`<canvit-frontier>: unknown series "${key}"`);
     return new Set(keys);
   }
 
   get staged() { return this.hasAttribute("series"); }
 
+  get #logX() {
+    const scale = this.getAttribute("x-scale") ?? "linear";
+    if (scale !== "linear" && scale !== "log") throw new Error(`<canvit-frontier>: x-scale="${scale}", expected linear or log`);
+    return scale === "log";
+  }
+
+  get #yRange() {
+    const value = this.getAttribute("y-range");
+    if (value === null) return [0, Y_MAX];
+    const [low, high] = value.trim().split(/\s+/).map(Number);
+    if (!(low < high)) throw new Error(`<canvit-frontier>: y-range="${value}" is not "LO HI"`);
+    return [low, high];
+  }
+
+  /** The cheapest cost shown, for a log axis's start: a round number below it. */
+  #xMin() {
+    const shown = this.series;
+    const costs = [...this.#curves().filter((c) => shown.has(this.#key(c))).map((c) => c.per_timestep[0].cum_gflops),
+                   ...(shown.has("prior") ? this.#data.baselines.map((b) => b.gflops) : []),
+                   ...(shown.has("dinov3") ? this.#passive().map((r) => r.gflops) : [])];
+    return 10 ** Math.floor(Math.log10(Math.min(...costs) * 0.9));
+  }
+
   #targetXMax() {
     const shown = this.series;
     const curves = this.#curves().filter((c) => shown.has(this.#key(c)));
     const costs = [...curves.flatMap((c) => c.per_timestep.map((p) => p.cum_gflops)),
-                   ...(shown.has("prior") ? this.#data.baselines.map((b) => b.gflops) : [])];
+                   ...(shown.has("prior") ? this.#data.baselines.map((b) => b.gflops) : []),
+                   ...(shown.has("dinov3") ? this.#passive().map((r) => r.gflops) : [])];
     if (!costs.length) throw new Error("<canvit-frontier>: series shows nothing");
     return Math.max(...costs) * 1.04;
   }
@@ -193,7 +220,7 @@ class CanvitFrontier extends HTMLElement {
       if (this.#data) this.#changeSeries();
       return;
     }
-    if (name === "show" || name === "height") {
+    if (name === "show" || name === "height" || name === "x-scale" || name === "y-range") {
       if (this.#data) this.#render(Math.round(this.svg.clientWidth));
       return;
     }
@@ -262,15 +289,20 @@ class CanvitFrontier extends HTMLElement {
     this.#xMax = xMax;
     if (!only) this.#drawnSeries = new Set(series);
     const plot = { left: margin.left, right: width - margin.right, top: margin.top, bottom: height - margin.bottom };
-    const x = (gflops) => plot.left + (gflops / xMax) * (plot.right - plot.left);
-    const y = (miou) => plot.bottom - (miou / Y_MAX) * (plot.bottom - plot.top);
+    const logX = this.#logX, xMin = logX ? this.#xMin() : 0, [yLow, yHigh] = this.#yRange;
+    const x = logX
+      ? (gflops) => plot.left + (Math.log(gflops / xMin) / Math.log(xMax / xMin)) * (plot.right - plot.left)
+      : (gflops) => plot.left + (gflops / xMax) * (plot.right - plot.left);
+    const y = (miou) => plot.bottom - ((miou - yLow) / (yHigh - yLow)) * (plot.bottom - plot.top);
 
     const grid = el("g", { class: "grid" }, svg), axis = el("g", { class: "axis" }, svg);
-    for (const value of ticks(Y_MAX, 5)) {
+    for (const value of ticks(yHigh, 5).filter((v) => v >= yLow)) {
       el("line", { x1: plot.left, x2: plot.right, y1: y(value), y2: y(value) }, grid);
       el("text", { x: plot.left - 10, y: y(value) + 4, "text-anchor": "end" }, axis).textContent = String(value);
     }
-    for (const value of ticks(xMax, narrow ? 3 : 5)) {
+    const xTicks = logX ? [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000].filter((v) => v >= xMin && v <= xMax)
+      : ticks(xMax, narrow ? 3 : 5);
+    for (const value of xTicks) {
       el("text", { x: x(value), y: plot.bottom + 20, "text-anchor": "middle" }, axis).textContent = String(value);
     }
     el("line", { x1: plot.left, x2: plot.right, y1: plot.bottom, y2: plot.bottom, stroke: "#94a3b8" }, svg);
@@ -295,12 +327,14 @@ class CanvitFrontier extends HTMLElement {
                                 markerUnits: "userSpaceOnUse", orient: "auto" }, defs);
     el("path", { class: "arrowhead", d: "M0,1 L9,5 L0,9 Z" }, head);
     const clip = el("clipPath", { id: "reveal" }, defs);
-    el("rect", { class: "reveal", x: 0, y: 0, width: this.#shown || staged ? width : 0, height }, clip);
+    // A narrowed vertical axis clips what falls below or above it.
+    const [clipTop, clipHeight] = this.hasAttribute("y-range") ? [plot.top - 6, plot.bottom - plot.top + 6] : [0, height];
+    el("rect", { class: "reveal", x: 0, y: clipTop, width: this.#shown || staged ? width : 0, height: clipHeight }, clip);
     const drawn = el("g", { "clip-path": "url(#reveal)" }, svg);
     this.#points = [];
     // Both views share the axes (curves are measured for the x range even when hidden), so they can follow each other.
-    if (view === "prior") this.#drawPassive(drawn, x, y);
-    else for (const curve of curves) {
+    if (view === "prior" || series.has("dinov3")) this.#drawPassive(drawn, x, y, entering.has("dinov3") ? " enter-fade" : "");
+    if (view !== "prior") for (const curve of curves) {
       const { label, color } = POLICIES[curve.policy], canvas = CANVASES[curve.canvas_grid];
       const pts = curve.per_timestep;
       const enter = entering.has(this.#key(curve));
@@ -376,8 +410,9 @@ class CanvitFrontier extends HTMLElement {
   }
 
   /** The passive teacher's probe results as a curve over input resolutions, labeled at both ends. */
-  #drawPassive(parent, x, y) {
+  #drawPassive(parent, x, y, enter = "") {
     const rows = this.#passive();
+    parent = el("g", { class: enter.trim() }, parent);
     el("polyline", { class: "curve", points: rows.map((r) => `${x(r.gflops)},${y(r.miou_pct)}`).join(" "), stroke: PASSIVE.color }, parent);
     for (const r of rows) {
       el("circle", { cx: x(r.gflops), cy: y(r.miou_pct), r: 3.5, fill: PASSIVE.color }, parent);

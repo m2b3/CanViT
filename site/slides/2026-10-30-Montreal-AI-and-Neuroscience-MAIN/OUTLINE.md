@@ -408,6 +408,15 @@ yet reviewed by the authors.
   64 × 64 canvas) is said, not shown.
 - **Status:** draft (ring positions to check).
 
+### CanViT-B and its DINOv3 teacher
+- **Title:** names what the chart compares; subtitle "ADE20K accuracy v. inference compute". For the question
+  "isn't it just DINOv3?" (`AGENTS.md`, "Questions to anticipate").
+- **Builds:** `<canvit-frontier series="dinov3">`, log cost axis, mIoU 25 to 50: DINOv3 ViT-B/16 on the whole scene at
+  128 to 512 px (the export's probe_table, the paper's Figure 4C), then CanViT-B under EG-C2F at 32² and 64² canvases.
+- **Says:** at small budgets CanViT-B is above its own teacher (38.5 from one glimpse against 33.2 for the teacher at the
+  same compute, the paper's macros); with the whole scene at 512 px the teacher ends higher (47.2).
+- **Status:** draft (built), in Backup.
+
 ### Live demo
 - **Title:** "Live demo" [Yohaï, 2026-10-01: "the live explorer from 'A general-purpose observer lets you use any
   policy' should be renamed 'Live demo'"]; a bonus, in Backup [Yohaï, 2026-10-01: "no one [cares] enough for [the

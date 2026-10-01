@@ -167,7 +167,7 @@ is a strawman and does not belong here [Yohaï, 2026-10-01, on "Is the canvas a 
 THESE [...] QUESTIONS"]. Each answer points to its facts (below) [CC,
 2026-10-01; the authors decide what to prepare as backup slides]:
 
-- "Isn't it just DINOv3?" The architecture control (same teacher and data, an AdaGlimpse-derived design: 15.6 against
+- "Isn't it just DINOv3?" Backup `#teacher` (CanViT-B against its teacher at matched compute). The architecture control (same teacher and data, an AdaGlimpse-derived design: 15.6 against
   33.7 mIoU at t = 3, a quarter of the cost per glimpse); the frozen teacher probed alike reaches 47.2, CanViT-B 45.9,
   and CanViT-B beats its input- or FLOP-matched teacher at low budgets. The teacher's absolute share is not isolated;
   say so.

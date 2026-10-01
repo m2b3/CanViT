@@ -17,11 +17,20 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] `#glimpses` ("Scenes, viewpoints and glimpses"): "this slide seems unnecessary, instead we should
+  have a masterfully done that introduces all the concepts and then how the model itself works / what it does, with
+  animations/transitions"; "you can borrow from 'CanViT in action', start from there but fade into the full thing to
+  make complexity appear gradually and explain first scene, then a glimpse which is sampled at a viewpoint, then what
+  we do with it, etc, gradually building up". To do.
 - [Yohaï, 2026-10-01] `#timeline`: "remove the [bad] subtitles like 'Recurrent glimpses on digits' (a GLIMPSE IS NOT
   RECURRENT ANYWAY) and add to TODO to question PRECISELY what was interesting/new/notable about each of these works".
   Subtitles: removing. TODO: for each model, what was new or notable, read in its paper.
 - [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
-  scheme is still not great not great at all". To do.
+  scheme is still not great not great at all". Labels redone 2026-10-01 (no key; each passive line named at its end
+  under one "Passive" heading, "linear decoding"; active models named at their points over "Active models"); awaiting
+  the authors' look. Codex (gpt-6-astra) is auditing the data against primary sources: brief and report in
+  `throwaway/history-audit/` (MISSION.md, REPORT.md, proposed_points.json); its findings are to be checked before any
+  enters `sources/sota-history.json`.
 - [Yohaï, 2026-10-01] `#table`: "we're missing some kind of explanation of what the hell the colors correspond to...
   labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
   yet." To do.

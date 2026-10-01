@@ -1,11 +1,12 @@
-// Year against accuracy on one benchmark, passive against active computer vision. One visual grammar throughout:
-// color is the family (passive ink, active amber, CanViT canvas red); solid lines and filled points are trained end to
-// end, dashed lines and hollow points are frozen features read by a linear layer; a key at the top says so. Points come from
-// sources/sota-history.json (each read in its paper; its _about defines the series), CanViT-B's from the paper's
-// macros. Three series, each labeled where it ends: the best passive model trained end to end (a step line), the best
-// frozen passive features read by a linear layer (dashed), and the sequential active models of the timeline slide,
-// each at its paper's best number, as named points. A bracket marks the gap between the best active model and the
-// frozen line. With data-canvit, CanViT-B's points are added.
+// Year against accuracy on one benchmark, passive against active computer vision. Color is the family (passive ink,
+// active amber, CanViT canvas red); solid lines and filled points are trained end to end, dashed lines and hollow points
+// are frozen features with linear decoding. Everything is labeled where it is drawn, with no key: the two passive lines
+// at their ends under one "Passive" heading, each active model at its point with "Active models" under them, CanViT-B
+// at its points. Points come from sources/sota-history.json (each read in its paper; its _about defines the series),
+// CanViT-B's from the paper's macros. The passive lines are the best base-size model trained end to end (a step line)
+// and the best base-size frozen features (dashed); the active models are those of the timeline slide, each at its
+// paper's best number. A bracket marks the gap between the best active model and the frozen line. With data-canvit,
+// CanViT-B's points are added.
 // Drawn into the light DOM so that a slide's CSS can build it: its groups carry the classes passive, frozen, active,
 // gap and canvit.
 
@@ -68,7 +69,6 @@ function draw(container, data, macros) {
   const step = (records) => records.map((p, i) => (i ? `H${x(yearOf(p))}V${y(p.value)}` : `M${x(yearOf(p))},${y(p.value)}`)).join("") + `H${x(END)}`;
   const svg = el("svg", { viewBox: `0 0 ${WIDTH} ${HEIGHT}`, role: "img", "aria-label": spec.unit });
   const labelX = x(END) + 18;
-  const seriesLabel = (group, lines, top) => lines.forEach((line, i) => text(line, { x: labelX, y: top + i * 25, class: i ? "label" : "label head" }, group));
 
   const axes = el("g", { class: "axes" }, svg);
   for (let v = spec.range[0]; v <= spec.range[1]; v += spec.step) {
@@ -77,14 +77,6 @@ function draw(container, data, macros) {
   }
   for (let year = Math.ceil(spec.years[0] / 2) * 2; year <= 2026; year += 2) text(year, { x: x(year + 0.5), y: HEIGHT - 8, "text-anchor": "middle" }, axes);
   text(spec.unit, { x: M.left, y: M.top - 14, class: "unit" }, axes);
-  const key = el("g", { class: "key" }, svg);
-  const keyX = WIDTH - M.right - 470, keyY = M.top - 20;
-  el("path", { d: `M${keyX},${keyY}h34`, class: "solid" }, key);
-  el("circle", { cx: keyX + 50, cy: keyY, r: 7, class: "filled" }, key);
-  text("trained end to end", { x: keyX + 66, y: keyY + 6 }, key);
-  el("path", { d: `M${keyX + 236},${keyY}h34`, class: "dashed" }, key);
-  el("circle", { cx: keyX + 286, cy: keyY, r: 7, class: "hollow" }, key);
-  text("frozen + a linear layer", { x: keyX + 302, y: keyY + 6 }, key);
 
   // Passive lines at the active models' size: base-size backbones only (size_class, sota-history.json) [Yohaï,
   // 2026-10-01: "comparing to nonsensically large models is indeed stupid and counterproductive"].
@@ -94,12 +86,13 @@ function draw(container, data, macros) {
   const passiveTop = passive.at(-1).value, frozenTop = frozen.at(-1).value;
   const passiveGroup = el("g", { class: "passive" }, svg);
   el("path", { d: step(passive), class: "line" }, passiveGroup);
-  const passiveY = y(passiveTop) - 2;
-  seriesLabel(passiveGroup, ["Passive", "trained end to end"], passiveY);
+  // Each line named at its end; "Passive" heads the two, above the upper one.
+  const passiveY = y(passiveTop) + 7;
+  text("Passive", { x: labelX, y: passiveY - 30, class: "label head" }, passiveGroup);
+  text("trained end to end", { x: labelX, y: passiveY, class: "label" }, passiveGroup);
   const frozenGroup = el("g", { class: "frozen" }, svg);
   el("path", { d: step(frozen), class: "line" }, frozenGroup);
-  const frozenY = Math.max(y(frozenTop) + 6, passiveY + 62);
-  seriesLabel(frozenGroup, ["Passive", "frozen + a linear layer"], frozenY);
+  text("frozen + linear decoding", { x: labelX, y: Math.max(y(frozenTop) + 7, passiveY + 28), class: "label" }, frozenGroup);
 
   const activeGroup = el("g", { class: "active" }, svg);
   const shown = ACTIVE.flatMap((a) => {
@@ -112,7 +105,9 @@ function draw(container, data, macros) {
     text(name, { x: x(yearOf(point)) + dx, y: y(point.value) + dy, "text-anchor": anchor, class: "label" }, activeGroup);
   }
   const bestActive = Math.max(...shown.map((a) => a.point.value));
-  seriesLabel(activeGroup, ["Active"], Math.max(y(bestActive) + 8, frozenY + 62));
+  // "Active models" under the lowest name, centered under the points.
+  const xs = shown.map((a) => x(yearOf(a.point))), lowest = Math.max(...shown.map((a) => y(a.point.value) + Math.max(a.dy, 8)));
+  text("Active models", { x: (Math.min(...xs) + Math.max(...xs)) / 2, y: lowest + 40, "text-anchor": "middle", class: "label head" }, activeGroup);
 
   // The gap, from the best active model up to the frozen line, at the plot's right edge.
   const gap = el("g", { class: "gap" }, svg);

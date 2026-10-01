@@ -78,14 +78,8 @@
 .reveal .history-chart .grid { stroke: var(--rule); stroke-width: 1; }
 .reveal .history-chart .line { fill: none; stroke-width: 4; }
 .reveal .history-chart .passive .line { stroke: var(--ink); }
-/* Frozen features: the family's color, dashed; the key at the top states the grammar. */
+/* Frozen features: the family's color, dashed. */
 .reveal .history-chart .frozen .line { stroke: var(--ink); stroke-width: 3; stroke-dasharray: 9 6; }
-.reveal .history-chart .key path { fill: none; stroke: var(--ink); stroke-width: 3.5; }
-.reveal .history-chart .key .dashed { stroke-dasharray: 8 5; }
-.reveal .history-chart .key circle { stroke: var(--ink); stroke-width: 3; }
-.reveal .history-chart .key .filled { fill: var(--ink); }
-.reveal .history-chart .key .hollow { fill: var(--bg); }
-.reveal .history-chart .key text { font-size: 18px; fill: var(--text); }
 .reveal .history-chart .label { font-size: 20px; font-weight: 600; fill: var(--text); }
 .reveal .history-chart .label.head { font-weight: 800; fill: var(--ink); }
 .reveal .history-chart .active circle { fill: #d97706; stroke: var(--bg); stroke-width: 2; }

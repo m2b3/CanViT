@@ -166,7 +166,8 @@ yet reviewed by the authors.
   x,y,scale so show THAT"; "go up to glimpse 21"; "for the MSE loss, we might want a heatmap, or a single number"]: a
   training step unrolled in time, one column per glimpse (1, 2, 3, then 21 after an ellipsis), one row per role: the
   128 px glimpse and its (x, y, scale), the CanViT logo, its prediction of DINOv3's features for the whole scene, the
-  mean squared error (a number; per-patch heatmaps `loss-<t>.png` exist if the authors prefer them), the target
+  mean squared error (a number in a box, orange to green as it falls [Yohaï: "COLOR THE MSE TEXT to make it clear it
+  gets better"]; row labels "Prediction", "MSE", "Target" [Yohaï]; per-patch heatmaps `loss-<t>.png` exist if the authors prefer them), the target
   (DINOv3 on the whole scene) repeated in every column; the canvas carried from logo to logo by a straight arrow. The
   first column; then its target and error; then a column per click, its rows in order from input to output.
 - **Data:** `throwaway/distillation/training_step.py` writes `steps.json` (viewpoints, the pretraining patch loss after

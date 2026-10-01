@@ -208,7 +208,8 @@
 #distillation :is(.model, .carry) { grid-row: 5; }
 #distillation .out { grid-row: 6; }
 #distillation .prediction { grid-row: 7; }
-#distillation .score { grid-row: 8; font: 600 17px var(--mono); color: var(--ink); }
+#distillation .score { grid-row: 8; padding: 1px 10px; border: 2px solid currentColor; border-radius: 7px;
+  background: color-mix(in srgb, currentColor 10%, white); font: 700 17px var(--mono); }
 #distillation .target { grid-row: 9; }
 #distillation :is(.glimpse, .prediction, .target) { width: var(--img); height: var(--img); border-radius: 6px; }
 #distillation .model { width: var(--logo); height: auto; }

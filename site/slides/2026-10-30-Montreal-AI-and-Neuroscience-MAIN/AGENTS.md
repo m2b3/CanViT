@@ -395,6 +395,16 @@ when scaled). The table panels are redrawn with
 `throwaway/table_corners/` (and `--panels scene --box none --separate ../../site/data/talk/table-clean`). `--logits-upsampling bilinear` gives the smooth
 version (the paper's evaluation); both stay available [Yohaï: "we shall see. keep both possible"].
 
+Memory across three glimpses [measured 2026-10-01 by a subagent, `throwaway/memory_reset/trio_*` and their logs;
+numbers read from its report, not rerun]: 6,218 sequences of three objects of distinct classes in 442 ADE20K
+validation images, one glimpse per object (box about half the glimpse), left to right; after the third glimpse, mean
+p over the first object's pixels 0.410 kept against 0.041 reset, the second's 0.451 against 0.042. Good examples sit
+above the 95th percentile of the weakest kept object (median 0.073). The left-to-right order flatters the chosen
+examples (other orders keep the first object at 0.52 to 0.75, reset stays at most 0.08); after two earlier glimpses
+the current object scores 0.048 lower with the canvas kept than alone (unexplained). The slide's example,
+ADE_val_00000836 (shop sign 0.91 / 0.90 / 0.04, person 0.76 / 0.68 / 0.06 after its glimpse / kept / reset), is below
+the strict bar for person; ADE_val_00001182 (a bedroom) meets it.
+
 Experiments behind slides (gitignored `throwaway/`, outputs under `../../data/talk/`): `table_corners/` (two
 glimpses at the ends of large ADE20K objects; `run.log` has the averages), `distillation/` (DINOv3 features of a
 scene and CanViT's prediction of them after each glimpse; `export.log` has the cosine similarity per glimpse),

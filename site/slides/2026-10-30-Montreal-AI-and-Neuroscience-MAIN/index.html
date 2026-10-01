@@ -321,20 +321,27 @@
 
 <section id="memory" data-status="draft">
   <h2>A persistent, evolving understanding of the scene</h2>
-  <!-- ADE_val_00001425, chosen by a sweep over every object covering 1–15% of an ADE20K validation scene
-       (throwaway/memory_reset): one glimpse on the object, three far from it, none showing its class; the canvas
-       carried, or reset before each glimpse. Its gap is among the largest; the average is in the notes. -->
+  <!-- ADE_val_00000836, a street, from a sweep of 6,218 three-object sequences in ADE20K validation
+       (throwaway/memory_reset, trio_*): a glimpse on a shop sign, then on people walking, then on a bicycle; each
+       object's class probability in its color over the dimmed scene, per canvas cell. Kept: the canvas carried; reset:
+       cleared before each glimpse. Alternative, numerically cleaner but less lively: ADE_val_00001182 (a bedroom). -->
   <div class="memory-demo">
-    <figure><figcaption>Glimpses</figcaption>
-      <div class="swap"><img src="../../data/talk/memory/ADE_val_00001425-person/scene_t0.png" alt="A person in front of a rock, the first glimpse on the person"><img class="later" src="../../data/talk/memory/ADE_val_00001425-person/scene_t3.png" alt="The same scene with three more glimpses, far from the person"></div></figure>
-    <figure><figcaption>Memory kept</figcaption>
-      <div class="swap"><img class="pixels" src="../../data/talk/memory/ADE_val_00001425-person/person_carried_t0.png" alt="The probability of person after the first glimpse: a bright silhouette"><img class="pixels later" src="../../data/talk/memory/ADE_val_00001425-person/person_carried_t3.png" alt="After three glimpses away, the silhouette remains"></div></figure>
-    <figure class="reset"><figcaption>Memory reset</figcaption><img class="pixels" src="../../data/talk/memory/ADE_val_00001425-person/person_reset_t3.png" alt="With the memory reset before each glimpse, nothing remains"></figure>
+    <figure><figcaption>Glimpses</figcaption><div class="stack">
+      <img class="t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t0.png" alt="A street with a glimpse on a shop sign">
+      <img class="t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t1.png" alt="A second glimpse, on people walking">
+      <img class="t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t2.png" alt="A third glimpse, on a bicycle"></div></figure>
+    <figure><figcaption>Memory kept</figcaption><div class="stack">
+      <img class="pixels t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t0.png" alt="The sign lights up">
+      <img class="pixels t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t1.png" alt="The people light up; the sign stays">
+      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="The bicycle lights up; the sign and the people stay"></div></figure>
+    <figure class="reset"><figcaption>Memory reset</figcaption><div class="stack">
+      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="With the memory reset before each glimpse, only the bicycle remains"></div></figure>
   </div>
-  <p class="scale"><span>p(person)</span><span class="bar"></span><span>0</span><span>1</span></p>
-  <span class="fragment step-marker" data-shows="away"></span>
+  <p class="memory-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
+  <span class="fragment step-marker" data-shows="second"></span>
+  <span class="fragment step-marker" data-shows="third"></span>
   <span class="fragment step-marker" data-shows="reset"></span>
-  <aside class="notes">What does the memory buy you? One glimpse, on the person. The map shows, at every position, how likely the model thinks it is that there's a person there: bright means yes. [click] Now three more glimpses, all far from the person. The canvas keeps it. [click] Same four glimpses, but the memory is reset before each one. Gone. Unless you get a good look at something, the representation is bad. This is a clean example. Over 2,781 objects in ADE20K validation, after three glimpses elsewhere, the probability on the object is 0.46 on average when the memory is kept, and 0.03 when it's reset: no better than never having looked at it.</aside>
+  <aside class="notes">What does the memory do? A street. First glimpse: a shop sign. In the middle, for each kind of thing, how likely the model thinks it is, at every position: the sign lights up. [click] Second glimpse: people walking. They light up, and the sign is still there. [click] Third: a bicycle. All three now: what it saw stays, glimpse after glimpse. That's integration across glimpses, what the eye does across saccades. [click] Same three glimpses, but the memory is wiped before each one: only the bicycle. Unless you get a good look at something, the representation is bad. This is a clean example; over the sequences we tried across ADE20K, an object seen once and then looked away from keeps a probability around 0.4 to 0.45 with the memory, against 0.04 when it is reset.</aside>
 </section>
 
 <section id="extrapolation" data-status="ready">
@@ -561,6 +568,16 @@
   await drawHistoryCharts();
   await drawTimeline(document.querySelector("#timeline .timeline"));
   await drawMapNames();
+  // The memory slide's legend: each class in its color, from the plot step's legend.json.
+  for (const legend of document.querySelectorAll(".memory-legend[data-src]")) {
+    const entries = await (await fetch(legend.dataset.src)).json();
+    legend.replaceChildren(...entries.map(({ class: name, color }) => {
+      const chip = document.createElement("span");
+      chip.textContent = name;
+      chip.style.setProperty("--chip", color);
+      return chip;
+    }));
+  }
   await drawReconstruction(document.querySelector("#reconstruction"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/cosine.json");
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
   const uncertainty = document.querySelector("#uncertainty");

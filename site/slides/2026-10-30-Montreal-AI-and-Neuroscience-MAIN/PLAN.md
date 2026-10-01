@@ -55,9 +55,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   the observer makes a great policy easy ("this WILL need work!"), from the CanViT-PyTorch-RL work and possibly new
   experiments before the talk. Also teasers of what's next ("we might want future / teasers etc."). Both in Backup
   until the material exists (`OUTLINE.md`).
-- [Yohaï, 2026-10-01] The memory slide: "why would a slide be called that" (now "A persistent, evolving understanding
-  of the scene") and "the example you chose really doesn't look inspiring": a three-object example in a lively scene
-  is being swept (`OUTLINE.md`, its example properties).
+- [Yohaï, 2026-10-01] The memory slide: retitled; rebuilt on a street (sign, people, bicycle) from a sweep of 6,218
+  three-object sequences; awaiting the authors' look (alternative: a bedroom).
 - [Yohaï, 2026-10-01] "Spatial coverage and perception of detail" (`#detail`): "the idea ... is good and nice but the
   way it is showed is really not good atm". Rebuilt 2026-10-01 (one example, a zoom into the model's own input);
   awaiting the authors' look.

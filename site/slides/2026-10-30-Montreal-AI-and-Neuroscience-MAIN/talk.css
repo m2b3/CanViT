@@ -324,24 +324,21 @@
 #timeline .did { font: 500 18px var(--sans); fill: var(--text); }
 #timeline .cite { font: italic 400 15px var(--sans); fill: var(--muted); }
 
-/* Resetting the memory: the glimpses, p(person) with the canvas kept, and with it reset; large, in inferno 0–1. */
+/* A persistent, evolving understanding of the scene: glimpses, the composite with the canvas kept, then with it reset;
+   each glimpse a named state (second, third), the reset column last. */
 #memory .memory-demo { display: grid; grid-template-columns: repeat(3, 360px); justify-content: center; gap: 30px; }
 #memory .memory-demo figure { margin: 0; }
 #memory .memory-demo figcaption { margin-bottom: 8px; font-size: 26px; font-weight: 800; }
-#memory .memory-demo img { display: block; width: 360px; height: 360px; border-radius: 8px; }
-#memory .swap { display: grid; }
-#memory .swap img { grid-area: 1 / 1; transition: opacity .6s ease; }
-#memory .swap .later { opacity: 0; }
-#memory.shows-away .swap .later { opacity: 1; }
+#memory .stack { display: grid; }
+#memory .stack img { grid-area: 1 / 1; display: block; width: 360px; height: 360px; border-radius: 8px; opacity: 0;
+                     transition: opacity .5s ease; }
+#memory .stack .t0 { opacity: 1; }
+#memory.shows-second .stack .t1, #memory.shows-third .stack .t2 { opacity: 1; }
 #memory .reset { opacity: 0; transition: opacity .6s ease; }
-#memory.shows-reset .reset { opacity: 1; }
-#memory .scale { display: grid; grid-template-columns: auto 300px; grid-template-areas: "name bar" ". ends";
-                 justify-content: center; align-items: center; gap: 2px 14px; margin-top: 22px; font-size: 18px; color: var(--text); }
-#memory .scale span:first-child { grid-area: name; font-weight: 700; }
-#memory .scale .bar { grid-area: bar; height: 14px; border-radius: 3px;
-                      background: linear-gradient(90deg, #000004, #420a68, #932667, #dd513a, #fca50a, #fcffa4); }
-#memory .scale span:nth-child(3), #memory .scale span:nth-child(4) { grid-row: 2; grid-column: 2; }
-#memory .scale span:nth-child(4) { justify-self: end; }
+#memory.shows-reset .reset, #memory .reset .t2 { opacity: 1; }
+#memory .memory-legend { display: flex; justify-content: center; gap: 28px; margin-top: 18px; font-size: 22px; font-weight: 700; }
+#memory .memory-legend span::before { content: ""; display: inline-block; width: 18px; height: 18px; margin-right: 8px;
+                                      border-radius: 4px; background: var(--chip); vertical-align: -2px; }
 
 /* The model's own uncertainty: the scene with two rings, the class probabilities at each as bars, then the
    uncertainty map, its quadrants, and the one EG-C2F visits next. */

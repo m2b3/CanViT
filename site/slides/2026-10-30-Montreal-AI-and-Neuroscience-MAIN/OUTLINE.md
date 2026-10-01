@@ -230,6 +230,9 @@ yet reviewed by the authors.
   cars, a kitchen, a living room), well photographed; three objects of distinct, nameable classes, each needing its own
   glimpse and recognized confidently after it; glimpses mostly disjoint; after the last glimpse, the kept canvas shows
   all three with readable shapes and the reset canvas only the last.
+- **Chosen** (2026-10-01, `throwaway/memory_reset/trio_*`, `AGENTS.md`): ADE_val_00000836, a street: a shop sign,
+  people walking, a bicycle; alternative ADE_val_00001182, a bedroom (lamp, towels, painting), cleaner numbers, less
+  lively.
 - **Builds:** each class's probability in its own color over the dimmed scene, a glimpse per click: the first object
   lights up, then the second while the first stays, then the third; then, beside it, the same glimpses with the memory
   reset: only the last object.

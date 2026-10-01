@@ -1,8 +1,10 @@
-// <canvit-frontier src="ade20k_seg.json">: the paper's accuracy–efficiency frontier on ADE20K (Figure 3A), drawn
-// from its exported data: CanViT-B's mIoU against cumulative inference FLOPs, glimpse by glimpse, for EG-C2F and
-// F2C at 32² and 64² canvases, and the prior active models as points. Colors, line styles and markers follow the
-// paper's figure. The chart is drawn at its displayed size, so text stays legible on narrow screens; hovering
-// names the nearest point.
+// <canvit-frontier src="ade20k_seg.json" [show="canvit|prior"]>: the paper's accuracy–efficiency frontier on ADE20K
+// (Figure 3A), drawn from its exported data: CanViT-B's mIoU against cumulative inference FLOPs, glimpse by glimpse,
+// for EG-C2F and F2C at 32² and 64² canvases, and the prior active models as points. Colors, line styles and markers
+// follow the paper's figure. show="prior" draws what active vision faced before CanViT instead: the prior active
+// models and the passive DINOv3 ViT-B/16 teacher at input resolutions from 128 to 512 px (the export's probe_table,
+// the paper's Figure 5C), on the same axes. The chart is drawn at its displayed size, so text stays legible on
+// narrow screens; hovering names the nearest point.
 
 import { POLICIES as PAPER_POLICIES } from "./policies.js";
 
@@ -17,6 +19,8 @@ const BASELINES = {
   "AME (MAE)": { color: "#00a4b8", marker: "triangle" },
   AdaGlimpse: { color: "#6a3d9a", marker: "diamond" },
 };
+const PASSIVE = { model: "DINOv3 ViT-B/16", color: "#334155" };
+const VIEWS = ["canvit", "prior"];
 const Y_MAX = 50;
 const NARROW_PX = 560;
 
@@ -99,7 +103,7 @@ const lineSwatch = (color, dash) =>
   `<svg viewBox="0 0 24 6"><line x1="1" x2="23" y1="3" y2="3" stroke="${color}" stroke-width="2.6" stroke-dasharray="${dash}"/></svg>`;
 
 class CanvitFrontier extends HTMLElement {
-  static observedAttributes = ["src"];
+  static observedAttributes = ["src", "show"];
   #data = null;
   #points = [];
   #shown = false;
@@ -111,12 +115,6 @@ class CanvitFrontier extends HTMLElement {
     this.attachShadow({ mode: "open" }).append(template.content.cloneNode(true));
     this.svg = this.shadowRoot.querySelector(".chart");
     this.tooltip = this.shadowRoot.querySelector(".tooltip");
-    const markerSwatch = ({ color, marker: shape }) =>
-      `<svg viewBox="-7 -7 14 14" class="marker">${shape === "triangle" ? `<polygon points="0,-7 6,4 -6,4" fill="${color}"/>` : `<polygon points="0,-7 7,0 0,7 -7,0" fill="${color}"/>`}</svg>`;
-    this.shadowRoot.querySelector(".legend").innerHTML =
-      `<div class="row"><b>CanViT-B</b>${Object.values(POLICIES).map(({ label, name, color }) => `<span>${lineSwatch(color, "")}${label} (${name})</span>`).join("")}` +
-      `${Object.values(CANVASES).map(({ label, dash }) => `<span>${lineSwatch("#475569", dash)}${label}</span>`).join("")}</div>` +
-      `<div class="row"><b>Prior active models</b>${Object.entries(BASELINES).map(([name, style]) => `<span>${markerSwatch(style)}${name}</span>`).join("")}</div>`;
     new ResizeObserver(() => {
       const width = Math.round(this.svg.clientWidth);
       if (this.#data && width > 0 && width !== this.#width) this.#render(width);
@@ -129,7 +127,17 @@ class CanvitFrontier extends HTMLElement {
     }, { threshold: 0.3 }).observe(this);
   }
 
-  async attributeChangedCallback() {
+  get view() {
+    const view = this.getAttribute("show") ?? "canvit";
+    if (!VIEWS.includes(view)) throw new Error(`<canvit-frontier>: show="${view}", expected one of ${VIEWS.join(", ")}`);
+    return view;
+  }
+
+  async attributeChangedCallback(name) {
+    if (name === "show") {
+      if (this.#data) this.#render(Math.round(this.svg.clientWidth));
+      return;
+    }
     const version = ++this.#loadVersion;
     const src = this.getAttribute("src");
     const response = await fetch(new URL(src, document.baseURI));
@@ -149,6 +157,23 @@ class CanvitFrontier extends HTMLElement {
     return this.#data.policy_curves.filter((c) => c.policy in POLICIES && c.scene_size === SCENE_SIZE && c.canvas_grid in CANVASES);
   }
 
+  /** The passive teacher's probe results, cheapest input first. */
+  #passive() {
+    const rows = this.#data.probe_table.filter((r) => r.model === PASSIVE.model).sort((a, b) => a.gflops - b.gflops);
+    if (rows.length < 2) throw new Error(`<canvit-frontier>: no ${PASSIVE.model} rows in probe_table`);
+    return rows;
+  }
+
+  #legend(view) {
+    const markerSwatch = ({ color, marker: shape }) =>
+      `<svg viewBox="-7 -7 14 14" class="marker">${shape === "triangle" ? `<polygon points="0,-7 6,4 -6,4" fill="${color}"/>` : `<polygon points="0,-7 7,0 0,7 -7,0" fill="${color}"/>`}</svg>`;
+    const prior = `<div class="row"><b>Prior active models</b>${Object.entries(BASELINES).map(([name, style]) => `<span>${markerSwatch(style)}${name}</span>`).join("")}</div>`;
+    this.shadowRoot.querySelector(".legend").innerHTML = view === "prior"
+      ? `<div class="row"><b>Passive</b><span>${lineSwatch(PASSIVE.color, "")}${PASSIVE.model}, frozen, linear probe, input 128 to 512 px</span></div>${prior}`
+      : `<div class="row"><b>CanViT-B</b>${Object.values(POLICIES).map(({ label, name, color }) => `<span>${lineSwatch(color, "")}${label} (${name})</span>`).join("")}` +
+        `${Object.values(CANVASES).map(({ label, dash }) => `<span>${lineSwatch("#475569", dash)}${label}</span>`).join("")}</div>${prior}`;
+  }
+
   #render(width) {
     // A source change while hidden must invalidate the old visible width.
     this.#width = width;
@@ -157,10 +182,14 @@ class CanvitFrontier extends HTMLElement {
     const narrow = width < NARROW_PX;
     const height = Math.round(Math.min(460, Math.max(300, width * 0.58)));
     const svg = this.svg;
+    const view = this.view;
+    this.#legend(view);
     svg.replaceChildren();
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.setAttribute("height", String(height));
-    svg.setAttribute("aria-label", "ADE20K mIoU against cumulative inference FLOPs: CanViT-B's curves lie above and to the left of every prior active model.");
+    svg.setAttribute("aria-label", view === "prior"
+      ? "ADE20K mIoU against inference FLOPs: the passive DINOv3 ViT-B/16 lies above and to the left of every prior active model."
+      : "ADE20K mIoU against cumulative inference FLOPs: CanViT-B's curves lie above and to the left of every prior active model.");
 
     const curves = this.#curves(), baselines = this.#data.baselines;
     const xMax = Math.max(...curves.flatMap((c) => c.per_timestep.map((p) => p.cum_gflops)), ...baselines.map((b) => b.gflops)) * 1.04;
@@ -198,7 +227,9 @@ class CanvitFrontier extends HTMLElement {
     el("rect", { class: "reveal", x: 0, y: 0, width: this.#shown ? width : 0, height }, clip);
     const drawn = el("g", { "clip-path": "url(#reveal)" }, svg);
     this.#points = [];
-    for (const curve of curves) {
+    // Both views share the axes (curves are measured for the x range even when hidden), so they can follow each other.
+    if (view === "prior") this.#drawPassive(drawn, x, y);
+    else for (const curve of curves) {
       const { label, color } = POLICIES[curve.policy], canvas = CANVASES[curve.canvas_grid];
       const pts = curve.per_timestep;
       if (curve.n_runs >= 2) {
@@ -222,7 +253,7 @@ class CanvitFrontier extends HTMLElement {
     const [cx, cy] = [x(beat.first_beat_gflops), y(beat.first_beat_miou_pct)];
     const [tx, ty] = [cx + 30, y(bestPrior.miou_pct) + 64];
     const corridor = { left: cx - 12, right: tx + 4, top: cy + 2, bottom: ty - 12 }; // the arrow arrives from below
-    const inCorridor = (box) =>
+    const inCorridor = (box) => view === "canvit" &&
       box.x < corridor.right && box.x + box.width > corridor.left && box.y < corridor.bottom && box.y + box.height > corridor.top;
 
     // Baselines are labeled beside their markers on wide screens; narrow screens rely on the legend. A label goes left
@@ -254,7 +285,26 @@ class CanvitFrontier extends HTMLElement {
     }
     el("text", { class: "reference-label halo", x: plot.right, y: y(bestPrior.miou_pct) - 8, "text-anchor": "end" }, svg)
       .textContent = `${narrow ? "Best prior" : "Best prior active model"}: ${bestPrior.miou_pct.toFixed(1)}%`;
+    if (view === "canvit") this.#annotateCanvit({ svg, drawn, curves, x, y, narrow, beat: [cx, cy], note: [tx, ty] });
+    this.#hover(svg, plot, width);
+  }
 
+  /** The passive teacher's probe results as a curve over input resolutions, labeled at both ends. */
+  #drawPassive(parent, x, y) {
+    const rows = this.#passive();
+    el("polyline", { class: "curve", points: rows.map((r) => `${x(r.gflops)},${y(r.miou_pct)}`).join(" "), stroke: PASSIVE.color }, parent);
+    for (const r of rows) {
+      el("circle", { cx: x(r.gflops), cy: y(r.miou_pct), r: 3.5, fill: PASSIVE.color }, parent);
+      this.#points.push({ x: x(r.gflops), y: y(r.miou_pct), color: PASSIVE.color,
+        html: `<b>${PASSIVE.model}</b>, passive<br>${r.input_px} px input: ${r.miou_pct.toFixed(1)}% mIoU, ${r.gflops.toFixed(1)} GFLOPs` });
+    }
+    const [first, last] = [rows[0], rows.at(-1)];
+    el("text", { class: "baseline-label halo", x: x(first.gflops) + 8, y: y(first.miou_pct) + 18 }, parent).textContent = `${first.input_px} px`;
+    el("text", { class: "end-label halo", x: x(last.gflops) + 9, y: y(last.miou_pct) + 5, fill: PASSIVE.color }, parent)
+      .textContent = `${PASSIVE.model}, ${last.input_px} px: ${last.miou_pct.toFixed(1)}%`;
+  }
+
+  #annotateCanvit({ svg, drawn, curves, x, y, narrow, beat: [cx, cy], note: [tx, ty] }) {
     // Each 64² curve is labeled at its end as CanViT-B under its policy.
     for (const curve of curves.filter((c) => c.canvas_grid === 64)) {
       const last = curve.per_timestep.at(-1);
@@ -282,7 +332,10 @@ class CanvitFrontier extends HTMLElement {
     arrow([fx + 26, labelY - 5], [-1, 0], [fx, fy - 7], [0, 1], svg);
     el("text", { class: "callout", x: fx + 32, y: labelY }, svg).textContent =
       `${(100 * first.mean).toFixed(1)}% mIoU in a single glimpse`;
+  }
 
+  /** Hovering the plot names the nearest point. */
+  #hover(svg, plot, width) {
     const focus = el("g", { class: "focus", visibility: "hidden" }, svg);
     const focusDot = el("circle", { r: 5 }, focus);
     const hit = el("rect", { x: plot.left, y: plot.top, width: plot.right - plot.left, height: plot.bottom - plot.top, fill: "transparent" }, svg);

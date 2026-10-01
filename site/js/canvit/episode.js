@@ -229,6 +229,17 @@ class CanvitEpisode extends HTMLElement {
                              { threshold: 0.25 }).observe(this);
   }
 
+  /** Play from where it is; a slide deck calls these as its slide is shown and left. */
+  play() {
+    this.#pausedByUser = false;
+    this.#setPlaying(true);
+  }
+
+  pause() { this.#setPlaying(false); }
+
+  /** Play from the first glimpse. */
+  restart() { this.#restart(); }
+
   get readout() {
     const readout = this.getAttribute("readout") ?? "canvas";
     if (!(readout in READOUTS)) throw new Error(`<canvit-episode>: unknown readout "${readout}"`);

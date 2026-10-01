@@ -14,5 +14,8 @@ export async function drawDetail(section, dir) {
   style.setProperty("--object-left", left);
   style.setProperty("--object-height", bottom - top);
   style.setProperty("--object-width", right - left);
-  for (const caption of section.querySelectorAll("[data-class-caption]")) caption.textContent = `p(${name})`;
+  // data-class-caption names whose probability the panel shows, on a line above it: "CanViT", then "p(television)".
+  for (const caption of section.querySelectorAll("[data-class-caption]")) {
+    caption.textContent = caption.dataset.classCaption ? `${caption.dataset.classCaption}\np(${name})` : `p(${name})`;
+  }
 }

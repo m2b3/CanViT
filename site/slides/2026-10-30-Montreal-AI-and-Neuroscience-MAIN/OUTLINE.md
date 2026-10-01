@@ -241,8 +241,7 @@ yet reviewed by the authors.
   it; zoomed in on it, the same budget shows it and the model finds it. A passive model given the whole scene at that
   budget cannot go and look.
 - **Could:** the average (said: recall of the object's pixels 0.18 after the full-scene glimpse, 0.32 after a zoomed
-  one, 0.19 for the full scene twice, over 4,151 small objects); DINOv3 ViT-B at 128 px on the same scene, beside it
-  (`PLAN.md`).
+  one, 0.19 for the full scene twice, over 4,151 small objects).
 - **Example properties** [stated 2026-10-01]: an object everyone names; a few pixels in the full-scene glimpse; the
   model's p(class) near zero after it and high after the zoom, with few false positives; a scene read at a glance.
   Chosen: ADE_val_00001715, a television in a billiard room (p 0.03 → 0.77; `throwaway/looking_closer`, ranked over
@@ -250,6 +249,8 @@ yet reviewed by the authors.
 - **Builds:** the scene; its full-scene glimpse as the model receives it (128 px, hard nearest), p(television)
   following on the same click, dark; the input zooms into the zoomed glimpse's box, showing the few pixels it had of
   the television; the zoomed glimpse replaces it at the same framing and p(television) lights up on the same click.
+  Last, DINOv3 ViT-B's p(television) from the whole scene at 128 px with its released 128 px probe: dark (mean 0.004
+  over the object; CanViT 0.03 after the full-scene glimpse, 0.77 after the zoom; `throwaway/looking_closer/dinov3_full.py`).
   The model's answer changes with its input, never on a click of its own [Yohaï, 2026-10-01: "please think through
   when things should update and how, i shouldnt need an additional right-arrow to make the probability map
   update"].

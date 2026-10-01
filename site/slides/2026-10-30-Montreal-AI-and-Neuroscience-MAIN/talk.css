@@ -155,19 +155,21 @@
 #active-vision-model .claim span { display: block; }
 
 
-/* Spatial coverage and perception of detail: scene, the model's 128 px input, p(class); the input zooms into the
-   zoomed glimpse's box (--zoom-*, detail.js), then the zoomed glimpse replaces it at the same framing. */
-#detail .detail-row { display: grid; grid-template-columns: repeat(3, 368px); gap: 24px; justify-content: center; margin-top: 24px; }
+/* Spatial coverage and perception of detail: scene, the model's 128 px input, p(class), then DINOv3's p(class) from the
+   whole scene at 128 px; the input zooms into the zoomed glimpse's box (--zoom-*, detail.js), then the zoomed glimpse
+   replaces it at the same framing. */
+#detail .detail-row { display: grid; grid-template-columns: repeat(4, 270px); gap: 24px; justify-content: center; margin-top: 70px; }
 #detail figure { margin: 0; }
-#detail figcaption { margin-bottom: 8px; font-size: 22px; font-weight: 750; white-space: nowrap; }
-#detail .frame { position: relative; width: 368px; height: 368px; overflow: hidden; border-radius: 8px; }
+#detail figcaption { min-height: 2.5em; margin-bottom: 8px; font-size: 19px; font-weight: 750; line-height: 1.25; white-space: pre-line; }
+#detail .frame { position: relative; width: 270px; height: 270px; overflow: hidden; border-radius: 8px; }
 #detail .frame img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .6s ease; }
 #detail .scene .boxed { opacity: 0; }
 #detail.shows-loupe .scene .boxed { opacity: 1; }
 #detail.shows-full .scene .frame { outline: 4px solid var(--glimpse); outline-offset: -4px; }
 #detail.shows-loupe .scene .frame { outline: none; }
 /* The model's answer follows its input on the same click, a moment later (the delay only on the way in). */
-#detail .input, #detail .prob { opacity: 0; transition: opacity .6s ease; }
+#detail .input, #detail .prob, #detail .passive { opacity: 0; transition: opacity .6s ease; }
+#detail.shows-passive .passive { opacity: 1; }
 #detail.shows-full .input { opacity: 1; }
 #detail.shows-full .prob { opacity: 1; transition-delay: .8s; }
 #detail .input .full { transform-origin: 0 0; transition: transform 1.4s ease, opacity .6s ease; }

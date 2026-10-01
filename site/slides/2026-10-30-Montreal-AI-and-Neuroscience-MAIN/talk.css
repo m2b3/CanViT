@@ -355,7 +355,6 @@
 #timeline .legend .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--policy); }
 #timeline .leader { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 5; }
 #timeline .name { font: 800 24px var(--sans); fill: var(--ink); }
-#timeline .did { font: 500 18px var(--sans); fill: var(--text); }
 #timeline .cite { font: italic 400 15px var(--sans); fill: var(--muted); }
 
 /* A persistent, evolving understanding of the scene: glimpses, the composite with the canvas kept, then with it reset;

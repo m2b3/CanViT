@@ -75,7 +75,8 @@ yet reviewed by the authors.
   selection").
 - **Could:** the precursors (Larochelle & Hinton 2010; Bajcsy 1988 "We do not just see, we look") said; the empty
   years before 2019 (digits only).
-- **Builds:** a year axis; the models arrive one per click at their release dates (name, what it did, citation);
+- **Builds:** a year axis; the models arrive one per click at their release dates (name, citation) [Yohaï, 2026-10-01, on the descriptions: "remove the [bad]
+  subtitles"];
   then the markers of those whose policy is learned by reinforcement learning turn policy teal.
 - **Data:** `sources/active-vision-timeline.json` (evidence in `.md`).
 - **Status:** draft (built).
@@ -136,8 +137,9 @@ yet reviewed by the authors.
   of difference between seeing something blurry and seeing nothing at all".
 - **Status:** ready.
 
-### The Canvas Vision Transformer
-- **Title:** the paper's.
+### Canvas Vision Transformer architecture
+- **Title:** says it is the architecture [Yohaï, 2026-10-01: "this slide should be renamed to make it clear this is
+  architecture"]; the paper's Figure 2 is "CanViT architecture diagram".
 - **Shows:** the paper's architecture figure, large.
 - **Says:** a Vision Transformer backbone sees each glimpse; the canvas holds the scene. "I put the intelligence on the
   Vision Transformer side." The canvas answers, "at any point in time and for any position: what does the model think
@@ -380,7 +382,7 @@ yet reviewed by the authors.
 - **Title:** the paper's; "dumb, but not too dumb" is said.
 - **Place:** Backup [Yohaï, 2026-10-01: "details like canvas attention might not be fully relevant, I don't know...
   maybe we don't even show them in the talk, or only as backup?"]: its point for this audience fits in a sentence,
-  said on The Canvas Vision Transformer; the read–write pair and its projections are machine-learning detail.
+  said on Canvas Vision Transformer architecture; the read–write pair and its projections are machine-learning detail.
 - **Takeaway:** the asymmetry: every learned projection is on the glimpse side; the canvas side has only LayerNorm and
   RoPE.
 - **Shows:** a Canvas Attention read–write pair (the paper's Fig. 3A), as large as the slide allows; a click rings the

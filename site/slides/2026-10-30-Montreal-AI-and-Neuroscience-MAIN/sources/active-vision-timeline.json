@@ -1,10 +1,9 @@
 {
- "_about": "The deep active vision models of the timeline slide, each read in its paper (evidence, quotes and figure pages in active-vision-timeline.md). date: first public release (arXiv v1). name: the model's name. did: what it did, in a few words. cite: authors, venue and venue year. policy: how it chooses where to look: 'rl' when the choice is learned by reinforcement learning (named in method), else what it uses. row: where the label sits, -2 and -1 above the axis, 1 and 2 below, chosen so that labels do not overlap. Selection [Yohaï, 2026-10-01]: each entry precise and distinctive; STAM (CVPR 2022) was dropped: the CanViT paper does not cite it and never seeing the whole image is not what sets it apart (RAM's glimpses do not cover it either).",
+ "_about": "The deep active vision models of the timeline slide, each read in its paper (evidence, quotes and figure pages in active-vision-timeline.md). date: first public release (arXiv v1). name: the model's name. cite: authors, venue and venue year. policy: how it chooses where to look: 'rl' when the choice is learned by reinforcement learning (named in method), else what it uses. row: where the label sits, -2 and -1 above the axis, 1 and 2 below, chosen so that labels do not overlap. Selection [Yohaï, 2026-10-01]: each entry precise and distinctive; STAM (CVPR 2022) was dropped: the CanViT paper does not cite it and never seeing the whole image is not what sets it apart (RAM's glimpses do not cover it either).",
  "models": [
   {
    "date": "2014-06-24",
    "name": "RAM",
-   "did": "Recurrent glimpses on digits",
    "cite": "Mnih et al., NeurIPS 2014",
    "policy": "rl",
    "method": "REINFORCE",
@@ -13,7 +12,6 @@
   {
    "date": "2014-12-24",
    "name": "DRAM",
-   "did": "House numbers from glimpses",
    "cite": "Ba et al., ICLR 2015",
    "policy": "rl",
    "method": "REINFORCE (variational bound)",
@@ -22,7 +20,6 @@
   {
    "date": "2019-08-20",
    "name": "Saccader",
-   "did": "75% on ImageNet",
    "cite": "Elsayed et al., NeurIPS 2019",
    "policy": "rl",
    "method": "REINFORCE, after a pretraining step",
@@ -31,7 +28,6 @@
   {
    "date": "2020-10-11",
    "name": "GFNet",
-   "did": "Glance, then focus",
    "cite": "Wang et al., NeurIPS 2020",
    "policy": "rl",
    "method": "PPO",
@@ -40,7 +36,6 @@
   {
    "date": "2023-03-11",
    "name": "AME",
-   "did": "Segments the whole scene from glimpses",
    "cite": "Pardyl et al., IJCAI 2023",
    "policy": "attention entropy",
    "method": "the unobserved patch whose row of the decoder's attention map has the highest entropy",
@@ -49,7 +44,6 @@
   {
    "date": "2024-04-04",
    "name": "AdaGlimpse",
-   "did": "Chooses position and zoom",
    "cite": "Pardyl et al., ECCV 2024",
    "policy": "rl",
    "method": "Soft Actor-Critic",
@@ -58,7 +52,6 @@
   {
    "date": "2025-09-18",
    "name": "AdaptiveNN",
-   "did": "Coarse-to-fine, many tasks",
    "cite": "Wang et al., Nat. Mach. Intell. 2025",
    "policy": "rl",
    "method": "PPO, self-rewarding",

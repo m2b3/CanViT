@@ -1,5 +1,5 @@
 // The deep active vision timeline: each model of sources/active-vision-timeline.json at its release date on a year
-// axis, its label (name, what it did, citation) above or below on a dashed leader, in the style of Yohaï's typst
+// axis, its label (name, citation) above or below on a dashed leader, in the style of Yohaï's typst
 // timeline (github.com/yberreby/typst-snippets, timeline.typ). Every label is a fragment, so the models arrive one per
 // click in date order. Markers of models that learn where to look by reinforcement learning carry the class rl.
 
@@ -44,10 +44,10 @@ export async function drawTimeline(container, { src = "sources/active-vision-tim
     // Labels near an edge grow inward, so they stay on the slide.
     const anchor = mx < 200 ? "start" : mx > WIDTH - 200 ? "end" : "middle";
     const tx = { start: mx - 12, end: mx + 12, middle: mx }[anchor];
-    const top = above ? ly - 2 * LINE - 12 : ly + 22; // the name's baseline
+    const top = above ? ly - LINE - 12 : ly + 22; // the name's baseline
     const entry = el("g", { class: "fragment entry" }, svg);
     el("line", { x1: mx, x2: mx, y1: AXIS_Y + (above ? -10 : 10), y2: above ? ly + 4 : ly, class: "leader" }, entry);
-    [[model.name, "name"], [model.did, "did"], [model.cite, "cite"]]
+    [[model.name, "name"], [model.cite, "cite"]]
       .forEach(([content, kind], i) => text(content, { x: tx, y: top + i * LINE, "text-anchor": anchor, class: kind }, entry));
     el("circle", { cx: mx, cy: AXIS_Y, r: 9, class: model.policy === "rl" ? "marker rl" : "marker" }, entry);
   }

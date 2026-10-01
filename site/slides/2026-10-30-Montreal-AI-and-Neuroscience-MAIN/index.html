@@ -199,7 +199,7 @@
 </section>
 
 <section id="architecture" data-status="ready">
-  <h2>The <span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span></h2>
+  <h2><span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span> architecture</h2>
   <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
   <aside class="notes">This is CanViT. A Vision Transformer, in purple, processes each glimpse, in blue. The canvas, in red, is a memory for the whole scene: a grid of tokens tiling the scene, each staying at its place in the scene whatever the glimpse. I put the intelligence on the Vision Transformer side, and made the memory dumb, but not too dumb: the canvas never goes through a learned layer. Just dumb enough that I can read and write it cheaply, after every glimpse, at high resolution; flexible enough to fill in unseen things from what it knows of the world, like the table. The two streams talk all the time. In a read, the glimpse stream queries the canvas, so what you saw before shapes how you process what you see now: top-down feedback. In a write, the canvas queries the glimpse stream. After every glimpse I can ask, at any point in time and for any position: what does the model think is there?</aside>
 </section>

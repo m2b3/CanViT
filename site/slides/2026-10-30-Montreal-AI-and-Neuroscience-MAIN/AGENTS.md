@@ -364,6 +364,16 @@ received, so the talk may say it:
 - The VPE token helps at long horizons and fine canvases (+1.28 mIoU at t = 20, 64² canvas); EG-C2F's viewpoint
   selection costs about 1–5 MFLOP, under 0.03% of a glimpse.
 
+The timeline's models, what each introduced, checked against the papers [a subagent, 2026-10-01,
+`sources/active-vision-novelty.md`, pages there]: AdaptiveNN continues GFNet (same Tsinghua group: Yulin Wang, Shiji
+Song, Gao Huang; glance, fixed-size fixations, stopping, PPO), not AdaGlimpse, which it never cites; its human
+comparison uses SALICON, collected by mouse tracking, not eye tracking. Saccader's 75.03% ImageNet-1k is its six
+locations read by a separate NASNet classifier on 331 px images; Saccader alone at 224 px is 70.31%; its attention
+network sees the whole image. Of the seven, all but AME learn where to look by reinforcement learning; Larochelle &
+Hinton 2010 and Ranzato 2014 did not, and RAM is the usual start of the deep-learning line, not its first glimpse
+model. Random against learned glimpse choice, in the papers' own ablations: GFNet at 5 steps 74.46% against 75.93%
+(ImageNet-1k, Table 1, p. 9); AME 72.4% against 73.4% (SUN360 classification, 8 glimpses of 32² px, Table 5, p. 7).
+
 The history data [assembled 2026-10-01]: `sources/sota-history.json` (every point read in its paper; `_about`
 defines the fields and series) and `sources/sota-history.md` (sources, leads, caveats). Sequential active models top
 out at 82.2 on ImageNet-1k (AdaptiveNN, 2025) and 27.6 mIoU on ADE20K (AME, 2023); passive models reach 91.1 and

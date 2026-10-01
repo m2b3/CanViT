@@ -17,6 +17,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] "you will make sure, once you are satisfied with the slides etc, that they are force-pushed into
+  gh pages rendered website". To do with `../../deploy.sh` (the `gh-pages` branch's single commit), after checking
+  what it ships from this branch (the talk, its data under `../../data/talk/`, the project page as it stands here).
 - [Yohaï, 2026-10-01] `#cost`: on the Adapt column ("< 15 h, fine-tuning on ImageNet-1k, one TPU v6e-4; or just a
   linear layer"): "no this is horrible"; on the Run column (2.3 ms per glimpse, 175 ms on a CPU): "no one cares";
   "this is marketing as [...] and without comparison points (what about other models? for example could be PEAK
@@ -36,8 +39,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#timeline`: "remove the [bad] subtitles like 'Recurrent glimpses on digits' (a GLIMPSE IS NOT
   RECURRENT ANYWAY) and add to TODO to question PRECISELY what was interesting/new/notable about each of these works".
-  Subtitles removed. Open: for each model, what was new against the works before it, read in its paper, and the
-  notes checked sentence by sentence (a subagent on it 2026-10-01).
+  Subtitles removed. Each model's novelty, against the works before it, read in its paper, and the notes checked
+  sentence by sentence (`sources/active-vision-novelty.md`, 2026-10-01); the notes corrected from it (AdaptiveNN
+  continues GFNet; Saccader's 75% needs its NASNet classifier; "of these seven"). Open: the authors' read of that file.
 - [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
   scheme is still not great not great at all". Labels redone 2026-10-01 (no key; each passive line named at its end
   under one "Passive" heading, "linear decoding"; active models named at their points over "Active models"); awaiting

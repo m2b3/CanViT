@@ -159,33 +159,56 @@ yet reviewed by the authors.
 - **Status:** draft (ring positions to check).
 
 ### Passive-to-active dense latent distillation
-- **Title:** the paper's.
-- **Must:** what the student learns from: a passive teacher sees the whole scene; the student only gets glimpses, at
-  random places and zooms, and after each one predicts the teacher's features of the whole scene, seen or not; why
-  that teaches seeing (the teacher's space holds knowledge of the world); no labels, no policy built in.
-- **Could:** pixels as the identity teacher (the same scheme with g = identity); the guess improving glimpse by
-  glimpse as a number (cosine similarity to the teacher); the pretraining scale (said).
-- **Builds** [Yohaï, 2026-10-01: "fade-in fadeout ... the question, then the viz ... something big that then becomes
-  small"]: the scene large; the teacher's map arrives beside it (DINOv3 sees everything once); the scene shrinks to a
-  glimpse box and the student's best guess of the whole map appears beside the teacher's; glimpse by glimpse the guess
-  fills in, unseen regions included; then the teacher's map turns into the scene's pixels for a moment (the identity
-  teacher) and back.
-- **Example properties** [stated 2026-10-01, before a sweep]: a scene everyone recognizes whose teacher map shows
-  its objects as distinct color regions; a few random glimpses (pretraining's distribution, seeded) that leave large
-  parts unseen; the student's guess improving visibly glimpse by glimpse, also in regions never inside a glimpse; not
-  chosen because it is already on another slide.
-- **Shows** (until the sweep): the conference room; DINOv3's feature map of the whole scene (PCA colors), the target;
-  CanViT's best guess of that map after each of eight random glimpses, in the same colors, filling in.
-- **Says:** "We already know what good visual representations look like." Separate the architecture from learning
-  the representation: a passive teacher sees the whole scene; the student only gets glimpses, at random places and
-  zooms, and "wherever the model was looking, and at whatever zoom, it should be able to produce its best guess about
-  the entire scene". Pixel reconstruction would be distillation too, from the identity teacher; this teacher's space
-  encodes meaning. No labels anywhere, and no policy built in. The pretraining facts are said here: 13.2 M ImageNet-21k
-  scenes, 1 B random glimpses, 166 hours on one H100. A slide of these numbers alone was cut [Yohaï, 2026-10-01:
-  "impossible to compare to anything, what is the takeaway"]; it returns only with a verified point of comparison.
-- **Data:** `throwaway/distillation` (exported).
-- **Status:** build (example sweep, then the build).
+- **Title:** the paper's §5 (without "policy-agnostic", which the next slide carries).
+- **What it shows: the training process only**, never the trained model's output [Yohaï, 2026-10-01: "absolutely
+  distinguish the TRAINING PROCESS from the RESULT with the trained model"].
+- **Must:** the teacher, DINOv3 ViT-B, frozen, sees the whole scene at 512 px once and gives a feature vector for every
+  patch (32 × 32): the target. The student, CanViT, gets only glimpses (128 px, anywhere, any zoom); after every
+  glimpse it must output the teacher's features for the whole scene, seen or not. The loss: squared error between its
+  guess and the target, at every position and after every glimpse (plus the CLS token). No labels anywhere.
+- **Could:** pixels as the identity teacher (the same recipe with g = identity); the targets precomputed once (about
+  8 H100-hours for 13.2 M scenes); the target per-position z-scored.
+- **Builds:** the scene; the teacher row (scene → frozen DINOv3 → target map, crisp patches); the student row (a
+  glimpse box on the scene → the 128 px glimpse → CanViT → its guess of the whole map, drawn as an empty patch grid
+  to fill); the loss linking guess and target at every patch; a second glimpse: the same loss again.
+- **Says:** "We already know what good visual representations look like." "Wherever the model was looking, and at
+  whatever zoom, it should be able to produce its best guess about the entire scene." Separate the architecture from
+  learning the representation.
+- **Example:** the bedroom of the next two slides (ADE_val_00000124).
+- **Status:** to build.
 
+### Policy agnosticism
+- **Title:** the paper's §5.2 heading.
+- **Must:** during pretraining every viewpoint is random: position anywhere, zoom from the whole scene down to 0.25%
+  of it, small glimpses favored (p(s) ∝ 1 − s), sequences of random length (mean 4, sometimes much longer); two
+  rollouts per scene, one random from the start (R-IID), one starting from the full scene (F-IID). So no policy is
+  built in, and any policy can be used afterwards (C2F, F2C, EG-C2F were never seen in training).
+- **Could:** the scale distribution as a histogram; the training scale (13.2 M scenes, about 1 B glimpses, 166 h on
+  one H100) said here.
+- **Builds:** several scenes, each with its random glimpse boxes appearing one by one, lengths differing, an R-IID and
+  an F-IID rollout side by side; then the histogram of zooms; viewpoints drawn by `canvit_pytorch.policies` itself
+  and exported, never re-implemented in the page.
+- **Status:** to build.
+
+### Reconstructing scene-wide DINOv3 embeddings
+- **Title:** the abstract's ("reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution
+  glimpses"); "Its best guess about the entire scene", from the transcript, was rejected [Yohaï, 2026-10-01:
+  "seriously? as a slide title?"]; "its best guess" is said.
+- **Must:** the result of that training: after each glimpse, the trained CanViT-B's guess of the teacher's map fills
+  in, including regions never inside a glimpse (the window's unseen top after a glimpse of its bottom; the bed's
+  unseen side after a glimpse of the pillow).
+- **Could:** the similarity to the target over never-seen patches (said: cosine 0.72 → 0.89 over 8 glimpses, in
+  DINOv3 space).
+- **Builds:** three panels: glimpses so far (boxes on the scene), CanViT's guess, DINOv3's target; glimpse by glimpse.
+  [Yohaï, 2026-10-01, an idea: "have the glimpses be slow then fast (just like on the 'in action' demo), log-space the
+  x axis of number of glimpses maybe, and how the cosine similarity with the teacher features evolves"]: the glimpses
+  slow at first, then faster, as `<canvit-episode>` paces them; beside the panels, the guess's cosine similarity to the
+  teacher (all patches and never-seen patches) against the number of glimpses on a log axis, growing as they play;
+  more glimpses than 8 (export up to 21) so the log axis has room.
+- **Example properties** [stated 2026-10-01, before the sweep]: a recognizable scene whose teacher map shows objects as
+  distinct regions; random glimpses (pretraining's distribution) that leave large parts unseen; a guess that visibly
+  improves, also where never seen. Chosen: ADE_val_00000124 (sweep over ADE20K validation, `throwaway/distillation`).
+- **Status:** to build (data exported).
 ## Evidence
 
 ### CanViT in action
@@ -251,8 +274,12 @@ yet reviewed by the authors.
 - **Status:** draft (built: the six policies named over their first glimpses, then playing, then the race; the
   metacognition explanation to add).
 
-### The model's own uncertainty about what's where
-- **Title:** Yohaï's words [2026-10-01: "the model's own uncertainty about what's where"].
+### Uncertainty-based viewpoint selection
+- **Title:** the paper's §6 ("EG-C2F's uncertainty-based viewpoint selection"), proposed 2026-10-01 after "The
+  model's own uncertainty about what's where" was rejected [Yohaï: "terrible title for a slide. think of possible
+  titles"]; alternatives offered: "Entropy-Guided Coarse-to-Fine" (the policy's name), "Guiding viewpoint selection
+  with the canvas" (§6: "the ability of the canvas to guide viewpoint selection"). "The model's own uncertainty
+  about what's where" and "metacognition" are said.
 - **Must:** metacognition, explained: at a position, the class probabilities read out from the canvas, peaked or
   flat; entropy as how flat; the uncertainty map; EG-C2F averaging it per quadrant and looking next where it is
   highest, without reinforcement learning.
@@ -312,6 +339,20 @@ yet reviewed by the authors.
 - **Status:** ready.
 
 ## Backup (place in the story to be settled)
+
+### End-to-end policy learning (reserved)
+- **Title:** to choose with the authors ("What about RL?" was floated as a spoken framing).
+- **Must:** with a good observer, learning a policy becomes easy: a policy trained on top of the frozen CanViT-B
+  (the VPE token exists for this) and how it compares with C2F and EG-C2F [Yohaï, 2026-10-01: "having the observer
+  makes having a great policy easy (this WILL need work!)"].
+- **Data:** CanViT-PyTorch-RL (unpublished) and any experiment run before the talk; nothing is shown before it is
+  read and verified.
+- **Status:** reserved.
+
+### What's next (reserved)
+- **Must:** teasers of the work that follows, as the authors decide [Yohaï, 2026-10-01: "we might want future /
+  teasers etc."].
+- **Status:** reserved.
 
 ### A general-purpose observer lets you use any policy
 - **Title:** the project page's line; a bonus, in Backup [Yohaï, 2026-10-01: "no one [cares] enough for this

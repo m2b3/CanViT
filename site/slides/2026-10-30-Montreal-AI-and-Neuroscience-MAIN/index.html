@@ -222,29 +222,96 @@
 
 <section id="distillation" data-status="draft">
   <h2>Passive-to-active dense latent distillation</h2>
-  <div class="distill">
-    <div>
-      <div class="heads"><span class="term-glimpse">Glimpses so far</span><span class="term-canvas">CanViT's best guess</span></div>
-      <deck-sequence data-play period="1700" hold="3500">
-        <div class="frame"><img src="../../data/talk/distillation/ADE_val_00001271/riid-s4/scene-0.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/riid-s4/prediction-0.png" alt=""></div>
-        <div class="frame"><img src="../../data/talk/distillation/ADE_val_00001271/riid-s4/scene-1.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/riid-s4/prediction-1.png" alt=""></div>
-        <div class="frame"><img src="../../data/talk/distillation/ADE_val_00001271/riid-s4/scene-2.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/riid-s4/prediction-2.png" alt=""></div>
-        <div class="frame"><img src="../../data/talk/distillation/ADE_val_00001271/riid-s4/scene-3.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/riid-s4/prediction-3.png" alt=""></div>
-        <div class="frame"><img src="../../data/talk/distillation/ADE_val_00001271/riid-s4/scene-4.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/riid-s4/prediction-4.png" alt=""></div>
-        <div class="frame"><img src="../../data/talk/distillation/ADE_val_00001271/riid-s4/scene-5.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/riid-s4/prediction-5.png" alt=""></div>
-        <div class="frame"><img src="../../data/talk/distillation/ADE_val_00001271/riid-s4/scene-6.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/riid-s4/prediction-6.png" alt=""></div>
-        <div class="frame"><img src="../../data/talk/distillation/ADE_val_00001271/riid-s4/scene-7.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/riid-s4/prediction-7.png" alt=""></div>
-      </deck-sequence>
-    </div>
-    <div class="target">
-      <div class="heads"><span>DINOv3, whole scene</span></div>
-      <img class="pixels" src="../../data/talk/distillation/ADE_val_00001271/teacher.png" alt="DINOv3 ViT-B's feature map of the whole 512 px scene, in PCA colors">
-    </div>
+  <!-- The training process only: no trained model's output on this slide; the guess is an empty grid to fill
+       [Yohaï, 2026-10-01: "absolutely distinguish the TRAINING PROCESS from the RESULT"]. The bedroom of the result
+       slide (ADE_val_00000124); its first two glimpses from the sweep's random sequence (riid-s124). -->
+  <div class="recipe">
+    <img class="scene" src="../../data/talk/distillation/ADE_val_00000124/scene.png" alt="A bedroom">
+    <img class="scene with-box first" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/scene-0.png" alt="The bedroom with a glimpse's box">
+    <img class="scene with-box second" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/scene-1.png" alt="The bedroom with a second glimpse's box">
+    <div class="box teacher">DINOv3 ViT-B<span>frozen</span></div>
+    <figure class="target"><figcaption>target</figcaption><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3's features of the whole scene, 32 by 32 patches, in PCA colors"></figure>
+    <img class="glimpse pixels first" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/glimpse-0.png" alt="The first glimpse, 128 by 128 pixels">
+    <img class="glimpse pixels second" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/glimpse-1.png" alt="The second glimpse">
+    <div class="box student">CanViT</div>
+    <figure class="guess"><div class="grid"></div><figcaption>guess, whole scene</figcaption></figure>
+    <svg class="arrows" viewBox="0 0 1152 556">
+      <path class="draw teacher-path" pathLength="1" d="M258,232 C340,232 350,122 428,122"/>
+      <path class="draw teacher-path" pathLength="1" d="M652,122 C760,122 760,140 858,140"/>
+      <path class="draw glimpse-path" pathLength="1" d="M258,370 C300,370 300,455 328,455"/>
+      <path class="draw student-path" pathLength="1" d="M482,455 L558,455"/>
+      <path class="draw student-path" pathLength="1" d="M742,455 C800,455 800,430 858,430"/>
+      <path class="draw loss" pathLength="1" d="M970,262 L970,318"/>
+      <text class="loss-label" x="955" y="296" text-anchor="end">squared error, every patch</text>
+    </svg>
   </div>
-  <aside class="notes">How do you train it? The other thing that made it work was separating the architecture problem from the problem of learning good representations. We already know what good visual representations look like. So DINOv3 sees the whole scene, at high resolution, once: that's the target, on the right, in PCA colors. CanViT only gets glimpses, at random places and random zoom levels, and after every one it has to produce its best guess about the entire scene, not only the region it looked at. Watch: from glimpses of the floor, the guess is vague; when a glimpse catches the table, the whole room organizes. Is it cheating to learn from a model that sees everything? Reconstructing pixels from partial views would be distillation too, from the identity teacher. We just picked a teacher whose space means something. No labels anywhere, and since the glimpses are random, no policy is built in. (What's shown: CanViT-B's pretrained readout and DINOv3 ViT-B's features in one PCA basis and color scale, after random glimpses.) We pretrained CanViT-B this way from scratch, on 13.2 million ImageNet-21k scenes and a billion random glimpses, in 166 hours on a single H100: about a week on one GPU.</aside>
+  <span class="fragment step-marker" data-shows="teacher"></span>
+  <span class="fragment step-marker" data-shows="glimpse"></span>
+  <span class="fragment step-marker" data-shows="student"></span>
+  <span class="fragment step-marker" data-shows="loss"></span>
+  <span class="fragment step-marker" data-shows="again"></span>
+  <aside class="notes">How do you train it? The other thing that made it work was separating the architecture from the problem of learning good representations. We already know what good visual representations look like. Take a scene. [click] A passive teacher, DINOv3, frozen, sees the whole scene, at high resolution, once. Its features for every patch are the target. [click] The student only gets glimpses: here, a small piece of wall. [click] CanViT takes that glimpse and has to output its guess for the whole scene: every patch, including everything it hasn't seen. [click] The loss compares its guess to the teacher's features, everywhere. [click] Then another glimpse, somewhere else, at another zoom, and again. No labels anywhere. Is it cheating to learn from a model that sees everything? Reconstructing pixels from partial views would be distillation too, from the identity teacher. We just picked a teacher whose space means something.</aside>
+</section>
+
+<section id="policy-agnosticism" data-status="draft">
+  <h2>Policy agnosticism</h2>
+  <!-- Viewpoints drawn by the package's pretraining sampler for four ImageNet photographs (throwaway/pretraining):
+       rollout lengths from the pretraining config's process (K = 2, p_stop = 0.5), F-IID and R-IID as in pretraining.
+       Labels and colors from js/canvit/policies.js. -->
+  <div class="rollout-grid">
+    <p class="row-label" data-policy-label="random"></p>
+    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="dog" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="church" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="truck" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="parachute" policy="random"></pretraining-rollout>
+    <p class="row-label fiid" data-policy-label="full_then_random"></p>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="dog" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="church" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="truck" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="parachute" policy="full_then_random"></pretraining-rollout>
+  </div>
+  <span class="fragment step-marker" data-shows="fiid"></span>
+  <aside class="notes">One more thing about training: no policy is built in. Every glimpse is random: anywhere in the scene, at any zoom from the whole scene down to a quarter of a percent of it, with small glimpses more likely; and the number of glimpses is random too: two, four, six, sometimes many more, four on average. [click] Each scene is seen twice: once like this, and once starting from the whole scene, then random. These are the actual draws of our training code. So the model never learns one way of looking: C2F, F2C, the entropy-guided policy, none of them were ever seen in training. We pretrained CanViT-B this way from scratch, on 13.2 million ImageNet-21k scenes and about a billion random glimpses, in 166 hours on a single H100.</aside>
 </section>
 
 <!-- ============================================================== Evidence -->
+
+<section id="reconstruction" data-status="draft">
+  <h2>Reconstructing scene-wide DINOv3 embeddings</h2>
+  <!-- The result of pretraining: the released CanViT-B's pretrained readout (its guess of DINOv3 ViT-B's patch
+       features of the whole 512 px scene) after each of 21 random glimpses (pretraining's distribution, seed 124),
+       in one PCA basis and color scale with the target. ADE_val_00000124, chosen by a sweep over ADE20K validation
+       (throwaway/distillation). The glimpses play slow then fast; the chart follows them. -->
+  <div class="recon">
+    <div class="heads"><span>Glimpses</span><span class="term-canvas">CanViT's guess</span><span>DINOv3, whole scene</span></div>
+    <deck-sequence data-play period="1700" fast="260" hold="4500">
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-0.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-0.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-1.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-1.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-2.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-2.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-3.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-3.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-4.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-4.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-5.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-5.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-6.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-6.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-7.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-7.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-8.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-8.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-9.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-9.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-10.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-10.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-11.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-11.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-12.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-12.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-13.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-13.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-14.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-14.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-15.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-15.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-16.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-16.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-17.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-17.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-18.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-18.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-19.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-19.png" alt=""></div>
+      <div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/scene-20.png" alt=""><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-20.png" alt=""></div>
+    </deck-sequence>
+    <img class="target pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3 ViT-B's features of the whole scene">
+    <div class="cosine-chart"></div>
+  </div>
+  <aside class="notes">And this is what it learns. The trained model, on a bedroom it never saw, after random glimpses. Left, where it has looked; middle, its guess of DINOv3's features for the whole scene; right, DINOv3's own, from the whole picture. First a bare wall: the guess is vague. A glimpse of the window's bottom, and the whole window appears, top included. A glimpse of the pillow, and the bed spreads across the bottom, including the side it hasn't seen. Below, how close the guess is to the target, as cosine similarity, against the number of glimpses on a log scale (the vertical axis is spaced by the remaining distance, one minus the similarity, on a log scale, so the gains near the top stay visible): everything, and the patches no glimpse ever covered. From 0.71 to 0.92 over 21 glimpses; 0.87 where it never looked.</aside>
+</section>
 
 <section id="rollout" data-status="ready">
   <h2><span class="brand">CanViT</span> in action</h2>
@@ -314,7 +381,7 @@
 </section>
 
 <section id="uncertainty" data-status="draft">
-  <h2>The model's own uncertainty about what's where</h2>
+  <h2>Uncertainty-based viewpoint selection</h2>
   <!-- How EG-C2F chooses, on the street of #policies after its first glimpse (the full scene). The street-egc2f
        bundle draws the scene, the boxes and the uncertainty map; uncertainty.js draws the rings, the bars and the
        quadrants from throwaway/metacognition/export.py's data, a replay of that rollout checked against the bundle's
@@ -456,11 +523,13 @@
   import "../../js/canvit/frontier.js";
   import "../../js/canvit/policy-race.js";
   import "../sequence.js";
+  import "./pretraining-rollout.js";
   import { drawHistoryCharts } from "./history.js";
   import { drawTimeline } from "./timeline.js";
   import { drawMapNames } from "./labeled-map.js";
   import { drawUncertainty } from "./uncertainty.js";
   import { drawDetail } from "./detail.js";
+  import { drawReconstruction } from "./reconstruction.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
   function colorByPolicy(rollout) {
@@ -485,6 +554,7 @@
   await drawHistoryCharts();
   await drawTimeline(document.querySelector("#timeline .timeline"));
   await drawMapNames();
+  await drawReconstruction(document.querySelector("#reconstruction"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/cosine.json");
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
   const uncertainty = document.querySelector("#uncertainty");
   await drawUncertainty(uncertainty, "../../data/talk/metacognition/street");

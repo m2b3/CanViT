@@ -98,7 +98,9 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - Titles take the written register: the page's and the paper's headings, the authors' written applications, or the
   plain name of what the slide shows. A spoken turn of phrase (a joke, an aside, a rhetorical question such as "dumb,
   but not too dumb") belongs in the notes, where the speaker says it [Yohaï, 2026-10-01, on that title: "[...] you
-  actually put this as the title"].
+  actually put this as the title"]. A phrase from the transcript stays spoken even when it
+  describes the slide well [Yohaï, 2026-10-01, on "Its best guess about the entire scene": "seriously? as a slide
+  title?"]; the abstract's "Reconstructing scene-wide DINOv3 embeddings" names the same thing in writing.
 - Labels are as short as the thing they name: "Paper", "Code", "Models", not "Read the paper". Install commands use
   uv: `uv add canvit-pytorch` [Yohaï, 2026-10-01].
   Reuse their wordings, turns of phrase and framings verbatim where they fit; write new wording only when nothing
@@ -138,6 +140,10 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - No obvious caveats, in slides, notes or guides: a caveat earns its place only when a competent listener could
   believe the opposite [Yohaï, 2026-10-01, on "not claims about hippocampus, consciousness or calibrated posteriors":
   "obviously. please get rid of all [...] unnecessary and obvious caveats"].
+- Choose every axis scale for what the quantity does [Yohaï, 2026-10-01: "always think about axis scalings etc.
+  fisher transform or such?"]: a log axis for counts, glimpses and compute; for a similarity or accuracy close to its
+  bound, the distance to the bound on a log axis (1 − cosine, error rate) or a Fisher z / logit axis, so late gains
+  stay visible; render the candidates side by side and keep the one that shows the point truthfully.
 - Every number on a slide carries a unit the audience knows (bits, %, GFLOPs, hours); never a bare normalized score
   [Yohaï, 2026-10-01, on "uncertainty 0.44": "units?"].
 - A title says what the slide shows or claims, in the audience's terms; never the name of an experimental condition

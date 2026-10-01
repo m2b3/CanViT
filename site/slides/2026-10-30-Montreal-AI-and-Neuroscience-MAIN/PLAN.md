@@ -37,10 +37,26 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   ADE20K probe, `hub.repos.released_dinov3_ade20k_probe("dv3b", input_size_px=128)`), on the rollout, extrapolation
   and detail slides; the paper's numbers for the matched comparison (passive_comparison_rows: DINOv3 ViT-B at 128 px
   28.8 mIoU against CanViT-B's 29.3 to 39.6 from one full-scene glimpse) say why it matters.
-- [Yohaï, 2026-10-01] `#distillation`: replace the conference room (natively 256 px, shown upscaled; chosen for
-  convenience). The sweep (`throwaway/distillation`, 2026-10-01) proposes ADE_val_00000124 (bedroom: the unseen upper
-  window and the unseen side of the bed fill in), then 00001140, 00001784, 00001847; build with the sequential
-  pattern of `OUTLINE.md`.
+- [Yohaï, 2026-10-01] `#distillation`: "this slide is currently terrible. you should absolutely distinguish the
+  TRAINING PROCESS from the RESULT with the trained model anyway. it needs to be completely reworked and you need to
+  think of what we want to show and get across. also what about policy-agnostic pretraining...". Split into three
+  (`OUTLINE.md`): the recipe (teacher, glimpses, target, loss; no trained model on screen), policy-agnostic
+  pretraining (random places, zooms and lengths, two rollouts per scene; viewpoints drawn by the package's own
+  sampler), and the result (the trained model's guess filling in, on ADE_val_00000124, chosen by the 2026-10-01 sweep
+  over ADE20K validation; the conference room was natively 256 px). Idea for the result slide [Yohaï]: glimpses slow then fast, and the
+  cosine similarity to the teacher against glimpses on a log axis (`OUTLINE.md`).
+- [Yohaï, 2026-10-01] `#uncertainty`'s title: "terrible title for a slide. think of possible titles". Proposed
+  "Uncertainty-based viewpoint selection" (on the slide), "Entropy-Guided Coarse-to-Fine", "Guiding viewpoint
+  selection with the canvas"; the authors choose.
+- [Yohaï, 2026-10-01] `#frontier` ("A new active-vision state of the art in accuracy and efficiency"): "we should
+  not show everything at once, we should do animations and gradual reveals, rescaling of axes, etc. like: our worst
+  policy at 32^2, then at 64^2 canvas, then we show previous active models, then we show our best policy at both
+  resolutions". Built in named states on `<canvit-frontier>` (or a talk chart from `ade20k_seg.json`), the axes
+  rescaling as series arrive.
+- [Yohaï, 2026-10-01, to keep in mind] Reserve a slide for "What about RL?" / "End-to-end policy learning": having
+  the observer makes a great policy easy ("this WILL need work!"), from the CanViT-PyTorch-RL work and possibly new
+  experiments before the talk. Also teasers of what's next ("we might want future / teasers etc."). Both in Backup
+  until the material exists (`OUTLINE.md`).
 - [Yohaï, 2026-10-01] The memory slide: "why would a slide be called that" (now "A persistent, evolving understanding
   of the scene") and "the example you chose really doesn't look inspiring": a three-object example in a lively scene
   is being swept (`OUTLINE.md`, its example properties).

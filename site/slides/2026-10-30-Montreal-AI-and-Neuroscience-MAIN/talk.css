@@ -189,12 +189,58 @@
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
 #canvas-attention .canvas-side { fill: none; stroke: var(--canvas); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
 
-#distillation .distill { display: flex; justify-content: center; align-items: flex-start; gap: 36px; margin-top: 10px; }
-#distillation .heads { display: flex; gap: 14px; margin-bottom: 8px; font-size: 19px; font-weight: 700; }
-#distillation .heads span { width: 350px; }
-#distillation .frame { display: flex; gap: 14px; }
-#distillation .frame img, #distillation .target img { width: 350px; height: 350px; border-radius: 10px; }
-#distillation .target { padding-left: 36px; border-left: 2px solid var(--rule); }
+/* The recipe: scene, teacher row (DINOv3 -> target), student row (glimpse -> CanViT -> guess), the loss between guess
+   and target. Absolute positions match the arrows' viewBox (1152 x 556). */
+#distillation .recipe { position: relative; height: 556px; }
+#distillation .recipe > * { position: absolute; margin: 0; }
+#distillation .scene { left: 0; top: 150px; width: 256px; height: 256px; border-radius: 8px; transition: opacity .5s ease; }
+#distillation .with-box { opacity: 0; }
+#distillation.shows-glimpse:not(.shows-again) .with-box.first, #distillation.shows-again .with-box.second { opacity: 1; }
+#distillation .box { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 64px;
+                     border: 2.5px solid var(--ink); border-radius: 12px; background: var(--bg); font-size: 22px;
+                     font-weight: 750; opacity: 0; transition: opacity .5s ease .3s; }
+#distillation .box span { font-size: 15px; font-weight: 500; color: var(--muted); }
+#distillation .teacher { left: 430px; top: 90px; width: 220px; }
+#distillation .student { left: 560px; top: 423px; width: 180px; border-color: var(--canvas); color: var(--canvas); }
+#distillation figure figcaption { font-size: 18px; font-weight: 700; text-align: center; }
+#distillation .target { left: 860px; top: 6px; width: 220px; opacity: 0; transition: opacity .5s ease .8s; }
+#distillation .target img { display: block; width: 220px; height: 220px; border-radius: 6px; }
+#distillation .guess { left: 860px; top: 320px; width: 220px; opacity: 0; transition: opacity .5s ease .8s; }
+#distillation .guess .grid { width: 220px; height: 220px; border-radius: 6px; border: 2px dashed var(--canvas);
+  background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: calc(220px / 32) calc(220px / 32); }
+#distillation .glimpse { left: 330px; top: 380px; width: 150px; height: 150px; border: 3px solid var(--glimpse);
+                         border-radius: 4px; opacity: 0; transition: opacity .5s ease .5s; }
+#distillation .arrows { inset: 0; width: 1152px; height: 556px; overflow: visible; pointer-events: none; }
+#distillation .arrows path { stroke: var(--ink); stroke-width: 3; }
+#distillation .arrows .loss { stroke: var(--canvas); stroke-dasharray: 1; }
+#distillation .loss-label { font: 700 18px var(--sans); fill: var(--canvas); opacity: 0; transition: opacity .4s ease .6s; }
+#distillation.shows-teacher :is(.teacher, .target) { opacity: 1; }
+#distillation.shows-teacher .teacher-path { stroke-dashoffset: 0; }
+#distillation.shows-glimpse:not(.shows-again) .glimpse.first, #distillation.shows-again .glimpse.second { opacity: 1; }
+#distillation.shows-glimpse .glimpse-path { stroke-dashoffset: 0; }
+#distillation.shows-student :is(.student, .guess) { opacity: 1; }
+#distillation.shows-student .student-path { stroke-dashoffset: 0; }
+#distillation.shows-loss .loss { stroke-dashoffset: 0; }
+#distillation.shows-loss .loss-label { opacity: 1; }
+
+/* Policy agnosticism: R-IID rollouts, then F-IID below them, drawn from the pretraining sampler. */
+#policy-agnosticism .rollout-grid { display: grid; grid-template-columns: 90px repeat(4, 248px); gap: 18px 16px;
+                                    align-items: center; justify-content: center; margin-top: 10px; }
+#policy-agnosticism .row-label { font-size: 26px; font-weight: 800; }
+#policy-agnosticism pretraining-rollout { position: relative; display: block; width: 248px; height: 248px; }
+#policy-agnosticism pretraining-rollout img, #policy-agnosticism pretraining-rollout svg {
+  position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 6px; }
+/* The full-scene glimpse's box coincides with the photo's edge: let its stroke show outside it. */
+#policy-agnosticism pretraining-rollout svg { overflow: visible; }
+#policy-agnosticism pretraining-rollout rect { fill: none; stroke: var(--policy-color); stroke-width: .022;
+                                               transition: opacity .3s ease; }
+#policy-agnosticism pretraining-rollout rect.hidden { opacity: 0; }
+#policy-agnosticism pretraining-rollout rect.past { opacity: .45; stroke-width: .014; }
+#policy-agnosticism pretraining-rollout rect.current { stroke: #fff; stroke-width: .03;
+                                                       filter: drop-shadow(0 0 .02px var(--policy-color)); }
+#policy-agnosticism .fiid { opacity: 0; transition: opacity .6s ease; }
+#policy-agnosticism.shows-fiid .fiid { opacity: 1; }
 
 #rollout .episode { width: 1060px; margin: 0 auto; padding: 14px 20px; }
 #rollout canvit-episode { font-size: 15px; }
@@ -326,3 +372,21 @@
                                text-shadow: 0 0 4px #000; opacity: 0; transition: opacity .4s ease, border .4s ease; }
 #uncertainty.shows-quadrants .quadrants span { opacity: 1; }
 #uncertainty.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }
+
+/* Reconstructing scene-wide DINOv3 embeddings: glimpses and CanViT's guess play (slow then fast), the target beside
+   them, the cosine chart below, growing with the frames (reconstruction.js). */
+#reconstruction .recon { display: grid; grid-template-columns: 624px 300px; column-gap: 24px; justify-content: center; }
+#reconstruction .heads { grid-column: 1 / -1; display: grid; grid-template-columns: 300px 300px 300px; gap: 24px;
+                         font-size: 20px; font-weight: 750; margin-bottom: 6px; }
+#reconstruction deck-sequence .frame { display: grid; grid-template-columns: 300px 300px; gap: 24px; }
+#reconstruction .recon img { display: block; width: 300px; height: 300px; border-radius: 6px; }
+#reconstruction .cosine-chart { grid-column: 1 / -1; margin-top: 14px; }
+#reconstruction .cosine-chart svg { display: block; width: 948px; height: auto; overflow: visible; }
+#reconstruction .cosine-chart text { font: 500 16px var(--sans); fill: var(--muted); }
+#reconstruction .cosine-chart .axis-title { fill: var(--text); }
+#reconstruction .cosine-chart .grid { stroke: var(--rule); }
+#reconstruction .cosine-chart .line { fill: none; stroke-width: 3.5; stroke-linejoin: round; }
+#reconstruction .cosine-chart .all { stroke: var(--ink); fill: var(--ink); }
+#reconstruction .cosine-chart .never-seen { stroke: var(--canvas); fill: var(--canvas); }
+#reconstruction .cosine-chart .line.all, #reconstruction .cosine-chart .line.never-seen { fill: none; }
+#reconstruction .cosine-chart .label { font-size: 17px; font-weight: 700; stroke: none; }

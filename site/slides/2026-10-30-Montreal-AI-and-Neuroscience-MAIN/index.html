@@ -162,7 +162,7 @@
   <aside class="notes">How do you measure how smart a vision model is? Two standard tests. The first is classification, on ImageNet: one photo, one label for the whole image, out of a thousand classes, as fine as the breed of a dog. [click] English springer. One good look at the right part, here the head, and you have it. [click] Passive models of the same size as the active ones, over the years, trained end to end. [click] And frozen self-supervised features with just a linear layer on top: that's how foundation models are read out. [click] Now the active models from the timeline. Below the models trained end to end, every time. Two of them edge above the self-supervised features of their day, which still trailed supervised training back then. [click] The second test is much harder: semantic segmentation, on ADE20K. [click] A label for every pixel: wall, floor, sofa, the book on the coffee table; 150 classes. You have to know what is everywhere, including where you haven't looked closely. For a model that sees one glimpse at a time, that means remembering what it saw where, and guessing the rest. Most active models can't produce it at all. The score is mIoU: for each class, how much the predicted region overlaps the true one, averaged over classes. [click] Passive, frozen features, and the two active models that do it. [click] That's the gap. Active computer vision was not nearly as smart as passive computer vision. Even with lots of training, lots of data and lots of inference compute, it was terrible. The whole point was supposed to be efficiency; instead, worse accuracy and worse efficiency at every level.</aside>
 </section>
 
-<section id="active-vision-model" data-status="ready">
+<section id="active-vision-model" data-status="draft">
   <h2>What's in an active-vision model?</h2>
   <div class="axes">
     <div class="group observer">
@@ -182,8 +182,15 @@
       <p class="focus fragment">prior work focused here</p>
     </div>
   </div>
-  <p class="claim fragment"><span>No policy can make up for a poor observer.</span> <span>A general-purpose observer lets you use any policy.</span></p>
-  <aside class="notes">Why was it stuck? I think people were focusing on the wrong thing. I made the same mistake as everybody else: I focused on choosing where to look. An active-vision model does three things: make sense of what it sees right now, keep an evolving understanding of the scene, and decide where to look next. The first two make the observer: the thing that makes sense of the world given some inputs. The third is the policy. Prior work mostly worked on the policy, usually with reinforcement learning: a new algorithm, a new heuristic. Yet in their own ablations, looking at random did almost as well: GFNet on ImageNet loses a point and a half, AME a point. But it doesn't matter what policy I have if I don't have a good observer. Give a perfect observer enough glimpses of a static scene, and a naive policy ends up where a smart one does. And there was no good observer. There were good computer-vision models, but passive ones: nothing integrated what they saw into a global scene understanding. So, build the observer first. A general-purpose observer lets you use any policy.</aside>
+  <!-- What learning where to look bought, in the papers' own ablations (sources/policy-ablations.json), then the claim in
+       its place: demonstrate, then name. -->
+  <div class="bottom">
+    <div class="ablations"></div>
+    <p class="claim"><span>No policy can make up for a poor observer.</span> <span>A general-purpose observer lets you use any policy.</span></p>
+  </div>
+  <span class="fragment step-marker" data-shows="ablations"></span>
+  <span class="fragment step-marker" data-shows="claim"></span>
+  <aside class="notes">Why was it stuck? I think people were focusing on the wrong thing. I made the same mistake as everybody else: I focused on choosing where to look. An active-vision model does three things: make sense of what it sees right now, keep an evolving understanding of the scene, and decide where to look next. The first two make the observer: the thing that makes sense of the world given some inputs. The third is the policy. Prior work mostly worked on the policy, usually with reinforcement learning: a new algorithm, a new heuristic. [click] What did it buy? Two of these papers checked, in their own ablations: the same model, with its viewpoints chosen at random. GFNet on ImageNet: 74.5 at random, 75.9 with its learned policy. AME on scene classification: 72.4 against 73.4. About a point, where the gap to passive models was several points on ImageNet and over twenty on segmentation. [click] It doesn't matter what policy I have if I don't have a good observer. Give a perfect observer enough glimpses of a static scene, and a naive policy ends up where a smart one does. And there was no good observer. There were good computer-vision models, but passive ones: nothing integrated what they saw into a global scene understanding. So, build the observer first. A general-purpose observer lets you use any policy.</aside>
 </section>
 
 <!-- ============================================================== CanViT -->
@@ -639,6 +646,7 @@
   import { drawDetail } from "./detail.js";
   import { drawDistillation } from "./distillation.js";
   import { drawTrainingCost } from "./training-cost.js";
+  import { drawPolicyAblations } from "./policy-ablations.js";
   import { drawArchitecture } from "./architecture.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
@@ -685,6 +693,7 @@
   }
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
   await drawArchitecture(document.querySelector("#architecture .arch-build"));
+  await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
   await drawTrainingCost(document.querySelector("#cost"), "../../data/talk/training-cost.json");
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const uncertainty = document.querySelector("#uncertainty");

@@ -123,8 +123,10 @@ yet reviewed by the authors.
 ### What's in an active-vision model?
 - **Title:** the project page's section.
 - **Shows:** the page's diagram: Seeing (instantaneous vision, memory: the observer) and Choosing where to look (action
-  selection: the policy); then where prior work focused, the policy; then the page's line "No policy can make up for a
-  poor observer. A general-purpose observer lets you use any policy."
+  selection: the policy); then where prior work focused, the policy; then what that bought, in two of those papers'
+  own ablations (`sources/policy-ablations.json`): random viewpoints against the paper's choice, GFNet on ImageNet-1k
+  74.5 against 75.9%, AME on SUN360 72.4 against 73.4% (demonstrate, then name); then, in their place, the page's line
+  "No policy can make up for a poor observer. A general-purpose observer lets you use any policy."
 - **Says:** "I made the same mistake as everybody else: I focused on choosing where to look." "What's an observer?
   It's the thing that makes sense of the world given some inputs ... not just instantaneous vision ... but also
   memory." There was no good observer; borrowing a passive model's weights gave the wrong geometry. "A

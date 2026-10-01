@@ -151,8 +151,23 @@
 #active-vision-model .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
 #active-vision-model .focus { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap;
                               padding: 4px 14px; border-radius: 999px; background: var(--policy); color: #fff; font-size: 18px; font-weight: 700; }
-#active-vision-model .claim { margin-top: 70px; }
+/* Below the diagram, the prior models' ablations, then the claim in their place. */
+#active-vision-model .bottom { display: grid; margin-top: 58px; }
+#active-vision-model .bottom > * { grid-area: 1 / 1; opacity: 0; transition: opacity .6s ease; }
+#active-vision-model.shows-ablations:not(.shows-claim) .ablations, #active-vision-model.shows-claim .claim { opacity: 1; }
+#active-vision-model .claim { align-self: center; }
 #active-vision-model .claim span { display: block; }
+#active-vision-model .ablations svg { display: block; width: 100%; height: auto; overflow: visible; }
+#active-vision-model .ablations .value { font: 600 15px var(--sans); fill: var(--muted); }
+#active-vision-model .ablations .model { font: 800 22px var(--sans); fill: var(--ink); }
+#active-vision-model .ablations .where { font: 500 16px var(--sans); fill: var(--muted); }
+#active-vision-model .ablations .span { stroke: #94a3b8; stroke-width: 4; }
+#active-vision-model .ablations .random { fill: var(--bg); stroke: #64748b; stroke-width: 3; }
+#active-vision-model .ablations .chosen { fill: var(--policy); }
+#active-vision-model .ablations .delta { font: 800 22px var(--sans); fill: var(--policy); }
+#active-vision-model .ablations .key { font: 700 16px var(--sans); }
+#active-vision-model .ablations .random-key { fill: #64748b; }
+#active-vision-model .ablations .chosen-key { fill: var(--policy); }
 
 
 /* Spatial coverage and perception of detail: scene, the model's 128 px input, p(class), then DINOv3's p(class) from the

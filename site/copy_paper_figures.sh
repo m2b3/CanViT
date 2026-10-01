@@ -6,7 +6,7 @@
 set -euo pipefail
 : "${PAPER_EXPORTS:?set PAPER_EXPORTS to the directory of the figure exports of the paper}"
 site=$(cd "$(dirname "$0")" && pwd)
-for figure in arch_overview.svg canvas_attention_combined.svg; do
+for figure in arch_overview.svg canvas_attention_combined.svg ade20k_seg.json in1k_clf_frozen.json; do
   cp "$PAPER_EXPORTS/$figure" "$site/assets/paper/$figure"
   echo "copied $figure ($(wc -c < "$site/assets/paper/$figure") bytes)"
 done

@@ -310,6 +310,13 @@
                   transition: opacity .6s ease .3s; }
 #policies.shows-race .race { opacity: 1; }
 
+/* Accuracy by viewing policy: ImageNet-1k, then ADE20K beside it. */
+#policy-accuracy .charts { display: grid; grid-template-columns: repeat(2, 540px); gap: 48px; justify-content: center; }
+#policy-accuracy figure { margin: 0; transition: opacity .6s ease; }
+#policy-accuracy figcaption { margin-bottom: 6px; font-size: 22px; font-weight: 750; }
+#policy-accuracy .ade20k { opacity: 0; }
+#policy-accuracy.shows-ade20k .ade20k { opacity: 1; }
+
 /* Quickstart: the install line alone and large, then small above the code; the code walked through block by block,
    the street and the segmentation each model call returns beside it, the map a moment after its glimpse's box. */
 #quickstart .install { position: absolute; left: 0; right: 0; top: 300px; text-align: center; transition: top .7s ease, font-size .7s ease;

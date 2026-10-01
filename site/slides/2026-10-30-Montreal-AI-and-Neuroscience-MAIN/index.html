@@ -380,7 +380,7 @@
       <canvit-rollout class="policy" data-play="play" src="../../data/street-egc2f" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
     <figure style="--col: 2; --row: 1"><figcaption></figcaption>
       <canvit-rollout class="policy" data-play="play" src="../../data/street-rfs" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-    <figure class="race"><canvit-policy-race src="../../assets/paper/ade20k_seg.json" canvas-grid="64" t="0"></canvit-policy-race></figure>
+    <figure class="race"><canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" y-range="0 50" t="0"></canvit-policy-curves></figure>
   </div>
   <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-rollout.policy" data-canvit-t="0"></span>
   <span class="fragment step-marker" data-shows="race" data-canvit-target="canvit-rollout.policy" data-canvit-t="0"></span>
@@ -423,6 +423,23 @@
   <span class="fragment step-marker" data-shows="ade20k"></span>
   <span class="fragment step-marker" data-shows="canvit-ade20k"></span>
   <aside class="notes">Back to the charts. ImageNet first. [click] CanViT-B: 81.1 percent frozen, with a linear layer, and 84.5 after fine-tuning, above every active model. [click] Segmentation. [click] 45.9 percent mIoU, frozen, with a linear layer on top: 18 points above the best previous active model, and close to its own teacher: DINOv3 ViT-B, which sees the whole image at once, gets 47.2 when we probe it the same way. (The dashed line ends higher, at 51.8, because that is DINOv3's own probing protocol.)</aside>
+</section>
+
+<section id="policy-accuracy" data-status="draft">
+  <h2>Accuracy by viewing policy</h2>
+  <!-- The paper's Figure 3B and 3C as one view [Yohaï, 2026-10-01: "show the impact of the viewing policies for IN1k and
+       for ADE20K, with x axis = glimpse count (possibly log-scaled?) ... the focus / message is how the policies work
+       relative to one another and across tasks, and that they matter much more for ade20k"]. Both frozen with a linear
+       probe: ImageNet-1k at the 32 x 32 canvas of its export, ADE20K at 64 x 64 (the headline's). The vertical axes
+       span the same 55 points, so the spreads compare; one task after the other. -->
+  <div class="charts">
+    <figure class="in1k"><figcaption>ImageNet-1k classification</figcaption>
+      <canvit-policy-curves src="../../assets/paper/in1k_clf_frozen.json" task="in1k" canvas-grid="32" y-range="30 85" x-scale="log"></canvit-policy-curves></figure>
+    <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption>
+      <canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" y-range="0 55" x-scale="log"></canvit-policy-curves></figure>
+  </div>
+  <span class="fragment step-marker" data-shows="ade20k"></span>
+  <aside class="notes">How much does the viewing policy matter, and for which task? The same frozen model, the same policies, glimpse by glimpse, on a log scale. ImageNet first. The policies that start from the whole scene start high; fine-to-coarse, starting from the finest detail, starts low. But give them a few glimpses and they all end up together: by the end, within about a point of each other, except the full scene repeated. [click] Now segmentation, on the same span of points. Here the policies stay apart, and they keep climbing all the way: coarse-to-fine reaches <span data-macro="adeBestMiou">45.9</span>, the random policies and fine-to-coarse end about three points lower. For classification, where you look matters early on; for segmentation, it keeps mattering.</aside>
 </section>
 
 <section id="frontier" data-status="draft">
@@ -530,7 +547,7 @@
   import "../../js/canvit/index.js";
   import "../../js/canvit/episode.js";
   import "../../js/canvit/frontier.js";
-  import "../../js/canvit/policy-race.js";
+  import "../../js/canvit/policy-curves.js";
   import "./pretraining-rollout.js";
   import { drawHistoryCharts } from "./history.js";
   import { drawTimeline } from "./timeline.js";
@@ -556,7 +573,7 @@
     else rollout.addEventListener("canvit-load", (event) => event.target === rollout && colorByPolicy(rollout));
   }
   // The race grows with the panels: it shows the glimpse the first panel is at.
-  const race = document.querySelector("#policies canvit-policy-race");
+  const race = document.querySelector("#policies canvit-policy-curves");
   document.querySelector("#policies canvit-rollout.policy").addEventListener("canvit-change", (event) => race.setAttribute("t", event.detail.t));
   import { startDeck } from "../deck.js";
   await drawHistoryCharts();

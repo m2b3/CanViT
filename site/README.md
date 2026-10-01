@@ -57,9 +57,9 @@ The project page loads its two components directly. `<canvit-episode src="BUNDLE
 [readout] [autoplay]>` plays web bundles as the loop CanViT runs (scene, glimpse, CanViT, canvas), with
 the canvas shown as its features, uncertainty, segmentation or correctness, and one tab per bundle.
 `<canvit-frontier src>` draws the paper's ADE20K accuracy–efficiency frontier from
-`assets/paper/ade20k_seg.json`; `<canvit-policy-race src [canvas-grid] [t]>`
-(`js/canvit/policy-race.js`, imported on its own like the frontier) draws the same export's mIoU per viewing policy,
-glimpse by glimpse up to `t`. `js/canvit/policies.js` holds the paper's policy labels, names and figure colors.
+`assets/paper/ade20k_seg.json`; `<canvit-policy-curves src task canvas-grid y-range [x-scale] [t]>`
+(`js/canvit/policy-curves.js`, imported on its own like the frontier) draws accuracy per viewing policy, glimpse by
+glimpse up to `t`, from that export (`task="ade20k"`) or from `assets/paper/in1k_clf_frozen.json` (`task="in1k"`). `js/canvit/policies.js` holds the paper's policy labels, names and figure colors.
 
 The other components load once per page: `<script type="module" src="js/canvit/index.js"></script>`.
 Every bundle element takes `src` (a bundle directory, relative to the page)

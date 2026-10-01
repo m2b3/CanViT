@@ -17,6 +17,14 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] `#timeline`: "remove the [bad] subtitles like 'Recurrent glimpses on digits' (a GLIMPSE IS NOT
+  RECURRENT ANYWAY) and add to TODO to question PRECISELY what was interesting/new/notable about each of these works".
+  Subtitles: removing. TODO: for each model, what was new or notable, read in its paper.
+- [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
+  scheme is still not great not great at all". To do.
+- [Yohaï, 2026-10-01] `#table`: "we're missing some kind of explanation of what the hell the colors correspond to...
+  labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
+  yet." To do.
 - [Yohaï, 2026-10-01] `#live`: "the live explorer from 'A general-purpose observer lets you use any policy' should be
   renamed 'Live demo' and the component should be extracted cleanly such that we can have such a thing on the
   website". To do.
@@ -26,7 +34,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] "we should definitely show the impact of the viewing policies for IN1k and for ADE20K, with x
   axis = glimpse count (possibly log-scaled?) and y axis = in1k top 1 acc or ade20k miou. this is a different view
   into the same data, kind of, and here the focus / message is how the policies work relative to one another and
-  across tasks, and that they matter much more for ade20k." To do.
+  across tasks, and that they matter much more for ade20k." Built as `#policy-accuracy` (after `#results`); awaiting
+  the authors' look. What the data says: the early gap is large on both tasks (one glimpse: C2F 76.8 against F2C 32.2
+  top-1, 39.6 against 11.0 mIoU); after 21 glimpses the ImageNet-1k policies end within 1.3 points of each other
+  (RFS aside), the ADE20K ones 3 points apart and still rising. "Matter much more for ADE20K" holds for the end of
+  the rollouts and for C2F against the random policies (the paper's framing), not for the first glimpses.
 - [Yohaï, 2026-10-01] "you should also think of what needs to be introduced/highlighted when, when a concept first
   occurs on screen or must be spoken, etc. this is very important." A pass over every slide; to do.
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:

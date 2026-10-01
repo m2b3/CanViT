@@ -100,8 +100,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   are the user's to clear or keep: `~/.cache/uv` (18 GB; `uv cache prune` drops unreferenced entries) and
   `~/.cache/huggingface/hub` (8.1 GB, including twelve ablation checkpoints the talk does not use).
 - `#live` (Backup): shrunk with `zoom: .8`.
-- `assets/figures/`: 21 MB, many figures unused by the current slides; downscale the used ones to slide size and leave
-  the rest uncommitted.
 
 ## Experiments and exports
 

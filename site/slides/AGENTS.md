@@ -97,7 +97,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   MUCH better 'What's in an active-vision model?'"].
 - Titles take the written register: the page's and the paper's headings, the authors' written applications, or the
   plain name of what the slide shows. A spoken turn of phrase (a joke, an aside, a rhetorical question such as "dumb,
-  but not too dumb") belongs in the notes, where the speaker says it [Yohaï, 2026-10-01, on that title: "[...] you actually put this as the title"].
+  but not too dumb") belongs in the notes, where the speaker says it [Yohaï, 2026-10-01, on that title: "[...] you
+  actually put this as the title"].
 - Labels are as short as the thing they name: "Paper", "Code", "Models", not "Read the paper". Install commands use
   uv: `uv add canvit-pytorch` [Yohaï, 2026-10-01].
   Reuse their wordings, turns of phrase and framings verbatim where they fit; write new wording only when nothing

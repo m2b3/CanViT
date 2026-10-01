@@ -21,7 +21,10 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   have a masterfully done that introduces all the concepts and then how the model itself works / what it does, with
   animations/transitions"; "you can borrow from 'CanViT in action', start from there but fade into the full thing to
   make complexity appear gradually and explain first scene, then a glimpse which is sampled at a viewpoint, then what
-  we do with it, etc, gradually building up". To do.
+  we do with it, etc, gradually building up". Built 2026-10-01: `#rollout` ("CanViT in action") moved to its place
+  and staged part by part (`<canvit-episode stage>`); awaiting the authors' look. Open: the canvas's segmentation
+  colors are unnamed on screen, the complaint made of `#table`; options: class names on the map, or a readout of one
+  class's probability.
 - [Yohaï, 2026-10-01] `#timeline`: "remove the [bad] subtitles like 'Recurrent glimpses on digits' (a GLIMPSE IS NOT
   RECURRENT ANYWAY) and add to TODO to question PRECISELY what was interesting/new/notable about each of these works".
   Subtitles: removing. TODO: for each model, what was new or notable, read in its paper.
@@ -159,7 +162,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 |---|---|---|---|
 | `shoot.py` checks: titles that wrap, content in the footer band (below 676 px), single words alone on a last line | all | S | todo |
 | The table demonstration animated: each glimpse's passive answer flying to its place in the scene map (stepped CSS, `--x0/--y0/--s0` to `--x1/--y1/--s1`) | `#table` | M | todo |
-| `<canvit-foveate>`: glimpses jumping over a periphery blurred by eccentricity, which fades to nothing on a click | `#human-vision`, `#glimpses` | M | todo |
+| `<canvit-foveate>`: glimpses jumping over a periphery blurred by eccentricity, which fades to nothing on a click | `#human-vision`, `#rollout` | M | todo |
 | `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
 | The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |
 | `<canvit-live>` laid out for a slide; one model session for every live slide | `#live` | M | todo |

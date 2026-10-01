@@ -129,7 +129,7 @@ The words the audience should leave with, each with the slide that carries it [C
 transcript and Yohaï's requests, 2026-10-01; to be confirmed by the authors]:
 
 - **Active vision**: glimpses at chosen viewpoints (position and zoom), one after another (`#human-vision`,
-  `#glimpses`).
+  `#rollout`).
 - **Observer and policy**: "No policy can make up for a poor observer"; "a general-purpose observer lets you use any
   policy" (`#active-vision-model`, `#policies`).
 - **Trans-saccadic integration**: the canvas accumulates what each glimpse brings into one understanding of the scene,

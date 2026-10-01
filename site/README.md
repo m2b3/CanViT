@@ -54,8 +54,9 @@ to `LAYERS` in `layers.js`.
 ## Components
 
 The project page loads its two components directly. `<canvit-episode src="BUNDLE [BUNDLE…]"
-[readout] [autoplay]>` plays web bundles as the loop CanViT runs (scene, glimpse, CanViT, canvas), with
-the canvas shown as its features, uncertainty, segmentation or correctness, and one tab per bundle.
+[readout] [stage] [autoplay]>` plays web bundles as the loop CanViT runs (scene, glimpse, CanViT, canvas), with
+the canvas shown as its features, uncertainty, segmentation or correctness, and one tab per bundle; `stage`
+introduces the loop part by part (scene, viewpoint, glimpse, model, canvas, all), holding at the first glimpse.
 `<canvit-frontier src>` draws the paper's ADE20K accuracy–efficiency frontier from
 `assets/paper/ade20k_seg.json`; `<canvit-policy-curves src task canvas-grid y-range [x-scale] [t]>`
 (`js/canvit/policy-curves.js`, imported on its own like the frontier) draws accuracy per viewing policy, glimpse by

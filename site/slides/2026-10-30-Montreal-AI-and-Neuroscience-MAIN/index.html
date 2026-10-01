@@ -185,17 +185,19 @@
 
 <!-- ============================================================== CanViT -->
 
-<section id="glimpses" data-status="draft">
-  <h2>Scenes, viewpoints and glimpses</h2>
-  <div class="pair glimpse-pair">
-    <figure><figcaption>Scene and viewpoint</figcaption>
-      <canvit-scene class="zoom" src="../../data/street-egc2f" t="0" trail="none"></canvit-scene></figure>
-    <figure><figcaption class="term-glimpse">Glimpse, CanViT's input</figcaption>
-      <canvit-map class="zoom" src="../../data/street-egc2f" t="0" layer="crop"></canvit-map></figure>
-  </div>
-  <span class="fragment" data-canvit-target=".zoom" data-canvit-t="1"></span>
-  <span class="fragment" data-canvit-target=".zoom" data-canvit-t="5"></span>
-  <aside class="notes">Here's the setting. A scene, and a glimpse: a crop at a position and a zoom level, always resized to the same 128 by 128 pixels. Zoom out, and you see everything, coarsely. Zoom in, and you see detail, in a small region. Outside the glimpse there's nothing. Not even a blur. There's a world of difference between seeing something blurry and seeing nothing at all.</aside>
+<section id="rollout" data-status="draft">
+  <h2><span class="brand">CanViT</span> in action</h2>
+  <!-- The loop introduced part by part, each in its place [Yohaï, 2026-10-01: "start from there but fade into the full
+       thing to make complexity appear gradually and explain first scene, then a glimpse which is sampled at a
+       viewpoint, then what we do with it, etc, gradually building up"]: the fragments set the episode's stage; once
+       everything is shown it plays from the first glimpse (data-play="play"). -->
+  <div class="card episode"><canvit-episode data-play="play" src="../../data/street-riid ../../data/shop-riid ../../data/ferry-riid" readout="labels" stage="scene"></canvit-episode></div>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="viewpoint"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="glimpse"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="model"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="canvas"></span>
+  <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-episode" data-canvit-stage="all"></span>
+  <aside class="notes">Here's how it works. A scene: a street. [click] CanViT never sees it whole. It looks at one viewpoint at a time: a position, x and y, and a scale, how zoomed in. [click] What's inside the viewpoint is cropped and resized to 128 by 128 pixels, whatever the zoom: that's the glimpse, all the model gets. Outside it there's nothing, not even a blur, and there's a world of difference between seeing something blurry and seeing nothing at all. [click] The glimpse goes into CanViT, [click] which writes what it understood into its canvas: a memory of the whole scene. Read out with a linear layer, as segmentation, a class at every position: after one glimpse, a guess at the whole street. [click] Then the next viewpoint, the next glimpse, and so on. It takes glimpses and gradually paints its understanding, including places it hasn't looked at yet.</aside>
 </section>
 
 <section id="architecture" data-status="ready">
@@ -288,12 +290,6 @@
 </section>
 
 <!-- ============================================================== What it does -->
-
-<section id="rollout" data-status="ready">
-  <h2><span class="brand">CanViT</span> in action</h2>
-  <div class="card episode"><canvit-episode data-play src="../../data/street-riid ../../data/shop-riid ../../data/ferry-riid" readout="labels"></canvit-episode></div>
-  <aside class="notes">Now read the canvas the way we read DINOv3: one linear layer, trained on ADE20K, says what is where, after every glimpse. It takes glimpses and gradually paints its understanding, including places it hasn't looked at yet.</aside>
-</section>
 
 <section id="memory" data-status="draft">
   <h2>A persistent, evolving understanding of the scene</h2>

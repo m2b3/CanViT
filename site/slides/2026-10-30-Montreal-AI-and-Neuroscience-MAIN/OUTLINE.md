@@ -129,13 +129,20 @@ yet reviewed by the authors.
 
 ## CanViT
 
-### Scenes, viewpoints and glimpses
-- **Title:** the paper's §3 heading.
-- **Shows:** a scene and the glimpse taken at a viewpoint (position and zoom), the model's 128 px input beside it.
-  The looking-closer example is its own slide (Spatial coverage and perception of detail).
-- **Says:** zooming out trades detail for coverage. Outside the glimpse there is nothing, not even a blur: "a world
-  of difference between seeing something blurry and seeing nothing at all".
-- **Status:** ready.
+### CanViT in action
+- **Title:** the project page's "See it in action", with the model named [Yohaï, 2026-10-01].
+- **Replaces** "Scenes, viewpoints and glimpses" [Yohaï, 2026-10-01: "this slide seems unnecessary, instead we should
+  have a masterfully done that introduces all the concepts and then how the model itself works / what it does, with
+  animations/transitions"; "you can borrow from 'CanViT in action', start from there but fade into the full thing to
+  make complexity appear gradually and explain first scene, then a glimpse which is sampled at a viewpoint, then what
+  we do with it, etc, gradually building up"].
+- **Builds:** `<canvit-episode stage=...>`, each part fading in at its place: the scene; the viewpoint (its box); the
+  crop and the glimpse; CanViT; the canvas after the first glimpse (read out as segmentation); then everything, the
+  rollout playing from the first glimpse.
+- **Says:** a viewpoint is a position and a scale; the glimpse is its crop at 128 px, all the model gets ("a world of
+  difference between seeing something blurry and seeing nothing at all"); CanViT writes what it understood into the
+  canvas, a memory of the whole scene; "It takes glimpses and gradually paints its understanding."
+- **Status:** draft (built). Open: the segmentation's colors are not named on screen (`PLAN.md`).
 
 ### Canvas Vision Transformer architecture
 - **Title:** says it is the architecture [Yohaï, 2026-10-01: "this slide should be renamed to make it clear this is
@@ -194,14 +201,6 @@ yet reviewed by the authors.
 - **Status:** to build.
 
 ## What it does
-
-### CanViT in action
-- **Title:** the project page's "See it in action", with the model named [Yohaï, 2026-10-01].
-- **Shows:** `<canvit-episode>` on recorded scenes: the glimpse, the canvas decoded into a segmentation after every
-  glimpse.
-- **Says:** the canvas read out with a linear layer, as DINOv3 was on DINOv3 feature maps; "It takes glimpses and
-  gradually paints its understanding."
-- **Status:** ready.
 
 ### A persistent, evolving understanding of the scene
 - **Title:** the paper's and the page's words for memory ("updating a persistent, evolving understanding of the

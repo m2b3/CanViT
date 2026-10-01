@@ -1,8 +1,11 @@
-// <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels|correct"] [autoplay]>: a recorded rollout
-// (web bundle) played as the loop CanViT runs: the viewpoint moves on the scene, its crop becomes the glimpse,
+// <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels|correct"] [stage] [autoplay]>: a recorded
+// rollout (web bundle) played as the loop CanViT runs: the viewpoint moves on the scene, its crop becomes the glimpse,
 // the glimpse goes into CanViT, at the center, which reads its canvas and writes the glimpse into it. Under the canvas, the
 // pixel accuracy of the segmentation decoded from it. The first glimpses are slow and later ones faster; the
 // last state holds until Replay. Several bundles in `src` become scene tabs labeled with their titles.
+// stage introduces the loop part by part, each in its place: "scene" (the scene alone), "viewpoint" (with the first
+// glimpse's box), "glimpse" (the crop), "model" (CanViT), "canvas" (the canvas after the first glimpse), "all" (the
+// default: everything, and it plays). Before "all" it holds at the first glimpse and does not play.
 
 import { loadBundle } from "./bundle.js";
 import { CORRECTNESS, colormapGradient, correctnessImage, layerImage, layerSpec } from "./layers.js";
@@ -13,6 +16,7 @@ const READOUTS = {
   labels: { label: "Segmentation", image: (bundle, t) => layerImage(bundle, t, "labels") },
   correct: { label: "Correctness", image: correctnessImage },
 };
+const STAGES = ["scene", "viewpoint", "glimpse", "model", "canvas", "all"];
 const FIRST_STEP_MS = 1600;
 const STEP_RATIO = 0.74;
 const SHORTEST_STEP_MS = 170;
@@ -113,6 +117,12 @@ template.innerHTML = `
             color: var(--canvit-muted, #475569); white-space: nowrap; }
   .legend i { display: inline-block; width: 11px; height: 11px; margin-right: 6px; border-radius: 3px; vertical-align: -1px; }
   .error { padding: 14px; border: 1px solid #dc2626; border-radius: 10px; color: #b91c1c; font: 13px/1.5 ui-monospace, monospace; }
+  /* Staged: the parts not yet introduced keep their place, invisible. */
+  .flow > *, .bar { transition: opacity .6s ease; }
+  :host(:is([stage="scene"], [stage="viewpoint"])) :is(.crop, .glimpse, .glimpse-label),
+  :host(:is([stage="scene"], [stage="viewpoint"], [stage="glimpse"])) :is(.input, .model-cell),
+  :host(:is([stage="scene"], [stage="viewpoint"], [stage="glimpse"], [stage="model"])) :is(.write, .canvas-label, .canvas),
+  :host(:not([stage="all"])[stage]) :is(.meter, .bar) { opacity: 0; pointer-events: none; }
   /* Narrow: the same loop from top to bottom. */
   @container (max-width: 760px) {
     .flow { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 4px;
@@ -187,7 +197,7 @@ function sizeToDisplay(canvas) {
 }
 
 class CanvitEpisode extends HTMLElement {
-  static observedAttributes = ["src", "readout"];
+  static observedAttributes = ["src", "readout", "stage"];
 
   #bundle = null;
   #scene = null;
@@ -229,8 +239,9 @@ class CanvitEpisode extends HTMLElement {
                              { threshold: 0.25 }).observe(this);
   }
 
-  /** Play from where it is; a slide deck calls these as its slide is shown and left. */
+  /** Play from where it is; a slide deck calls these as its slide is shown and left. A staged episode holds. */
   play() {
+    if (this.#staged()) return;
     this.#pausedByUser = false;
     this.#setPlaying(true);
   }
@@ -238,7 +249,20 @@ class CanvitEpisode extends HTMLElement {
   pause() { this.#setPlaying(false); }
 
   /** Play from the first glimpse. */
-  restart() { this.#restart(); }
+  restart() {
+    if (!this.#staged()) this.#restart();
+  }
+
+  get stage() {
+    const stage = this.getAttribute("stage") ?? "all";
+    if (!STAGES.includes(stage)) throw new Error(`<canvit-episode>: unknown stage "${stage}", expected one of ${STAGES.join(", ")}`);
+    return stage;
+  }
+
+  #staged() { return this.stage !== "all"; }
+
+  /** Just before the second glimpse starts: the first one done, crop and canvas shown. */
+  #held() { return this.#schedule.durations[0] - 1; }
 
   get readout() {
     const readout = this.getAttribute("readout") ?? "canvas";
@@ -248,7 +272,18 @@ class CanvitEpisode extends HTMLElement {
 
   attributeChangedCallback(name) {
     if (name === "src") this.#showSources();
+    else if (name === "stage") this.#showStage();
     else this.#showReadout();
+  }
+
+  #showStage() {
+    if (!this.#schedule) return;
+    if (this.#staged()) {
+      this.#setPlaying(false);
+      this.#time = this.#held();
+    }
+    this.#renderPlayButton();
+    this.#draw();
   }
 
   connectedCallback() {
@@ -262,7 +297,7 @@ class CanvitEpisode extends HTMLElement {
   }
 
   #wantsAutoplay() {
-    return this.hasAttribute("autoplay") && !this.#pausedByUser && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return this.hasAttribute("autoplay") && !this.#staged() && !this.#pausedByUser && !matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
   #showSources() {
@@ -298,7 +333,7 @@ class CanvitEpisode extends HTMLElement {
       this.$.colorbarMax.textContent = `log ${bundle.manifest.readout.num_classes}`;
       this.$.colorbar.title = `Entropy of the decoded class distribution, from 0 to its maximum, log ${bundle.manifest.readout.num_classes}`;
       this.$.readouts.querySelector('[data-readout="correct"]').hidden = !annotated;
-      this.#time = this.#wantsAutoplay() ? 0 : this.#schedule.total;
+      this.#time = this.#staged() ? this.#held() : this.#wantsAutoplay() ? 0 : this.#schedule.total;
       this.#renderPlayButton();
       this.#draw();
     } catch (error) {
@@ -386,6 +421,7 @@ class CanvitEpisode extends HTMLElement {
     const size = sizeToDisplay(canvas);
     const context = canvas.getContext("2d");
     context.drawImage(this.#scene, 0, 0, size, size);
+    if (this.stage === "scene") return;
     const boxes = this.#bundle.glimpses.map((g) => g.box);
     const from = boxes[Math.max(0, t - 1)], to = boxes[t];
     const k = t === 0 ? 1 : easeInOut(progress(u, PHASES.move));

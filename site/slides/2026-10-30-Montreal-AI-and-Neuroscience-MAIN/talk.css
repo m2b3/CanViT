@@ -149,8 +149,6 @@
 #active-vision-model .claim { margin-top: 70px; }
 #active-vision-model .claim span { display: block; }
 
-#glimpses .glimpse-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; width: 900px; margin: 0 auto; }
-#glimpses figcaption { margin-bottom: 8px; font-size: 22px; font-weight: 700; }
 
 /* Spatial coverage and perception of detail: scene, the model's 128 px input, p(class); the input zooms into the
    zoomed glimpse's box (--zoom-*, detail.js), then the zoomed glimpse replaces it at the same framing. */

@@ -74,7 +74,7 @@ yet reviewed by the authors.
   almost all learned where to look by reinforcement learning (the paper: prior work "has often focused on action
   selection").
 - **Could:** the precursors (Larochelle & Hinton 2010; Bajcsy 1988 "We do not just see, we look") said; the empty
-  years before 2019 (digits only); STAM and the McGill connection.
+  years before 2019 (digits only).
 - **Builds:** a year axis; the models arrive one per click at their release dates (name, what it did, citation);
   then the markers of those whose policy is learned by reinforcement learning turn policy teal.
 - **Data:** `sources/active-vision-timeline.json` (evidence in `.md`).

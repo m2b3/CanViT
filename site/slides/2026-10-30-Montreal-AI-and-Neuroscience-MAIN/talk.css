@@ -59,7 +59,14 @@
 .reveal .history-chart .grid { stroke: var(--rule); stroke-width: 1; }
 .reveal .history-chart .line { fill: none; stroke-width: 4; }
 .reveal .history-chart .passive .line { stroke: var(--ink); }
-.reveal .history-chart .frozen .line { stroke: #64748b; stroke-width: 3; stroke-dasharray: 9 6; }
+/* Frozen features: the family's color, dashed; the key at the top states the grammar. */
+.reveal .history-chart .frozen .line { stroke: var(--ink); stroke-width: 3; stroke-dasharray: 9 6; }
+.reveal .history-chart .key path { fill: none; stroke: var(--ink); stroke-width: 3.5; }
+.reveal .history-chart .key .dashed { stroke-dasharray: 8 5; }
+.reveal .history-chart .key circle { stroke: var(--ink); stroke-width: 3; }
+.reveal .history-chart .key .filled { fill: var(--ink); }
+.reveal .history-chart .key .hollow { fill: var(--bg); }
+.reveal .history-chart .key text { font-size: 18px; fill: var(--text); }
 .reveal .history-chart .label { font-size: 20px; font-weight: 600; fill: var(--text); }
 .reveal .history-chart .label.head { font-weight: 800; fill: var(--ink); }
 .reveal .history-chart .active circle { fill: #d97706; stroke: var(--bg); stroke-width: 2; }
@@ -254,3 +261,33 @@
                       background: linear-gradient(90deg, #000004, #420a68, #932667, #dd513a, #fca50a, #fcffa4); }
 #memory .scale span:nth-child(3), #memory .scale span:nth-child(4) { grid-row: 2; grid-column: 2; }
 #memory .scale span:nth-child(4) { justify-self: end; }
+
+/* The model's own uncertainty: the scene with two rings, the class probabilities at each as bars, then the
+   uncertainty map, its quadrants, and the one EG-C2F visits next. */
+#uncertainty .layout { display: grid; grid-template-columns: 400px 300px 400px; gap: 26px; justify-content: center;
+                       align-items: start; margin-top: 10px; }
+#uncertainty figure { position: relative; margin: 0; }
+#uncertainty canvit-scene, #uncertainty canvit-map { display: block; width: 400px; }
+#uncertainty .rings text { font-size: 4.2px; }
+#uncertainty .rings .halo { stroke-width: 1.4; }
+#uncertainty .rings .ring { stroke-width: .7; }
+#uncertainty .ring-certain, #uncertainty .ring-uncertain { opacity: 0; transition: opacity .4s ease; }
+#uncertainty.shows-certain .ring-certain, #uncertainty.shows-uncertain .ring-uncertain { opacity: 1; }
+#uncertainty .bars { opacity: 0; transition: opacity .5s ease; margin-bottom: 26px; }
+#uncertainty.shows-certain .bars.certain, #uncertainty.shows-uncertain .bars.uncertain { opacity: 1; }
+#uncertainty .bars .head { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+#uncertainty .bars .row { display: grid; grid-template-columns: 96px 150px 46px; align-items: center; gap: 8px; font-size: 17px; }
+#uncertainty .bars .name { text-align: right; color: var(--text); }
+#uncertainty .bars .bar { height: 16px; width: calc(var(--p) * 150px); border-radius: 3px; background: var(--ink); }
+#uncertainty .bars .p { color: var(--muted); font-variant-numeric: tabular-nums; }
+#uncertainty .bars .entropy { margin-top: 6px; font-size: 18px; font-weight: 700; color: var(--text); opacity: 0;
+                              transition: opacity .4s ease; }
+#uncertainty.shows-map .bars .entropy { opacity: 1; }
+#uncertainty .map { opacity: 0; transition: opacity .6s ease; }
+#uncertainty.shows-map .map { opacity: 1; }
+#uncertainty .quadrants { position: absolute; left: 0; top: 0; width: 400px; height: 400px; pointer-events: none; }
+#uncertainty .quadrants span { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+                               border: 2px dashed rgba(255, 255, 255, .85); color: #fff; font-size: 26px; font-weight: 800;
+                               text-shadow: 0 0 4px #000; opacity: 0; transition: opacity .4s ease, border .4s ease; }
+#uncertainty.shows-quadrants .quadrants span { opacity: 1; }
+#uncertainty.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }

@@ -105,7 +105,7 @@
        to look. Evidence for every entry: sources/active-vision-timeline.md. -->
   <div class="timeline"></div>
   <p class="legend fragment" data-shows="rl"><span class="dot"></span>where to look, learned by reinforcement learning</p>
-  <aside class="notes">Machines that look around have a history too. In deep learning it starts in 2014 with the Recurrent Attention Model: take a glimpse, decide where to look next, and the computation no longer grows with the size of the image. [click] DRAM took it from toy digits to house numbers in photographs. [click] Then not much on real images until 2019: Saccader reached 75 percent on ImageNet, thanks to a pretraining step that made the reinforcement learning work. [click] GFNet: glance at the whole image, then focus on patches only when needed; active vision as a speed-up. [click] STAM never sees the whole image; it learns from a teacher that does. [click] AME produces dense outputs, and looks where its attention is most uncertain. [click] AdaGlimpse chooses both where to look and how much to zoom. [click] And AdaGlimpse's successor in spirit, AdaptiveNN, last year: coarse-to-fine fixations across many tasks, compared with where people look. [click] Notice one thing: all but one learn where to look by reinforcement learning. Most of the effort went into choosing where to look.</aside>
+  <aside class="notes">Machines that look around have a history too. In deep learning it starts in 2014 with the Recurrent Attention Model: take a glimpse, decide where to look next, and the computation no longer grows with the size of the image. [click] DRAM took it from toy digits to house numbers in photographs. [click] Then not much on real images until 2019: Saccader reached 75 percent on ImageNet, thanks to a pretraining step that made the reinforcement learning work. [click] GFNet: glance at the whole image, then focus on patches only when needed; active vision as a speed-up. [click] AME segments the whole scene from its glimpses, and picks the next one where its decoder's attention is most spread out; no reinforcement learning there. [click] AdaGlimpse chooses both where to look and how much to zoom. [click] And AdaGlimpse's successor in spirit, AdaptiveNN, last year: coarse-to-fine fixations across many tasks, compared with where people look. [click] Notice one thing: all but one learn where to look by reinforcement learning. Most of the effort went into choosing where to look.</aside>
 </section>
 
 <section id="history" data-status="draft">
@@ -294,6 +294,30 @@
   <aside class="notes">Because CanViT was pretrained with no policy built in, we can try any policy on it. These are the six in the paper, each in its color from the paper's figures. R-IID and F-IID are how it was pretrained: random places and zoom levels; F-IID starts with the full scene. C2F is the natural order: the whole scene, then quarters, then sixteenths. F2C uses exactly C2F's viewpoints, in reverse, finest first: by the end it has seen the same thing, so any difference comes from the order. EG-C2F follows C2F's levels but looks first where the segmentation read from the canvas is least certain: what the canvas holds can guide where to look, without reinforcement learning. And RFS shows the full scene again and again: more processing, no new input. [click] Here they are on the same street, glimpse by glimpse. [click] And the race: each policy's accuracy over all of ADE20K validation, glimpse by glimpse (mean over runs, 64 by 64 canvas). C2F ends above F2C with the same viewpoints: what was seen changes how the next view is processed. RFS improves at first, then declines.</aside>
 </section>
 
+<section id="uncertainty" data-status="draft">
+  <h2>The model's own uncertainty about what's where</h2>
+  <!-- How EG-C2F chooses, on the street of #policies after its first glimpse (the full scene). The street-egc2f
+       bundle draws the scene, the boxes and the uncertainty map; uncertainty.js draws the rings, the bars and the
+       quadrants from throwaway/metacognition/export.py's data, a replay of that rollout checked against the bundle's
+       viewpoints. -->
+  <div class="layout">
+    <!-- The scene moves on to the next glimpse; the map stays at the first, whose uncertainty chose it. -->
+    <canvit-rollout class="next-glimpse" src="../../data/street-egc2f" t="0">
+      <figure class="scene"><canvit-scene trail="past"></canvit-scene><svg class="marks rings" viewBox="0 0 100 100"></svg></figure>
+    </canvit-rollout>
+    <div class="all-bars"><div class="bars certain"></div><div class="bars uncertain"></div></div>
+    <canvit-rollout src="../../data/street-egc2f" t="0">
+      <figure class="map"><canvit-map layer="entropy"></canvit-map><div class="quadrants"></div><canvit-legend layer="entropy"></canvit-legend></figure>
+    </canvit-rollout>
+  </div>
+  <span class="fragment step-marker" data-shows="certain"></span>
+  <span class="fragment step-marker" data-shows="uncertain"></span>
+  <span class="fragment step-marker" data-shows="map"></span>
+  <span class="fragment step-marker" data-shows="quadrants"></span>
+  <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
+  <aside class="notes">EG-C2F was ahead of C2F for most of the race: same views, a different order within each level. How does it choose? After one glimpse of the whole street, read out from the canvas what the model thinks is at each position: a probability for each of the 150 classes. [click] Here, on the building: building, almost certain. [click] Here, by the car: car, building, road. It doesn't know. [click] How flat that distribution is, we call its entropy: low when the model is sure, high when it isn't. Over the whole scene, that's a map of the model's own uncertainty about what is where. A kind of metacognition: it knows what it doesn't know. [click] EG-C2F averages it over each quarter of the scene, [click] and looks next where it's highest. No reinforcement learning, no training: it reads what the canvas already holds. AME, in the timeline, did something similar with its attention maps.</aside>
+</section>
+
 <section id="results" data-status="draft">
   <h2>Benchmark results on ADE20K and ImageNet-1k</h2>
   <div class="stage">
@@ -410,6 +434,7 @@
   import { drawHistoryCharts } from "./history.js";
   import { drawTimeline } from "./timeline.js";
   import { drawMapNames } from "./labeled-map.js";
+  import { drawUncertainty } from "./uncertainty.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
   function colorByPolicy(rollout) {
@@ -434,6 +459,9 @@
   await drawHistoryCharts();
   await drawTimeline(document.querySelector("#timeline .timeline"));
   await drawMapNames();
+  const uncertainty = document.querySelector("#uncertainty");
+  await drawUncertainty(uncertainty, "../../data/talk/metacognition/street");
+  uncertainty.style.setProperty("--canvit-glimpse", POLICIES.entropy_coarse_to_fine.color);
   await startDeck();
 </script>
 </body>

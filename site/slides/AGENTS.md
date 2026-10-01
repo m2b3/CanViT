@@ -125,6 +125,10 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   almost no one in the audience understands or cares about, with wrong emphasis ... WHAT IS THE TAKEAWAY HERE? it's
   the asymmetry"]. A paper figure that carries the point is shown as large as the slide allows, with annotations
   (rings, `.marks`) pointing at the part that matters.
+- A description on a slide is precise and says what sets the thing apart; a work earns its place by what it means for
+  the story, not by being recent or local [Yohaï, 2026-10-01, on "STAM: Never sees the whole image": "who [...]
+  cares about this paper and is this really a distinctive properly in any way"; on "AME: Dense outputs; looks where
+  uncertain": "is this a precise and correct description..."].
 - No obvious caveats, in slides, notes or guides: a caveat earns its place only when a competent listener could
   believe the opposite [Yohaï, 2026-10-01, on "not claims about hippocampus, consciousness or calibrated posteriors":
   "obviously. please get rid of all [...] unnecessary and obvious caveats"].

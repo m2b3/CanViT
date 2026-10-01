@@ -1,4 +1,6 @@
-// Year against accuracy on one benchmark, passive against active computer vision. Points come from
+// Year against accuracy on one benchmark, passive against active computer vision. One visual grammar throughout:
+// color is the family (passive ink, active amber, CanViT canvas red); solid lines and filled points are trained end to
+// end, dashed lines and hollow points are frozen features read by a linear layer; a key at the top says so. Points come from
 // sources/sota-history.json (each read in its paper; its _about defines the series), CanViT-B's from the paper's
 // macros. Three series, each labeled where it ends: the best passive model trained end to end (a step line), the best
 // frozen passive features read by a linear layer (dashed), and the sequential active models of the timeline slide,
@@ -27,7 +29,6 @@ const FLAGGED = new Set(["OmniVec (fine-tuned)", "OmniVec2 (fine-tuned)", "ViT-P
 const ACTIVE = [
   { model: /^Saccader/, name: "Saccader", dx: -16, dy: 8, anchor: "end" },
   { model: /^GFNet/, name: "GFNet", dx: 0, dy: 34, anchor: "middle" },
-  { model: /^STAM/, name: "STAM", dx: 0, dy: -18, anchor: "middle" },
   { model: /^AdaGlimpse/, name: "AdaGlimpse", dx: 0, dy: 34, anchor: "middle" },
   { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: 0, dy: -18, anchor: "middle" },
   { model: /^AME/, name: "AME", dx: 0, dy: 34, anchor: "middle" },
@@ -77,6 +78,14 @@ function draw(container, data, macros) {
   }
   for (let year = Math.ceil(spec.years[0] / 2) * 2; year <= 2026; year += 2) text(year, { x: x(year + 0.5), y: HEIGHT - 8, "text-anchor": "middle" }, axes);
   text(spec.unit, { x: M.left, y: M.top - 14, class: "unit" }, axes);
+  const key = el("g", { class: "key" }, svg);
+  const keyX = WIDTH - M.right - 470, keyY = M.top - 20;
+  el("path", { d: `M${keyX},${keyY}h34`, class: "solid" }, key);
+  el("circle", { cx: keyX + 50, cy: keyY, r: 7, class: "filled" }, key);
+  text("trained end to end", { x: keyX + 66, y: keyY + 6 }, key);
+  el("path", { d: `M${keyX + 236},${keyY}h34`, class: "dashed" }, key);
+  el("circle", { cx: keyX + 286, cy: keyY, r: 7, class: "hollow" }, key);
+  text("frozen + a linear layer", { x: keyX + 302, y: keyY + 6 }, key);
 
   const passive = frontier(points.filter((p) => p.kind === "passive" && p.series !== "frozen_ssl" && !FLAGGED.has(p.model)));
   const frozen = frontier(points.filter((p) => p.series === "frozen_ssl" && p.protocol !== "linear probe + ms"));

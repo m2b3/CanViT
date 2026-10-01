@@ -172,8 +172,9 @@ THESE [...] QUESTIONS"]. Each answer points to its facts (below) [CC,
 - "Where does the viewpoint come from? The brain has to compute it (corollary discharge, remapping)." CanViT is given
   each glimpse's position and scale; it does not model how they are computed.
 - "LookWhere?" Select-once, not sequential; its numbers (Claims, below).
-- "AME already chose glimpses by uncertainty." Yes: by the entropy of its decoder's attention maps (2023, the timeline
-  slide). EG-C2F uses the entropy of the class probabilities read out from the canvas, with no policy training; the
+- "AME already chose glimpses by uncertainty." It chose them by the entropy of its decoder's attention maps (2023, the
+  timeline slide), which its authors call the model's internal uncertainty; attention entropy is not the uncertainty of
+  a prediction. EG-C2F uses the entropy of the class probabilities read out from the canvas, with no policy training; the
   paper's point is that what the canvas holds can guide where to look.
 - "Video, moving objects, forgetting?" Static scenes only; the rebuttal's answer (gating, remapping-inspired updates,
   a 3D canvas) is future work.

@@ -113,6 +113,9 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   tagline, a metaphor or a slogan of your own.
 - A title is literally true and matches what the slide shows. History is told as the paper tells it: active
   models "have struggled to match" passive ones; they did not "fall behind".
+- A title names the scope of what it compares: the task, and the set of models (an accuracy–efficiency frontier
+  drawn over active models only is the "Active-vision" frontier) [Yohaï, 2026-10-01, on "Accuracy–efficiency
+  frontier on ADE20K segmentation": "ACTIVE. ACTIVE."]. Without it, the audience reads a claim over all models.
 - A setting detail (the glimpse size, a canvas grid) belongs in the body or the notes, never in a title.
 - Never number slides, sections or items in outlines, plans and notes; refer to a slide by its title or its id
   [Yohaï, 2026-10-01: "I [...] HATE YOUR TENDENCY TO NUMBER EVERYTHING, that creates unnecessarily huge diffs and

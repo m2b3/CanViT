@@ -297,8 +297,9 @@ yet reviewed by the authors.
   canvas) and 84.5% ImageNet-1k top-1 (fine-tuned).
 - **Status:** ready.
 
-### Accuracy–efficiency frontier on ADE20K segmentation
-- **Title:** the paper's Figure 3A caption, scoped to what the chart shows; "A new active-vision state of the art in
+### Active-vision accuracy–efficiency frontier on ADE20K segmentation
+- **Title:** the paper's Figure 3A caption, scoped to what the chart shows: active models only [Yohaï, 2026-10-01, on
+  the caption alone: "ACTIVE. ACTIVE."], segmentation only; "A new active-vision state of the art in
   accuracy and efficiency" (the page's section) spoke of more than segmentation [Yohaï, 2026-10-01: "shorten that
   title ... this plot was ONLY about segmentation but you talk more generally... beware"]. No best-prior reference
   line [Yohaï: "remove the 'best prior active model' horizontal line"].

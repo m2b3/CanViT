@@ -36,7 +36,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   enters `sources/sota-history.json`.
 - [Yohaï, 2026-10-01] `#table`: "we're missing some kind of explanation of what the hell the colors correspond to...
   labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
-  yet." To do.
+  yet." Done 2026-10-01: DINOv3's probability of table per glimpse, with a 0-to-1 scale; `#extrapolation` uses the
+  same panel and names its segmentation classes. Awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#live`: "the live explorer from 'A general-purpose observer lets you use any policy' should be
   renamed 'Live demo' and the component should be extracted cleanly such that we can have such a thing on the
   website". To do.

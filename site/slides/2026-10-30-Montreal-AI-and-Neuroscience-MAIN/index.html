@@ -77,17 +77,19 @@
       <img class="over fragment" data-fragment-index="0" src="../../data/talk/table/ADE_val_00001271-table/scene.png" alt="The same room, with two glimpses at the two ends of the table">
     </figure>
     <figure class="fragment" data-fragment-index="1">
-      <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/dinov3.png" alt="A passive model's segmentation of each glimpse, pasted where it was taken; nothing elsewhere">
+      <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="A passive model's probability of table from each glimpse alone, pasted where the glimpse was taken; nothing elsewhere">
       <svg class="marks fragment" data-fragment-index="2" viewBox="0 0 470 470">
         <ellipse class="halo" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
         <ellipse class="ring" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
         <text class="query" x="320" y="283" text-anchor="middle">?</text>
       </svg>
+      <figcaption>DINOv3, each glimpse alone</figcaption>
+      <p class="scale"><span>0</span><i></i><span>1</span><b>probability of table</b></p>
     </figure>
   </div>
   <!-- XXX: the cognitive-science citation for this slide is being verified (sources/cognition.md). TODO (PLAN.md): each
        glimpse's answer flying to its place. -->
-  <aside class="notes">Here's a room. Suppose I see one corner of the table, then another corner. The naïve approach is to paste the understanding from here and paste the understanding from there. This is a strong passive model, DINOv3, run on each glimpse alone, its answer put back where the glimpse was taken. What about the space in between? No clue. But you know what's there: more table. A smart observer should infer that the table extends between them, because it understands objectness and has knowledge of the world. And that same knowledge is what lets you skip looking there.</aside>
+  <aside class="notes">Here's a room. Suppose I see one corner of the table, then another corner. The naïve approach is to paste the understanding from here and paste the understanding from there. This is a strong passive model, DINOv3, run on each glimpse alone, its answer put back where the glimpse was taken: how likely each spot is to be table, bright for yes. What about the space in between? No clue. But you know what's there: more table. A smart observer should infer that the table extends between them, because it understands objectness and has knowledge of the world. And that same knowledge is what lets you skip looking there.</aside>
 </section>
 
 <section id="foundation" data-status="draft">
@@ -309,7 +311,7 @@
     <figure class="reset"><figcaption>Memory reset</figcaption><div class="stack">
       <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="With the memory reset before each glimpse, only the bicycle remains"></div></figure>
   </div>
-  <p class="memory-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
+  <p class="class-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
   <span class="fragment step-marker" data-shows="second"></span>
   <span class="fragment step-marker" data-shows="third"></span>
   <span class="fragment step-marker" data-shows="reset"></span>
@@ -320,13 +322,13 @@
   <h2>Extrapolation to unobserved regions</h2>
   <div class="extrapolation">
     <div></div><p class="col-label">DINOv3, each glimpse</p><p class="col-label">CanViT, far end</p><p class="col-label">CanViT, near end</p><p class="col-label">CanViT, both</p>
-    <p class="row-label">Classes</p>
+    <div class="row-label">Classes<p class="class-legend" data-src="../../data/talk/table/ADE_val_00001271-table/legend.json"></p></div>
     <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/dinov3.png" alt="">
     <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/table/ADE_val_00001271-table/a.png" alt="">
     <img class="pixels fragment" data-fragment-index="1" src="../../data/talk/table/ADE_val_00001271-table/b.png" alt="">
     <img class="pixels fragment" data-fragment-index="2" src="../../data/talk/table/ADE_val_00001271-table/ab.png" alt="">
     <p class="row-label">p(table)</p>
-    <img src="../../data/talk/table-clean/ADE_val_00001271-table/scene.png" alt="">
+    <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="">
     <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_a.png" alt="">
     <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_b.png" alt="">
     <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_ab.png" alt="">
@@ -576,8 +578,8 @@
   await drawHistoryCharts();
   await drawTimeline(document.querySelector("#timeline .timeline"));
   await drawMapNames();
-  // The memory slide's legend: each class in its color, from the plot step's legend.json.
-  for (const legend of document.querySelectorAll(".memory-legend[data-src]")) {
+  // Class legends: each class in its color, from a plot step's legend.json.
+  for (const legend of document.querySelectorAll(".class-legend[data-src]")) {
     const entries = await (await fetch(legend.dataset.src)).json();
     legend.replaceChildren(...entries.map(({ class: name, color }) => {
       const chip = document.createElement("span");

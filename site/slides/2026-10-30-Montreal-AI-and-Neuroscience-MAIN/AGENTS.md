@@ -400,7 +400,7 @@ Display of maps [Yohaï, 2026-10-01: "i do like the nearest viz"]: probability a
 cell or patch, repeated over its pixels (nearest neighbor), and the deck renders them with `img.pixels` (hard nearest
 when scaled). The table panels are redrawn with
 `uv run --project ../../canvit-pytorch python plot.py exports/ADE_val_00001271-table.npz --cmap inferno --size 640
---panels scene truth dinov3 a b ab prob_a prob_b prob_ab entropy_ab --separate ../../site/data/talk/table` from
+--panels scene truth dinov3 prob_dinov3 a b ab prob_a prob_b prob_ab entropy_ab --separate ../../site/data/talk/table` from
 `throwaway/table_corners/` (and `--panels scene --box none --separate ../../site/data/talk/table-clean`). `--logits-upsampling bilinear` gives the smooth
 version (the paper's evaluation); both stay available [Yohaï: "we shall see. keep both possible"].
 

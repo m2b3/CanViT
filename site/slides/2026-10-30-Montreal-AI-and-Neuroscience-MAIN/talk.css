@@ -36,13 +36,17 @@
 
 #table .table-demo { display: flex; justify-content: center; gap: 44px; }
 #table figure { position: relative; }
-#table figure > img { width: 470px; height: 470px; border-radius: 10px; }
+#table figure > img { width: 420px; height: 420px; border-radius: 10px; }
 #table figure img.over { position: absolute; inset: 0; }
 #table figcaption { margin-top: 10px; font-size: 19px; color: var(--muted); }
-#table .marks { height: 470px; }
+#table .marks { height: 420px; }
 #table .marks .ring { stroke: var(--ink); }
 #table .marks .halo { stroke: var(--bg); }
 #table .marks .query { fill: var(--ink); font-size: 44px; font-weight: 800; }
+#table .scale { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 17px; color: var(--muted); }
+#table .scale i { width: 160px; height: 12px; border-radius: 3px;
+  background: linear-gradient(90deg, #000004, #420a68, #932667, #dd513a, #fca50a, #fcffa4); }
+#table .scale b { margin-left: 8px; font-weight: 650; color: var(--text); }
 
 /* DINOv3 feature maps: the photo; then the feature map beside it; then the feature map small, with arrows to the
    linear probe's probability maps. Positions per state, so the images glide between them. */
@@ -260,6 +264,11 @@
 #extrapolation img { width: 235px; height: 235px; border-radius: 8px; }
 #extrapolation .col-label { font-size: 17px; font-weight: 700; text-align: center; }
 #extrapolation .row-label { font-size: 18px; font-weight: 700; color: var(--muted); }
+#extrapolation .class-legend { display: grid; gap: 4px; margin-top: 10px; font-size: 15px; font-weight: 650; color: var(--text); }
+
+/* A class legend (index.html fills it from a legend.json): each class name after a chip of its color. */
+.reveal .class-legend span::before { content: ""; display: inline-block; width: .8em; height: .8em; margin-right: .4em;
+                                     border-radius: 3px; background: var(--chip); vertical-align: -.05em; }
 
 #frontier .chart { width: 1040px; margin: 0 auto; padding: 14px 20px 10px; font-size: 14px; }
 
@@ -361,9 +370,7 @@
 #memory.shows-second .stack .t1, #memory.shows-third .stack .t2 { opacity: 1; }
 #memory .reset { opacity: 0; transition: opacity .6s ease; }
 #memory.shows-reset .reset, #memory .reset .t2 { opacity: 1; }
-#memory .memory-legend { display: flex; justify-content: center; gap: 28px; margin-top: 18px; font-size: 22px; font-weight: 700; }
-#memory .memory-legend span::before { content: ""; display: inline-block; width: 18px; height: 18px; margin-right: 8px;
-                                      border-radius: 4px; background: var(--chip); vertical-align: -2px; }
+#memory .class-legend { display: flex; justify-content: center; gap: 28px; margin-top: 18px; font-size: 22px; font-weight: 700; }
 
 /* The model's own uncertainty: the scene with two rings, the class probabilities at each as bars, then the
    uncertainty map, its quadrants, and the one EG-C2F visits next. */

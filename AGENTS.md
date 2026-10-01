@@ -161,6 +161,12 @@ spelling.
 - Put durable learning in its home: an invariant enforced in code, this
   guide, or a `TODO` beside its owner. Avoid parallel manuals and handoff
   narratives.
+- Record a rule in a guide as it was given, with no examples or extensions
+  of your own; a guide records what is true, no more specific than it has
+  to be [Yohaï, 2026-10-01: "DO NOT INCLUDE HALLUCINATED ARBITRARY EXAMPLES.
+  IF I GIVE YOU A RULE YOU TAKE THE RULE YOU DO NOT EXTRAPOLATE IN AGENTS.md.
+  AGENTS.MD IS A RECORD FOR THE FUTURE, "the truth" - IT SHOULD NOT BE ANY
+  MORE SPECIFIC THAN IT HAS TO BE."].
 - Test interfaces as a user meets them: a fresh process, the installed
   package outside this checkout, released checkpoints from the Hub.
 

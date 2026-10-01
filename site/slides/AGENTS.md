@@ -4,10 +4,7 @@ The repository's `AGENTS.md` and `site/AGENTS.md` apply here too. This guide hol
 and it is kept current: when the workflow or a convention changes, change it here in the same commit.
 
 The overarching principle [Yohaï, 2026-10-01]: "NEVER TAKE ANYTHING AT FACE VALUE. YOU CANNOT PRESENT WHAT YOU DON'T
-FULLY UNDERSTAND. READ AND UNDERSTAND FIRST." Before a slide shows a number, a model, a figure or a claim, read its
-primary source (the paper's text and tables, the code, the data file and how it was made) until you can explain what
-it measures, under which conditions, and what it does not show. A summary, a data file's label, an agent's report or
-an earlier note is a pointer to that source, never a substitute for reading it.
+FULLY UNDERSTAND. READ AND UNDERSTAND FIRST."
 
 ## What lives where
 
@@ -55,14 +52,9 @@ uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-30-Montre
 python3 site/check_paper_numbers.py
 ```
 
-Gather the primary material before deciding what a slide shows, and keep its nuance and ambiguity in the data
-until the authors have looked at it [Yohaï, 2026-10-01: "in your slide-prep process, try to avoid collapsing nuance
-and ambiguity upfront, gather primary material and do things in such a way that it is easy for me and you to do quick
-back and forth on views into the data"]. A data file keeps every point with what qualifies it (model size,
-resolution, training data, protocol, training cost) rather than only the points a first chart needs; an untracked
-exploration page in the talk's directory shows it under switchable views (which series, which axis: year, parameters,
-training cost, inference cost) so a view can be proposed, looked at and changed in minutes. The slide is drawn from
-the view the authors choose.
+[Yohaï, 2026-10-01] "in your slide-prep process, try to avoid collapsing nuance and ambiguity upfront, gather primary
+material and do things in such a way that it is easy for me and you to do quick back and forth on views into the
+data".
 
 Every request of the authors that is not yet done goes into the talk's `PLAN.md` ("Open requests") the moment it
 arrives, in their words, before any work on it, and leaves only when it is done; requests survive the end of a
@@ -100,7 +92,7 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   but not too dumb") belongs in the notes, where the speaker says it [Yohaï, 2026-10-01, on that title: "[...] you
   actually put this as the title"]. A phrase from the transcript stays spoken even when it
   describes the slide well [Yohaï, 2026-10-01, on "Its best guess about the entire scene": "seriously? as a slide
-  title?"]; the abstract's "Reconstructing scene-wide DINOv3 embeddings" names the same thing in writing.
+  title?"].
 - Labels are as short as the thing they name: "Paper", "Code", "Models", not "Read the paper". Install commands use
   uv: `uv add canvit-pytorch` [Yohaï, 2026-10-01].
   Reuse their wordings, turns of phrase and framings verbatim where they fit; write new wording only when nothing
@@ -113,13 +105,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   tagline, a metaphor or a slogan of your own.
 - A title is literally true and matches what the slide shows. History is told as the paper tells it: active
   models "have struggled to match" passive ones; they did not "fall behind".
-- A title names the scope of what it compares: the task, and the set of models (an accuracy–efficiency frontier
-  drawn over active models only is the "Active-vision" frontier) [Yohaï, 2026-10-01, on "Accuracy–efficiency
-  frontier on ADE20K segmentation": "ACTIVE. ACTIVE."]. Without it, the audience reads a claim over all models.
 - A setting detail (the glimpse size, a canvas grid) belongs in the body or the notes, never in a title.
-- Call a thing by its name on screen: "Neocognitron", "Brain-Score", "DINOv3", "CanViT's input"; never a phrase that
-  circles it ("a network built on them", "ranking networks by brain similarity", "passive", "the model") [Yohaï,
-  2026-10-01, on "A network built on them": "BANISH CIRCUMLOCUTIONS."].
+- Banish circumlocutions [Yohaï, 2026-10-01, on the caption "A network built on them": "BANISH CIRCUMLOCUTIONS."].
 - Never number slides, sections or items in outlines, plans and notes; refer to a slide by its title or its id
   [Yohaï, 2026-10-01: "I [...] HATE YOUR TENDENCY TO NUMBER EVERYTHING, that creates unnecessarily huge diffs and
   wastes of tokens just because you move slides around and can be highly misleading"].
@@ -139,25 +126,17 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   almost no one in the audience understands or cares about, with wrong emphasis ... WHAT IS THE TAKEAWAY HERE? it's
   the asymmetry"]. A paper figure that carries the point is shown as large as the slide allows, with annotations
   (rings, `.marks`) pointing at the part that matters.
-- A description on a slide is precise and says what sets the thing apart; a work earns its place by what it means for
-  the story, not by being recent or local [Yohaï, 2026-10-01, on "STAM: Never sees the whole image": "who [...]
+- A description on a slide is precise and distinctive [Yohaï, 2026-10-01, on "STAM: Never sees the whole image": "who [...]
   cares about this paper and is this really a distinctive properly in any way"; on "AME: Dense outputs; looks where
   uncertain": "is this a precise and correct description..."].
-- No obvious caveats, in slides, notes or guides: a caveat earns its place only when a competent listener could
-  believe the opposite [Yohaï, 2026-10-01, on "not claims about hippocampus, consciousness or calibrated posteriors":
-  "obviously. please get rid of all [...] unnecessary and obvious caveats"].
-- Choose every axis scale for what the quantity does [Yohaï, 2026-10-01: "always think about axis scalings etc.
-  fisher transform or such?"]: a log axis for counts, glimpses and compute; for a similarity or accuracy close to its
-  bound, the distance to the bound on a log axis (1 − cosine, error rate) or a Fisher z / logit axis, so late gains
-  stay visible; render the candidates side by side and keep the one that shows the point truthfully.
-- Every number on a slide carries a unit the audience knows (bits, %, GFLOPs, hours); never a bare normalized score
-  [Yohaï, 2026-10-01, on "uncertainty 0.44": "units?"].
+- No unnecessary or obvious caveats [Yohaï, 2026-10-01, on "not claims about hippocampus, consciousness or calibrated
+  posteriors": "obviously. please get rid of all [...] unnecessary and obvious caveats"].
+- Think about axis scalings [Yohaï, 2026-10-01: "always think about axis scalings etc. fisher transform or such?"].
+- A number on a slide carries its unit [Yohaï, 2026-10-01, on "uncertainty 0.44": "units?"].
 - A title says what the slide shows or claims, in the audience's terms; never the name of an experimental condition
-  [Yohaï, 2026-10-01, on "Resetting the memory": "why would a slide be called that"]. An example must also be
-  inspiring: a scene the audience relates to, where the effect is large and beautiful, not merely clean [on its person
-  in a desert: "the example you chose really doesn't look inspiring"].
-- Never overload a slide with text [Yohaï, 2026-10-01]: a label is a few words; what something is for, how it works
-  and why it matters are said, in the notes. A slide whose visual needs sentences beside it to be read is not done.
+  [Yohaï, 2026-10-01, on "Resetting the memory": "why would a slide be called that"]. An example must be inspiring
+  [on its person in a desert: "the example you chose really doesn't look inspiring"].
+- Never overload a slide with text [Yohaï, 2026-10-01].
 - Quality over quantity [Yohaï, 2026-10-01: "still so much useless, ugly, poorly presented [stuff] in your
   slides"]. The deck holds only slides whose visual carries the point. A slide that would be a list of lines, a
   paragraph or a placeholder box stays out of `index.html` until its visual exists; its plan lives in `OUTLINE.md`
@@ -172,38 +151,23 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   then smaller as the next arrives; arrows that draw themselves between what relates; fades between states. Built
   with named states: a fragment `<span class="fragment step-marker" data-shows="teacher">` gives its slide the class
   `shows-teacher` while it is shown, and the slide's CSS keys on those names (`deck.js`); `.draw` arrows (`deck.css`).
-  Build states are named, never numbered [Yohaï, 2026-10-01, on `step-N` classes: "I HATE NUMBERINGS"]. Introduce
-  before showing: what the audience needs to read a visual (what each colored line or panel is, why it matters) comes
-  first, in its own state, laid out where the visual will be, then fades into it [Yohaï, 2026-10-01, on the policies
-  slide: "we shouldn't go straight up to the animation ... a grid with the colors and titles of each policy explaining
+  Build states are named, never numbered [Yohaï, 2026-10-01, on `step-N` classes: "I HATE NUMBERINGS"]. [Yohaï,
+  2026-10-01, on the policies slide: "we shouldn't go straight up to the animation ... a grid with the colors and titles of each policy explaining
   what it is and why we [care], and then fade into the animation ... and generally have this sort of careful,
   step-by-step, visually-supported storytelling throughout"]; "use and abuse transitions, step-by-step reveals,
   highlights" [Yohaï, 2026-10-01]. Code is walked through the same way: a fragment with `data-lines="A-B"` highlights
   those lines of its slide's code block (`deck.js`).
-- A diagram of a process lets alignment carry the relations: one column per timestep, time left to right, one row
-  per role, and a constant repeated in every column (the teacher's target under each prediction) rather than reached
-  by arrows. Connectors are straight, and only where alignment cannot say it (the state carried to the next
-  timestep) [Yohaï, 2026-10-01, on the distillation slide: "the fancy curved arrows etc do nothing for it ... unroll
-  the timesteps across time ... you can duplicate the teacher features, we want things to align in terms of columns
-  etc. this should not need curved arrows"].
-- CanViT in a diagram is its logo (`../assets/logos/canvit-wordmark.svg`), never a text box; any element that recurs
-  looks the same wherever it appears [Yohaï, 2026-10-01: "be visually consistent, when you have CanViT in a diagram
-  use the logo"].
-- Decide for every build when each element updates. A model's output changes on the same click as its input, a
-  moment after it (a transition delay on the way in), never on a click of its own [Yohaï, 2026-10-01, on the detail
-  slide: "please think through when things should update and how, i shouldnt need an additional right-arrow to make
-  the probability map update"]. A click is spent on a new input or a new idea.
-- Introduce every task, measure or representation the audience may not know by doing it on a real image before using
-  it: the photograph first, large; then what the concept adds appears on it (a labeled map wiping across the scene,
-  class names arriving one by one); then the example shrinks into place beside what comes next. The model for this is
-  the introduction to semantic segmentation on `#history` of the MAIN 2026 talk [Yohaï, 2026-10-01: "I LOVE how you
+- Be visually consistent [Yohaï, 2026-10-01: "be visually consistent, when you have CanViT in a diagram use the logo
+  etc"]; the logo is `../assets/logos/canvit-wordmark.svg`.
+- Think through when things update and how [Yohaï, 2026-10-01, on the detail slide: "please think through when things
+  should update and how, i shouldnt need an additional right-arrow to make the probability map update"].
+- The introduction to semantic segmentation on `#history` of the MAIN 2026 talk [Yohaï, 2026-10-01: "I LOVE how you
   did the illustration of what semantic segmentation as a task is, with an image and then the mask that slides over
   it and appears. YES. THAT'S THE KIND OF STUFF WE WANT - always. they DO need an intro to semantic segmentation.
-  perfect. learn from that"]. `.wipe` (`deck.css`) reveals an overlay across its image. Overlays can confuse: for each
-  map, try it over the photograph, beside it, and after it, and keep what reads [Yohaï, 2026-10-01: "beware of
-  OVERLAYS - they can confuse. it is worth exploring both side by side / one after the other, and overlays"]. A
-  patch-grid map is upsampled with nearest neighbor so its patches stay crisp, never blurred by interpolation [Yohaï,
-  2026-10-01, on a bilinear DINOv3 map: "it is blurry because you must have run interpolation instead of nearest"].
+  perfect. learn from that"]. `.wipe` (`deck.css`) reveals an overlay across its image. [Yohaï, 2026-10-01] "beware of
+  OVERLAYS - they can confuse. it is worth exploring both side by side / one after the other, and overlays".
+- DINOv3 feature maps and probability maps are drawn with hard nearest-neighbor upsampling [Yohaï, 2026-10-01: "it
+  should be hard nearest for dinov3 stuff, probability maps etc!"].
 - Choose every example image because, out of the whole validation set, it illustrates the point best, found by a
   sweep that measures the point, and checked by eye; never because it is convenient or already in use [Yohaï,
   2026-10-01: "never be wedded to any given example image ... choose ... because out of the whole val set they
@@ -211,10 +175,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   example must have (what must be visible, what the model must do, what the audience must recognize, what must not
   mislead), and the sweep measures them [Yohaï, 2026-10-01: "always be clear, for each example image, what properties
   the image should have to make it into a good example"].
-- An example serves the claim the slide makes and shows the work at its best: it makes the point we want to make,
-  strongly, on a case where the model does well [Yohaï, 2026-10-01: "make sure that whatever examples you choose
-  actually make us look good and match what we WANT to say"]. Honesty lives in the notes: the average over the
-  dataset and how the example was selected are said beside it.
+- [Yohaï, 2026-10-01] "make sure that whatever examples you choose actually make us look good and match what we WANT
+  to say".
 - Show what the model thinks of a few named classes (their probabilities or logits, two or three at a time) rather
   than a full segmentation map, whose class colors the audience cannot read [Yohaï, 2026-10-01, on the memory slide].
 - For any slide that matters, try several ways to present its point, render each (screenshot, or play the

@@ -20,8 +20,8 @@ its policy agnosticism), then what it does, then the results. How it was built s
 "I'm thinking that 'how we built it' should be subordinate to 'here's what we built / what it can do / why it's so
 cool'"; then: "the overall arch and policy-agnostic pretraining should probably still come first i guess, but details
 like canvas attention might not be fully relevant, I don't know... maybe we don't even show them in the talk, or only
-as backup? you must think critically"]. A mechanism whose point fits in a spoken sentence is said where it matters and
-its slide goes to Backup: Canvas Attention's point, a memory cheap to read and write, is said on the architecture slide.
+as backup? you must think critically"]. Canvas Attention is in Backup; that the memory is cheap to read and write is
+said on the architecture slide.
 
 - Deep networks became models of the visual system; the ones used today see each image whole, once.
 - Human vision is active: sharp central vision, blurry periphery, the eyes moving to what matters, and what was

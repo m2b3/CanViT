@@ -1,5 +1,5 @@
 {
- "_about": "The deep active vision models of the timeline slide, each read in its paper (evidence, quotes and figure pages in active-vision-timeline.md). date: first public release (arXiv v1). name: the model's name. cite: authors, venue and venue year. policy: how it chooses where to look: 'rl' when the choice is learned by reinforcement learning (named in method), else what it uses. row: where the label sits, -2 and -1 above the axis, 1 and 2 below, chosen so that labels do not overlap. Selection [Yohaï, 2026-10-01]: each entry precise and distinctive; STAM (CVPR 2022) was dropped: the CanViT paper does not cite it and never seeing the whole image is not what sets it apart (RAM's glimpses do not cover it either).",
+ "_about": "The deep active vision models of the timeline slide, each read in its paper (evidence, quotes and figure pages in active-vision-timeline.md). date: first public release (arXiv v1). name: the model's name. cite: authors, venue and venue year. policy: how it chooses where to look: 'rl' when the choice is learned by reinforcement learning (named in method), else what it uses. row: where the label sits, -2 and -1 above the axis, 1 and 2 below, chosen so that labels do not overlap. Selection [Yohaï, 2026-10-01]: each entry precise and distinctive; STAM (CVPR 2022) was dropped: the CanViT paper does not cite it and never seeing the whole image is not what sets it apart (RAM's glimpses do not cover it either). canvit: CanViT itself, drawn on the slide's last click as the axis extends into 2026; date: arXiv v1 of arXiv:2603.22570, submitted 23 March 2026 (read on its arXiv page, 2026-10-01).",
  "models": [
   {
    "date": "2014-06-24",
@@ -57,5 +57,11 @@
    "method": "PPO, self-rewarding",
    "row": 2
   }
- ]
+ ],
+ "canvit": {
+  "date": "2026-03-23",
+  "name": "CanViT",
+  "cite": "Berreby et al., NeurIPS 2026",
+  "row": -2
+ }
 }

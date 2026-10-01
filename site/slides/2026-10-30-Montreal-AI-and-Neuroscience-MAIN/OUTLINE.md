@@ -77,7 +77,10 @@ yet reviewed by the authors.
   years before 2019 (digits only).
 - **Builds:** a year axis; the models arrive one per click at their release dates (name, citation) [Yohaï, 2026-10-01, on the descriptions: "remove the [bad]
   subtitles"];
-  then the markers of those whose policy is learned by reinforcement learning turn policy teal.
+  then the markers of those whose policy is learned by reinforcement learning turn policy teal. Last click [Yohaï,
+  2026-10-01: "an animation that extends the timeline and then highlights canvit, neurips 2026"]: the axis, stopped
+  after AdaptiveNN, extends into 2026, and CanViT arrives in the brand's gradient (arXiv v1, 23 March 2026;
+  NeurIPS 2026).
 - **Data:** `sources/active-vision-timeline.json` (evidence in `.md`).
 - **Status:** draft (built).
 

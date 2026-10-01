@@ -357,6 +357,15 @@
 #timeline .leader { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 5; }
 #timeline .name { font: 800 24px var(--sans); fill: var(--ink); }
 #timeline .cite { font: italic 400 15px var(--sans); fill: var(--muted); }
+/* The last click: the axis extends into 2026 and CanViT arrives, in the brand's gradient. */
+#timeline .extension { clip-path: inset(0 100% 0 0); transition: clip-path .9s ease; }
+#timeline.shows-canvit .extension { clip-path: inset(0); }
+#timeline.shows-canvit .first-head { opacity: 0; }
+#timeline .canvit { opacity: 0; transition: opacity .6s ease; }
+#timeline.shows-canvit .canvit { opacity: 1; transition-delay: .8s; }
+#timeline .canvit .name { font-size: 30px; fill: url(#timeline-brand); }
+#timeline .canvit .cite { font-style: normal; font-weight: 650; fill: var(--ink); }
+#timeline .marker.ours { fill: url(#timeline-brand); }
 
 /* A persistent, evolving understanding of the scene: glimpses, the composite with the canvas kept, then with it reset;
    each glimpse a named state (second, third), the reset column last. */

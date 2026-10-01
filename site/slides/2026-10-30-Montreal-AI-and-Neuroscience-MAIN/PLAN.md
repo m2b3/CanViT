@@ -31,7 +31,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#timeline`: "remove the [bad] subtitles like 'Recurrent glimpses on digits' (a GLIMPSE IS NOT
   RECURRENT ANYWAY) and add to TODO to question PRECISELY what was interesting/new/notable about each of these works".
-  Subtitles: removing. TODO: for each model, what was new or notable, read in its paper.
+  Subtitles removed. Open: for each model, what was new against the works before it, read in its paper, and the
+  notes checked sentence by sentence (a subagent on it 2026-10-01).
 - [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
   scheme is still not great not great at all". Labels redone 2026-10-01 (no key; each passive line named at its end
   under one "Passive" heading, "linear decoding"; active models named at their points over "Active models"); awaiting
@@ -45,9 +46,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
   yet." Done 2026-10-01: DINOv3's probability of table per glimpse, with a 0-to-1 scale; `#extrapolation` uses the
   same panel and names its segmentation classes. Awaiting the authors' look.
-- [Yohaï, 2026-10-01] `#live`: "the live explorer from 'A general-purpose observer lets you use any policy' should be
-  renamed 'Live demo' and the component should be extracted cleanly such that we can have such a thing on the
-  website". To do.
 - [Yohaï, 2026-10-01] `#distillation` "is completely terrible ... needs to be entirely reworked": rebuilt the same day
   as a training step unrolled in time (`OUTLINE.md`); awaiting the authors' look. The predictions shown are the
   released model's; placeholders instead would be a one-line change.
@@ -156,7 +154,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Known issues
 
-- The disk is nearly full (2.7 GB free at the end of 2026-10-01, shrinking from processes outside this work). Two caches
+- The disk is nearly full (about 250 MB free on the evening of 2026-10-01, shrinking from processes outside this
+  work); the live model's export and the codex audit wait for about 1 GB. Two caches
   are the user's to clear or keep: `~/.cache/uv` (18 GB; `uv cache prune` drops unreferenced entries) and
   `~/.cache/huggingface/hub` (8.1 GB, including twelve ablation checkpoints the talk does not use).
 - `#live` (Backup): shrunk with `zoom: .8`.

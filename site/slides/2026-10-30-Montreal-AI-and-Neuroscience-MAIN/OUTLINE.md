@@ -117,7 +117,7 @@ yet reviewed by the authors.
   nearly no unlabeled pixels, and class names that fit on their regions; not the conference room, which the audience
   will see under other claims.
 - **Data:** `sources/sota-history.json`; caveats in `AGENTS.md`.
-- **Status:** build.
+- **Status:** draft (built).
 
 ### What's in an active-vision model?
 - **Title:** the project page's section.
@@ -145,7 +145,7 @@ yet reviewed by the authors.
 - **Says:** a viewpoint is a position and a scale; the glimpse is its crop at 128 px, all the model gets ("a world of
   difference between seeing something blurry and seeing nothing at all"); CanViT writes what it understood into the
   canvas, a memory of the whole scene; "It takes glimpses and gradually paints its understanding."
-- **Status:** draft (built). Open: the segmentation's colors are not named on screen (`PLAN.md`).
+- **Status:** draft (built; the segmentation's largest classes named beside the canvas).
 
 ### Canvas Vision Transformer architecture
 - **Title:** says it is the architecture [Yohaï, 2026-10-01: "this slide should be renamed to make it clear this is
@@ -187,8 +187,8 @@ yet reviewed by the authors.
 - **Says:** "We already know what good visual representations look like." "Wherever the model was looking, and at
   whatever zoom, it should be able to produce its best guess about the entire scene." Separate the architecture from
   learning the representation.
-- **Example:** the bedroom of the next two slides (ADE_val_00000124).
-- **Status:** to build.
+- **Example:** a bedroom (ADE_val_00000124), 21 random glimpses.
+- **Status:** draft (built).
 
 ### Policy agnosticism
 - **Title:** the paper's §5.2 heading.
@@ -201,7 +201,8 @@ yet reviewed by the authors.
 - **Builds:** several scenes, each with its random glimpse boxes appearing one by one, lengths differing, an R-IID and
   an F-IID rollout side by side; then the histogram of zooms; viewpoints drawn by `canvit_pytorch.policies` itself
   and exported, never re-implemented in the page.
-- **Status:** to build.
+- **Status:** draft (built: four ImageNet photographs, R-IID then F-IID, the pretraining sampler's own draws; the
+  histogram of zooms not drawn).
 
 ## What it does
 
@@ -306,8 +307,23 @@ yet reviewed by the authors.
 ### Benchmark results on ADE20K and ImageNet-1k
 - **Title:** the paper's Fig. 3 caption.
 - **Shows:** the history chart of `#history`, now with CanViT-B: 45.9% ADE20K mIoU (frozen, linear probe, C2F, 64²
-  canvas) and 84.5% ImageNet-1k top-1 (fine-tuned).
-- **Status:** ready.
+  canvas) and 84.5% ImageNet-1k top-1 (fine-tuned), named in the chart's margin.
+- **Status:** draft (the breakdown of results is still to settle, `PLAN.md`).
+
+### Accuracy by viewing policy
+- **Title:** names what the charts show (the paper's Figure 3B and 3C: "mIoU by viewing policy", "classification
+  accuracy by viewing policy").
+- **Request** [Yohaï, 2026-10-01]: "show the impact of the viewing policies for IN1k and for ADE20K, with x axis =
+  glimpse count (possibly log-scaled?) ... the focus / message is how the policies work relative to one another and
+  across tasks, and that they matter much more for ade20k"; "need axis cutoffs intelligently for visual storytelling".
+- **Must:** on ImageNet-1k the policies start far apart and end together (within about a point, RFS aside); on
+  ADE20K they stay apart and keep rising; C2F ends above F2C on both, with the same viewpoints.
+- **Builds:** `<canvit-policy-curves>`, glimpses on a log axis; ImageNet-1k first (frozen, 32² canvas, 70 to 82%),
+  then ADE20K beside it (frozen, 64² canvas, 35 to 47 mIoU): two windows of the same 12 points, so the spreads
+  compare; low starts enter from below.
+- **Scope:** "matter much more for ADE20K" holds at the end of the rollouts; after one glimpse the gap is large on both
+  (`PLAN.md`).
+- **Status:** draft (built).
 
 ### Training and inference cost
 - **Title:** names the slide's content.

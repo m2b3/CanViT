@@ -25,10 +25,28 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   current or next slide (`data-load-near`, `../deck.js`), never in the speaker view's previews; with WebGPU disabled the
   model then starts on WebAssembly in the deck (peak about 1.9 GB). Open: whether Yohaï's browser (which one, speaker
   view open?) still fails; releasing the model when the slide is left; making the rollouts load only near their slide.
-- [Yohaï, 2026-10-01] Metacognition on the policies, above all EG-C2F: the model's own uncertainty about what is
-  where, explained (class probabilities at a position as bars, peaked or flat; entropy; the entropy map; the tile
-  EG-C2F visits next), before or within `#policies` (`OUTLINE.md`). Data: bundles carry an entropy layer per glimpse;
-  per-position class probabilities need an export (`canvit_pytorch.viz`). M.
+- [Yohaï, 2026-10-01] `#foundation`: the DINOv3 feature map "looks [bad]. it is blurry because you must have run
+  interpolation instead of nearest ... choose other principal components. it looks washed out ... rerun it at higher
+  res ... we want the objects to stand out. it could also transition into becoming smaller and having arrows that go
+  from the feature map to probability maps using our ade20k segmentation heads to show it is EASY to decode what's
+  where from those features"; and "beware of OVERLAYS - they can confuse ... exploring both side by side / one after
+  the other, and overlays". In progress: 1024 px input, PCs 2–4 clipped 2–98%, nearest neighbor
+  (`throwaway/foundation`); the released DINOv3 ViT-B ADE20K probe decodes television, fireplace, armchair.
+- [Yohaï, 2026-10-01] "when you show examples of canvit, contrast with simply having dinov3 128px full scene": beside
+  CanViT's maps, DINOv3 ViT-B on the whole scene at 128 px (the same input budget as a glimpse; its released 128 px
+  ADE20K probe, `hub.repos.released_dinov3_ade20k_probe("dv3b", input_size_px=128)`), on the rollout, extrapolation
+  and detail slides; the paper's numbers for the matched comparison (passive_comparison_rows: DINOv3 ViT-B at 128 px
+  28.8 mIoU against CanViT-B's 29.3 to 39.6 from one full-scene glimpse) say why it matters.
+- [Yohaï, 2026-10-01] The memory slide: "why would a slide be called that" (now "A persistent, evolving understanding
+  of the scene") and "the example you chose really doesn't look inspiring": a three-object example in a lively scene
+  is being swept (`OUTLINE.md`, its example properties).
+- [Yohaï, 2026-10-01] "Spatial coverage and perception of detail" (`#detail`): "the idea ... is good and nice but the
+  way it is showed is really not good atm". Try several presentations (the full-scene glimpse with a loupe on the
+  object, the zoom animated, the object's probability before and after, recall against object size with the
+  full-scene-twice control), side by side and one after the other, with the `#history` segmentation intro as the bar.
+- [Yohaï, 2026-10-01] `#uncertainty`: "metacognition" said with its scope (`sources/concepts.md`: Fleming 2024 keeps
+  "sensitivity to uncertainty" apart from metacognition; Renninger, Verghese & Coughlan 2007: people fixate where
+  uncertainty is highest, EG-C2F's rule); decide the wording with the authors.
 - [Yohaï, 2026-10-01] Careful, step-by-step, visually supported storytelling on every slide: introduce what a visual
   needs before showing it (`../AGENTS.md`, "Writing slides"). Review every slide for it.
 - [Yohaï, 2026-10-01] Reuse the well-received primitives of the September deck, ported (never imported): see
@@ -36,6 +54,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] Keep every TODO, known issue and request in this file.
 
 ## Next
+
+- [Yohaï, 2026-10-01, an idea for after the rest] Give a sense of how good DINOv3 is and how much went into it: its
+  training data (LVD-1689M, 1.7 billion images), the 7B teacher it is distilled from, its compute, where it stands on
+  dense benchmarks; every number read in the DINOv3 paper (Siméoni et al. 2025, arXiv:2508.10104). A build state of
+  `#foundation` or a slide of its own. S–M.
 
 - [Yohaï, 2026-10-01] `#history` and `#results` fail at their jobs: overloaded, hard to parse, not showing the right
   things; make end-to-end training against frozen features with a linear readout explicit. ImageNet-1k and ADE20K one
@@ -57,13 +80,12 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   per glimpse and per rollout against AME and AdaGlimpse (`../../assets/paper/ade20k_seg.json`), wall time per glimpse
   measured on a laptop and in the browser, the paper's training costs (§6, App. H); then design how the slide shows
   the case (a build state before the chart, or the chart's cost axis translated into time or money). M.
-- [Yohaï, 2026-10-01] Zoom and detail (`#detail`, now in Backup): try several presentations (segmentation instead of a
-  probability blob, the full-scene glimpse with a loupe on the object, recall against object size with the
-  full-scene-twice control, an animated zoom), render them, integrate. M.
 
-- The cognition links on `#table` and `#extrapolation`: amodal completion, boundary extension, trans-saccadic
-  integration (`sources/cognition.md`; `sources/concepts.md` being researched), as keywords and a backup slide with
-  their figures (`assets/figures/`, extracted). S.
+- The cognition links (`sources/cognition.md`, `sources/concepts.md`, read 2026-10-01): trans-saccadic integration
+  (Irwin 1991; Melcher 2001) on the memory slide; coarse-to-fine scene categorization in humans (Musel et al. 2012;
+  Kauffmann et al. 2015) beside C2F against F2C; uncertainty-driven fixations (Renninger et al. 2007) on
+  `#uncertainty`; amodal completion and boundary extension on `#table` and `#extrapolation`; as keywords and a backup
+  slide with their figures. S.
 - `#neuro-ai`: three lines of text on a half-empty slide; needs a visual. S–M.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
 - Independent reviews of `OUTLINE.md` (a fresh subagent; `codex exec -m gpt-6-astra`), then the authors'. S.

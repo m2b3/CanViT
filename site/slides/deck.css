@@ -52,6 +52,16 @@ html, body { background: var(--bg); }
 .reveal .draw { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .9s ease; }
 .reveal .fragment.visible .draw, .reveal .draw.fragment.visible { stroke-dashoffset: 0; }
 
+/* Maps and model inputs drawn on a grid (feature maps, probability maps, glimpses) keep their cells crisp when the
+   deck scales them: hard nearest neighbor, never the browser's smoothing. Photographs stay smooth. */
+.reveal img.pixels { image-rendering: pixelated; }
+
+/* An overlay revealed across its image from left to right: as a fragment when shown, or when the slide's CSS sets
+   clip-path: inset(0) on a named state (e.g. #history.shows-map .map). */
+.reveal .wipe { clip-path: inset(0 100% 0 0); transition: clip-path 1.2s ease; }
+.reveal .wipe.fragment { opacity: 1; visibility: inherit; }
+.reveal .wipe.fragment.visible { clip-path: inset(0); }
+
 /* A ring around a region of a figure or photograph, with a short label: white line over a dark halo, legible on
    light and dark pixels alike. An absolutely positioned SVG in the figure's pixel coordinates. */
 .reveal .marks { position: absolute; inset: 0; overflow: visible; pointer-events: none; }

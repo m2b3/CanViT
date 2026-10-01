@@ -3,6 +3,8 @@
 // at each as bars, and the four quadrants with the one EG-C2F visits next.
 
 const ringLabels = { certain: "sure", uncertain: "unsure" };
+// Entropy in bits, as the map's legend shows it: 0 for one class, log2(150) ≈ 7.2 for all 150 equally likely.
+const bits = (nats) => (nats / Math.LN2).toFixed(nats / Math.LN2 < 1 ? 2 : 1);
 
 async function json(url) {
   const response = await fetch(url);
@@ -12,7 +14,7 @@ async function json(url) {
 
 /** Fill section's .rings, .bars.certain, .bars.uncertain and .quadrants from the export in dir. */
 export async function drawUncertainty(section, dir) {
-  const [{ cells }, { after, max_entropy_nats: maxEntropy }] = await Promise.all([json(`${dir}/cells.json`), json(`${dir}/tiles.json`)]);
+  const [{ cells }, { after }] = await Promise.all([json(`${dir}/cells.json`), json(`${dir}/tiles.json`)]);
   const SVG = "http://www.w3.org/2000/svg";
   const rings = section.querySelector(".rings");
   for (const cell of cells) {
@@ -28,7 +30,7 @@ export async function drawUncertainty(section, dir) {
     const rows = [...cell.top.slice(0, 4).map(({ class: name, p }) => [name, p]), ["other", cell.top.slice(4).reduce((s, { p }) => s + p, cell.p_rest)]];
     bars.innerHTML = `<p class="head">${ringLabels[cell.kind]}</p>` + rows.map(([name, p]) =>
       `<div class="row"><span class="name">${name}</span><span class="bar" style="--p: ${p}"></span><span class="p">${Math.round(100 * p)}%</span></div>`).join("")
-      + `<p class="entropy">uncertainty ${(cell.entropy_nats / maxEntropy).toFixed(2)}</p>`;
+      + `<p class="entropy">entropy ${bits(cell.entropy_nats)} bits</p>`;
   }
 
   // The quadrants after the first glimpse, the one with the highest mean entropy marked: where EG-C2F looks next.
@@ -40,5 +42,5 @@ export async function drawUncertainty(section, dir) {
   }
   section.querySelector(".quadrants").innerHTML = quadrants.map((q) =>
     `<span class="${q === highest ? "next" : ""}" style="left: ${(q.col - q.scale + 1) * 50}%; top: ${(q.row - q.scale + 1) * 50}%;`
-    + ` width: ${q.scale * 100}%; height: ${q.scale * 100}%">${(q.mean_entropy_nats / maxEntropy).toFixed(2)}</span>`).join("");
+    + ` width: ${q.scale * 100}%; height: ${q.scale * 100}%">${bits(q.mean_entropy_nats)}</span>`).join("");
 }

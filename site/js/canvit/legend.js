@@ -74,7 +74,7 @@ class CanvitLegend extends CanvitView {
     } else if (spec.kind === "scalar") {
       const domain = this.getAttribute("domain") ?? spec.domain;
       const [lo, hi] = scalarDomain(bundle, t, name, domain);
-      const fmt = (f) => spec.value(f).toFixed(spec.value(hi) < 0.1 ? 3 : 2);
+      const fmt = (f) => spec.value(f, bundle).toFixed(spec.value(hi, bundle) < 0.1 ? 3 : 2);
       const quantity = spec.quantity(bundle);
       this.body.innerHTML = `
         <div class="bar" style="background:${colormapGradient(spec.colormap)}"></div>

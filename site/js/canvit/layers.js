@@ -12,7 +12,7 @@ const PCA_NOTES = {
 
 /**
  * kind: "rgb" (colored in Python; note(bundle) says how), "labels" (class index per cell) or
- * "scalar" (a fraction in [0, 1]; quantity(bundle) names it, value(f) converts it for display).
+ * "scalar" (a fraction in [0, 1]; quantity(bundle) names it, value(f, bundle) converts it for display).
  * grid: sized canvas_grid × canvas_grid (else glimpse_px × glimpse_px).
  * Scalar domains: "unit" [0, 1]; "frame" min–max of this glimpse; "bundle" min–max over all glimpses.
  * Defaults keep one color scale across glimpses, so brightness compares across time: a per-frame
@@ -25,7 +25,9 @@ const LAYERS = {
   labels: { kind: "labels", grid: true, title: "Segmentation" },
   entropy: {
     kind: "scalar", grid: true, title: "Uncertainty", colormap: "magma", domain: "unit",
-    low: "sure", high: "unsure", quantity: (bundle) => `entropy/log ${bundle.manifest.readout.num_classes}`, value: (f) => f,
+    // Stored as entropy / log C; shown in bits, from 0 (one class) to log2 C (all C classes equally likely).
+    low: "sure", high: "unsure", quantity: () => "entropy, bits",
+    value: (f, bundle) => f * Math.log2(bundle.manifest.readout.num_classes),
   },
   change: {
     kind: "scalar", grid: true, title: "Change", colormap: "magma", domain: "bundle",

@@ -64,6 +64,11 @@ exploration page in the talk's directory shows it under switchable views (which 
 training cost, inference cost) so a view can be proposed, looked at and changed in minutes. The slide is drawn from
 the view the authors choose.
 
+Every request of the authors that is not yet done goes into the talk's `PLAN.md` ("Open requests") the moment it
+arrives, in their words, before any work on it, and leaves only when it is done; requests survive the end of a
+session only there [Yohaï, 2026-10-01: "keep track of all of my unanswered-as-of-yet-requests, always, immediately, so
+they survive across context windows"].
+
 Every fact a talk needed checked in the paper, the code or the data is noted in the talk's `AGENTS.md` ("Checked
 facts") with where it lives, the same day [Yohaï, 2026-10-01: "save notes for yourself ... for anything and
 everything that you needed to check by reading code or paper"], so the next session finds it without rereading.
@@ -132,6 +137,12 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - No obvious caveats, in slides, notes or guides: a caveat earns its place only when a competent listener could
   believe the opposite [Yohaï, 2026-10-01, on "not claims about hippocampus, consciousness or calibrated posteriors":
   "obviously. please get rid of all [...] unnecessary and obvious caveats"].
+- Every number on a slide carries a unit the audience knows (bits, %, GFLOPs, hours); never a bare normalized score
+  [Yohaï, 2026-10-01, on "uncertainty 0.44": "units?"].
+- A title says what the slide shows or claims, in the audience's terms; never the name of an experimental condition
+  [Yohaï, 2026-10-01, on "Resetting the memory": "why would a slide be called that"]. An example must also be
+  inspiring: a scene the audience relates to, where the effect is large and beautiful, not merely clean [on its person
+  in a desert: "the example you chose really doesn't look inspiring"].
 - Never overload a slide with text [Yohaï, 2026-10-01]: a label is a few words; what something is for, how it works
   and why it matters are said, in the notes. A slide whose visual needs sentences beside it to be read is not done.
 - Quality over quantity [Yohaï, 2026-10-01: "still so much useless, ugly, poorly presented [stuff] in your
@@ -156,6 +167,17 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   step-by-step, visually-supported storytelling throughout"]; "use and abuse transitions, step-by-step reveals,
   highlights" [Yohaï, 2026-10-01]. Code is walked through the same way: a fragment with `data-lines="A-B"` highlights
   those lines of its slide's code block (`deck.js`).
+- Introduce every task, measure or representation the audience may not know by doing it on a real image before using
+  it: the photograph first, large; then what the concept adds appears on it (a labeled map wiping across the scene,
+  class names arriving one by one); then the example shrinks into place beside what comes next. The model for this is
+  the introduction to semantic segmentation on `#history` of the MAIN 2026 talk [Yohaï, 2026-10-01: "I LOVE how you
+  did the illustration of what semantic segmentation as a task is, with an image and then the mask that slides over
+  it and appears. YES. THAT'S THE KIND OF STUFF WE WANT - always. they DO need an intro to semantic segmentation.
+  perfect. learn from that"]. `.wipe` (`deck.css`) reveals an overlay across its image. Overlays can confuse: for each
+  map, try it over the photograph, beside it, and after it, and keep what reads [Yohaï, 2026-10-01: "beware of
+  OVERLAYS - they can confuse. it is worth exploring both side by side / one after the other, and overlays"]. A
+  patch-grid map is upsampled with nearest neighbor so its patches stay crisp, never blurred by interpolation [Yohaï,
+  2026-10-01, on a bilinear DINOv3 map: "it is blurry because you must have run interpolation instead of nearest"].
 - Choose every example image because, out of the whole validation set, it illustrates the point best, found by a
   sweep that measures the point, and checked by eye; never because it is convenient or already in use [Yohaï,
   2026-10-01: "never be wedded to any given example image ... choose ... because out of the whole val set they
@@ -163,6 +185,10 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   example must have (what must be visible, what the model must do, what the audience must recognize, what must not
   mislead), and the sweep measures them [Yohaï, 2026-10-01: "always be clear, for each example image, what properties
   the image should have to make it into a good example"].
+- An example serves the claim the slide makes and shows the work at its best: it makes the point we want to make,
+  strongly, on a case where the model does well [Yohaï, 2026-10-01: "make sure that whatever examples you choose
+  actually make us look good and match what we WANT to say"]. Honesty lives in the notes: the average over the
+  dataset and how the example was selected are said beside it.
 - Show what the model thinks of a few named classes (their probabilities or logits, two or three at a time) rather
   than a full segmentation map, whose class colors the audience cannot read [Yohaï, 2026-10-01, on the memory slide].
 - For any slide that matters, try several ways to present its point, render each (screenshot, or play the

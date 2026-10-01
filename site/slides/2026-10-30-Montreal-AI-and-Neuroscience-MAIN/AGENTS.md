@@ -387,6 +387,14 @@ p(class) over the object's pixels after the last glimpse: 0.462 ± 0.006 with th
 each glimpse, 0.038 when the object's own glimpse is skipped. Among objects recognized after their glimpse (p ≥ 0.5,
 1,579): 0.683 against 0.038.
 
+Display of maps [Yohaï, 2026-10-01: "i do like the nearest viz"]: probability and feature maps are drawn per canvas
+cell or patch, repeated over its pixels (nearest neighbor), and the deck renders them with `img.pixels` (hard nearest
+when scaled). The table panels are redrawn with
+`uv run --project ../../canvit-pytorch python plot.py exports/ADE_val_00001271-table.npz --cmap inferno --size 640
+--panels scene truth dinov3 a b ab prob_a prob_b prob_ab entropy_ab --separate ../../site/data/talk/table` from
+`throwaway/table_corners/` (and `--panels scene --box none --separate ../../site/data/talk/table-clean`). `--logits-upsampling bilinear` gives the smooth
+version (the paper's evaluation); both stay available [Yohaï: "we shall see. keep both possible"].
+
 Experiments behind slides (gitignored `throwaway/`, outputs under `../../data/talk/`): `table_corners/` (two
 glimpses at the ends of large ADE20K objects; `run.log` has the averages), `distillation/` (DINOv3 features of a
 scene and CanViT's prediction of them after each glimpse; `export.log` has the cosine similarity per glimpse),

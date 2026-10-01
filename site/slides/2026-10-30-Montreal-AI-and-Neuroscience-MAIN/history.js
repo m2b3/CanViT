@@ -5,9 +5,9 @@
 // macros. Three series, each labeled where it ends: the best passive model trained end to end (a step line), the best
 // frozen passive features read by a linear layer (dashed), and the sequential active models of the timeline slide,
 // each at its paper's best number, as named points. A bracket marks the gap between the best active model and the
-// frozen line. With data-canvit, CanViT-B's points are added, and on ADE20K its frozen DINOv3 ViT-B teacher, probed
-// alike. Drawn into the light DOM so that a slide's CSS can build it: its groups carry the classes passive, frozen,
-// active, gap, canvit and teacher.
+// frozen line. With data-canvit, CanViT-B's points are added.
+// Drawn into the light DOM so that a slide's CSS can build it: its groups carry the classes passive, frozen, active,
+// gap and canvit.
 
 const SVG = "http://www.w3.org/2000/svg";
 const WIDTH = 1120, HEIGHT = 540, M = { left: 56, right: 250, top: 40, bottom: 40 };
@@ -19,8 +19,7 @@ const BENCHMARKS = {
               canvit: [{ macro: "inkFinetunedBest", label: "CanViT-B, fine-tuned", filled: true },
                        { macro: "inkFrozenBest", label: "CanViT-B, frozen", filled: false }] },
   ade20k: { key: "ade20k_miou", unit: "ADE20K mIoU (%)", years: [2016, END], range: [10, 70], step: 10,
-            canvit: [{ macro: "adeBestMiou", label: "CanViT-B, frozen", filled: false }],
-            teacher: /^DINOv3 ViT-B\/16, probed by Berreby/ },
+            canvit: [{ macro: "adeBestMiou", label: "CanViT-B, frozen", filled: false }] },
 };
 
 // Entries sota-history.md flags as unreproduced or as two-model systems; the frontier is drawn without them.
@@ -28,9 +27,9 @@ const FLAGGED = new Set(["OmniVec (fine-tuned)", "OmniVec2 (fine-tuned)", "ViT-P
 // The active models of the timeline slide: the entries of each paper, its label's offset from the point (px), anchor.
 const ACTIVE = [
   { model: /^Saccader/, name: "Saccader", dx: -16, dy: 8, anchor: "end" },
-  { model: /^GFNet/, name: "GFNet", dx: 0, dy: 34, anchor: "middle" },
+  { model: /^GFNet/, name: "GFNet", dx: -16, dy: 8, anchor: "end" },
   { model: /^AdaGlimpse/, name: "AdaGlimpse", dx: 0, dy: 34, anchor: "middle" },
-  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: 0, dy: -18, anchor: "middle" },
+  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: 0, dy: 34, anchor: "middle" },
   { model: /^AME/, name: "AME", dx: 0, dy: 34, anchor: "middle" },
 ];
 
@@ -87,8 +86,11 @@ function draw(container, data, macros) {
   el("circle", { cx: keyX + 286, cy: keyY, r: 7, class: "hollow" }, key);
   text("frozen + a linear layer", { x: keyX + 302, y: keyY + 6 }, key);
 
-  const passive = frontier(points.filter((p) => p.kind === "passive" && p.series !== "frozen_ssl" && !FLAGGED.has(p.model)));
-  const frozen = frontier(points.filter((p) => p.series === "frozen_ssl" && p.protocol !== "linear probe + ms"));
+  // Passive lines at the active models' size: base-size backbones only (size_class, sota-history.json) [Yohaï,
+  // 2026-10-01: "comparing to nonsensically large models is indeed stupid and counterproductive"].
+  const base = (p) => p.kind === "passive" && p.size_class === "base";
+  const passive = frontier(points.filter((p) => base(p) && p.series !== "frozen_ssl" && !FLAGGED.has(p.model)));
+  const frozen = frontier(points.filter((p) => base(p) && p.series === "frozen_ssl" && p.protocol !== "linear probe + ms"));
   const passiveTop = passive.at(-1).value, frozenTop = frozen.at(-1).value;
   const passiveGroup = el("g", { class: "passive" }, svg);
   el("path", { d: step(passive), class: "line" }, passiveGroup);
@@ -125,15 +127,8 @@ function draw(container, data, macros) {
       const value = Number(macros[macro]);
       if (!Number.isFinite(value)) throw new Error(`history chart: macro ${macro} is missing`);
       el("circle", { cx: x(CANVIT_YEAR), cy: y(value), r: 12, class: filled ? "filled" : "hollow" }, canvit);
-      text(`${label}: ${value}`, { x: x(CANVIT_YEAR) - 22, y: y(value) + 8, "text-anchor": "end", class: "label" }, canvit);
-    }
-    if (spec.teacher) {
-      const teacher = points.find((p) => spec.teacher.test(p.model));
-      if (!teacher) throw new Error(`history chart: no ${spec.teacher} in ${spec.key}`);
-      const group = el("g", { class: "teacher" }, svg);
-      el("line", { x1: x(CANVIT_YEAR) - 20, x2: x(CANVIT_YEAR) + 20, y1: y(teacher.value), y2: y(teacher.value), class: "tick" }, group);
-      text(`its teacher, DINOv3 ViT-B, frozen: ${teacher.value.toFixed(1)}`, { x: x(CANVIT_YEAR) - 22, y: y(teacher.value) - 14,
-                                                                             "text-anchor": "end", class: "label" }, group);
+      // Below its point, clear of the lines that pass at its height.
+      text(`${label}: ${value}`, { x: x(CANVIT_YEAR) + 12, y: y(value) + 40, "text-anchor": "end", class: "label" }, canvit);
     }
   }
   container.replaceChildren(svg);

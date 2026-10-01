@@ -160,8 +160,22 @@ yet reviewed by the authors.
 
 ### Passive-to-active dense latent distillation
 - **Title:** the paper's.
-- **Shows:** the conference room; DINOv3's feature map of the whole scene (PCA colors), the target; CanViT's best
-  guess of that map after each of eight random glimpses, in the same colors, filling in.
+- **Must:** what the student learns from: a passive teacher sees the whole scene; the student only gets glimpses, at
+  random places and zooms, and after each one predicts the teacher's features of the whole scene, seen or not; why
+  that teaches seeing (the teacher's space holds knowledge of the world); no labels, no policy built in.
+- **Could:** pixels as the identity teacher (the same scheme with g = identity); the guess improving glimpse by
+  glimpse as a number (cosine similarity to the teacher); the pretraining scale (said).
+- **Builds** [Yohaï, 2026-10-01: "fade-in fadeout ... the question, then the viz ... something big that then becomes
+  small"]: the scene large; the teacher's map arrives beside it (DINOv3 sees everything once); the scene shrinks to a
+  glimpse box and the student's best guess of the whole map appears beside the teacher's; glimpse by glimpse the guess
+  fills in, unseen regions included; then the teacher's map turns into the scene's pixels for a moment (the identity
+  teacher) and back.
+- **Example properties** [stated 2026-10-01, before a sweep]: a scene everyone recognizes whose teacher map shows
+  its objects as distinct color regions; a few random glimpses (pretraining's distribution, seeded) that leave large
+  parts unseen; the student's guess improving visibly glimpse by glimpse, also in regions never inside a glimpse; not
+  chosen because it is already on another slide.
+- **Shows** (until the sweep): the conference room; DINOv3's feature map of the whole scene (PCA colors), the target;
+  CanViT's best guess of that map after each of eight random glimpses, in the same colors, filling in.
 - **Says:** "We already know what good visual representations look like." Separate the architecture from learning
   the representation: a passive teacher sees the whole scene; the student only gets glimpses, at random places and
   zooms, and "wherever the model was looking, and at whatever zoom, it should be able to produce its best guess about
@@ -170,7 +184,7 @@ yet reviewed by the authors.
   scenes, 1 B random glimpses, 166 hours on one H100. A slide of these numbers alone was cut [Yohaï, 2026-10-01:
   "impossible to compare to anything, what is the takeaway"]; it returns only with a verified point of comparison.
 - **Data:** `throwaway/distillation` (exported).
-- **Status:** build.
+- **Status:** build (example sweep, then the build).
 
 ## Evidence
 
@@ -181,17 +195,21 @@ yet reviewed by the authors.
 - **Says:** "It takes glimpses and gradually paints its understanding."
 - **Status:** ready.
 
-### Resetting the memory
-- **Must:** what the memory buys: an object seen once stays in the canvas after glimpses elsewhere, and is gone when
-  the canvas is reset before each glimpse.
-- **Could:** the average over ADE20K validation (said); a pair of objects (toilet and sink, ADE_val_00001082; painting
-  and lamp, ADE_val_00000150) for two classes at once; the glimpses one by one.
-- **Example properties** [stated 2026-10-01, before the sweep]: an object everyone names; the canvas sure of it after
-  one glimpse; the other glimpses far from it, none showing its class; its shape readable in the probability map;
-  carried and reset far apart. Chosen: ADE_val_00001425, a person (p 0.93 after its glimpse, 0.88 kept and 0.006
-  reset after three glimpses away), by a sweep over 2,781 objects (`throwaway/memory_reset`, `AGENTS.md`).
-- **Builds:** the glimpse on the person and p(person) after it; three glimpses away, the silhouette stays; the reset
-  panel, empty. Inferno, 0 to 1, with its scale.
+### A persistent, evolving understanding of the scene
+- **Title:** the paper's and the page's words for memory ("updating a persistent, evolving understanding of the
+  scene"); "Resetting the memory" named a condition, not what the slide shows [Yohaï, 2026-10-01: "why would a slide
+  be called that"].
+- **Must:** trans-saccadic integration made visible: each glimpse adds what it saw to one picture of the scene, and
+  what was seen stays; with the memory reset before each glimpse, only the current glimpse remains.
+- **Could:** the average over ADE20K validation (said: 0.46 kept against 0.03 reset, single objects).
+- **Example properties** [stated 2026-10-01, before a new sweep; the person in a desert (ADE_val_00001425) was clean
+  but "really doesn't look inspiring"]: a scene the audience relates to and finds lively (a street with people and
+  cars, a kitchen, a living room), well photographed; three objects of distinct, nameable classes, each needing its own
+  glimpse and recognized confidently after it; glimpses mostly disjoint; after the last glimpse, the kept canvas shows
+  all three with readable shapes and the reset canvas only the last.
+- **Builds:** each class's probability in its own color over the dimmed scene, a glimpse per click: the first object
+  lights up, then the second while the first stays, then the third; then, beside it, the same glimpses with the memory
+  reset: only the last object.
 - **Says:** "unless you get a good look at something, the representation is bad"; the average, as a clean example's
   context.
 - **Status:** draft (built).
@@ -232,6 +250,16 @@ yet reviewed by the authors.
 - **Data:** recorded bundles of one scene per policy (`canvit_pytorch.viz`, same seed).
 - **Status:** draft (built: the six policies named over their first glimpses, then playing, then the race; the
   metacognition explanation to add).
+
+### The model's own uncertainty about what's where
+- **Title:** Yohaï's words [2026-10-01: "the model's own uncertainty about what's where"].
+- **Must:** metacognition, explained: at a position, the class probabilities read out from the canvas, peaked or
+  flat; entropy as how flat; the uncertainty map; EG-C2F averaging it per quadrant and looking next where it is
+  highest, without reinforcement learning.
+- **Could:** the next glimpses one by one; AME's attention-map entropy as the precedent (said).
+- **Example:** the street of `#policies` after its first glimpse (continuity with the race); the surest and least
+  sure canvas cells chosen by entropy (`throwaway/metacognition`).
+- **Status:** draft (built).
 
 ### Benchmark results on ADE20K and ImageNet-1k
 - **Title:** the paper's Fig. 3 caption.

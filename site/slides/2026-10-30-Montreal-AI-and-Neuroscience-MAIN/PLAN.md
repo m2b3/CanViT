@@ -165,7 +165,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   segmentation is harder (`AGENTS.md`, "Visual decisions"). Built: the named-state slide with its examples, the passive
   lines restricted to base-size models ("comparing to nonsensically large models is indeed stupid and
   counterproductive"); `#results` still to rework. M.
-- [Yohaï, 2026-10-01] An exploration page for the history data: `_explore-history.html` (untracked) shows every point
+- [Yohaï, 2026-10-01] An exploration page for the history data: `_explore-history.html` (a working page, not deployed) shows every point
   with series, size and numeric axes; extend it with training and inference cost once those fields exist. S.
 - [Yohaï, 2026-10-01] A training-cost view ("having a 'training flops' graph could be interesting as well idk. or
   training cost"): training compute or cost of the active models and of CanViT-B, from their papers and the rebuttal

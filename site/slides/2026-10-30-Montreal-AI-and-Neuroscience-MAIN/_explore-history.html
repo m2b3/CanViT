@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>History data explorer</title>
+<link rel="stylesheet" href="../../css/canvit.css">
+<style>
+  /* A working page (its name starts with _, so deploy.sh leaves it out): every point of sources/sota-history.json
+     under switchable views, for quick back and forth before a slide's view is fixed. Not part of the deck. */
+  body { margin: 0; padding: 16px 20px; background: var(--bg); color: var(--ink); font: 14px/1.4 var(--sans); }
+  h1 { font-size: 18px; margin: 0 0 10px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; margin-bottom: 10px; }
+  .controls fieldset { border: 1px solid var(--rule); border-radius: 8px; padding: 4px 10px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .controls legend { font-size: 12px; color: var(--muted); }
+  .controls label { white-space: nowrap; }
+  svg { display: block; width: 100%; height: auto; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+  svg text { font: 12px var(--sans); fill: #475569; }
+  svg .grid { stroke: #e2e8f0; }
+  svg .frontier { fill: none; stroke-width: 2.5; }
+  svg .point { stroke: #fff; stroke-width: 1.2; cursor: pointer; }
+  svg .point.flagged { stroke: #000; stroke-dasharray: 2 2; }
+  svg .name { font-size: 11px; }
+  #detail { margin-top: 10px; padding: 10px 12px; min-height: 60px; border: 1px solid var(--rule); border-radius: 8px;
+            font: 12.5px/1.5 var(--mono); white-space: pre-wrap; }
+  #count { color: var(--muted); }
+</style>
+</head>
+<body>
+<h1>History data explorer <span id="count"></span></h1>
+<div class="controls">
+  <fieldset><legend>benchmark</legend>
+    <label><input type="radio" name="bench" value="imagenet_top1" checked> ImageNet-1k</label>
+    <label><input type="radio" name="bench" value="ade20k_miou"> ADE20K</label></fieldset>
+  <fieldset><legend>x axis</legend><span id="axes"></span></fieldset>
+  <fieldset><legend>series</legend><span id="series"></span></fieldset>
+  <fieldset><legend>size</legend><span id="sizes"></span></fieldset>
+  <fieldset><legend>show</legend>
+    <label><input type="checkbox" id="names" checked> names</label>
+    <label><input type="checkbox" id="frontiers" checked> record lines (x = year)</label>
+    <label><input type="checkbox" id="flagged"> flagged entries</label>
+    <label><input type="checkbox" id="canvit" checked> CanViT-B</label>
+    <label><input type="checkbox" id="logx"> log x</label></fieldset>
+</div>
+<svg id="chart" viewBox="0 0 1200 620"></svg>
+<div id="detail">Hover or click a point for every field it carries.</div>
+<script type="module">
+  const COLORS = { overall: "#334155", in1k_only: "#64748b", frozen_ssl: "#0d9488", active: "#d97706", select_once: "#7c3aed",
+                   borderline: "#db2777", canvit: "#dc2626" };
+  const FLAGGED = new Set(["OmniVec (fine-tuned)", "OmniVec2 (fine-tuned)", "ViT-P on InternImage-H + Mask2Former"]);
+  const CANVIT = { imagenet_top1: [["inkFinetunedBest", "CanViT-B, fine-tuned"], ["inkFrozenBest", "CanViT-B, frozen"]],
+                   ade20k_miou: [["adeBestMiou", "CanViT-B, frozen"]] };
+  const [data, macros] = await Promise.all(["sources/sota-history.json", "../../assets/paper/data_macros.json"]
+    .map((url) => fetch(url).then((r) => { if (!r.ok) throw new Error(`${url}: ${r.status}`); return r.json(); })));
+
+  const yearOf = (p) => { const d = String(p.date); return Number(d.slice(0, 4)) + (d.length >= 7 ? (Number(d.slice(5, 7)) - .5) / 12 : .5); };
+  const numericFields = (points) => ["year", ...new Set(points.flatMap((p) => Object.keys(p).filter((k) =>
+    !["value", "year"].includes(k) && typeof p[k] === "number")))];
+  const $ = (s) => document.querySelector(s);
+  const state = { series: new Set(Object.keys(COLORS)), sizes: null, x: "year" };
+
+  function checkboxes(host, values, selected, onChange) {
+    host.replaceChildren(...values.map((v) => {
+      const label = document.createElement("label");
+      label.innerHTML = `<input type="checkbox" ${selected.has(v) ? "checked" : ""}> ${v}`;
+      label.querySelector("input").addEventListener("change", (e) => { e.target.checked ? selected.add(v) : selected.delete(v); onChange(); });
+      return label;
+    }));
+  }
+
+  function controls() {
+    const points = data[document.querySelector("input[name=bench]:checked").value];
+    const axes = numericFields(points);
+    if (!axes.includes(state.x)) state.x = "year";
+    $("#axes").replaceChildren(...axes.map((a) => {
+      const label = document.createElement("label");
+      label.innerHTML = `<input type="radio" name="x" value="${a}" ${a === state.x ? "checked" : ""}> ${a}`;
+      label.querySelector("input").addEventListener("change", () => { state.x = a; draw(); });
+      return label;
+    }));
+    const series = [...new Set(points.map((p) => p.series))];
+    checkboxes($("#series"), series, state.series, draw);
+    const sizes = [...new Set(points.map((p) => p.size_class ?? "unknown"))];
+    state.sizes ??= new Set(sizes);
+    for (const s of sizes) if (!state.sizes.has(s) && !state.sizes.has(`seen:${s}`)) state.sizes.add(s);
+    checkboxes($("#sizes"), sizes, state.sizes, draw);
+    draw();
+  }
+
+  function draw() {
+    const key = document.querySelector("input[name=bench]:checked").value;
+    const all = data[key];
+    const xOf = (p) => (state.x === "year" ? yearOf(p) : p[state.x]);
+    const points = all.filter((p) => state.series.has(p.series) && state.sizes.has(p.size_class ?? "unknown")
+      && ($("#flagged").checked || !FLAGGED.has(p.model)) && Number.isFinite(xOf(p)));
+    $("#count").textContent = `· ${points.length} of ${all.length} points shown (${all.filter((p) => !Number.isFinite(xOf(p))).length} lack ${state.x})`;
+    const svg = $("#chart");
+    svg.replaceChildren();
+    const W = 1200, H = 620, M = { l: 60, r: 220, t: 20, b: 44 };
+    const xs = points.map(xOf), ys = points.map((p) => p.value);
+    const canvit = $("#canvit").checked ? CANVIT[key].map(([m, label]) => ({ label, value: Number(macros[m]) })) : [];
+    ys.push(...canvit.map((c) => c.value));
+    const log = $("#logx").checked && state.x !== "year";
+    const tx = (v) => (log ? Math.log10(v) : v);
+    let [x0, x1] = [Math.min(...xs.map(tx)), Math.max(...xs.map(tx))];
+    if (state.x === "year") x1 = Math.max(x1, 2026.6);
+    const pad = (x1 - x0) * 0.03 || 1;
+    [x0, x1] = [x0 - pad, x1 + pad];
+    const [y0, y1] = [Math.floor(Math.min(...ys) / 5) * 5 - 5, Math.ceil(Math.max(...ys) / 5) * 5 + 2];
+    const X = (v) => M.l + (tx(v) - x0) / (x1 - x0) * (W - M.l - M.r);
+    const Y = (v) => H - M.b - (v - y0) / (y1 - y0) * (H - M.t - M.b);
+    const ns = "http://www.w3.org/2000/svg";
+    const add = (name, attrs, text) => { const n = document.createElementNS(ns, name); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); if (text != null) n.textContent = text; svg.append(n); return n; };
+    for (let v = Math.ceil(y0 / 5) * 5; v <= y1; v += 5) { add("line", { x1: M.l, x2: W - M.r, y1: Y(v), y2: Y(v), class: "grid" }); add("text", { x: M.l - 8, y: Y(v) + 4, "text-anchor": "end" }, v); }
+    for (let i = 0; i <= 8; i++) {
+      const t = x0 + (i / 8) * (x1 - x0), v = log ? 10 ** t : t;
+      add("text", { x: X(v), y: H - 24, "text-anchor": "middle" }, state.x === "year" ? Math.floor(v) : (v >= 100 ? Math.round(v) : v.toPrecision(2)));
+    }
+    add("text", { x: (M.l + W - M.r) / 2, y: H - 6, "text-anchor": "middle" }, `${state.x}${log ? " (log)" : ""}`);
+    if ($("#frontiers").checked && state.x === "year") {
+      for (const s of state.series) {
+        const recs = [];
+        for (const p of points.filter((p) => p.series === s).sort((a, b) => yearOf(a) - yearOf(b))) if (!recs.length || p.value > recs.at(-1).value) recs.push(p);
+        if (recs.length < 2) continue;
+        add("path", { class: "frontier", stroke: COLORS[s] ?? "#999", d: recs.map((p, i) => (i ? `H${X(yearOf(p))}V${Y(p.value)}` : `M${X(yearOf(p))},${Y(p.value)}`)).join("") });
+      }
+    }
+    for (const p of points) {
+      const c = add("circle", { cx: X(xOf(p)), cy: Y(p.value), r: 5.5, fill: COLORS[p.series] ?? "#999", class: `point${FLAGGED.has(p.model) ? " flagged" : ""}` });
+      const show = () => { $("#detail").textContent = JSON.stringify(p, null, 1); };
+      c.addEventListener("mouseenter", show);
+      c.addEventListener("click", show);
+      if ($("#names").checked) add("text", { x: X(xOf(p)) + 7, y: Y(p.value) - 6, class: "name" }, p.model.replace(/\s*\(.*$/, ""));
+    }
+    if (state.x === "year") for (const c of canvit) {
+      add("circle", { cx: X(2026.2), cy: Y(c.value), r: 7, fill: COLORS.canvit });
+      add("text", { x: X(2026.2) + 10, y: Y(c.value) + 4, fill: COLORS.canvit }, `${c.label}: ${c.value}`);
+    }
+    let ly = M.t + 10;
+    for (const s of state.series) { add("circle", { cx: W - M.r + 20, cy: ly - 4, r: 5, fill: COLORS[s] ?? "#999" }); add("text", { x: W - M.r + 32, y: ly }, s); ly += 18; }
+  }
+
+  for (const input of document.querySelectorAll("input[name=bench]")) input.addEventListener("change", controls);
+  for (const id of ["names", "frontiers", "flagged", "canvit", "logx"]) $(`#${id}`).addEventListener("change", draw);
+  controls();
+</script>
+</body>
+</html>

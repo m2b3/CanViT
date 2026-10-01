@@ -17,8 +17,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
-- [Yohaï, 2026-10-01] "where are acknowledgements, QR codes, etc btw": `#links` (QR codes, homepage, funders) renders
-  blank, its content one slide height below the viewport; in progress.
 - [Yohaï, 2026-10-01] `#distillation` "is completely terrible ... needs to be entirely reworked. the fancy curved arrows
   etc do nothing for it. having something relatively static where you unroll the timesteps across time (maybe we
   transition one timestep to next, showing them next to each other, time left-to-right) could work. you basically just

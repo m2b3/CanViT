@@ -250,9 +250,12 @@ yet reviewed by the authors.
   model's p(class) near zero after it and high after the zoom, with few false positives; a scene read at a glance.
   Chosen: ADE_val_00001715, a television in a billiard room (p 0.03 → 0.77; `throwaway/looking_closer`, ranked over
   all qualifying objects; runners-up: a basket of soaps, ADE_val_00001081; bottles on a counter, ADE_val_00000439).
-- **Builds:** the scene; its full-scene glimpse as the model receives it (128 px, hard nearest) and p(television),
-  dark; the input zooms into the zoomed glimpse's box, showing the few pixels it had of the television; the zoomed
-  glimpse replaces it at the same framing; p(television) lights up.
+- **Builds:** the scene; its full-scene glimpse as the model receives it (128 px, hard nearest), p(television)
+  following on the same click, dark; the input zooms into the zoomed glimpse's box, showing the few pixels it had of
+  the television; the zoomed glimpse replaces it at the same framing and p(television) lights up on the same click.
+  The model's answer changes with its input, never on a click of its own [Yohaï, 2026-10-01: "please think through
+  when things should update and how, i shouldnt need an additional right-arrow to make the probability map
+  update"].
 - **Status:** draft (built; rebuilt after "the idea ... is good and nice but the way it is showed is really not good
   atm"). In the main talk, after Extrapolation [Yohaï, 2026-10-01: "the 'Spatial coverage and perception of detail'
   stuff is really great and should be in main pres"].

@@ -177,6 +177,19 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   step-by-step, visually-supported storytelling throughout"]; "use and abuse transitions, step-by-step reveals,
   highlights" [Yohaï, 2026-10-01]. Code is walked through the same way: a fragment with `data-lines="A-B"` highlights
   those lines of its slide's code block (`deck.js`).
+- A diagram of a process lets alignment carry the relations: one column per timestep, time left to right, one row
+  per role, and a constant repeated in every column (the teacher's target under each prediction) rather than reached
+  by arrows. Connectors are straight, and only where alignment cannot say it (the state carried to the next
+  timestep) [Yohaï, 2026-10-01, on the distillation slide: "the fancy curved arrows etc do nothing for it ... unroll
+  the timesteps across time ... you can duplicate the teacher features, we want things to align in terms of columns
+  etc. this should not need curved arrows"].
+- CanViT in a diagram is its logo (`../assets/logos/canvit-wordmark.svg`), never a text box; any element that recurs
+  looks the same wherever it appears [Yohaï, 2026-10-01: "be visually consistent, when you have CanViT in a diagram
+  use the logo"].
+- Decide for every build when each element updates. A model's output changes on the same click as its input, a
+  moment after it (a transition delay on the way in), never on a click of its own [Yohaï, 2026-10-01, on the detail
+  slide: "please think through when things should update and how, i shouldnt need an additional right-arrow to make
+  the probability map update"]. A click is spent on a new input or a new idea.
 - Introduce every task, measure or representation the audience may not know by doing it on a real image before using
   it: the photograph first, large; then what the concept adds appears on it (a labeled map wiping across the scene,
   class names arriving one by one); then the example shrinks into place beside what comes next. The model for this is

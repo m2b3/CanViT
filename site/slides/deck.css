@@ -44,6 +44,32 @@ html, body { background: var(--bg); }
 /* The highlighter of the project page, for the one phrase a slide must leave behind. */
 .reveal .hl { padding: 0 .1em; border-radius: 3px; background: linear-gradient(transparent 58%, var(--highlight) 58%); }
 
+/* Click-by-click builds without a visible element: a fragment that only counts the click, for <section data-step>
+   rules keyed on step-N (deck.js). */
+.reveal .step-marker { display: none; }
+
+/* An SVG path that draws itself when its fragment (or its own .fragment class) becomes visible. pathLength="1" on the
+   path makes the dash independent of its measured length. */
+.reveal .draw { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .9s ease; }
+.reveal .fragment.visible .draw, .reveal .draw.fragment.visible { stroke-dashoffset: 0; }
+
+/* A ring around a region of a figure or photograph, with a short label: white line over a dark halo, legible on
+   light and dark pixels alike. An absolutely positioned SVG in the figure's pixel coordinates. */
+.reveal .marks { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+.reveal .marks .halo { fill: none; stroke: rgba(0, 0, 0, .35); stroke-width: 6; }
+.reveal .marks .ring { fill: none; stroke: #fff; stroke-width: 2.5; }
+.reveal .marks .pill { fill: rgba(15, 23, 42, .78); }
+.reveal .marks text { fill: #fff; font: 600 16px var(--sans); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal *, .reveal *::before, .reveal *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
+
+/* <deck-sequence> (sequence.js): its children stacked in one place, the current one shown. */
+deck-sequence { display: grid; }
+deck-sequence > * { grid-area: 1 / 1; visibility: hidden; }
+deck-sequence > [data-current] { visibility: visible; }
+
 /* A light card holding a component, so its own surfaces line up with the slide's. */
 .reveal .card { padding: 18px 22px; border-radius: 16px; background: var(--soft); --canvit-surface: var(--soft); }
 

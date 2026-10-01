@@ -3,7 +3,8 @@
 // from glimpse to glimpse until reset, and EG-C2F can choose the next glimpse instead. Shows the model's input,
 // the ADE20K classes decoded from the canvas, and their entropy on a fixed scale from 0 to log(num_classes).
 // `model` is a directory written by `python -m canvit_pytorch.viz.live export`, `scene` an image URL, both
-// relative to the page. The download starts from a button that states its size, or at once with `autoload`.
+// relative to the page. The download starts from a button that states its size, or as soon as `autoload` is
+// present (also when it is added later, as a deck does when the slide comes near).
 // Events: canvit-load {manifest, backend}, canvit-glimpse {t, viewpoint, chosenBy, stepMs, runMs}, canvit-error.
 
 import { ADE20K_PALETTE } from "./ade20k.js";
@@ -100,7 +101,7 @@ function argmaxLabels(logits, numClasses) {
 const paletteRgb = (c) => [ADE20K_PALETTE[3 * c], ADE20K_PALETTE[3 * c + 1], ADE20K_PALETTE[3 * c + 2]];
 
 class CanvitLive extends HTMLElement {
-  static observedAttributes = ["model", "scene"];
+  static observedAttributes = ["model", "scene", "autoload"];
 
   #manifest = null;
   #model = null;
@@ -120,6 +121,7 @@ class CanvitLive extends HTMLElement {
   #sceneRequests = 0; // increments when `scene` changes; only the latest request is shown
   #ready = Promise.withResolvers();
   #loading = false;
+  #downloading = false;
   #colors = null;
 
   constructor() {
@@ -142,6 +144,10 @@ class CanvitLive extends HTMLElement {
 
   attributeChangedCallback(name, old, value) {
     if (old === value || !this.isConnected) return;
+    if (name === "autoload") {
+      if (value !== null && this.#manifest && !this.#loading) this.load();
+      return;
+    }
     if (name === "model") this.#prepare();
     else if (this.#manifest) this.#loadScene().catch((error) => this.#fail(error));
   }
@@ -171,6 +177,8 @@ class CanvitLive extends HTMLElement {
 
   /** Download and start the model (the download button calls this). */
   async load() {
+    if (this.#model || this.#downloading) return;
+    this.#downloading = true;
     const generation = this.#generation;
     const manifest = this.#manifest;
     const button = this.shadowRoot.querySelector("[data-load]");
@@ -203,6 +211,8 @@ class CanvitLive extends HTMLElement {
       this.dispatchEvent(new CustomEvent("canvit-load", { detail: { manifest, backend: model.backendName }, bubbles: true, composed: true }));
     } catch (error) {
       this.#fail(error);
+    } finally {
+      this.#downloading = false;
     }
   }
 

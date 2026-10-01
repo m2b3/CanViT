@@ -5,8 +5,9 @@ and it is kept current: when the workflow or a convention changes, change it her
 
 ## What lives where
 
-- `deck.js`, `deck.css`: the deck every talk runs on (reveal.js at 1280 × 720, the page's light identity from
-  `../css/canvit.css`). Slide conventions are documented at the top of `deck.js`: `data-play`,
+- `deck.js`, `deck.css`, `sequence.js`: the deck every talk runs on (reveal.js at 1280 × 720, the page's light
+  identity from `../css/canvit.css`) and its own elements (`<deck-sequence>`); `deck.css` also holds the utilities
+  every talk may use (`.draw` arrows, `.marks` rings, `.step-marker`). Slide conventions are documented at the top of `deck.js`: `data-play`,
   `data-canvit-target`/`data-canvit-t`, `<section data-step>`, `<section data-status>`.
 - `package.json`: reveal.js, pinned and installed locally (`npm ci --prefix site/slides`), so a talk runs offline.
 - `shoot.py`: screenshots of every slide in Chromium, and the browser errors (below).
@@ -14,6 +15,11 @@ and it is kept current: when the workflow or a convention changes, change it her
   decisions), `OUTLINE.md` (the talk, slide by slide, designed before the slides), `index.html` (every slide, with
   speaker notes), `talk.css` (rules scoped by slide id), `PLAN.md` (the talk's open work, ranked), `sources/` (the
   material it draws on) and any talk-only modules or assets.
+
+Computing, exporting and plotting are separate steps [Yohaï, 2026-10-01]: an experiment writes its results as
+uncolored data (labels, probabilities, scalar maps, metrics, viewpoints) to files; figures and slides read those files
+and choose colors, colormaps and layout, so a figure can be redrawn differently without running the model again.
+This is the web bundle's rule (`canvit-pytorch/docs/viz.md`, "Data layers are lossless and uncolored").
 
 A visual that shows CanViT itself (recorded rollouts, features, the live model, the paper's results) is a
 `<canvit-*>` component in `../js/canvit/`, usable on the project page as well; a talk never keeps its own copy.
@@ -40,6 +46,12 @@ uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-30-Montre
 python3 site/check_paper_numbers.py
 ```
 
+Every fact a talk needed checked in the paper, the code or the data is noted in the talk's `AGENTS.md` ("Checked
+facts") with where it lives, the same day [Yohaï, 2026-10-01: "save notes for yourself ... for anything and
+everything that you needed to check by reading code or paper"], so the next session finds it without rereading.
+A note points to its source (paper section, module and symbol, file path) and states the fact; numbers the paper
+generates stay in its macros.
+
 `shoot.py` exits nonzero when the page logged an error; read `errors.txt` and look at the images of every slide
 you touched, with all fragments shown (default) and before them (`--first-fragment`). Screenshots are review
 material and are never committed (`site/.screens/` is ignored).
@@ -54,19 +66,59 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 [Yohaï, 2026-10-01, on the first draft of the MAIN 2026 talk: invented titles such as "Seeing is something you do",
 "the world you build is spatiotopic" and "A glimpse is always 128 × 128 pixels" were rejected outright.]
 
-- Slide text comes from the paper and the sources it cites, in their words. Read the paper section a slide
-  covers before writing the slide.
+- Slide text comes from verified human material, in its words: the paper, the project page (`../index.html`: its
+  headings and labels, such as "What's in an active-vision model?", "See it in action"), the README, the authors'
+  own writing and speech (the applications and talks quoted in a talk's `AGENTS.md` and `sources/`), and the
+  sources the paper cites. Look there for every title before writing one [Yohaï, 2026-10-01, on "Three axes of an
+  active vision model": "why use such [bad] titles like this when primary material that i gave you say the MUCH MUCH
+  MUCH better 'What's in an active-vision model?'"].
+- Titles take the written register: the page's and the paper's headings, the authors' written applications, or the
+  plain name of what the slide shows. A spoken turn of phrase (a joke, an aside, a rhetorical question such as "dumb,
+  but not too dumb") belongs in the notes, where the speaker says it [Yohaï, 2026-10-01, on that title: "[...] you actually put this as the title"].
+- Labels are as short as the thing they name: "Paper", "Code", "Models", not "Read the paper". Install commands use
+  uv: `uv add canvit-pytorch` [Yohaï, 2026-10-01].
+  Reuse their wordings, turns of phrase and framings verbatim where they fit; write new wording only when nothing
+  human fits, and keep it plain [Yohaï, 2026-10-01, on the title "Perception goes beyond the information sampled":
+  "I HATE the title of that slide it's ugly ai-written [stuff] ... ALWAYS favor wordings, turns of phrase,
+  formulations, framings, etc, that come from verified human material"]. A paraphrase of a human sentence is not
+  human wording. Read the paper section a slide covers before writing the slide.
 - A title names the thing the slide shows ("Canvas Attention", "Scene-Relative RoPE", "A CanViT rollout") or
   states a claim the paper or a cited source makes ("No policy can make up for a poor observer"). Never a
   tagline, a metaphor or a slogan of your own.
 - A title is literally true and matches what the slide shows. History is told as the paper tells it: active
   models "have struggled to match" passive ones; they did not "fall behind".
 - A setting detail (the glimpse size, a canvas grid) belongs in the body or the notes, never in a title.
+- Never number slides, sections or items in outlines, plans and notes; refer to a slide by its title or its id
+  [Yohaï, 2026-10-01: "I [...] HATE YOUR TENDENCY TO NUMBER EVERYTHING, that creates unnecessarily huge diffs and
+  wastes of tokens just because you move slides around and can be highly misleading"].
 - What a talk shows, and how many slides it takes, follows from what makes it correct, clear, meaningful and
   beautiful [Yohaï, 2026-10-01]; no slides-per-minute rule decides it.
+- Layouts use the slide: the visual as large as the 1152 × 628 px content area allows, no large empty regions, the
+  most important element the largest [Yohaï, 2026-10-01: "avoid wasting space with your layout, always"].
+- The last slide stays up during questions: the links (QR codes, largest) and the funding acknowledgments on one
+  slide [Yohaï, 2026-10-01].
+- Visual storytelling first and always; less is more [Yohaï, 2026-10-01]. A slide states a fact once: no
+  information repeated on the same slide (affiliations as text under the faces and again as logos). Check
+  centering and balance on the screenshot: reveal.js sets `display: block` inline on the shown slide, so a
+  section's own `display: flex` does not apply; center blocks with auto margins or a wrapper.
+- Ask what the slide's takeaway is, then make it the most visible thing on the slide; nothing else gets more
+  emphasis than it. A number the audience does not need goes to the notes, never into a large callout [Yohaï,
+  2026-10-01, on the Canvas Attention slide showing "2.8 GFLOPs" in large type: "huge visual callout to something
+  almost no one in the audience understands or cares about, with wrong emphasis ... WHAT IS THE TAKEAWAY HERE? it's
+  the asymmetry"]. A paper figure that carries the point is shown as large as the slide allows, with annotations
+  (rings, `.marks`) pointing at the part that matters.
+- Quality over quantity [Yohaï, 2026-10-01: "still so much useless, ugly, poorly presented [stuff] in your
+  slides"]. The deck holds only slides whose visual carries the point. A slide that would be a list of lines, a
+  paragraph or a placeholder box stays out of `index.html` until its visual exists; its plan lives in `OUTLINE.md`
+  and `PLAN.md`.
 - The neuroscience is the paper's: human vision is active (gaze shifts toward regions of interest, sequential,
   with strategic planning, integration across time in visual working memory, and top-down recurrent
   feedback), each point with its citation.
+- Demonstrate, then name [Yohaï, 2026-10-01: "such things should always be your first thoughts"]. The first idea for
+  any claim is how to show it happening, on a real image, with the real model or the real baseline: for "pasting
+  local predictions into scene coordinates does not extrapolate", a photo of a table, two crops, each crop's passive
+  segmentation flying to its place in a scene-wide map, and the hole left in the middle. A claim shown only as text
+  or a diagram is a placeholder until such a demonstration exists or is ruled out.
 - The takeaway is said, not written: speaker notes (`<aside class="notes">`) hold the spoken text, in full
   sentences, and say only what the paper or a cited source supports.
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../css/canvit.css`).

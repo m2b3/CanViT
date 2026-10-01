@@ -10,6 +10,10 @@
 //   <section data-step>          gets data-step="N" and classes step-1 … step-N, N the number of fragments shown, so
 //                                its CSS can build a diagram click by click
 //   <section data-status="…">    how far the slide is from presentable: shown as a corner badge unless ?present
+//   data-load-near               on an element that loads something heavy when given `autoload` (<canvit-live>): the
+//                                attribute is added once its slide is the current one or the next, never at page load
+// Elements a slide can use besides the project page's components: <deck-sequence> (sequence.js), its children shown
+// one at a time, played with data-play.
 
 import Reveal from "./node_modules/reveal.js/dist/reveal.mjs";
 import RevealNotes from "./node_modules/reveal.js/dist/plugin/notes.mjs";
@@ -25,7 +29,7 @@ const presenting = params.has("present") || params.has("receiver");
 const printing = params.has("print-pdf");
 
 // Clicks on these never advance the deck: controls, links and the live model's scene.
-const INTERACTIVE = "a, button, input, select, textarea, label, video[controls], canvit-live, canvit-episode, canvit-frontier, [data-no-advance]";
+const INTERACTIVE = "a, button, input, select, textarea, label, video[controls], canvit-live, canvit-episode, canvit-frontier, canvit-rollout, [data-no-advance]";
 
 /** Play the slide's animations from the start; pause every other slide's. */
 async function syncPlayback(deck) {
@@ -39,6 +43,15 @@ async function syncPlayback(deck) {
 }
 
 const initialT = new WeakMap();
+
+/** Heavy elements load when their slide comes near: the current slide or the next one. */
+function loadNear(deck) {
+  const slides = deck.getSlides();
+  const index = slides.indexOf(deck.getCurrentSlide());
+  for (const slide of slides.slice(index, index + 2)) {
+    for (const element of slide.querySelectorAll("[data-load-near]:not([autoload])")) element.setAttribute("autoload", "");
+  }
+}
 
 /** Every data-canvit-target fragment of the current slide sets t on its targets; none shown restores the markup's t. */
 function syncTargets(deck) {
@@ -127,6 +140,8 @@ export async function startDeck(options = {}) {
   };
   for (const event of ["ready", "slidechanged", "fragmentshown", "fragmenthidden"]) deck.on(event, sync);
   for (const event of ["ready", "slidechanged"]) deck.on(event, () => syncPlayback(deck));
+  // The speaker view's previews (?receiver) and print never load heavy elements: each preview is a whole deck.
+  if (!printing && !params.has("receiver")) for (const event of ["ready", "slidechanged"]) deck.on(event, () => loadNear(deck));
   replayButton(deck);
   await deck.initialize();
   // A click on a slide advances like the space bar, except on controls and interactive figures, after a text

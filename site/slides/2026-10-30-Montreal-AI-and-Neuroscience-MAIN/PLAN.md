@@ -1,63 +1,92 @@
 # MAIN 2026 talk: open work
 
-A 30-minute talk at MAIN 2026 (Montreal AI and Neuroscience), October 30, 2026, for an audience of
-neuroscientists, cognitive scientists and machine-learning researchers; presented by Yohaï-Eliel Berreby, possibly
-with Sabrina Du. The NeurIPS camera-ready is due November 6, 2026 (`camera_ready/REQUIREMENTS.md` in the paper's
-repository), so work that serves both is worth more.
+Everything still to do for the talk: Yohaï's open requests, known issues, the work behind the slides, and the
+authors' decisions. It is updated in the same step a request arrives or an item lands, so nothing is lost between
+sessions; a done item is deleted (git keeps it). Each slide's status is in `OUTLINE.md`; slides are named by their id
+in `index.html`. Difficulty: S (hours), M (a day), L (days). The NeurIPS camera-ready is due 2026-11-06, a week after
+the talk.
 
-Each slide's status is its `data-status` in `index.html`. This file ranks what is left. Difficulty: S (hours),
-M (a day), L (days). Leverage: what the talk loses without it. Status: `todo`, `doing`, `done`, `decide` (needs the
-authors). "Also" names what else the work serves: the project page (`site/index.html`) or the camera-ready.
+## Open requests
 
-## Visuals and experiments
+- [Yohaï, 2026-10-01] `#policies`: a race between the policies: one line per policy, in the paper's colors, growing
+  glimpse by glimpse as the six animations play, against the ground truth. Plan: the paper's ADE20K mIoU per policy
+  and glimpse (`../../assets/paper/ade20k_seg.json`, `policy_curves`; all of ADE20K validation), labeled as such; the
+  bundles' own per-glimpse pixel accuracy on the street scene separates the policies too little (87–89% for four of
+  six). S–M.
+- [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:
+  Aborted(InternalError: out of memory)". Measured on 2026-10-01 in headless Chromium (`throwaway/live_memory.py`,
+  `slide_memory.py`, `live_wasm.py`): the deck with no slide 376 MB RSS; every slide without the model 1.46 GB (static
+  slides about +100 MB each alone; `#rollout` +200, `#memory` +210, `#policies` +320); the model created at page
+  open (`autoload`) brought the deck to about 3.5 GB. Fixed: the deck now adds `autoload` only when `#live` is the
+  current or next slide (`data-load-near`, `../deck.js`), never in the speaker view's previews; with WebGPU disabled the
+  model then starts on WebAssembly in the deck (peak about 1.9 GB). Open: whether Yohaï's browser (which one, speaker
+  view open?) still fails; releasing the model when the slide is left; making the rollouts load only near their slide.
+- [Yohaï, 2026-10-01] Reuse the well-received primitives of the September deck, ported (never imported): see
+  "Components and deck primitives".
+- [Yohaï, 2026-10-01] Keep every TODO, known issue and request in this file.
 
-| # | Item | Slide | Diff. | Leverage | Cool | Also | Status |
-|---|---|---|---|---|---|---|---|
-| 1 | `<canvit-foveate>`: a scene through a retina, sharp at the fixation, blurred with eccentricity, fixations along a recorded scanpath; the pointer can take over | `human-vision` | M | high: the opening hook | high | page | todo |
-| 2 | DINOv3 feature explorer: teacher-feature export (`canvit_pytorch.viz`) and `<canvit-features>`: similarity to the hovered patch, PCA colors, linear-probe segmentation | `dinov3` | M–L | high: what a feature map is | very high | page | todo |
-| 3 | Distillation, shown: bundles recording the pretrained readout's prediction of the teacher's features, in the teacher's PCA colors, glimpse by glimpse | `distillation` | M | high: the training objective | high | page, paper figure | todo |
-| 4 | Architecture built click by click: tokens through reads and writes, the canvas filling | `architecture` | M | high | high | page | todo |
-| 5 | SR-RoPE geometry: glimpse patch centers over the canvas grid in scene coordinates, packed or spread with zoom | `sr-rope` | S–M | medium: the retinotopic/spatiotopic binding | high | page | todo |
-| 6 | History timeline, two lanes, with thumbnails and citations (being verified) | `history` | M | high for this audience | medium | camera-ready related work | doing |
-| 7 | `<canvit-frontier>` that can show only the prior active models and passive DINOv3 (probe_table) first, then CanViT | `gap`, `results` | S–M | high | medium | page | todo |
-| 8 | The page's "What's in an active-vision model?" as one component used by the page and the talk, with the cycling policy slot | `three-axes` | S | medium | medium | page | todo |
-| 9 | Canvas resolution dial: one rollout decoded at 16², 32², 64²; DINOv3's input-matched number read from the export | `decoupling` | S | medium | medium | page | todo |
-| 10 | Pretraining's random rollouts, sampled live with the paper's distribution | `policy-agnosticism` | S | medium | medium | | todo |
-| 11 | Architecture control (rebuttal Table R1) and ablations as charts; numbers into the paper's macros at camera-ready | `architecture-vs-pretraining` | S | high: architecture vs pretraining | medium | camera-ready | todo |
-| 12 | Pretraining economics as a chart: teacher export, pretraining, the baseline architecture's training | `pretraining` | S | high | medium | camera-ready compute table | todo |
-| 13 | Filling in: two glimpses at the two ends of an object, the segmentation filling the space between (recording with chosen viewpoints) | `extrapolation` | S–M | high for neuroscientists (amodal completion) | high | page | todo |
-| 14 | Policy curves (C2F, F2C, RFS) from `ade20k_seg.json`, as a component | `policies` | S–M | medium | medium | page (Figure 3B) | todo |
-| 15 | Free-form entropy guidance: next glimpse at the most uncertain region, any position and zoom; live in the browser with the priority map and scanpath; measured on ADE20K against EG-C2F | `entropy-guided` | M–L | high: novel, interactive | very high | page | todo |
-| 16 | Live canvas similarity: hover the live canvas, see what the model groups together | `live` | S–M | medium | high | page | todo |
-| 17 | `<canvit-live>` laid out for a slide: large panels, little chrome; one model session shared by every live slide | `live` | M | high on the day | | | todo |
-| 18 | Learned viewing policy on a frozen observer (CanViT-PyTorch-RL): results chart from its saved evaluations | `learned-policy` | S | medium | medium | | decide: unpublished |
-| 19 | The learned policy's scanpaths, recorded (needs the RL code migrated to canvit-pytorch 0.2) | `learned-policy` | L | low | high | | decide |
-| 20 | CanViT in JAX and MLX: clean up the ports so the "runs everywhere" slide is true | `code` | L each | low for the talk | medium | | decide |
+## Next
 
-## Content and logistics
+- The looking-closer example (`#glimpses`), when `throwaway/looking_closer` reports (blocked while the disk was full).
+  S.
+- The cognition citation on `#table` (`sources/cognition.md`: Intraub & Richardson 1989; Biederman, Mezzanotte &
+  Rabinowitz 1982; Torralba et al. 2006) and a backup slide with their figures (`assets/figures/`, extracted). Prepare
+  the objection that edge continuation fills the gap without knowledge of tables (amodal completion). S.
+- `#distillation`: the content fills the top half of the slide; use the space. S.
+- `#neuro-ai`: three lines of text on a half-empty slide; needs a visual. S–M.
+- `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
+- Independent reviews of `OUTLINE.md` (a fresh subagent; `codex exec -m gpt-6-astra`), then the authors'. S.
+- Commit the talk (staged by name; no reference to the September deck or its organization). S.
 
-| # | Item | Diff. | Status |
+## Known issues
+
+- The disk is nearly full (about 250 MB free on 2026-10-01, shrinking from processes outside this work). Two caches
+  are the user's to clear or keep: `~/.cache/uv` (18 GB; `uv cache prune` drops unreferenced entries) and
+  `~/.cache/huggingface/hub` (8.1 GB, including twelve ablation checkpoints the talk does not use).
+- `#memory`: `<canvit-path>` is shrunk with `zoom: .72` to fit; a slide-sized layout of the component would be cleaner.
+- `#live` (Backup): shrunk with `zoom: .8`.
+- `assets/figures/`: 21 MB, many figures unused by the current slides; downscale the used ones to slide size and leave
+  the rest uncommitted.
+
+## Experiments and exports
+
+| Item | Slides | Diff. | Also | Status |
+|---|---|---|---|---|
+| Table corners: two glimpses at an object's ends, CanViT against DINOv3 per glimpse, over ADE20K validation (`throwaway/table_corners`); to graduate into `canvit_pytorch.viz` | `#table`, `#extrapolation` | S | page | done |
+| Distillation: DINOv3's features of a scene and CanViT's prediction after each glimpse (`throwaway/distillation`) | `#distillation` | S | page, paper | done |
+| Looking closer: small objects missed by a full-scene glimpse and found by a zoomed one (`throwaway/looking_closer`) | `#glimpses` | S | page | running |
+| Teacher features of the conference room for the browser (similarity to a hovered patch, PCA, probe segmentation) | `#foundation` | M | page | todo |
+
+## Components and deck primitives
+
+| Item | Slides | Diff. | Status |
 |---|---|---|---|
-| 21 | Logos: McGill, Mila, Université Laval, funders, PyTorch, JAX, MLX, ONNX Runtime | S | doing |
-| 22 | QR code to the project page, generated (not a downloaded image) | S | todo |
-| 23 | Collaborators and directions slide: names and wording from the authors | S | decide |
-| 24 | Funding slide from the paper's acknowledgments: the authors confirm the list | S | decide |
-| 25 | Third-party figures for the primer (Yarbus's scanpaths, acuity falloff, RAM), cited on the slide | S | todo |
-| 26 | Offline on the day: ONNX Runtime Web loads from jsDelivr (`js/canvit/live-model.js`); install it locally like reveal.js | S–M | todo |
-| 27 | Canvases sized from their displayed size, so components stay sharp when the deck scales (episode, mosaic) | S | todo |
-| 28 | Rehearse, and shape the talk around what is correct, clear and meaningful for this audience | — | decide |
-| 29 | Who presents what, if Sabrina co-presents | — | decide |
+| `shoot.py` checks: titles that wrap, content in the footer band (below 676 px), single words alone on a last line | all | S | todo |
+| The table demonstration animated: each glimpse's passive answer flying to its place in the scene map (stepped CSS, `--x0/--y0/--s0` to `--x1/--y1/--s1`) | `#table` | M | todo |
+| `<canvit-foveate>`: glimpses jumping over a periphery blurred by eccentricity, which fades to nothing on a click | `#human-vision`, `#glimpses` | M | todo |
+| `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
+| The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |
+| `<canvit-live>` laid out for a slide; one model session for every live slide | `#live` | M | todo |
+| Canvases sized from their displayed size, sharp when the deck scales (episode, mosaic) | all | S | todo |
 
-## Ideas worth considering
+## Logistics
 
-- Human visual working memory holds a few objects (Luck & Vogel 1997); the canvas holds 4,096 × 1,024 numbers.
-  The contrast invites the question of what a capacity-limited canvas would learn to keep.
-- Change blindness, in the model: change part of a scene between glimpses; the canvas keeps the old content
-  wherever it does not look again. A demonstration of what a static-scene observer assumes, and a natural
-  bridge to video.
-- Inhibition of return: a purely greedy uncertainty-driven policy may keep returning to the same confusing
-  region; suppressing visited regions is the textbook fix. Test it (item 15) before claiming it.
-- Priority maps (LIP, FEF, superior colliculus) as the frame for the uncertainty map that drives the free-form
-  policy (item 15).
-- Coarse-to-fine perception (global precedence; low spatial frequencies first) as the frame for C2F beating F2C
-  (item 14).
+| Item | Diff. | Status |
+|---|---|---|
+| Offline on the day: ONNX Runtime Web loads from jsDelivr (`js/canvit/live-model.js`); install it locally as reveal.js is | S–M | todo |
+
+## For the camera-ready (not the talk)
+
+- Remove "an order of magnitude more than previous active models" from the abstract [Yohaï, 2026-10-01]; the project
+  page's abstract and the README copy it and follow.
+
+## Decisions for the authors
+
+- LookWhere (NeurIPS 2025; 83.0 ImageNet-1k, 44.6 ADE20K, patches selected once from a low-resolution view): address
+  it in the talk, or only if asked.
+- Learned viewing policies (CanViT-PyTorch-RL, unpublished): show them or not.
+- The funders on the last slide: those of the paper's acknowledgments, confirmed.
+- Sabrina Du's portrait (`../../assets/authors/du.jpg`) was provided privately: confirm she agrees to its
+  publication before the branch is pushed.
+- Who presents what, if Sabrina co-presents.
+- JAX and MLX ports: clean them up for "runs everywhere", or say PyTorch and the browser.

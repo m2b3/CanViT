@@ -139,7 +139,5 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   it in the talk, or only if asked.
 - Learned viewing policies (CanViT-PyTorch-RL, unpublished): show them or not.
 - The funders on the last slide: those of the paper's acknowledgments, confirmed.
-- Sabrina Du's portrait (`../../assets/authors/du.jpg`) was provided privately: confirm she agrees to its
-  publication before the branch is pushed.
 - Who presents what, if Sabrina co-presents.
 - JAX and MLX ports: clean them up for "runs everywhere", or say PyTorch and the browser.

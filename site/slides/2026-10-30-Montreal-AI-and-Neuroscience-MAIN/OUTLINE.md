@@ -162,13 +162,15 @@ yet reviewed by the authors.
 - **Builds** [Yohaï, 2026-10-01, on the first version: "completely terrible ... the fancy curved arrows etc do nothing
   for it. having something relatively static where you unroll the timesteps across time ... you can duplicate the
   teacher features, we want things to align in terms of columns etc. this should not need curved arrows"; "when you
-  have CanViT in a diagram use the logo"]: a training step unrolled in time, one column per glimpse (1, 2, 3, then 8
-  after an ellipsis), one row per role: the scene faded outside the glimpse, the CanViT logo, its prediction of
-  DINOv3's features for the whole scene, the squared error, the target (DINOv3 on the whole scene) repeated in every
-  column; the canvas carried from logo to logo by a straight arrow. The first column; then its target and error; then
-  a column per click, its rows in order from input to output.
-- **Data:** `throwaway/distillation/training_step.py` (views, loss.json): the pretraining patch loss after each glimpse
-  of this sequence, 0.87, 0.74, 0.52, 0.51, 0.44, 0.38, 0.37, 0.36 (1.05 for a prediction of the average target).
+  have CanViT in a diagram use the logo"; "show the actual glimpses not the full scene, the input is the glimpse +
+  x,y,scale so show THAT"; "go up to glimpse 21"; "for the MSE loss, we might want a heatmap, or a single number"]: a
+  training step unrolled in time, one column per glimpse (1, 2, 3, then 21 after an ellipsis), one row per role: the
+  128 px glimpse and its (x, y, scale), the CanViT logo, its prediction of DINOv3's features for the whole scene, the
+  mean squared error (a number; per-patch heatmaps `loss-<t>.png` exist if the authors prefer them), the target
+  (DINOv3 on the whole scene) repeated in every column; the canvas carried from logo to logo by a straight arrow. The
+  first column; then its target and error; then a column per click, its rows in order from input to output.
+- **Data:** `throwaway/distillation/training_step.py` writes `steps.json` (viewpoints, the pretraining patch loss after
+  each glimpse, and the loss of a prediction of the average target), which `distillation.js` puts on the slide.
 - **Says:** "We already know what good visual representations look like." "Wherever the model was looking, and at
   whatever zoom, it should be able to produce its best guess about the entire scene." Separate the architecture from
   learning the representation.
@@ -342,7 +344,6 @@ yet reviewed by the authors.
 - **Title:** the README's heading.
 - **Must:** that using CanViT takes a few lines anyone can read: install, load, glimpse, read the canvas
   [Yohaï, 2026-10-01: "the point is to show them it's trivial to start using this"].
-- **Could:** what the code produces, beside it: the two glimpses on a street and the canvas after them.
 - **Code** [Yohaï, 2026-10-01: "don't define both glimpses upfront, don't use a for loop, inline, and improve the viz /
   animation"; "NO LOOP PLEASE. ONE AFTER THE OTHER. DO NOT DEFINE BOTH UPFRONT."]: `quickstart.py`, the segmentation
   model, each glimpse written where it is taken; it runs as shown (`throwaway/quickstart/export.py` executes it). The

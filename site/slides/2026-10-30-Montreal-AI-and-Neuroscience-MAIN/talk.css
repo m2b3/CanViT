@@ -192,31 +192,33 @@
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
 #canvas-attention .canvas-side { fill: none; stroke: var(--canvas); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
 
-/* A training step unrolled in time: one column per glimpse (1, 2, 3, then 8 after an ellipsis), one row per role;
+/* A training step unrolled in time: one column per glimpse (1, 2, 3, then 21 after an ellipsis), one row per role;
    the target repeats in every column. Each column appears on its click, its rows in order, input to output. */
-#distillation .unrolled { --col: 176px; --gap: 22px; --ellipsis: 34px; --img: 134px; --logo: 110px;
+#distillation .unrolled { --col: 176px; --gap: 22px; --ellipsis: 34px; --img: 128px; --logo: 104px;
   display: grid; grid-template-columns: 190px repeat(3, var(--col)) var(--ellipsis) var(--col);
-  grid-template-rows: 24px var(--img) 22px 26px 22px var(--img) 30px var(--img); column-gap: var(--gap); row-gap: 3px;
-  justify-content: center; align-items: center; justify-items: center; }
+  grid-template-rows: 22px var(--img) 22px 20px 24px 20px var(--img) 30px var(--img); column-gap: var(--gap);
+  row-gap: 3px; justify-content: center; align-items: center; justify-items: center; }
 #distillation .unrolled > * { margin: 0; }
 #distillation .t0 { grid-column: 2; } #distillation .t1 { grid-column: 3; }
-#distillation .t2 { grid-column: 4; } #distillation .t7 { grid-column: 6; }
+#distillation .t2 { grid-column: 4; } #distillation .t20 { grid-column: 6; }
 #distillation .head { grid-row: 1; font-size: 18px; font-weight: 700; color: var(--glimpse); }
-#distillation .view { grid-row: 2; }
-#distillation .in { grid-row: 3; }
-#distillation :is(.model, .carry) { grid-row: 4; }
-#distillation .out { grid-row: 5; }
-#distillation .prediction { grid-row: 6; }
-#distillation .score { grid-row: 7; }
-#distillation .target { grid-row: 8; }
-#distillation :is(.view, .prediction, .target) { width: var(--img); height: var(--img); border-radius: 6px; }
+#distillation .glimpse { grid-row: 2; outline: 3px solid var(--glimpse); outline-offset: -3px; }
+#distillation .viewpoint { grid-row: 3; font: 500 14px var(--mono); color: var(--text); white-space: nowrap; }
+#distillation .in { grid-row: 4; }
+#distillation :is(.model, .carry) { grid-row: 5; }
+#distillation .out { grid-row: 6; }
+#distillation .prediction { grid-row: 7; }
+#distillation .score { grid-row: 8; font: 600 17px var(--mono); color: var(--ink); }
+#distillation .target { grid-row: 9; }
+#distillation :is(.glimpse, .prediction, .target) { width: var(--img); height: var(--img); border-radius: 6px; }
 #distillation .model { width: var(--logo); height: auto; }
 #distillation .row-label { grid-column: 1; justify-self: end; text-align: right; font-size: 19px; font-weight: 700;
   line-height: 1.2; }
-#distillation .of-prediction { grid-row: 6; } #distillation .of-score { grid-row: 7; } #distillation .of-target { grid-row: 8; }
+#distillation .of-input { grid-row: 2 / span 2; } #distillation .of-prediction { grid-row: 7; }
+#distillation .of-score { grid-row: 8; } #distillation .of-target { grid-row: 9; }
 #distillation .ellipsis { grid-column: 5; grid-row: 1; font-size: 22px; font-weight: 700; color: var(--glimpse); }
-/* Straight connectors: glimpse to model to prediction (ink), the canvas carried from one model to the next (canvas red),
-   the comparison of prediction and target (dashed). */
+/* Straight connectors: glimpse to model to prediction (ink), the canvas carried from one model to the next (canvas
+   red). */
 #distillation .down { position: relative; width: 3px; height: 100%; background: var(--ink); }
 #distillation .down::after { content: ""; position: absolute; left: -5px; bottom: -2px;
   border: 6.5px solid transparent; border-top: 8px solid var(--ink); border-bottom: 0; }
@@ -229,14 +231,13 @@
   border: 6.5px solid transparent; border-left: 9px solid var(--canvas); border-right: 0; }
 #distillation .carry.t1::before { content: "canvas"; position: absolute; left: 50%; bottom: 6px; translate: -50% 0;
   font-size: 15px; font-weight: 700; color: var(--canvas); }
-#distillation .score { width: 0; height: 100%; border-left: 3px dashed var(--muted); }
 /* Visibility: the first column without its target, then the target and the error, then one column per click. */
-#distillation .unrolled > :not(.of-prediction) { opacity: 0; transition: opacity .5s ease; }
+#distillation .unrolled > :not(.of-input, .of-prediction) { opacity: 0; transition: opacity .5s ease; }
 #distillation .unrolled > .t0:not(.score, .target) { opacity: 1; }
 #distillation.shows-score .unrolled > :is(.t0, .row-label) { opacity: 1; }
 #distillation.shows-second .unrolled > .t1, #distillation.shows-third .unrolled > .t2,
-#distillation.shows-last .unrolled > :is(.t7, .ellipsis) { opacity: 1; }
-#distillation :is(.view, .head) { --delay: 0s; } #distillation :is(.in, .model, .carry) { --delay: .35s; }
+#distillation.shows-last .unrolled > :is(.t20, .ellipsis) { opacity: 1; }
+#distillation :is(.head, .glimpse, .viewpoint) { --delay: 0s; } #distillation :is(.in, .model, .carry) { --delay: .35s; }
 #distillation :is(.out, .prediction) { --delay: .7s; } #distillation :is(.score, .target) { --delay: 1.05s; }
 #distillation:is(.shows-second, .shows-third, .shows-last) .unrolled > :not(.t0, .row-label) { transition-delay: var(--delay); }
 

@@ -103,11 +103,9 @@
 
 #architecture img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
 
-#canvas-attention svg.figure { display: block; height: 480px; width: auto; margin: -10px auto 0; overflow: hidden; }
+#canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden; }
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
 #canvas-attention .canvas-side { fill: none; stroke: var(--canvas); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
-#canvas-attention .claim { margin-top: 6px; }
-#canvas-attention .cite { text-align: center; }
 
 #distillation .distill { display: flex; justify-content: center; align-items: flex-start; gap: 36px; margin-top: 10px; }
 #distillation .heads { display: flex; gap: 14px; margin-bottom: 8px; font-size: 19px; font-weight: 700; }
@@ -115,7 +113,6 @@
 #distillation .frame { display: flex; gap: 14px; }
 #distillation .frame img, #distillation .target img { width: 350px; height: 350px; border-radius: 10px; }
 #distillation .target { padding-left: 36px; border-left: 2px solid var(--rule); }
-#distillation > .cite { margin-top: 18px; text-align: center; }
 
 #rollout .episode { width: 1060px; margin: 0 auto; padding: 14px 20px; }
 #rollout canvit-episode { font-size: 15px; }
@@ -154,4 +151,4 @@
 #policies .policies { display: grid; grid-template-columns: repeat(3, 180px); gap: 12px 22px; }
 #policies .policies figcaption { margin-bottom: 4px; color: var(--canvit-glimpse); font-size: 22px; font-weight: 800; }
 #policies canvit-rollout { display: block; width: 180px; }
-#policies .race .cite { margin-top: 4px; text-align: center; }
+

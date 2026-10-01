@@ -101,18 +101,6 @@ yet reviewed by the authors.
 - **Data:** `throwaway/looking_closer` (running).
 - **Status:** ready, example pending.
 
-### Spatial coverage and perception of detail
-- **Title:** the paper's §3 ("s_t smoothly controls the tradeoff between spatial coverage and perception of detail").
-- **Shows:** two small objects (a clock, a television; ADE_val_00000068, ADE_val_00001195): the scene with the zoomed
-  glimpse's box; the zoomed-out glimpse's few pixels of the object; CanViT's probability of its class after the
-  zoomed-out glimpse (near zero); on a click, the zoomed-in glimpse; on the next, the probability after it (high).
-  Each panel right of the scene shows the box's region.
-- **Says:** over 4,151 small objects of ADE20K validation, recall of the object's pixels goes from 18% after the
-  full-scene glimpse to 32% after a zoomed one, against 19% for the full scene seen twice: the zoom, not the extra
-  step. The two examples are picked; the object is a few pixels when zoomed out, not invisible to a person.
-- **Data:** `throwaway/looking_closer` (`summary.log`; panels in `../../data/talk/looking-closer/`).
-- **Status:** draft.
-
 ### The Canvas Vision Transformer
 - **Title:** the paper's.
 - **Shows:** the paper's architecture figure, large.
@@ -219,3 +207,15 @@ yet reviewed by the authors.
 - **Shows:** `<canvit-live>`: I choose where to look; then the canvas's own uncertainty chooses.
 - **Status:** ready (layout to fit; offline runtime in `PLAN.md`).
 
+### Spatial coverage and perception of detail
+- **Title:** the paper's §3 ("s_t smoothly controls the tradeoff between spatial coverage and perception of detail").
+- **Shows:** two small objects (a clock, a television; ADE_val_00000068, ADE_val_00001195): the scene with the zoomed
+  glimpse's box; the zoomed-out glimpse's few pixels of the object; CanViT's probability of its class after the
+  zoomed-out glimpse (near zero); on a click, the zoomed-in glimpse; on the next, the probability after it (high).
+  Each panel right of the scene shows the box's region.
+- **Says:** over 4,151 small objects of ADE20K validation, recall of the object's pixels goes from 18% after the
+  full-scene glimpse to 32% after a zoomed one, against 19% for the full scene seen twice: the zoom, not the extra
+  step. The two examples are picked; the object is a few pixels when zoomed out, not invisible to a person.
+- **Data:** `throwaway/looking_closer` (`summary.log`; panels in `../../data/talk/looking-closer/`).
+- **Status:** in Backup in this form [Yohaï, 2026-10-01: "a good start ... just having black vs centered blob
+  doesn't say much"]; presentations being tried (`PLAN.md`).

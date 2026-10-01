@@ -114,11 +114,20 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - The neuroscience is the paper's: human vision is active (gaze shifts toward regions of interest, sequential,
   with strategic planning, integration across time in visual working memory, and top-down recurrent
   feedback), each point with its citation.
+- For any slide that matters, try several ways to present its point, render each (screenshot, or play the
+  animation), compare what works and what does not, then integrate the best parts [Yohaï, 2026-10-01: "in general i
+  would recommend trying a bunch of different ways to do something, rendering them / playing with it, then seeing
+  what works and what doesn't and integrating together"]. Variants are drafted outside the deck (an untracked page in
+  the talk's directory, deleted after the choice) and the choice is recorded in `OUTLINE.md`.
 - Demonstrate, then name [Yohaï, 2026-10-01: "such things should always be your first thoughts"]. The first idea for
   any claim is how to show it happening, on a real image, with the real model or the real baseline: for "pasting
   local predictions into scene coordinates does not extrapolate", a photo of a table, two crops, each crop's passive
   segmentation flying to its place in a scene-wide map, and the hole left in the middle. A claim shown only as text
   or a diagram is a placeholder until such a demonstration exists or is ruled out.
+- No subtext [Yohaï, 2026-10-01, three times: "remove this useless subtext", "superfluous subtext"]: on-screen text
+  is the title, the labels a visual cannot be read without, and the citation of another paper's figure. A caption
+  that restates the visual, a takeaway line, a conditions line, and a citation of the authors' own paper go to the
+  notes.
 - The takeaway is said, not written: speaker notes (`<aside class="notes">`) hold the spoken text, in full
   sentences, and say only what the paper or a cited source supports.
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../css/canvit.css`).

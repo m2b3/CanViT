@@ -27,6 +27,16 @@ the talk.
 
 ## Next
 
+- [Yohaï, 2026-10-01] `#history` and `#results` fail at their jobs: overloaded, hard to parse, not showing the right
+  things; make end-to-end training against frozen features with a linear readout explicit. A timeline slide of the
+  key works of deep active vision before them, from RAM, each with what it did and why it mattered (facts being
+  verified: `sources/active-vision-timeline.md`), in the spirit of Yohaï's typst timeline
+  (github.com/yberreby/typst-snippets, `timeline.typ`: a year axis, dots at true dates, labels above and below on
+  dashed leaders). M.
+- [Yohaï, 2026-10-01] Zoom and detail (`#detail`, now in Backup): try several presentations (segmentation instead of a
+  probability blob, the full-scene glimpse with a loupe on the object, recall against object size with the
+  full-scene-twice control, an animated zoom), render them, integrate. M.
+
 - The cognition citation on `#table` (`sources/cognition.md`: Intraub & Richardson 1989; Biederman, Mezzanotte &
   Rabinowitz 1982; Torralba et al. 2006) and a backup slide with their figures (`assets/figures/`, extracted). Prepare
   the objection that edge continuation fills the gap without knowledge of tables (amodal completion). S.

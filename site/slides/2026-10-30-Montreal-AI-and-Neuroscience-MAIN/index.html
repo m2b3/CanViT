@@ -92,7 +92,7 @@
 
 <section id="foundation" data-status="ready">
   <h2>DINOv3 feature maps</h2>
-  <figure class="dinov3"><img src="assets/figures/dinov3-features.jpg" alt="Cosine similarity between a marked patch and every other patch of a market stall image"><figcaption class="cite">DINOv3: similarity of every patch to the marked one. Siméoni et al. 2025</figcaption></figure>
+  <figure class="dinov3"><img src="assets/figures/dinov3-features.jpg" alt="Cosine similarity between a marked patch and every other patch of a market stall image"><figcaption class="cite">Siméoni et al. 2025, DINOv3</figcaption></figure>
   <!-- TODO (PLAN.md): the interactive version on the conference room. -->
   <aside class="notes">Where does a machine get that kind of knowledge? From foundation models: trained once, on a huge amount of images, without labels, then used for many tasks. This is DINOv3. It turns every patch of an image into a vector. Mark a patch, and the patches with similar vectors light up: the same fruit, the same kind of fruit, across the whole stall. Nobody labeled any of this. These models are also among today's best models of visual cortex. But they're passive: one image, all at once.</aside>
 </section>
@@ -149,26 +149,6 @@
   <aside class="notes">Here's the setting. A scene, and a glimpse: a crop at a position and a zoom level, always resized to the same 128 by 128 pixels. Zoom out, and you see everything, coarsely. Zoom in, and you see detail, in a small region. Outside the glimpse there's nothing. Not even a blur. There's a world of difference between seeing something blurry and seeing nothing at all.</aside>
 </section>
 
-<section id="detail" data-status="draft">
-  <h2>Spatial coverage and perception of detail</h2>
-  <div class="detail-grid">
-    <div></div><p class="col-label">Scene</p><p class="col-label">Zoomed out</p><p class="col-label">p(object)</p><p class="col-label fragment" data-fragment-index="0">Zoomed in</p><p class="col-label fragment" data-fragment-index="1">p(object)</p>
-    <p class="row-label">Clock</p>
-    <img src="../../data/talk/looking-closer/ADE_val_00000068-clock/scene.png" alt="">
-    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00000068-clock/full_in_box.png" alt="">
-    <img src="../../data/talk/looking-closer/ADE_val_00000068-clock/prob_f_in_box.png" alt="">
-    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/looking-closer/ADE_val_00000068-clock/glimpse_zoom.png" alt="">
-    <img class="fragment" data-fragment-index="1" src="../../data/talk/looking-closer/ADE_val_00000068-clock/prob_fz_in_box.png" alt="">
-    <p class="row-label">Television</p>
-    <img src="../../data/talk/looking-closer/ADE_val_00001195-television/scene.png" alt="">
-    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00001195-television/full_in_box.png" alt="">
-    <img src="../../data/talk/looking-closer/ADE_val_00001195-television/prob_f_in_box.png" alt="">
-    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/looking-closer/ADE_val_00001195-television/glimpse_zoom.png" alt="">
-    <img class="fragment" data-fragment-index="1" src="../../data/talk/looking-closer/ADE_val_00001195-television/prob_fz_in_box.png" alt="">
-  </div>
-  <aside class="notes">Zooming trades spatial coverage for detail. Zoomed out on this bar, the clock is a few pixels of the 128 the model gets, and the canvas has no idea it's there. Zoom in, and it's a clock. Same for the television. These two are picked, but across four thousand small objects in ADE20K the zoomed glimpse almost doubles how much of the object the canvas gets right, from 18 to 32 percent, while seeing the full scene a second time barely helps, 19 percent: it's the zoom, not the extra step.</aside>
-</section>
-
 <section id="architecture" data-status="ready">
   <h2>The <span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span></h2>
   <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
@@ -185,8 +165,6 @@
     </g>
     <rect class="fragment canvas-side" x="158" y="60" width="58" height="102" rx="6"/>
   </svg>
-  <p class="claim fragment">Learned projections on the glimpse side only</p>
-  <p class="cite">Berreby et al. 2026, Fig. 3A</p>
   <aside class="notes">The canvas talks to the glimpse stream through Canvas Attention. In a write, the canvas queries the glimpse; in a read, the glimpse queries the canvas. Here's the trick: it's asymmetric. Every learned projection, the queries, keys, values and outputs, sits on the glimpse side. The canvas side only gets a LayerNorm and its position. The canvas never goes through a learned layer: no MLP, no self-attention, no projection. So the memory is dumb, on purpose. But not too dumb. Just dumb enough that I could interact with it cheaply, while leaving it flexible enough to reconstruct unseen things from world-knowledge priors, like the table. That's what lets the canvas be large and fine-grained, and read after every glimpse. Previous dense models had a cheap encoder and a massive decoder. Here, a read and a write on a 64 by 64 canvas cost <span data-macro="cSixFourAsymRwPairGf">2.8</span> gigaflops; with projections on both sides it would be <span data-macro="cSixFourFullRwPairGf">37.3</span>.</aside>
 </section>
 
@@ -211,8 +189,7 @@
       <img class="tokens" src="../../data/talk/distillation/ADE_val_00001271/teacher.png" alt="DINOv3 ViT-B's feature map of the whole 512 px scene, in PCA colors">
     </div>
   </div>
-  <p class="cite">CanViT-B's pretrained readout and DINOv3 ViT-B's features, one PCA basis and color scale, random glimpses</p>
-  <aside class="notes">How do you train it? The other thing that made it work was separating the architecture problem from the problem of learning good representations. We already know what good visual representations look like. So DINOv3 sees the whole scene, at high resolution, once: that's the target, on the right, in PCA colors. CanViT only gets glimpses, at random places and random zoom levels, and after every one it has to produce its best guess about the entire scene, not only the region it looked at. Watch: from glimpses of the floor, the guess is vague; when a glimpse catches the table, the whole room organizes. Is it cheating to learn from a model that sees everything? Reconstructing pixels from partial views would be distillation too, from the identity teacher. We just picked a teacher whose space means something. No labels anywhere, and since the glimpses are random, no policy is built in. We pretrained CanViT-B this way from scratch, on 13.2 million ImageNet-21k scenes and a billion random glimpses, in 166 hours on a single H100: about a week on one GPU.</aside>
+  <aside class="notes">How do you train it? The other thing that made it work was separating the architecture problem from the problem of learning good representations. We already know what good visual representations look like. So DINOv3 sees the whole scene, at high resolution, once: that's the target, on the right, in PCA colors. CanViT only gets glimpses, at random places and random zoom levels, and after every one it has to produce its best guess about the entire scene, not only the region it looked at. Watch: from glimpses of the floor, the guess is vague; when a glimpse catches the table, the whole room organizes. Is it cheating to learn from a model that sees everything? Reconstructing pixels from partial views would be distillation too, from the identity teacher. We just picked a teacher whose space means something. No labels anywhere, and since the glimpses are random, no policy is built in. (What's shown: CanViT-B's pretrained readout and DINOv3 ViT-B's features in one PCA basis and color scale, after random glimpses.) We pretrained CanViT-B this way from scratch, on 13.2 million ImageNet-21k scenes and a billion random glimpses, in 166 hours on a single H100: about a week on one GPU.</aside>
 </section>
 
 <!-- ============================================================== Evidence -->
@@ -258,9 +235,9 @@
       <figure><figcaption></figcaption><canvit-rollout class="policy" data-play src="../../data/street-egc2f" interval="800"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
       <figure><figcaption></figcaption><canvit-rollout class="policy" data-play src="../../data/street-rfs" interval="800"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
     </div>
-    <figure class="race"><canvit-policy-race src="../../assets/paper/ade20k_seg.json" canvas-grid="64" t="0"></canvit-policy-race><figcaption class="cite">ADE20K validation, mean over runs; 64 × 64 canvas</figcaption></figure>
+    <figure class="race"><canvit-policy-race src="../../assets/paper/ade20k_seg.json" canvas-grid="64" t="0"></canvit-policy-race></figure>
   </div>
-  <aside class="notes">Because CanViT was pretrained with no policy built in, we can try any policy on it. These are the ones in the paper. R-IID and F-IID are the training distribution: random viewpoints, with F-IID starting from the full scene. C2F is the natural order: the whole scene, then quarters, then sixteenths. F2C is the same set of viewpoints in reverse: by the end it has seen exactly what C2F saw, and it does worse, so the order matters: what was seen changes how the next view is processed. EG-C2F follows C2F's levels but looks first where the canvas is most uncertain: the canvas can choose where to look, without reinforcement learning. And RFS shows the full scene again and again: more processing with no new input helps at first, then declines. On the right, the race: each policy's accuracy over all of ADE20K, glimpse by glimpse, growing as the panels play.</aside>
+  <aside class="notes">Because CanViT was pretrained with no policy built in, we can try any policy on it. These are the ones in the paper. R-IID and F-IID are the training distribution: random viewpoints, with F-IID starting from the full scene. C2F is the natural order: the whole scene, then quarters, then sixteenths. F2C is the same set of viewpoints in reverse: by the end it has seen exactly what C2F saw, and it does worse, so the order matters: what was seen changes how the next view is processed. EG-C2F follows C2F's levels but looks first where the canvas is most uncertain: the canvas can choose where to look, without reinforcement learning. And RFS shows the full scene again and again: more processing with no new input helps at first, then declines. On the right, the race: each policy's accuracy over all of ADE20K validation, glimpse by glimpse, growing as the panels play (mean over runs, 64 by 64 canvas).</aside>
 </section>
 
 <section id="results" data-status="draft">
@@ -322,6 +299,26 @@
     <canvit-live data-load-near model="../../.live-model" scene="../../data/street-path/scene.png"></canvit-live>
   </div>
   <aside class="notes">This is the released CanViT-B, running live. Right now, I am the policy: I click where to look, at whatever zoom, and the canvas integrates what it sees. Now I hand over to the canvas: it looks where its own prediction is most uncertain. Same observer, any policy.</aside>
+</section>
+
+<section id="detail" data-status="draft">
+  <h2>Spatial coverage and perception of detail</h2>
+  <div class="detail-grid">
+    <div></div><p class="col-label">Scene</p><p class="col-label">Zoomed out</p><p class="col-label">p(object)</p><p class="col-label fragment" data-fragment-index="0">Zoomed in</p><p class="col-label fragment" data-fragment-index="1">p(object)</p>
+    <p class="row-label">Clock</p>
+    <img src="../../data/talk/looking-closer/ADE_val_00000068-clock/scene.png" alt="">
+    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00000068-clock/full_in_box.png" alt="">
+    <img src="../../data/talk/looking-closer/ADE_val_00000068-clock/prob_f_in_box.png" alt="">
+    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/looking-closer/ADE_val_00000068-clock/glimpse_zoom.png" alt="">
+    <img class="fragment" data-fragment-index="1" src="../../data/talk/looking-closer/ADE_val_00000068-clock/prob_fz_in_box.png" alt="">
+    <p class="row-label">Television</p>
+    <img src="../../data/talk/looking-closer/ADE_val_00001195-television/scene.png" alt="">
+    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00001195-television/full_in_box.png" alt="">
+    <img src="../../data/talk/looking-closer/ADE_val_00001195-television/prob_f_in_box.png" alt="">
+    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/looking-closer/ADE_val_00001195-television/glimpse_zoom.png" alt="">
+    <img class="fragment" data-fragment-index="1" src="../../data/talk/looking-closer/ADE_val_00001195-television/prob_fz_in_box.png" alt="">
+  </div>
+  <aside class="notes">Zooming trades spatial coverage for detail. Zoomed out on this bar, the clock is a few pixels of the 128 the model gets, and the canvas has no idea it's there. Zoom in, and it's a clock. Same for the television. These two are picked, but across four thousand small objects in ADE20K the zoomed glimpse almost doubles how much of the object the canvas gets right, from 18 to 32 percent, while seeing the full scene a second time barely helps, 19 percent: it's the zoom, not the extra step.</aside>
 </section>
 
 </div>

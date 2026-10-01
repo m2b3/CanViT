@@ -69,6 +69,7 @@ class PretrainingRollout extends HTMLElement {
   play() { if (this.#timer === null) this.#tick(); }
   pause() { clearTimeout(this.#timer); this.#timer = null; }
   restart() { this.pause(); this.#shown = 0; this.#render(); this.play(); }
+  get playing() { return this.#timer !== null; }
 }
 
 customElements.define("pretraining-rollout", PretrainingRollout);

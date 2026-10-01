@@ -39,11 +39,14 @@ const INTERACTIVE = "a, button, input, select, textarea, label, video[controls],
 // The animations playing since their slide or state was shown; they start over only when shown anew.
 const started = new Set();
 
-/** Play the animations the current slide shows, each from the start when it appears; pause every other one. */
+/** Play the animations the current slide shows, each from the start when it appears; pause every other one. The
+ * current slide is read once every element is defined, so calls racing through quick slide changes all apply the
+ * slide shown when they resume. */
 async function syncPlayback(deck) {
+  const elements = [...document.querySelectorAll(".reveal .slides [data-play]")];
+  await Promise.all(elements.map((element) => customElements.whenDefined(element.localName).catch(() => {})));
   const current = deck.getCurrentSlide();
-  for (const element of document.querySelectorAll(".reveal .slides [data-play]")) {
-    await customElements.whenDefined(element.localName).catch(() => {});
+  for (const element of elements) {
     const state = element.dataset.play;
     const shown = !printing && !!current?.contains(element) && (!state || current.classList.contains(`shows-${state}`));
     if (shown && !started.has(element)) {

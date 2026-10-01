@@ -35,9 +35,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   to add to todo a thorough review of that [...]". To do: a thorough review of every number on the history charts
   against its primary source, and of which passive points count as the relevant competition (size, training data,
   resolution, protocol), before the slide is used.
-- [Yohaï, 2026-10-01] "make sure that things work smoothly as well if we skip through slides rapidly back and forth".
-  To do: a check that walks the deck forward and back quickly, every fragment, and verifies each slide's state and the
-  absence of errors.
 - [Yohaï, 2026-10-01] `#architecture`: "the 'Canvas Vision Transformer architecture' slide still looks super broken fyi";
   then "if you're going to show the intermediate reads and writes bro you should capture intermediate values like we
   actually did in one of the paper's supplementary figures - this would be GREAT to visualize on 'Canvas Vision

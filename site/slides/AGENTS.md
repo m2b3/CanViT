@@ -68,8 +68,12 @@ A note points to its source (paper section, module and symbol, file path) and st
 generates stay in its macros.
 
 `shoot.py` exits nonzero when the page logged an error; read `errors.txt` and look at the images of every slide
-you touched, with all fragments shown (default) and before them (`--first-fragment`). Screenshots are review
-material and are never committed (`site/.screens/` is ignored).
+you touched, with all fragments shown (default) and before them (`--first-fragment`), or click by click (`--steps`).
+Screenshots are review material and are never committed (`site/.screens/` is ignored).
+
+`stress.py` skips through a talk quickly, forward, back and at random, and checks that each slide lands in the state
+a settled visit gives it, with nothing playing off its slide [Yohaï, 2026-10-01: "make sure that things work smoothly
+as well if we skip through slides rapidly back and forth"].
 
 Every slide carries `data-status`: `ready`, `draft` (content in place, visuals or wording to finish) or
 `aspirational` (shows what we want; the data or code behind it does not exist yet). Drafting views show it as a

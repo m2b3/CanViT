@@ -257,6 +257,8 @@ class CanvitEpisode extends HTMLElement {
 
   pause() { this.#setPlaying(false); }
 
+  get playing() { return this.#playing; }
+
   /** Play from the first glimpse, or on from it when a stage held it there. */
   restart() {
     if (this.#staged()) return;

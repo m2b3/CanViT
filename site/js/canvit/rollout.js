@@ -127,6 +127,8 @@ class CanvitRollout extends CanvitView {
     }
   }
 
+  get playing() { return this.hasAttribute("playing"); }
+
   get interval() { return Number(this.getAttribute("interval") ?? 1200); }
 
   #schedule() {

@@ -416,10 +416,17 @@
   <aside class="notes">Back to the charts. ImageNet first. [click] CanViT-B: 81.1 percent frozen, with a linear layer, and 84.5 after fine-tuning, above every active model. [click] Segmentation. [click] 45.9 percent mIoU, frozen, with a linear layer on top: 18 points above the best previous active model, and close to its own teacher: DINOv3 ViT-B, which sees the whole image at once, gets 47.2 when we probe it the same way. (The dashed line ends higher, at 51.8, because that is DINOv3's own probing protocol.)</aside>
 </section>
 
-<section id="frontier" data-status="ready">
+<section id="frontier" data-status="draft">
   <h2>A new active-vision state of the art in accuracy and efficiency</h2>
-  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json"></canvit-frontier></div>
-  <aside class="notes">And it's cheap. Each curve is CanViT taking more glimpses. A single low-resolution glimpse of the full scene already gives <span data-macro="adeSingleGlimpseMiou">38.5</span> percent, above the best previous active model, with <span data-macro="adeCheapestBeatFlopRatio">20</span> times fewer FLOPs. And even our worst policy, worse than random, going from fine detail to coarse, gets better performance at lower cost than the best prior model. Perception, not viewpoint selection, was the bottleneck.</aside>
+  <!-- Built step by step [Yohaï, 2026-10-01: "our worst policy at 32^2, then at 64^2 canvas, then we show previous
+       active models, then we show our best policy at both resolutions"]: the frontier's series attribute, set by the
+       fragments; the cost axis glides to fit what is shown. Best policy: EG-C2F, the frontier policy of the paper's
+       Figure 3A. -->
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="f2c-32" height="440"></canvit-frontier></div>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
+  <aside class="notes">Accuracy against cost: ADE20K mIoU against the inference compute spent, glimpse by glimpse. Start with our worst policy, F2C, fine detail first, worse than random, with a 32 by 32 canvas. [click] The same with a 64 by 64 canvas: more accurate, a little more expensive. [click] Now the previous active models. Look where they are: to the right, and below. Even our worst policy gets better accuracy at lower cost than the best of them. [click] And our best policy, guided by its own uncertainty, at both canvas sizes. From the very first glimpse of the whole scene, <span data-macro="adeSingleGlimpseMiou">38.5</span> percent, above the best previous active model, with <span data-macro="adeCheapestBeatFlopRatio">20</span> times fewer FLOPs. Perception, not viewpoint selection, was the bottleneck.</aside>
 </section>
 
 <!-- ============================================================== Closing -->

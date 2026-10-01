@@ -6,8 +6,9 @@
 // Slide markup conventions, all handled here:
 //   data-play on an element      play() when its slide is shown (restart() when it has one), pause() when it is left;
 //     data-play="NAME"           only while its slide shows the named state (data-shows below)
-//   data-canvit-target="SEL"     on a fragment: while shown, set t="data-canvit-t" on the slide's elements matching SEL;
-//     data-canvit-t="T"          with none shown, a target keeps the t of its markup
+//   data-canvit-target="SEL"     on a fragment: while it is the last shown one for SEL, set each of its data-canvit-NAME
+//     data-canvit-NAME="V"       attributes as NAME="V" on the slide's elements matching SEL (t on a rollout, series on
+//                                a frontier); with none shown, a target keeps the values of its markup
 //   data-shows="NAME"            on a fragment: while it is shown, its slide has the class shows-NAME, so the slide's CSS
 //                                builds a diagram click by click, keyed on named states
 //   <section data-status="…">    how far the slide is from presentable: shown as a corner badge unless ?present
@@ -57,7 +58,7 @@ async function syncPlayback(deck) {
   }
 }
 
-const initialT = new WeakMap();
+const initialValues = new WeakMap(); // target -> {name: its markup's value}
 
 /** Heavy elements load when their slide comes near: the current slide or the next one. */
 function loadNear(deck) {
@@ -68,7 +69,13 @@ function loadNear(deck) {
   }
 }
 
-/** Every data-canvit-target fragment of the current slide sets t on its targets; none shown restores the markup's t. */
+/** The attributes a data-canvit-target fragment sets: its data-canvit-NAME attributes other than the target. */
+const targetAttributes = (fragment) =>
+  [...fragment.attributes].filter((a) => a.name.startsWith("data-canvit-") && a.name !== "data-canvit-target")
+    .map((a) => [a.name.slice("data-canvit-".length), a.value]);
+
+/** Every data-canvit-target fragment of the current slide sets its attributes on its targets; none shown restores the
+ * markup's values. */
 function syncTargets(deck) {
   const slide = deck.getCurrentSlide();
   if (!slide) return;
@@ -77,10 +84,19 @@ function syncTargets(deck) {
   for (const selector of new Set(fragments.map((f) => f.dataset.canvitTarget))) {
     const targets = slide.querySelectorAll(selector);
     if (targets.length === 0) throw new Error(`data-canvit-target="${selector}" matches nothing on its slide`);
-    const shown = fragments.filter((f) => f.dataset.canvitTarget === selector && f.classList.contains("visible"));
+    const mine = fragments.filter((f) => f.dataset.canvitTarget === selector);
+    const names = new Set(mine.flatMap((f) => targetAttributes(f).map(([name]) => name)));
+    const last = mine.filter((f) => f.classList.contains("visible")).at(-1);
     for (const target of targets) {
-      if (!initialT.has(target)) initialT.set(target, target.getAttribute("t") ?? "0");
-      target.setAttribute("t", shown.length ? shown.at(-1).dataset.canvitT : initialT.get(target));
+      if (!initialValues.has(target)) {
+        initialValues.set(target, Object.fromEntries([...names].map((name) => [name, target.getAttribute(name)])));
+      }
+      const values = last ? Object.fromEntries(targetAttributes(last)) : initialValues.get(target);
+      for (const name of names) {
+        const value = values[name] ?? initialValues.get(target)[name];
+        if (value === null) target.removeAttribute(name);
+        else if (target.getAttribute(name) !== value) target.setAttribute(name, value);
+      }
     }
   }
 }

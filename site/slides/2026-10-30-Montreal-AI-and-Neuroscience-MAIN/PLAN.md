@@ -48,11 +48,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#uncertainty`'s title: "terrible title for a slide. think of possible titles". Proposed
   "Uncertainty-based viewpoint selection" (on the slide), "Entropy-Guided Coarse-to-Fine", "Guiding viewpoint
   selection with the canvas"; the authors choose.
-- [Yohaï, 2026-10-01] `#frontier` ("A new active-vision state of the art in accuracy and efficiency"): "we should
-  not show everything at once, we should do animations and gradual reveals, rescaling of axes, etc. like: our worst
-  policy at 32^2, then at 64^2 canvas, then we show previous active models, then we show our best policy at both
-  resolutions". Built in named states on `<canvit-frontier>` (or a talk chart from `ade20k_seg.json`), the axes
-  rescaling as series arrive.
+- [Yohaï, 2026-10-01] `#frontier` built step by step as asked (worst policy at 32², at 64², prior models, best
+  policy at both) with the axis gliding; awaiting the authors' look. The case for why cost matters, before it, is
+  still open (below).
 - [Yohaï, 2026-10-01, to keep in mind] Reserve a slide for "What about RL?" / "End-to-end policy learning": having
   the observer makes a great policy easy ("this WILL need work!"), from the CanViT-PyTorch-RL work and possibly new
   experiments before the talk. Also teasers of what's next ("we might want future / teasers etc."). Both in Backup

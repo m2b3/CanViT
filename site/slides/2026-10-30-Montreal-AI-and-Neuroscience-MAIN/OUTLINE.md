@@ -296,6 +296,10 @@ yet reviewed by the authors.
 
 ### A new active-vision state of the art in accuracy and efficiency
 - **Title:** the project page's section.
+- **Builds** [Yohaï, 2026-10-01: "we should not show everything at once ... our worst policy at 32^2, then at 64^2
+  canvas, then we show previous active models, then we show our best policy at both resolutions"]: F2C at 32²; F2C at
+  64²; the prior active models (the cost axis widens to 835 GFLOPs as they arrive, pushing CanViT's curves left);
+  EG-C2F at 32² and 64². `<canvit-frontier series=...>` set by fragments; each curve labeled at its end.
 - **Shows:** `<canvit-frontier>`: 38.5% from one low-resolution glimpse of the full scene; even fine-to-coarse beats
   the prior models.
 - **Must:** why cost matters (money and time per experiment), training cost first, the main concern for scientists

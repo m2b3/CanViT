@@ -185,7 +185,56 @@
                        height: calc(100% * (var(--object-height) + .06)); width: calc(100% * (var(--object-width) + .06)); }
 #detail.shows-full:not(.shows-loupe) .object-ring { opacity: 1; transition-delay: 1.6s; }
 
-#architecture img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
+#architecture-paper img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
+
+/* Canvas Vision Transformer architecture, drawn by architecture.js: the glimpse through the blocks, then the canvas,
+   the writes, the reads, and the next glimpse with the canvas carried; each arrow draws itself (--delay), and on the
+   next glimpse the exchanges redraw in depth order (--depth). */
+#architecture .arch-build { position: relative; margin: 4px auto 0; }
+#architecture .arch-build > img { position: absolute; border-radius: 6px; transition: opacity .6s ease; }
+#architecture .wires { position: absolute; inset: 0; z-index: 1; overflow: visible; pointer-events: none; }
+#architecture .wires :is(rect, text) { transition: opacity .6s ease; }
+#architecture .block { fill: #d0a8e0; stroke: #b48ac9; stroke-width: 1.5; }
+#architecture .patches line { stroke: rgba(255, 255, 255, .6); stroke-width: 1; }
+#architecture .glimpse-stream { stroke: var(--glimpse); stroke-width: 5; }
+#architecture .box { fill: none; stroke: var(--glimpse); stroke-width: 3; }
+#architecture .wire .line { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 1; stroke-dashoffset: 1;
+                            transition: stroke-dashoffset .5s ease var(--delay, 0s); }
+#architecture .wire .head { fill: var(--ink); opacity: 0; transition: opacity .15s ease calc(var(--delay, 0s) + .45s); }
+#architecture .feed .line { stroke: var(--glimpse); stroke-width: 3; }
+#architecture .feed .head { fill: var(--glimpse); }
+#architecture :is(.canvas-stream, .carry) .line { stroke: var(--canvas); stroke-width: 5; }
+#architecture :is(.canvas-stream, .carry) .head { fill: var(--canvas); }
+#architecture .exchange-label { font: 700 16px var(--sans); fill: var(--muted); opacity: 0; }
+#architecture .label { position: absolute; margin: 0; translate: -50% 0; text-align: center; line-height: 1.25;
+                       white-space: nowrap; transition: opacity .6s ease; }
+#architecture .label span { display: block; }
+#architecture .label span:first-child { font-size: 21px; font-weight: 750; }
+#architecture .label span + span { font: 500 15px var(--mono); color: var(--text); }
+#architecture .glimpse-label span:first-child { color: var(--glimpse); }
+#architecture .canvas-label span:first-child { color: var(--canvas); }
+#architecture .tower-label { translate: -100% -50%; writing-mode: vertical-rl; rotate: 180deg; }
+#architecture .tower-label span:first-child { color: #7e4fa0; }
+
+#architecture .feed .line { stroke-dashoffset: 0; } #architecture .feed .head { opacity: 1; }
+#architecture :is(.before, .after, .next, .canvas-label) { opacity: 0; }
+#architecture.shows-canvas :is(.before.now, .canvas-label) { opacity: 1; }
+#architecture.shows-canvas .canvas-stream .line { stroke-dashoffset: 0; }
+#architecture.shows-canvas .canvas-stream .head { opacity: 1; }
+#architecture .exchange { --delay: calc(var(--order) * .3s); }
+#architecture.shows-write .write .line, #architecture.shows-read .read .line { stroke-dashoffset: 0; }
+#architecture.shows-write .write .head, #architecture.shows-read .read .head,
+#architecture.shows-write .exchange-label.write, #architecture.shows-read .exchange-label.read { opacity: 1; }
+#architecture.shows-write .after.now { opacity: 1; transition-delay: 1.2s; }
+
+@keyframes architecture-redraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes architecture-appear { from { opacity: 0; } to { opacity: 1; } }
+#architecture.shows-next :is(.box.now, .glimpse.now, .glimpse-label.now, .before.now, .after.now) { opacity: 0; transition-delay: 0s; }
+#architecture.shows-next :is(.box.next, .glimpse.next, .glimpse-label.next, .before.next) { opacity: 1; }
+#architecture.shows-next .after.next { opacity: 1; transition-delay: 3.4s; }
+#architecture.shows-next .carry .line { stroke-dashoffset: 0; } #architecture.shows-next .carry .head { opacity: 1; }
+#architecture.shows-next .exchange .line { animation: architecture-redraw .45s ease both calc(1s + var(--depth) * .3s); }
+#architecture.shows-next .exchange .head { animation: architecture-appear .15s ease both calc(1.4s + var(--depth) * .3s); }
 
 #canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden; }
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }

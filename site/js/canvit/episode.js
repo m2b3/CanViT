@@ -6,7 +6,8 @@
 // last state holds until Replay. Several bundles in `src` become scene tabs labeled with their titles.
 // stage introduces the loop part by part, each in its place: "scene" (the scene alone), "viewpoint" (with the first
 // glimpse's box), "glimpse" (the crop), "model" (CanViT), "canvas" (the canvas after the first glimpse), "all" (the
-// default: everything, and it plays). Before "all" it holds at the first glimpse and does not play.
+// default: everything, and it plays). Before "all" it holds at the first glimpse and does not play; released to "all",
+// it plays on from that glimpse, so what the stages built stays on screen.
 
 import { ADE20K_PALETTE } from "./ade20k.js";
 import { loadBundle } from "./bundle.js";
@@ -216,6 +217,7 @@ class CanvitEpisode extends HTMLElement {
   #lastTime = null;
   #colors = null;
   #namedAt = null; // the glimpse whose classes are named beside the canvas
+  #holding = false; // held at the first glimpse by a stage: the next play goes on from there
 
   constructor() {
     super();
@@ -255,9 +257,13 @@ class CanvitEpisode extends HTMLElement {
 
   pause() { this.#setPlaying(false); }
 
-  /** Play from the first glimpse. */
+  /** Play from the first glimpse, or on from it when a stage held it there. */
   restart() {
-    if (!this.#staged()) this.#restart();
+    if (this.#staged()) return;
+    if (!this.#holding) return this.#restart();
+    this.#holding = false;
+    this.#pausedByUser = false;
+    this.#setPlaying(true);
   }
 
   get stage() {
@@ -288,6 +294,7 @@ class CanvitEpisode extends HTMLElement {
     if (this.#staged()) {
       this.#setPlaying(false);
       this.#time = this.#held();
+      this.#holding = true;
     }
     this.#renderPlayButton();
     this.#draw();
@@ -341,6 +348,7 @@ class CanvitEpisode extends HTMLElement {
       this.$.colorbarMax.textContent = `log ${bundle.manifest.readout.num_classes}`;
       this.$.colorbar.title = `Entropy of the decoded class distribution, from 0 to its maximum, log ${bundle.manifest.readout.num_classes}`;
       this.$.readouts.querySelector('[data-readout="correct"]').hidden = !annotated;
+      this.#holding = this.#staged();
       this.#time = this.#staged() ? this.#held() : this.#wantsAutoplay() ? 0 : this.#schedule.total;
       this.#renderPlayButton();
       this.#draw();
@@ -363,6 +371,7 @@ class CanvitEpisode extends HTMLElement {
   }
 
   #restart() {
+    this.#holding = false;
     this.#time = 0;
     this.#pausedByUser = false;
     this.#draw();

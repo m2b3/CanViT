@@ -140,8 +140,11 @@ yet reviewed by the authors.
   make complexity appear gradually and explain first scene, then a glimpse which is sampled at a viewpoint, then what
   we do with it, etc, gradually building up"].
 - **Builds:** `<canvit-episode stage=...>`, each part fading in at its place: the scene; the viewpoint (its box); the
-  crop and the glimpse; CanViT; the canvas after the first glimpse (read out as segmentation); then everything, the
-  rollout playing from the first glimpse.
+  crop and the glimpse; CanViT; the canvas after the first glimpse, as features (PCA colors) [Yohaï, 2026-10-01:
+  "START WITH FEATURES, not segmentation map"]; then everything, the rollout playing on from the first glimpse with
+  nothing redrawn [Yohaï: "ensure that there is no flickering from the gradual-reveal to the beginning of actually
+  running the animation (canvas full then empty then full again)"]; last, the canvas read out as segmentation, its
+  largest classes named.
 - **Says:** a viewpoint is a position and a scale; the glimpse is its crop at 128 px, all the model gets ("a world of
   difference between seeing something blurry and seeing nothing at all"); CanViT writes what it understood into the
   canvas, a memory of the whole scene; "It takes glimpses and gradually paints its understanding."
@@ -150,13 +153,17 @@ yet reviewed by the authors.
 ### Canvas Vision Transformer architecture
 - **Title:** says it is the architecture [Yohaï, 2026-10-01: "this slide should be renamed to make it clear this is
   architecture"]; the paper's Figure 2 is "CanViT architecture diagram".
-- **Shows:** the paper's architecture figure, large.
+- **Shows:** the paper's two streams drawn for the talk (`architecture.js`) on the street of `#rollout`, its second
+  glimpse: the scene and the viewpoint, the glimpse cut into its 8 × 8 patches, the Vision Transformer's twelve
+  blocks; then the canvas before the glimpse (64 × 64, PCA colors); then the writes after the 4th, 8th and 12th
+  blocks (the bundle's manifest) and the canvas after; then the reads after the 2nd, 6th and 10th; then the third glimpse, the canvas
+  carried over and the reads and writes redrawn in depth order. The paper's full figure is in Backup.
 - **Says:** a Vision Transformer backbone sees each glimpse; the canvas holds the scene. "I put the intelligence on the
   Vision Transformer side." The canvas answers, "at any point in time and for any position: what does the model think
   is there?" Reads condition the backbone on the canvas: top-down feedback. Blue for the glimpse, red for the canvas.
   The memory "dumb, but not too dumb" (the canvas never goes through a learned layer), cheap to read and write, is said
   here, since Canvas Attention is in Backup.
-- **Status:** ready.
+- **Status:** draft (built 2026-10-01; replaces the paper's figure, `PLAN.md` "Decisions for the authors").
 
 ### Passive-to-active dense latent distillation
 - **Title:** the paper's §5 (without "policy-agnostic", which the next slide carries).
@@ -432,6 +439,12 @@ yet reviewed by the authors.
   models had "a cheap encoder and a massive decoder". The cost (2.8 against 37.3 GFLOPs per read–write pair on a
   64 × 64 canvas) is said, not shown.
 - **Status:** draft (ring positions to check).
+
+### CanViT architecture diagram
+- **Title:** the paper's Figure 2 caption.
+- **Shows:** the paper's figure: the two streams over three glimpses with the recurrent CLS token, the VPE token and
+  the registers, for questions about what `#architecture` leaves out.
+- **Status:** draft, in Backup.
 
 ### CanViT-B and its DINOv3 teacher
 - **Title:** names what the chart compares; subtitle "ADE20K accuracy v. inference compute". For the question

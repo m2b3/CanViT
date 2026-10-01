@@ -8,7 +8,7 @@
     uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/ \
         --out site/.screens/main-2026
 
-Writes NN-<slide id>.png and errors.txt into --out; exits with status 1 when the page logged an error or a slide is
+Writes NN-<slide id>.png (with --steps, one image per click) and errors.txt into --out; exits with status 1 when the page logged an error or a slide is
 missing an id. Animations are captured after --wait-ms on each slide.
 """
 
@@ -32,6 +32,8 @@ class Shoot:
     """Device pixels per CSS pixel: 1.5 gives 1920 × 1080 images."""
     first_fragment: bool = False
     """Capture each slide before its fragments, instead of after all of them."""
+    steps: bool = False
+    """Capture each slide before its fragments and after each one (NN-<id>-SS.png), to review a build click by click."""
 
 
 async def shoot(args: Shoot) -> int:
@@ -59,6 +61,18 @@ async def shoot(args: Shoot) -> int:
                 slide_id = "no-id"
             where["slide"] = slide_id
             if args.only and slide_id not in args.only:
+                continue
+            if args.steps:
+                await page.evaluate(f"deck.slide({index}, 0, -1)")
+                step = 0
+                while True:
+                    await page.wait_for_timeout(args.wait_ms)
+                    path = args.out / f"{index + 1:02d}-{slide_id}-{step:02d}.png"
+                    await page.screenshot(path=path)
+                    print(f"{path}", flush=True)
+                    if not await page.evaluate("deck.nextFragment()"):
+                        break
+                    step += 1
                 continue
             await page.wait_for_timeout(args.wait_ms)
             path = args.out / f"{index + 1:02d}-{slide_id}.png"

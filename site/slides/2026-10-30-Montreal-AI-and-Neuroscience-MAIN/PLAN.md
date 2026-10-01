@@ -17,6 +17,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] `#cost`: on the Adapt column ("< 15 h, fine-tuning on ImageNet-1k, one TPU v6e-4; or just a
+  linear layer"): "no this is horrible"; on the Run column (2.3 ms per glimpse, 175 ms on a CPU): "no one cares";
+  "this is marketing as [...] and without comparison points (what about other models? for example could be PEAK
+  PERFORMANCE VS TRAINING COST/exaflops... or whatnot...)". To do: the slide rebuilt as a comparison with the other
+  models.
 - [Yohaï, 2026-10-01] The live model on the Hub: "you can do huggingface, just do it properly and cleanly and
   consistently"; then, on the export fusing CanViT-B and its ADE20K probe in one graph: "did you fuse the entire
   [...] thing instead of separating the probes from the canvit". Nothing is published. In progress: a CanViT graph
@@ -136,7 +141,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   (training glimpses, epochs, GPU-hours); what each paper reports differs, so the qualifiers stay with each number. M.
 - [Yohaï, 2026-10-01] A first draft is `#cost`, before `#frontier` (train, adapt, run); awaiting the authors' look. `#frontier` (accuracy against cost) must first make the case for why anyone cares about cost:
   money, cheap experiments (`AGENTS.md`, "The story"); training cost first, the main concern for scientists, then
-  inference. Training: pretrained once and released; adapting it is a linear probe or a fine-tuning under 800 USD;
+  inference. Training: pretrained once and released; adapting it is a linear probe or a fine-tuning run of under 15 h on a TPU v6e-4;
   its pretraining is comparable to AdaGlimpse's own, not cheaper than every prior model (`AGENTS.md`, rebuttal facts).
   Gather verified facts that make cost concrete: inference GFLOPs
   per glimpse and per rollout against AME and AdaGlimpse (`../../assets/paper/ade20k_seg.json`), wall time per glimpse
@@ -193,8 +198,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Decisions for the authors
 
-- `#architecture` shows the paper's full figure (recurrent CLS, VPE token, registers); with Canvas Attention in Backup,
-  a drawing of just the two streams and the canvas may serve the talk better.
+- `#architecture` is now a drawing of the two streams on the street rollout, built click by click (glimpse and
+  Vision Transformer, canvas, writes, reads, next glimpse with the canvas carried); the paper's full figure, with the
+  recurrent CLS, VPE and register tokens, moved to Backup (`#architecture-paper`). Confirm, or put the figure back.
 
 - LookWhere (NeurIPS 2025; 83.0 ImageNet-1k, 44.6 ADE20K, patches selected once from a low-resolution view): address
   it in the talk, or only if asked.

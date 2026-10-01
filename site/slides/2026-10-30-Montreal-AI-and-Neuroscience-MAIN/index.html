@@ -193,20 +193,32 @@
   <!-- The loop introduced part by part, each in its place [Yohaï, 2026-10-01: "start from there but fade into the full
        thing to make complexity appear gradually and explain first scene, then a glimpse which is sampled at a
        viewpoint, then what we do with it, etc, gradually building up"]: the fragments set the episode's stage; once
-       everything is shown it plays from the first glimpse (data-play="play"). -->
-  <div class="card episode"><canvit-episode data-play="play" src="../../data/street-riid ../../data/shop-riid ../../data/ferry-riid" readout="labels" stage="scene"></canvit-episode></div>
+       everything is shown it plays on from the first glimpse (data-play="play") without redrawing it [Yohaï: "ensure
+       that there is no flickering from the gradual-reveal to the beginning of actually running the animation"]. The
+       canvas shows features first, segmentation on the last click [Yohaï: "START WITH FEATURES, not segmentation
+       map"]. -->
+  <div class="card episode"><canvit-episode data-play="play" src="../../data/street-riid ../../data/shop-riid ../../data/ferry-riid" readout="canvas" stage="scene"></canvit-episode></div>
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="viewpoint"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="glimpse"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="model"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="canvas"></span>
   <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-episode" data-canvit-stage="all"></span>
-  <aside class="notes">Here's how it works. A scene: a street. [click] CanViT never sees it whole. It looks at one viewpoint at a time: a position, x and y, and a scale, how zoomed in. [click] What's inside the viewpoint is cropped and resized to 128 by 128 pixels, whatever the zoom: that's the glimpse, all the model gets. Outside it there's nothing, not even a blur, and there's a world of difference between seeing something blurry and seeing nothing at all. [click] The glimpse goes into CanViT, [click] which writes what it understood into its canvas: a memory of the whole scene. Read out with a linear layer, as segmentation, a class at every position: after one glimpse, a guess at the whole street. [click] Then the next viewpoint, the next glimpse, and so on. It takes glimpses and gradually paints its understanding, including places it hasn't looked at yet.</aside>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="all" data-canvit-readout="labels"></span>
+  <aside class="notes">Here's how it works. A scene: a street. [click] CanViT never sees it whole. It looks at one viewpoint at a time: a position, x and y, and a scale, how zoomed in. [click] What's inside the viewpoint is cropped and resized to 128 by 128 pixels, whatever the zoom: that's the glimpse, all the model gets. Outside it there's nothing, not even a blur, and there's a world of difference between seeing something blurry and seeing nothing at all. [click] The glimpse goes into CanViT, [click] which writes what it understood into its canvas: a memory of the whole scene, a vector for every small region of it. As for DINOv3, the colors are three directions of those vectors: after one glimpse, already a guess at the whole street. [click] Then the next viewpoint, the next glimpse, and so on. It takes glimpses and gradually paints its understanding, including places it hasn't looked at yet. [click] And at any moment the canvas can be read out with a linear layer: here as segmentation, a class at every position.</aside>
 </section>
 
-<section id="architecture" data-status="ready">
+<section id="architecture" data-status="draft">
   <h2><span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span> architecture</h2>
-  <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
-  <aside class="notes">This is CanViT. A Vision Transformer, in purple, the architecture behind DINOv3 and most vision models today, processes each glimpse, in blue, cut into small patches. The canvas, in red, is a memory for the whole scene: a grid of vectors, one per small region of the scene, each staying at its place in the scene whatever the glimpse. It is 32 by 32 in training, and I can make it finer, 64 by 64, at test time, without retraining. I put the intelligence on the Vision Transformer side, and made the memory dumb, but not too dumb: the canvas never goes through a learned layer. Just dumb enough that I can read and write it cheaply, after every glimpse, at high resolution; flexible enough to fill in unseen things from what it knows of the world, like the table. The two streams talk all the time. In a read, the glimpse stream queries the canvas, so what you saw before shapes how you process what you see now: top-down feedback. In a write, the canvas queries the glimpse stream. After every glimpse I can ask, at any point in time and for any position: what does the model think is there?</aside>
+  <!-- The paper's two streams drawn on the street of #rollout (street-riid), its second glimpse and then its third
+       (architecture.js): the blocks, reads and writes from the bundle's manifest; the canvas shown as in the paper, its
+       features in three principal components as colors, before and after each glimpse. The paper's full figure, with
+       the CLS, VPE and register tokens, is in Backup (#architecture-paper). -->
+  <div class="arch-build" data-src="../../data/street-riid" data-t="1"></div>
+  <span class="fragment step-marker" data-shows="canvas"></span>
+  <span class="fragment step-marker" data-shows="write"></span>
+  <span class="fragment step-marker" data-shows="read"></span>
+  <span class="fragment step-marker" data-shows="next"></span>
+  <aside class="notes">How does it work inside? The street again, and a glimpse of it. A Vision Transformer, the architecture behind DINOv3 and most vision models today, processes the glimpse, cut into small patches, through twelve blocks. [click] Beside it, the canvas: a memory for the whole scene, a grid of vectors, one per small region of the scene, each staying at its place in the scene whatever the glimpse. Here it holds what the first glimpse left. It is 32 by 32 in training, and I can make it finer, 64 by 64, at test time, without retraining. [click] Every few blocks, a write: the canvas queries the glimpse stream and adds what it finds. After the glimpse, the canvas has changed. [click] In between, reads: the glimpse stream queries the canvas, so what you saw before shapes how you process what you see now: top-down feedback. I put the intelligence on the Vision Transformer side, and made the memory dumb, but not too dumb: the canvas never goes through a learned layer. Just dumb enough that I can read and write it cheaply, after every glimpse, at high resolution; flexible enough to fill in unseen things from what it knows of the world, like the table. [click] The next glimpse: the glimpse stream starts over, the canvas carries over. Read, write, read, write, up through the network. After every glimpse I can ask, at any point in time and for any position: what does the model think is there?</aside>
 </section>
 
 <section id="distillation" data-status="draft">
@@ -583,6 +595,14 @@
   <aside class="notes">The canvas talks to the glimpse stream through Canvas Attention. In a write, the canvas queries the glimpse; in a read, the glimpse queries the canvas. Here's the trick: it's asymmetric. Every learned projection, the queries, keys, values and outputs, sits on the glimpse side. The canvas side only gets a LayerNorm and its position. The canvas never goes through a learned layer: no MLP, no self-attention, no projection. So the memory is dumb, on purpose. But not too dumb. Just dumb enough that I could interact with it cheaply, while leaving it flexible enough to reconstruct unseen things from world-knowledge priors, like the table. That's what lets the canvas be large and fine-grained, and read after every glimpse. Previous dense models had a cheap encoder and a massive decoder. Here, a read and a write on a 64 by 64 canvas cost <span data-macro="cSixFourAsymRwPairGf">2.8</span> gigaflops; with projections on both sides it would be <span data-macro="cSixFourFullRwPairGf">37.3</span>.</aside>
 </section>
 
+<section id="architecture-paper" data-status="draft">
+  <h2>CanViT architecture diagram</h2>
+  <!-- The paper's Figure 2, for questions about what #architecture leaves out: the recurrent CLS token, the viewpoint
+       encoding (VPE) token and the registers, over three glimpses. -->
+  <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
+  <aside class="notes">The paper's figure: the same two streams over three glimpses, with the tokens I skipped. In green, a CLS token, carried from one glimpse to the next and read out for classification. In orange, the viewpoint encoding token: the glimpse's position and scale, as one token. In gray, registers: extra tokens with no position, on the glimpse side and, persistent, on the canvas side.</aside>
+</section>
+
 <section id="teacher" data-status="draft">
   <hgroup><h2>CanViT-B and its DINOv3 teacher</h2><p>ADE20K accuracy v. inference compute</p></hgroup>
   <!-- For "isn't it just DINOv3?" (AGENTS.md, "Questions to anticipate"): the paper's Figure 4C view. DINOv3 ViT-B/16
@@ -617,6 +637,7 @@
   import { drawDetail } from "./detail.js";
   import { drawDistillation } from "./distillation.js";
   import { drawCost } from "./cost.js";
+  import { drawArchitecture } from "./architecture.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
   function colorByPolicy(rollout) {
@@ -652,6 +673,7 @@
     }));
   }
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
+  await drawArchitecture(document.querySelector("#architecture .arch-build"));
   await drawCost(document.querySelector("#cost"), "../../assets/paper/hw_bench.json");
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const uncertainty = document.querySelector("#uncertainty");

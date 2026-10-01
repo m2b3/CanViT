@@ -2,15 +2,15 @@
 // glimpse there, at any scale: scroll over the scene, drag out a box, or use the slider. The canvas carries over
 // from glimpse to glimpse until reset, and EG-C2F can choose the next glimpse instead. Shows the model's input,
 // the ADE20K classes decoded from the canvas, and their entropy on a fixed scale from 0 to log(num_classes).
-// `model` is a directory written by `python -m canvit_pytorch.viz.live export`, `scene` an image URL, both
-// relative to the page. The download starts from a button that states its size, or as soon as `autoload` is
+// `model` is a directory written by `python -m canvit_pytorch.viz.live export`, relative to the page; without it, the
+// published export on the Hub (PUBLISHED_MODEL). `scene` is an image URL, relative to the page. The download starts from a button that states its size, or as soon as `autoload` is
 // present (also when it is added later, as a deck does when the slide comes near).
 // Events: canvit-load {manifest, backend}, canvit-glimpse {t, viewpoint, chosenBy, stepMs, runMs}, canvit-error.
 
 import { ADE20K_PALETTE } from "./ade20k.js";
 import { COLORMAPS } from "./colormaps.js";
 import { EntropyGuidedC2F } from "./entropy-guided-c2f.js";
-import { LiveModel, loadManifest, sceneFromImage } from "./live-model.js";
+import { LiveModel, PUBLISHED_MODEL, loadManifest, sceneFromImage } from "./live-model.js";
 import { frameCss, sheet } from "./view.js";
 
 const DEFAULT_SCALE = 0.25;
@@ -130,6 +130,8 @@ class CanvitLive extends HTMLElement {
     this.#ready.promise.catch(() => {}); // failures are shown in place; awaiting `ready` still rejects
   }
 
+  get #modelUrl() { return this.getAttribute("model") ?? PUBLISHED_MODEL; }
+
   /** Resolves when the model and the scene are loaded. */
   get ready() { return this.#ready.promise; }
 
@@ -160,9 +162,7 @@ class CanvitLive extends HTMLElement {
     this.#ready = Promise.withResolvers();
     this.#ready.promise.catch(() => {});
     try {
-      const url = this.getAttribute("model");
-      if (!url) throw new Error("needs a model attribute: a directory written by python -m canvit_pytorch.viz.live export");
-      const { manifest } = await loadManifest(url);
+      const { manifest } = await loadManifest(this.#modelUrl);
       if (generation !== this.#generation) return;
       this.#manifest = manifest;
       this.#build();
@@ -186,7 +186,7 @@ class CanvitLive extends HTMLElement {
     const progress = this.shadowRoot.querySelector("progress");
     progress.hidden = false;
     try {
-      const model = await LiveModel.load(this.getAttribute("model"), {
+      const model = await LiveModel.load(this.#modelUrl, {
         onProgress: (stage, received, total) => {
           if (stage === "download") {
             progress.max = total || manifest.graph.bytes;

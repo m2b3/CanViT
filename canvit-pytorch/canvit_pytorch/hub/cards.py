@@ -6,6 +6,7 @@ checkpoints come in as typed arguments.
 """
 
 from dataclasses import dataclass
+from typing import Any
 
 from huggingface_hub import EvalResult, ModelCardData
 
@@ -79,7 +80,13 @@ class DINOv3ProbeFacts:
     training: ProbeTraining
 
 
-def _card(*, data: ModelCardData, title: str, summary: str, usage: str, details: list[tuple[str, str]]) -> str:
+INSTALL = f'pip install "canvit-pytorch>={FORMAT_VERSION}"'
+
+
+def _card(
+    *, data: ModelCardData, title: str, summary: str, usage: str, details: list[tuple[str, str]],
+    install: str = INSTALL, install_language: str = "bash", usage_language: str = "python",
+) -> str:
     table = "\n".join(["| | |", "|---|---|", *(f"| {name} | {value} |" for name, value in details)])
     return f"""---
 {data.to_yaml()}
@@ -95,11 +102,11 @@ def _card(*, data: ModelCardData, title: str, summary: str, usage: str, details:
 
 ## Usage
 
-```bash
-pip install "canvit-pytorch>={FORMAT_VERSION}"
+```{install_language}
+{install.strip()}
 ```
 
-```python
+```{usage_language}
 {usage.strip()}
 ```
 
@@ -279,3 +286,43 @@ with torch.inference_mode():
                f"protocol.")
     return _card(data=data, title=f"ADE20K probe on {facts.dinov3_name} at {facts.input_size_px} px",
                  summary=summary, usage=usage, details=details)
+
+
+def _hub_link(record: dict[str, Any]) -> str:
+    """A manifest's model or readout record as a link to the repo at the revision it names."""
+    return f"[{record['repo']}](https://huggingface.co/{record['repo']}/tree/{record['revision']}) at `{record['revision'][:7]}`"
+
+
+def live_model_card(*, repo: str, manifest: dict[str, Any], parity: dict[str, Any]) -> str:
+    """The card of a canvit_pytorch.viz.live export: manifest.json and its parity/report.json state every fact."""
+    grid, graph = manifest["canvas_grid"], manifest["graph"]
+    worst = parity["worst"]
+    install = f"""<script type="module" src="{project.PAGE_URL}js/canvit/index.js"></script>"""
+    usage = f"""<canvit-live model="https://huggingface.co/{repo}/resolve/main" scene="scene.jpg"></canvit-live>"""
+    details = [
+        ("Model", _hub_link(manifest["model"])),
+        ("Readout", f"{_hub_link(manifest['readout'])}, {manifest['readout']['num_classes']} ADE20K classes"),
+        ("Geometry", (f"{manifest['scene_px']} px scenes, {manifest['glimpse_px']} px glimpses, "
+                      f"a {grid} × {grid} canvas")),
+        ("Graph", (f"`{graph['path']}`: one glimpse, ONNX opset {graph['opset']}, float32, weights embedded, "
+                   f"{graph['bytes'] / 1e6:.0f} MB; inputs {', '.join(graph['inputs'])}; outputs "
+                   f"{', '.join(graph['outputs'])}")),
+        ("Initial state", (f"`{manifest['initial_state']['path']}`: float32, "
+                           f"{', '.join(part['name'] for part in manifest['initial_state']['parts'])}")),
+        ("Policy", f"{manifest['policy']['paper_name']}: {manifest['policy']['description']}"),
+        ("Parity with PyTorch", (f"{parity['comparison']}, over {len(parity['per_glimpse'])} glimpses: relative L2 "
+                                 f"error at most {worst['canvas']:.1e} (canvas) and {worst['logits']:.1e} (logits); "
+                                 f"{100 * worst['min_argmax_agreement']:.2f}% of cells or more keep their class")),
+        ("Exported with", (f"`python -m canvit_pytorch.viz.live export`, torch {manifest['provenance']['torch']}, "
+                           f"onnx {manifest['provenance']['onnx']}; checked with onnxruntime {parity['onnxruntime']}")),
+        ("Manifest", f"`manifest.json`, schema `{manifest['schema']}`: every size, shape and name the page uses"),
+    ]
+    data = ModelCardData(
+        license="mit", library_name="onnx", pipeline_tag="image-segmentation", tags=TAGS + ["ade20k", "onnx"],
+        datasets=[ADE20K_HUB_ID], base_model=[manifest["model"]["repo"], manifest["readout"]["repo"]],
+    )
+    summary = (f"The released CanViT-B and its ADE20K probe on a {grid} × {grid} canvas as one ONNX graph per "
+               f"glimpse, for `<canvit-live>`: the [live demo]({project.PAGE_URL}live.html) of the project page, "
+               f"which runs it in the browser with ONNX Runtime Web (WebGPU, else WebAssembly).")
+    return _card(data=data, title="CanViT-B with its ADE20K probe, for the browser", summary=summary, usage=usage,
+                 details=details, install=install, install_language="html", usage_language="html")

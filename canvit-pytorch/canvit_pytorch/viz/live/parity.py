@@ -152,6 +152,7 @@ class Parity:
             for t, (o, r) in enumerate(zip(replayed, reference, strict=True))
         ]
         report: dict[str, Any] = {
+            "graph_sha256": manifest["graph"]["sha256"],
             "image": str(self.image),
             "comparison": "onnxruntime CPU execution provider against PyTorch CPU, float32, the same viewpoints",
             "onnxruntime": ort.__version__,

@@ -4,6 +4,8 @@
 // to output buffers, which a GPU copy moves onto the input buffers; only the maps shown are read back.
 
 const SCHEMA = "canvit-live-model-2ef08388-92e1-4d7d-b5ac-2922601b5aa0";
+// The published export, canvit_pytorch.hub.repos.LIVE_MODEL on the Hub (`python -m canvit_pytorch.viz.live publish`).
+export const PUBLISHED_MODEL = "https://huggingface.co/canvit/canvitb16-in21k-ade20k-s512-c64-onnx-fp32/resolve/main";
 // The exported graph relies on this version's WebGPU kernels (docs/viz.md, "Live model"): after changing it,
 // rerun `canvit_pytorch.viz.live check-browser` on both backends.
 const ORT_VERSION = "1.30.0";

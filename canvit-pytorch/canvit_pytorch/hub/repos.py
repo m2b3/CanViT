@@ -36,6 +36,10 @@ RELEASED_CANVAS_GRID_SIZE = 32
 # The Hub tag on each checkpoint released before canvit-pytorch 0.2: its files in the format 0.1 code reads.
 OLD_FORMAT_REVISION = "canvit-pytorch-0.1"
 
+# The flagship and its ADE20K probe on a 64×64 canvas as one float32 ONNX graph per glimpse (canvit_pytorch.viz.live),
+# which <canvit-live> downloads from the Hub.
+LIVE_MODEL = hub_repo("canvitb16-in21k-ade20k-s512-c64-onnx-fp32")
+
 # The flagship fine-tuned on ImageNet-1k classification (LP-FT, TPU).
 FINETUNED_IN1K = hub_repo("canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06")
 

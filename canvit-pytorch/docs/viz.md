@@ -155,7 +155,15 @@ uv run --extra live python -m canvit_pytorch.viz.live parity --model-dir ../site
 # serve site/ (site/README.md), then, with Google Chrome installed:
 uv run --extra live python -m canvit_pytorch.viz.live check-browser \
     --page-url http://127.0.0.1:8000/live.html --backend webgpu --out outputs/live/webgpu.json
+# stage, then with --push upload, to hub.repos.LIVE_MODEL (a new private repo, made public once reviewed)
+uv run --extra live python -m canvit_pytorch.viz.live publish --model-dir ../site/.live-model --out-dir staging
 ```
+
+`publish` refuses an export without a passing parity report on its graph
+(the report records the graph's SHA-256) or whose model or probe is no longer
+the Hub's current revision; its card (`hub.cards.live_model_card`) comes from
+the manifest and the parity report. The project page and the talks run the
+published export (`PUBLISHED_MODEL` in `site/js/canvit/live-model.js`).
 
 `export` writes three files into its directory; `site/.live-model/` is
 ignored by git, and the exported graph is never committed.

@@ -188,8 +188,9 @@
 #architecture-paper img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
 
 /* Canvas Vision Transformer architecture, drawn by architecture.js, depth left to right: the glimpse through the
-   blocks; then the canvas before it; the writes, each followed by the canvas it leaves (--order); the reads; then the
-   next glimpse, its exchanges and canvases redrawn in depth order (--depth). Each arrow draws itself after its --delay. */
+   blocks; then the canvas before it; then the glimpse runs through the network, its reads and writes in depth order
+   (--depth): a read's arrow, or a write's glimpse tokens, its arrow and the canvas it leaves; then the next glimpse,
+   the same again. */
 #architecture .arch-build { position: relative; margin: 8px auto 0; }
 #architecture .arch-build > img { position: absolute; z-index: 1; border-radius: 8px; transition: opacity .5s ease; }
 #architecture .wires { position: absolute; inset: 0; z-index: 2; overflow: visible; pointer-events: none; }
@@ -199,13 +200,14 @@
 #architecture .patches line { stroke: rgba(255, 255, 255, .6); stroke-width: 1; }
 #architecture .glimpse-stream { stroke: var(--glimpse); stroke-width: 5; }
 #architecture .canvas-stream { stroke: var(--canvas); stroke-width: 5; transition: opacity .5s ease; }
+#architecture .glimpse-tokens { outline: 3px solid var(--glimpse); outline-offset: -3px; border-radius: 6px; }
 #architecture .box { fill: none; stroke: var(--glimpse); stroke-width: 3; }
 #architecture .wire .line { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 1; stroke-dashoffset: 1;
-                            transition: stroke-dashoffset .5s ease var(--delay, 0s); }
-#architecture .wire .head { fill: var(--ink); opacity: 0; transition: opacity .15s ease calc(var(--delay, 0s) + .45s); }
+                            transition: stroke-dashoffset .45s ease var(--start, 0s); }
+#architecture .wire .head { fill: var(--ink); opacity: 0; transition: opacity .15s ease calc(var(--start, 0s) + .4s); }
 #architecture .feed .line { stroke: var(--glimpse); stroke-width: 3; stroke-dashoffset: 0; }
 #architecture .feed .head { fill: var(--glimpse); opacity: 1; }
-#architecture .exchange-label { font: 700 18px var(--sans); fill: var(--muted); opacity: 0; }
+#architecture .exchange-label { font: 700 18px var(--sans); fill: var(--muted); }
 #architecture .label { position: absolute; margin: 0; translate: -50% 0; text-align: center; line-height: 1.25;
                        white-space: nowrap; transition: opacity .5s ease; }
 #architecture .label span { display: block; }
@@ -217,22 +219,24 @@
 #architecture .canvas-label span { color: var(--canvas); }
 #architecture .glimpse-label span + span { font: 500 15px var(--mono); color: var(--text); }
 
-#architecture :is(.canvas, .canvas-stream, .canvas-label, .snapshot-label, .next) { opacity: 0; }
+/* An exchange's moment in the run: a read at once, a write's arrow after its tokens appear, its canvas after the arrow. */
+#architecture .exchange { --start: calc(var(--depth) * .9s); }
+#architecture .exchange.write { --start: calc(var(--depth) * .9s + .3s); }
+#architecture :is(.canvas, .canvas-stream, .canvas-label, .snapshot-label, .source, .exchange-label, .next) { opacity: 0; }
 #architecture.shows-canvas :is(.before.now, .canvas-stream, .canvas-label) { opacity: 1; }
-#architecture .write { --delay: calc(var(--order) * .6s); }
-#architecture .read { --delay: calc(var(--order) * .3s); }
-#architecture.shows-write .write .line, #architecture.shows-read .read .line { stroke-dashoffset: 0; }
-#architecture.shows-write .write .head, #architecture.shows-read .read .head,
-#architecture.shows-write .exchange-label.write, #architecture.shows-read .exchange-label.read { opacity: 1; }
-#architecture.shows-write :is(.snapshot.now, .snapshot-label) { opacity: 1; transition-delay: calc(var(--order) * .6s + .5s); }
+#architecture.shows-run .exchange .line { stroke-dashoffset: 0; }
+#architecture.shows-run :is(.exchange .head, .exchange-label) { opacity: 1; }
+#architecture.shows-run .source.now { opacity: 1; transition-delay: calc(var(--depth) * .9s); }
+#architecture.shows-run :is(.snapshot.now, .snapshot-label) { opacity: 1; transition-delay: calc(var(--depth) * .9s + .8s); }
 
 @keyframes architecture-redraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes architecture-appear { from { opacity: 0; } to { opacity: 1; } }
-#architecture.shows-next :is(.box.now, .glimpse.now, .glimpse-label.now, .before.now, .snapshot.now) { opacity: 0; transition-delay: 0s; }
+#architecture.shows-next :is(.box.now, .glimpse.now, .glimpse-label.now, .before.now, .snapshot.now, .source.now) { opacity: 0; transition-delay: 0s; }
 #architecture.shows-next :is(.box.next, .glimpse.next, .glimpse-label.next, .before.next) { opacity: 1; }
-#architecture.shows-next .snapshot.next { opacity: 1; transition-delay: calc(1.15s + var(--depth) * .3s); }
-#architecture.shows-next .exchange .line { animation: architecture-redraw .45s ease both calc(.7s + var(--depth) * .3s); }
-#architecture.shows-next .exchange .head { animation: architecture-appear .15s ease both calc(1.1s + var(--depth) * .3s); }
+#architecture.shows-next .source.next { opacity: 1; transition-delay: calc(.8s + var(--depth) * .9s); }
+#architecture.shows-next .snapshot.next { opacity: 1; transition-delay: calc(1.6s + var(--depth) * .9s); }
+#architecture.shows-next .exchange .line { animation: architecture-redraw .45s ease both calc(.8s + var(--start)); }
+#architecture.shows-next .exchange .head { animation: architecture-appear .15s ease both calc(1.2s + var(--start)); }
 
 #canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden; }
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }

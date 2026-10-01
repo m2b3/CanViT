@@ -124,6 +124,14 @@ def write_bundle(
         _save(_gray16(entropy_fraction(glimpse.logits)), out_dir / layers["entropy"])
         _save(_gray16(canvas_change(previous, glimpse.canvas) / 2).reshape(grid, grid), out_dir / layers["change"])
         canvas = previous
+        assert len(glimpse.write_sources) == len(glimpse.write_residuals), glimpse.t
+        for k, source in enumerate(glimpse.write_sources):
+            # The glimpse tokens a Write read, one basis per Write: each depth of the backbone has its own features.
+            patches = math.isqrt(source.shape[0])
+            source_projection = project(fit_pca(source), source)
+            layers[f"write{k}_glimpse"] = f"{d}/write{k}_glimpse.png"
+            rgb = to_rgb(source_projection, color_limits(source_projection)).reshape(patches, patches, 3)
+            _save(rgb, out_dir / layers[f"write{k}_glimpse"])
         for k, residual in enumerate(glimpse.write_residuals):
             # One basis per Write, as in the paper's canvas-evolution figure.
             residual_projection = project(fit_pca(residual), residual)

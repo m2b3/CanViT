@@ -13,24 +13,25 @@ const PCA_NOTES = {
 /**
  * kind: "rgb" (colored in Python; note(bundle) says how), "labels" (class index per cell) or
  * "scalar" (a fraction in [0, 1]; quantity(bundle) names it, value(f, bundle) converts it for display).
- * grid: sized canvas_grid × canvas_grid (else glimpse_px × glimpse_px).
+ * size: the raster's side and what it covers: "canvas" canvas_grid, the whole scene; "glimpse" glimpse_px, the glimpse's
+ * box; "patches" glimpse_px / model.patch_px, the glimpse's box, one cell per patch.
  * Scalar domains: "unit" [0, 1]; "frame" min–max of this glimpse; "bundle" min–max over all glimpses.
  * Defaults keep one color scale across glimpses, so brightness compares across time: a per-frame
  * range would paint a small late change as brightly as the first glimpse's rewrite.
  */
 
 const LAYERS = {
-  crop: { kind: "rgb", grid: false, title: "Glimpse", note: () => "what the model saw" },
-  canvas: { kind: "rgb", grid: true, title: "Canvas", note: (bundle) => PCA_NOTES[bundle.manifest.pca.protocol] },
-  labels: { kind: "labels", grid: true, title: "Segmentation" },
+  crop: { kind: "rgb", size: "glimpse", title: "Glimpse", note: () => "what the model saw" },
+  canvas: { kind: "rgb", size: "canvas", title: "Canvas", note: (bundle) => PCA_NOTES[bundle.manifest.pca.protocol] },
+  labels: { kind: "labels", size: "canvas", title: "Segmentation" },
   entropy: {
-    kind: "scalar", grid: true, title: "Uncertainty", colormap: "magma", domain: "unit",
+    kind: "scalar", size: "canvas", title: "Uncertainty", colormap: "magma", domain: "unit",
     // Stored as entropy / log C; shown in bits, from 0 (one class) to log2 C (all C classes equally likely).
     low: "sure", high: "unsure", quantity: () => "entropy, bits",
     value: (f, bundle) => f * Math.log2(bundle.manifest.readout.num_classes),
   },
   change: {
-    kind: "scalar", grid: true, title: "Change", colormap: "magma", domain: "bundle",
+    kind: "scalar", size: "canvas", title: "Change", colormap: "magma", domain: "bundle",
     low: "kept", high: "rewritten", quantity: () => "1 − cos", value: (f) => 2 * f,
   },
 };
@@ -52,9 +53,11 @@ export const CORRECTNESS = {
 export function layerSpec(name) {
   if (Object.hasOwn(LAYERS, name)) return LAYERS[name];
   const write = /^write(\d+)$/.exec(name);
-  if (write) return { kind: "rgb", grid: true, title: `Write ${write[1]}`, note: () => "PCA of one Canvas Attention Write" };
+  if (write) return { kind: "rgb", size: "canvas", title: `Write ${write[1]}`, note: () => "PCA of one Canvas Attention Write" };
   const after = /^write(\d+)_canvas$/.exec(name);
-  if (after) return { kind: "rgb", grid: true, title: `Canvas after Write ${after[1]}`, note: () => "PCA of the canvas, as in its features layer" };
+  if (after) return { kind: "rgb", size: "canvas", title: `Canvas after Write ${after[1]}`, note: () => "PCA of the canvas, as in its features layer" };
+  const source = /^write(\d+)_glimpse$/.exec(name);
+  if (source) return { kind: "rgb", size: "patches", title: `Glimpse read by Write ${source[1]}`, note: () => "PCA of the glimpse's patch tokens" };
   throw new Error(`Unknown bundle layer "${name}": add it to LAYERS in js/canvit/layers.js`);
 }
 

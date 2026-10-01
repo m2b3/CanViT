@@ -43,6 +43,8 @@ async function load(url) {
   check(manifest.schema === SCHEMA, `${where}: schema is ${JSON.stringify(manifest.schema)}, expected "${SCHEMA}"`);
   const { canvas_grid: grid, glimpse_px: glimpsePx, glimpses, readout } = manifest;
   check(Number.isInteger(grid) && grid > 0, `${where}: canvas_grid must be a positive integer`);
+  const sides = { canvas: grid, glimpse: glimpsePx, patches: glimpsePx / manifest.model.patch_px };
+  check(Number.isInteger(sides.patches), `${where}: glimpse_px ${glimpsePx} is not a whole number of ${manifest.model.patch_px} px patches`);
   check(Array.isArray(glimpses) && glimpses.length > 0, `${where}: no glimpses`);
   check(readout.class_names?.length === readout.num_classes,
         `${where}: readout.class_names has ${readout.class_names?.length} names for ${readout.num_classes} classes`);
@@ -85,7 +87,7 @@ async function load(url) {
     await Promise.all(layerNames.map(async (name) => {
       const file = new URL(g.layers[name], url).href;
       const raster = await decodePng(await (await fetchOk(file)).arrayBuffer(), file);
-      layers[name] = checkRaster(raster, name, file, { grid, glimpsePx, numClasses: readout.num_classes });
+      layers[name] = checkRaster(raster, name, file, { sides, numClasses: readout.num_classes });
     }));
     return { t, box: g.box, viewpoint: g.viewpoint, layers, pixelAccuracy: g.pixel_accuracy ?? null };
   }));
@@ -98,7 +100,7 @@ async function load(url) {
   }
 
   return {
-    url, manifest, grid, glimpsePx, layerNames, range, sceneUrl, truth,
+    url, manifest, grid, glimpsePx, sides, layerNames, range, sceneUrl, truth,
     classNames: readout.class_names,
     glimpses: decoded,
   };
@@ -112,9 +114,9 @@ export function requireLayer(bundle, name) {
   return name;
 }
 
-function checkRaster(raster, name, file, { grid, glimpsePx, numClasses }) {
+function checkRaster(raster, name, file, { sides, numClasses }) {
   const spec = layerSpec(name);
-  const side = spec.grid ? grid : glimpsePx;
+  const side = sides[spec.size];
   check(raster.width === side && raster.height === side,
         `${file}: ${raster.width}×${raster.height}, expected ${side}×${side}`);
   const channels = spec.kind === "rgb" ? [3, 4] : [1];

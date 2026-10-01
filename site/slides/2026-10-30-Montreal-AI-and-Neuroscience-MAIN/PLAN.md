@@ -17,6 +17,10 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] `#architecture`: "you might also want to viz the intermediate vit-side glimpse stream on the arch
+  diagram"; "the way you positioned the glimpse-stream stuff SUCKS. terrible. just align it with the vit blocks, even if
+  you only show the end-of-glimpse features"; "showing all writes before all reads makes exactly zero sense". Rebuilt
+  2026-10-01 (`OUTLINE.md`); awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#cost`, on "AdaptiveNN 82.2, training compute not disclosed": "??? should be possible to read
   the code, the paper, etc, and figure this [...] out i think, we shall see". In progress: AdaptiveNN's ImageNet-1k
   training FLOPs counted from its paper and code under the rebuttal's conventions; AdaGlimpse's ADE20K training too.

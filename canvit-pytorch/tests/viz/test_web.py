@@ -23,11 +23,13 @@ def _rollout(capture_writes: bool) -> Rollout:
     glimpses, canvas = [], initial
     for t in range(3):
         writes = (tokens(), tokens()) if capture_writes else ()
+        sources = tuple(rng.normal(size=(4, D)).astype(np.float32) for _ in writes)  # 2 × 2 glimpse patches
         canvas = canvas + sum(writes) if capture_writes else tokens()
         glimpses.append(GlimpseRecord(
             t=t, viewpoint=_viewpoint(0.5, -0.5, 0.5),
             crop=rng.integers(0, 256, size=(PX, PX, 3), dtype=np.uint8),
             canvas=canvas, logits=rng.normal(size=(C, G, G)).astype(np.float32), write_residuals=writes,
+            write_sources=sources,
         ))
     annotation = rng.integers(0, C, size=(32, 32)).astype(np.int64)
     return Rollout(scene=rng.integers(0, 256, size=(32, 32, 3), dtype=np.uint8), initial_canvas=initial,
@@ -57,7 +59,7 @@ def test_bundle_is_self_describing_and_lossless(tmp_path):
     assert manifest["schema"] == SCHEMA and len(manifest["glimpses"]) == 3
     first = manifest["glimpses"][0]
     assert set(first["layers"]) == {"crop", "canvas", "labels", "entropy", "change", "write0", "write1",
-                                    "write0_canvas", "write1_canvas"}
+                                    "write0_canvas", "write1_canvas", "write0_glimpse", "write1_glimpse"}
     for rel in [*first["layers"].values(), manifest["initial_canvas"]]:
         assert (tmp_path / rel).is_file()
     # The canvas after the last Write is the glimpse's canvas, drawn the same way.

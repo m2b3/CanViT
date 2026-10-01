@@ -154,15 +154,18 @@ yet reviewed by the authors.
 ### Canvas Vision Transformer architecture
 - **Title:** says it is the architecture [Yohaï, 2026-10-01: "this slide should be renamed to make it clear this is
   architecture"]; the paper's Figure 2 is "CanViT architecture diagram".
-- **Shows:** the paper's two streams drawn for the talk (`architecture.js`) on the street of `#rollout`, its first
-  glimpse: the scene and the viewpoint, the glimpse cut into its 8 × 8 patches, the Vision Transformer's twelve
-  blocks; then the canvas before it (the initial canvas, the same everywhere; 64 × 64, PCA colors); then the writes
-  after the 4th, 8th and 12th blocks, each followed by the canvas it leaves, level with it, as in the paper's
-  canvas-evolution figure [Yohaï, 2026-10-01: "capture intermediate values like we actually did in one of the paper's
-  supplementary figures"; "for the viz only the intermediate canvases make sense"]: the glimpse's own square, then
-  shapes inside it, then structure beyond it; then the reads after the 2nd, 6th and 10th blocks; then the second
-  glimpse in place, the canvas carried over and the reads, writes and canvases redrawn in depth order. The paper's
-  full figure is in Backup.
+- **Shows:** the paper's two streams drawn for the talk (`architecture.js`), depth left to right, on the street of
+  `#rollout`, its first glimpse: the scene and the viewpoint, the glimpse cut into its patches, the Vision
+  Transformer's twelve blocks in three groups of four, each followed by the glimpse tokens the next write reads
+  [Yohaï, 2026-10-01: "you might also want to viz the intermediate vit-side glimpse stream"; then "just align it with
+  the vit blocks"]. Then the canvas before the glimpse, the initial canvas, the same everywhere. Then the glimpse runs
+  through on one click, its reads and writes in depth order [Yohaï: "showing all writes before all reads makes exactly
+  zero sense"]: each read down from the canvas stream between two blocks; each write up from its glimpse tokens into the
+  canvas it leaves, above them, as in the paper's canvas-evolution figure [Yohaï: "for the viz only the intermediate
+  canvases make sense"]: the glimpse's own square, then shapes inside it, then structure beyond it. Then the second
+  glimpse in place, the canvas carried over, the same run. Captions say only "Scene", "Canvas", "after write k",
+  "Glimpse" with its viewpoint, "Vision Transformer" [Yohaï, on "Canvas, 64 × 64": "why [...] IS THIS ON THE ARCH
+  SLIDE"]. The paper's full figure is in Backup.
 - **Says:** a Vision Transformer backbone sees each glimpse; the canvas holds the scene. "I put the intelligence on the
   Vision Transformer side." The canvas answers, "at any point in time and for any position: what does the model think
   is there?" Reads condition the backbone on the canvas: top-down feedback. Blue for the glimpse, red for the canvas.

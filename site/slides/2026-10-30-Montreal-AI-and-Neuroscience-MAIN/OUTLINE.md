@@ -343,9 +343,13 @@ yet reviewed by the authors.
 - **Must:** that using CanViT takes a few lines anyone can read: install, load, glimpse, read the canvas
   [Yohaï, 2026-10-01: "the point is to show them it's trivial to start using this"].
 - **Could:** what the code produces, beside it: the two glimpses on a street and the canvas after them.
-- **Builds:** `uv add canvit-pytorch` alone and large; the code (`quickstart.py`, which runs as shown); a band
-  walks through it: the model, the scene and state, the viewpoints (the scene with their boxes appears), the loop, the
-  canvas (the canvas appears).
+- **Code** [Yohaï, 2026-10-01: "don't define both glimpses upfront, don't use a for loop, inline, and improve the viz /
+  animation"; "NO LOOP PLEASE. ONE AFTER THE OTHER. DO NOT DEFINE BOTH UPFRONT."]: `quickstart.py`, the segmentation
+  model, each glimpse written where it is taken; it runs as shown (`throwaway/quickstart/export.py` executes it). The
+  second viewpoint, the left of the street, was chosen by `throwaway/quickstart/sweep.py`: it adds person and van.
+- **Builds:** `uv add canvit-pytorch` alone and large; the code; a band walks through it: the model, the scene and
+  state (the street appears), the first glimpse (its box, then `logits.argmax(1)` with the class names), the second
+  (its box, then the new map).
 - **Status:** draft.
 
 ### The last slide: paper, code, models and funding

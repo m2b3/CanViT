@@ -159,6 +159,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   those lines of its slide's code block (`deck.js`).
 - Be visually consistent [Yohaï, 2026-10-01: "be visually consistent, when you have CanViT in a diagram use the logo
   etc"]; the logo is `../assets/logos/canvit-wordmark.svg`.
+- [Yohaï, 2026-10-01] "you should also think of what needs to be introduced/highlighted when, when a concept first
+  occurs on screen or must be spoken, etc. this is very important."
 - Think through when things update and how [Yohaï, 2026-10-01, on the detail slide: "please think through when things
   should update and how, i shouldnt need an additional right-arrow to make the probability map update"].
 - The introduction to semantic segmentation on `#history` of the MAIN 2026 talk [Yohaï, 2026-10-01: "I LOVE how you

@@ -23,8 +23,12 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#distillation` "is completely terrible ... needs to be entirely reworked": rebuilt the same day
   as a training step unrolled in time (`OUTLINE.md`); awaiting the authors' look. The predictions shown are the
   released model's; placeholders instead would be a one-line change.
-- [Yohaï, 2026-10-01] `#quickstart`: "the quickstart example is bad, don't define both glimpses upfront, don't use a
-  for loop, inline, and improve the viz / animation". In progress.
+- [Yohaï, 2026-10-01] "we should definitely show the impact of the viewing policies for IN1k and for ADE20K, with x
+  axis = glimpse count (possibly log-scaled?) and y axis = in1k top 1 acc or ade20k miou. this is a different view
+  into the same data, kind of, and here the focus / message is how the policies work relative to one another and
+  across tasks, and that they matter much more for ade20k." To do.
+- [Yohaï, 2026-10-01] "you should also think of what needs to be introduced/highlighted when, when a concept first
+  occurs on screen or must be spoken, etc. this is very important." A pass over every slide; to do.
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:
   Aborted(InternalError: out of memory)". Measured on 2026-10-01 in headless Chromium (`throwaway/live_memory.py`,
   `slide_memory.py`, `live_wasm.py`): the deck with no slide 376 MB RSS; every slide without the model 1.46 GB (static

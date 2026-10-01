@@ -308,19 +308,30 @@
                   transition: opacity .6s ease .3s; }
 #policies.shows-race .race { opacity: 1; }
 
-/* Quickstart: the install line alone and large, then small above the code. */
+/* Quickstart: the install line alone and large, then small above the code; the code walked through block by block,
+   the street and the segmentation each model call returns beside it, the map a moment after its glimpse's box. */
 #quickstart .install { position: absolute; left: 0; right: 0; top: 300px; text-align: center; transition: top .7s ease, font-size .7s ease;
                        font-size: 44px; }
 #quickstart .install code { padding: .3em .7em; border-radius: .3em; background: var(--ink); color: #fff; font-size: 1em; }
-#quickstart.shows-code .install { top: 112px; font-size: 20px; }
-#quickstart pre { position: absolute; left: var(--slide-pad-x); right: var(--slide-pad-x); top: 168px; }
-#quickstart pre { padding: 14px 22px; font-size: 15px; line-height: 1.42; }
-#quickstart pre::before { top: calc(14px + (var(--line-from, 1) - 1) * 1lh); right: 236px; }
-#quickstart .result figure { opacity: 0; transition: opacity .5s ease; }
-#quickstart.shows-viewpoints .result .glimpses, #quickstart.shows-canvas .result .canvas { opacity: 1; }
-#quickstart .result { position: absolute; left: 968px; top: 178px; width: 200px; display: grid; gap: 12px; }
-#quickstart .result figure { margin: 0; }
-#quickstart .result figcaption { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+#quickstart.shows-code .install { top: 104px; font-size: 20px; }
+#quickstart pre { position: absolute; left: var(--slide-pad-x); top: 156px; width: 800px; box-sizing: border-box;
+                  padding: 14px 22px; font-size: 13.5px; line-height: 1.42; }
+#quickstart pre::before { top: calc(14px + (var(--line-from, 1) - 1) * 1lh); }
+#quickstart .result { position: absolute; right: var(--slide-pad-x); top: 136px; width: 226px; display: grid; gap: 8px; }
+#quickstart .result figure { margin: 0; opacity: 0; transition: opacity .5s ease; }
+#quickstart.shows-scene .result .scene, #quickstart.shows-first .result .map { opacity: 1; }
+#quickstart.shows-first .result .map { transition-delay: .8s; }
+#quickstart .result figcaption { margin-bottom: 4px; font-size: 16px; }
+#quickstart .result .frame { position: relative; width: 226px; height: 226px; }
+#quickstart .result .frame > * { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .5s ease; }
+#quickstart .result .frame img { border-radius: 6px; }
+#quickstart .result :is(.first, .second) { opacity: 0; }
+#quickstart.shows-first .result .first { opacity: 1; }
+#quickstart.shows-second .result .first { opacity: 0; }
+#quickstart.shows-second .result .second { opacity: 1; }
+#quickstart.shows-second .result .map .second { transition-delay: .8s; }
+#quickstart .names span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; color: #fff;
+                          font-size: 13px; font-weight: 750; text-shadow: 0 0 3px #000, 0 0 6px rgba(0, 0, 0, .6); }
 
 /* The deep active vision timeline (timeline.js): active models in the history chart's amber; on the last click, those
    whose policy is learned by reinforcement learning turn policy teal. */

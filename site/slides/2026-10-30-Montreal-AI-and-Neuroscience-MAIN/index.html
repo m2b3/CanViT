@@ -447,21 +447,27 @@
 <section id="quickstart" data-status="draft">
   <h2>Quickstart</h2>
   <p class="install"><code>uv add canvit-pytorch</code></p>
-  <!-- quickstart.py runs as shown (checked 2026-10-01 on ADE_val_00001780, M4 Pro, canvas [1, 64, 64, 1024]). -->
+  <!-- quickstart.py runs as shown: throwaway/quickstart/export.py executes it on the street (ADE_val_00001780, the 512 px
+       scene of the recorded bundles) and saves what each model call returned; plot.py draws the boxes, the maps and
+       the class names. The second viewpoint was chosen by throwaway/quickstart/sweep.py. -->
   <pre class="fragment" data-shows="code"><code class="language-python" data-src="quickstart.py"></code></pre>
-  <!-- What the code computes, from the street bundle recorded with the same checkpoint, 64² canvas and viewpoints (C2F's
-       first two: the full scene, then the top-left quarter); its scene.png is the 512 px scene the code would read. -->
-  <canvit-rollout class="result" src="../../data/street-c2f" t="1">
-    <figure class="glimpses"><figcaption>Two glimpses</figcaption><canvit-scene trail="past"></canvit-scene></figure>
-    <figure class="canvas"><figcaption class="term-canvas">The canvas</figcaption><canvit-map layer="canvas"></canvit-map></figure>
-  </canvit-rollout>
-  <!-- Line ranges of quickstart.py: the model, the scene and state, the viewpoints, the loop, the canvas. -->
-  <span class="fragment step-marker" data-lines="7-9"></span>
-  <span class="fragment step-marker" data-lines="10-11"></span>
-  <span class="fragment step-marker" data-shows="viewpoints" data-lines="13-14"></span>
-  <span class="fragment step-marker" data-lines="16-19"></span>
-  <span class="fragment step-marker" data-shows="canvas" data-lines="21-21"></span>
-  <aside class="notes">And it's easy to use. One line to install. [click] The code. [click] Load the model from the Hub. [click] Load an image, start a state. [click] Pick viewpoints: here the whole scene, then its top-left quarter; on this street, these two. [click] For each, take the glimpse, run the model, keep the state. [click] At the end you have the canvas: a 64 by 64 map of features of the whole scene, after two glimpses, here in PCA colors, ready for a linear layer for whatever you care about. This runs on a laptop.</aside>
+  <div class="result">
+    <figure class="scene"><figcaption><code>street.jpg</code></figcaption><div class="frame">
+      <img src="../../data/street-c2f/scene.png" alt="A street">
+      <img class="first" src="../../data/talk/quickstart/scene-1.png" alt="The street, the whole scene as the first glimpse">
+      <img class="second" src="../../data/talk/quickstart/scene-2.png" alt="The street, the second glimpse's box on its left"></div></figure>
+    <figure class="map"><figcaption><code>logits.argmax(1)</code></figcaption><div class="frame">
+      <img class="pixels first" src="../../data/talk/quickstart/map-1.png" alt="The segmentation after the first glimpse">
+      <div class="names first" data-src="../../data/talk/quickstart/names-1.json"></div>
+      <img class="pixels second" src="../../data/talk/quickstart/map-2.png" alt="The segmentation after the second glimpse: people and a van appear">
+      <div class="names second" data-src="../../data/talk/quickstart/names-2.json"></div></div></figure>
+  </div>
+  <!-- Line ranges of quickstart.py: the model, the scene and state, the first glimpse, the second. -->
+  <span class="fragment step-marker" data-lines="6-10"></span>
+  <span class="fragment step-marker" data-shows="scene" data-lines="11-12"></span>
+  <span class="fragment step-marker" data-shows="first" data-lines="14-17"></span>
+  <span class="fragment step-marker" data-shows="second" data-lines="19-22"></span>
+  <aside class="notes">And it's easy to use. One line to install. [click] The code. [click] Load the model from the Hub: CanViT-B and its ADE20K probe. [click] Load an image, start a state. [click] A first glimpse: the whole scene, zoomed out. Take the glimpse, run the model: you get the segmentation of the whole scene, and the new state. [click] A second glimpse, written the same way: zoom in on the left of the street. Same three lines, and people and a van appear. That's all there is to it, and it runs on a laptop.</aside>
 </section>
 
 <section id="links" data-status="draft">

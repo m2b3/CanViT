@@ -187,11 +187,11 @@
 
 #architecture-paper img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
 
-/* Canvas Vision Transformer architecture, drawn by architecture.js: the glimpse up through the blocks; then the canvas
-   before it; the writes, each followed by the canvas it leaves (--order); the reads; then the next glimpse, its
-   exchanges and canvases redrawn in depth order (--depth). Each arrow draws itself after its --delay. */
-#architecture .arch-build { position: relative; margin: 2px auto 0; }
-#architecture .arch-build > img { position: absolute; z-index: 1; border-radius: 6px; transition: opacity .5s ease; }
+/* Canvas Vision Transformer architecture, drawn by architecture.js, depth left to right: the glimpse through the
+   blocks; then the canvas before it; the writes, each followed by the canvas it leaves (--order); the reads; then the
+   next glimpse, its exchanges and canvases redrawn in depth order (--depth). Each arrow draws itself after its --delay. */
+#architecture .arch-build { position: relative; margin: 8px auto 0; }
+#architecture .arch-build > img { position: absolute; z-index: 1; border-radius: 8px; transition: opacity .5s ease; }
 #architecture .wires { position: absolute; inset: 0; z-index: 2; overflow: visible; pointer-events: none; }
 #architecture .wires.under { z-index: 0; }
 #architecture .wires :is(rect, text) { transition: opacity .5s ease; }
@@ -205,16 +205,17 @@
 #architecture .wire .head { fill: var(--ink); opacity: 0; transition: opacity .15s ease calc(var(--delay, 0s) + .45s); }
 #architecture .feed .line { stroke: var(--glimpse); stroke-width: 3; stroke-dashoffset: 0; }
 #architecture .feed .head { fill: var(--glimpse); opacity: 1; }
-#architecture .exchange-label { font: 700 17px var(--sans); fill: var(--muted); opacity: 0; }
-#architecture .label { position: absolute; margin: 0; line-height: 1.25; white-space: nowrap; transition: opacity .5s ease; }
+#architecture .exchange-label { font: 700 18px var(--sans); fill: var(--muted); opacity: 0; }
+#architecture .label { position: absolute; margin: 0; translate: -50% 0; text-align: center; line-height: 1.25;
+                       white-space: nowrap; transition: opacity .5s ease; }
 #architecture .label span { display: block; }
-#architecture .heading { translate: -50% 0; text-align: center; }
-#architecture :is(.heading, .glimpse-label, .canvas-label) span:first-child { font-size: 24px; font-weight: 750; }
+#architecture .caption span { font-size: 20px; font-weight: 700; color: var(--muted); }
+#architecture :is(.scene-label, .glimpse-label, .tower-label, .canvas-label) span:first-child { font-size: 22px; font-weight: 750; }
+#architecture .scene-label span { color: var(--ink); }
 #architecture .tower-label span { color: #7e4fa0; }
 #architecture .glimpse-label span:first-child { color: var(--glimpse); }
-#architecture .canvas-label span:first-child { color: var(--canvas); }
-#architecture :is(.glimpse-label, .canvas-label) span + span { font: 500 16px var(--mono); color: var(--text); }
-#architecture .snapshot-label { font-size: 17px; font-weight: 650; color: var(--muted); }
+#architecture .canvas-label span { color: var(--canvas); }
+#architecture .glimpse-label span + span { font: 500 15px var(--mono); color: var(--text); }
 
 #architecture :is(.canvas, .canvas-stream, .canvas-label, .snapshot-label, .next) { opacity: 0; }
 #architecture.shows-canvas :is(.before.now, .canvas-stream, .canvas-label) { opacity: 1; }

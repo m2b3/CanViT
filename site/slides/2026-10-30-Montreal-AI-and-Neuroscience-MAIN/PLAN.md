@@ -17,6 +17,14 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] `#policies`: "you will have to rethink how precisely each viewing policy is introduced, could go
+  through them one after the other instead of overloading the reader with movement, and shouldnt directly show their
+  ade20k perf, we have other slides for that, more focused". To do.
+- [Yohaï, 2026-10-01] `#history`: "i really dont believe your numbers on [...] 'The wide gap between passive and active
+  computer vision' where somehow active models would have been above relevant passive competition fyi, you will have
+  to add to todo a thorough review of that [...]". To do: a thorough review of every number on the history charts
+  against its primary source, and of which passive points count as the relevant competition (size, training data,
+  resolution, protocol), before the slide is used.
 - [Yohaï, 2026-10-01] "make sure that things work smoothly as well if we skip through slides rapidly back and forth".
   To do: a check that walks the deck forward and back quickly, every fragment, and verifies each slide's state and the
   absence of errors.

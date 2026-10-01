@@ -78,11 +78,6 @@ html, body { background: var(--bg); }
   .reveal *, .reveal *::before, .reveal *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
 }
 
-/* <deck-sequence> (sequence.js): its children stacked in one place, the current one shown. */
-deck-sequence { display: grid; }
-deck-sequence > * { grid-area: 1 / 1; visibility: hidden; }
-deck-sequence > [data-current] { visibility: visible; }
-
 /* Code, highlighted by reveal.js's highlight plugin, in light colors that avoid the glimpse, canvas and policy hues. */
 .reveal pre { position: relative; margin: 0; padding: 18px 24px; border-radius: 14px; box-shadow: none; background: var(--soft);
                color: var(--ink); font: 500 17px/1.55 var(--mono); }

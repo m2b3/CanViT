@@ -18,8 +18,6 @@
 //                                a snippet on a slide is a file that runs
 //   data-lines="A-B"             on a fragment: while it is the last shown one with data-lines, a band marks lines A
 //                                to B of its slide's code block
-// Elements a slide can use besides the project page's components: <deck-sequence> (sequence.js), its children shown
-// one at a time, played with data-play.
 
 import Reveal from "./node_modules/reveal.js/dist/reveal.mjs";
 import RevealNotes from "./node_modules/reveal.js/dist/plugin/notes.mjs";

@@ -308,7 +308,6 @@
                   transition: opacity .6s ease .3s; }
 #policies.shows-race .race { opacity: 1; }
 
-
 /* Quickstart: the install line alone and large, then small above the code. */
 #quickstart .install { position: absolute; left: 0; right: 0; top: 300px; text-align: center; transition: top .7s ease, font-size .7s ease;
                        font-size: 44px; }
@@ -385,20 +384,3 @@
 #uncertainty.shows-quadrants .quadrants span { opacity: 1; }
 #uncertainty.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }
 
-/* Reconstructing scene-wide DINOv3 embeddings: glimpses and CanViT's guess play (slow then fast), the target beside
-   them, the cosine chart below, growing with the frames (reconstruction.js). */
-#reconstruction .recon { display: grid; grid-template-columns: 624px 300px; column-gap: 24px; justify-content: center; }
-#reconstruction .heads { grid-column: 1 / -1; display: grid; grid-template-columns: 300px 300px 300px; gap: 24px;
-                         font-size: 20px; font-weight: 750; margin-bottom: 6px; }
-#reconstruction deck-sequence .frame { display: grid; grid-template-columns: 300px 300px; gap: 24px; }
-#reconstruction .recon img { display: block; width: 300px; height: 300px; border-radius: 6px; }
-#reconstruction .cosine-chart { grid-column: 1 / -1; margin-top: 14px; }
-#reconstruction .cosine-chart svg { display: block; width: 948px; height: auto; overflow: visible; }
-#reconstruction .cosine-chart text { font: 500 16px var(--sans); fill: var(--muted); }
-#reconstruction .cosine-chart .axis-title { fill: var(--text); }
-#reconstruction .cosine-chart .grid { stroke: var(--rule); }
-#reconstruction .cosine-chart .line { fill: none; stroke-width: 3.5; stroke-linejoin: round; }
-#reconstruction .cosine-chart .all { stroke: var(--ink); fill: var(--ink); }
-#reconstruction .cosine-chart .never-seen { stroke: var(--canvas); fill: var(--canvas); }
-#reconstruction .cosine-chart .line.all, #reconstruction .cosine-chart .line.never-seen { fill: none; }
-#reconstruction .cosine-chart .label { font-size: 17px; font-weight: 700; stroke: none; }

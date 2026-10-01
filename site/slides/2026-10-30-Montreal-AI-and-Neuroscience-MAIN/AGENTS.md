@@ -434,6 +434,9 @@ scene and CanViT's prediction of them after each glimpse; `export.log` has the c
   facts" for questions; the idea they support (the architecture and the learning signal are separate problems) is
   said on the distillation slide.
 - [Yohaï, 2026-10-01] His Journal of Vision work on remapping is not part of this talk.
+- [Yohaï, 2026-10-01] No slide of CanViT's guess of DINOv3's features over many glimpses with a cosine-similarity
+  chart ("Reconstructing scene-wide DINOv3 embeddings"): "this slide is horrible and now seems entirely pointless"
+  once the distillation slide showed the prediction after each glimpse. Removed with its chart code.
 - [Yohaï, 2026-10-01] Unpublished learned-policy results (CanViT-PyTorch-RL): their use is still to be decided.
 - [Yohaï, 2026-10-01] The paper's viewing policies get their own slide or slides: what each is, why it was chosen,
   shown animated on one scene.

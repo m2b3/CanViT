@@ -152,7 +152,7 @@ yet reviewed by the authors.
   RESULT with the trained model"; then: "you basically just want to show that the model produces a whole-scene
   prediction at each timestep and that it is scored with mean squared error against the teacher features at each
   timestep"]. The predictions drawn are the released CanViT-B's on that glimpse sequence (real outputs, not
-  placeholders); the result over 21 glimpses is the next part's first slide.
+  placeholders).
 - **Must:** the teacher, DINOv3 ViT-B, frozen, sees the whole scene at 512 px once and gives a feature vector for every
   patch (32 × 32): the target. The student, CanViT, gets only glimpses (128 px, anywhere, any zoom); after every
   glimpse it must output the teacher's features for the whole scene, seen or not. The loss: squared error between its
@@ -189,26 +189,6 @@ yet reviewed by the authors.
 - **Status:** to build.
 
 ## What it does
-
-### Reconstructing scene-wide DINOv3 embeddings
-- **Title:** the abstract's ("reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution
-  glimpses"); "Its best guess about the entire scene", from the transcript, was rejected [Yohaï, 2026-10-01:
-  "seriously? as a slide title?"]; "its best guess" is said.
-- **Must:** the result of that training: after each glimpse, the trained CanViT-B's guess of the teacher's map fills
-  in, including regions never inside a glimpse (the window's unseen top after a glimpse of its bottom; the bed's
-  unseen side after a glimpse of the pillow).
-- **Could:** the similarity to the target over never-seen patches (said: cosine 0.72 → 0.89 over 8 glimpses, in
-  DINOv3 space).
-- **Builds:** three panels: glimpses so far (boxes on the scene), CanViT's guess, DINOv3's target; glimpse by glimpse.
-  [Yohaï, 2026-10-01, an idea: "have the glimpses be slow then fast (just like on the 'in action' demo), log-space the
-  x axis of number of glimpses maybe, and how the cosine similarity with the teacher features evolves"]: the glimpses
-  slow at first, then faster, as `<canvit-episode>` paces them; beside the panels, the guess's cosine similarity to the
-  teacher (all patches and never-seen patches) against the number of glimpses on a log axis, growing as they play;
-  more glimpses than 8 (export up to 21) so the log axis has room.
-- **Example properties** [stated 2026-10-01, before the sweep]: a recognizable scene whose teacher map shows objects as
-  distinct regions; random glimpses (pretraining's distribution) that leave large parts unseen; a guess that visibly
-  improves, also where never seen. Chosen: ADE_val_00000124 (sweep over ADE20K validation, `throwaway/distillation`).
-- **Status:** to build (data exported).
 
 ### CanViT in action
 - **Title:** the project page's "See it in action", with the model named [Yohaï, 2026-10-01].

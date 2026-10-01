@@ -20,15 +20,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#live`: "the live explorer from 'A general-purpose observer lets you use any policy' should be
   renamed 'Live demo' and the component should be extracted cleanly such that we can have such a thing on the
   website". To do.
-- [Yohaï, 2026-10-01] `#distillation` "is completely terrible ... needs to be entirely reworked. the fancy curved arrows
-  etc do nothing for it. having something relatively static where you unroll the timesteps across time (maybe we
-  transition one timestep to next, showing them next to each other, time left-to-right) could work. you basically just
-  want to show that the model produces a whole-scene prediction at each timestep and that it is scored with mean
-  squared error against the teacher features at each timestep. you can duplicate the teacher features, we want things
-  to align in terms of columns etc. this should not need curved arrows"; and "be visually consistent, when you have
-  CanViT in a diagram use the logo". In progress.
+- [Yohaï, 2026-10-01] `#distillation` "is completely terrible ... needs to be entirely reworked": rebuilt the same day
+  as a training step unrolled in time (`OUTLINE.md`); awaiting the authors' look. The predictions shown are the
+  released model's; placeholders instead would be a one-line change.
 - [Yohaï, 2026-10-01] `#quickstart`: "the quickstart example is bad, don't define both glimpses upfront, don't use a
-  for loop, inline, and improve the viz / animation". To do.
+  for loop, inline, and improve the viz / animation". In progress.
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:
   Aborted(InternalError: out of memory)". Measured on 2026-10-01 in headless Chromium (`throwaway/live_memory.py`,
   `slide_memory.py`, `live_wasm.py`): the deck with no slide 376 MB RSS; every slide without the model 1.46 GB (static
@@ -49,14 +45,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   ADE20K probe, `hub.repos.released_dinov3_ade20k_probe("dv3b", input_size_px=128)`), on the rollout, extrapolation
   and detail slides; the paper's numbers for the matched comparison (passive_comparison_rows: DINOv3 ViT-B at 128 px
   28.8 mIoU against CanViT-B's 29.3 to 39.6 from one full-scene glimpse) say why it matters.
-- [Yohaï, 2026-10-01] `#distillation`: "this slide is currently terrible. you should absolutely distinguish the
-  TRAINING PROCESS from the RESULT with the trained model anyway. it needs to be completely reworked and you need to
-  think of what we want to show and get across. also what about policy-agnostic pretraining...". Split into three
-  (`OUTLINE.md`): the recipe (teacher, glimpses, target, loss; no trained model on screen), policy-agnostic
-  pretraining (random places, zooms and lengths, two rollouts per scene; viewpoints drawn by the package's own
-  sampler), and the result (the trained model's guess filling in, on ADE_val_00000124, chosen by the 2026-10-01 sweep
-  over ADE20K validation; the conference room was natively 256 px). Idea for the result slide [Yohaï]: glimpses slow then fast, and the
-  cosine similarity to the teacher against glimpses on a log axis (`OUTLINE.md`).
 - [Yohaï, 2026-10-01] `#uncertainty`'s title: "terrible title for a slide. think of possible titles". Proposed
   "Uncertainty-based viewpoint selection" (on the slide), "Entropy-Guided Coarse-to-Fine", "Guiding viewpoint
   selection with the canvas"; the authors choose.
@@ -77,8 +65,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] The memory slide: retitled; rebuilt on a street (sign, people, bicycle) from a sweep of 6,218
   three-object sequences; awaiting the authors' look (alternative: a bedroom).
 - [Yohaï, 2026-10-01] "Spatial coverage and perception of detail" (`#detail`): "the idea ... is good and nice but the
-  way it is showed is really not good atm". Rebuilt 2026-10-01 (one example, a zoom into the model's own input);
-  awaiting the authors' look.
+  way it is showed is really not good atm". Rebuilt 2026-10-01 (one example, a zoom into the model's own input), moved
+  into the main talk, its map changing on its input's click; awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#uncertainty`: "metacognition" said with its scope (`sources/concepts.md`: Fleming 2024 keeps
   "sensitivity to uncertainty" apart from metacognition; Renninger, Verghese & Coughlan 2007: people fixate where
   uncertainty is highest, EG-C2F's rule); decide the wording with the authors.

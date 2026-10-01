@@ -11,8 +11,8 @@ an earlier note is a pointer to that source, never a substitute for reading it.
 
 ## What lives where
 
-- `deck.js`, `deck.css`, `sequence.js`: the deck every talk runs on (reveal.js at 1280 × 720, the page's light
-  identity from `../css/canvit.css`) and its own elements (`<deck-sequence>`); `deck.css` also holds the utilities
+- `deck.js`, `deck.css`: the deck every talk runs on (reveal.js at 1280 × 720, the page's light identity from
+  `../css/canvit.css`); `deck.css` also holds the utilities
   every talk may use (`.draw` arrows, `.marks` rings, `.step-marker`). Slide conventions are documented at the top of `deck.js`: `data-play`,
   `data-canvit-target`/`data-canvit-t`, `data-shows`, `<section data-status>`.
 - `package.json`: reveal.js, pinned and installed locally (`npm ci --prefix site/slides`), so a talk runs offline.

@@ -87,13 +87,14 @@
 .reveal .history-chart .label { font-size: 20px; font-weight: 600; fill: var(--text); }
 .reveal .history-chart .label.head { font-weight: 800; fill: var(--ink); }
 .reveal .history-chart .active circle { fill: #d97706; stroke: var(--bg); stroke-width: 2; }
-.reveal .history-chart .active .label { fill: #b45309; font-weight: 700; }
+.reveal .history-chart .active .label { fill: #b45309; font-weight: 700; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
 .reveal .history-chart .active .label.head { fill: #b45309; }
 .reveal .history-chart .gap .bracket { fill: none; stroke: #b45309; stroke-width: 3; }
 .reveal .history-chart .gap .gap-label { font-size: 28px; font-weight: 800; fill: #b45309; }
 .reveal .history-chart .canvit circle { stroke: var(--canvas); stroke-width: 4; }
 .reveal .history-chart .canvit .filled { fill: var(--canvas); }
 .reveal .history-chart .canvit .hollow { fill: var(--bg); }
+.reveal .history-chart .canvit .leader { fill: none; stroke: var(--canvas); stroke-width: 1.5; }
 .reveal .history-chart .canvit .label { fill: var(--canvas); font-weight: 800; font-size: 21px;
                                          paint-order: stroke; stroke: var(--bg); stroke-width: 6px; }
 .reveal .history-chart g { transition: opacity .5s ease; }

@@ -1,8 +1,8 @@
 // Year against accuracy on one benchmark, passive against active computer vision. Color is the family (passive ink,
 // active amber, CanViT canvas red); solid lines and filled points are trained end to end, dashed lines and hollow points
 // are frozen features with linear decoding. Everything is labeled where it is drawn, with no key: the two passive lines
-// at their ends under one "Passive" heading, each active model at its point with "Active models" under them, CanViT-B
-// at its points. Points come from sources/sota-history.json (each read in its paper; its _about defines the series),
+// at their ends under one "Passive" heading, each active model at its point with "Active models" under them, CanViT-B's
+// results in the margin under a "CanViT-B" heading, each joined to its point. Points come from sources/sota-history.json (each read in its paper; its _about defines the series),
 // CanViT-B's from the paper's macros. The passive lines are the best base-size model trained end to end (a step line)
 // and the best base-size frozen features (dashed); the active models are those of the timeline slide, each at its
 // paper's best number. A bracket marks the gap between the best active model and the frozen line. With data-canvit,
@@ -17,10 +17,10 @@ const CANVIT_YEAR = 2026.2;
 
 const BENCHMARKS = {
   imagenet: { key: "imagenet_top1", unit: "ImageNet-1k top-1 accuracy (%)", years: [2012, END], range: [60, 95], step: 10,
-              canvit: [{ macro: "inkFinetunedBest", label: "CanViT-B, fine-tuned", filled: true },
-                       { macro: "inkFrozenBest", label: "CanViT-B, frozen", filled: false }] },
+              canvit: [{ macro: "inkFinetunedBest", label: "fine-tuned", filled: true },
+                       { macro: "inkFrozenBest", label: "frozen", filled: false }] },
   ade20k: { key: "ade20k_miou", unit: "ADE20K mIoU (%)", years: [2016, END], range: [10, 70], step: 10,
-            canvit: [{ macro: "adeBestMiou", label: "CanViT-B, frozen", filled: false }] },
+            canvit: [{ macro: "adeBestMiou", label: "frozen", filled: false }] },
 };
 
 // Entries sota-history.md flags as unreproduced or as two-model systems; the frontier is drawn without them.
@@ -30,7 +30,7 @@ const ACTIVE = [
   { model: /^Saccader/, name: "Saccader", dx: -16, dy: 8, anchor: "end" },
   { model: /^GFNet/, name: "GFNet", dx: -16, dy: 8, anchor: "end" },
   { model: /^AdaGlimpse/, name: "AdaGlimpse", dx: 0, dy: 34, anchor: "middle" },
-  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: 0, dy: 34, anchor: "middle" },
+  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: -16, dy: 8, anchor: "end" },
   { model: /^AME/, name: "AME", dx: 0, dy: 34, anchor: "middle" },
 ];
 
@@ -92,7 +92,8 @@ function draw(container, data, macros) {
   text("trained end to end", { x: labelX, y: passiveY, class: "label" }, passiveGroup);
   const frozenGroup = el("g", { class: "frozen" }, svg);
   el("path", { d: step(frozen), class: "line" }, frozenGroup);
-  text("frozen + linear decoding", { x: labelX, y: Math.max(y(frozenTop) + 7, passiveY + 28), class: "label" }, frozenGroup);
+  const frozenY = Math.max(y(frozenTop) + 7, passiveY + 28);
+  text("frozen + linear decoding", { x: labelX, y: frozenY, class: "label" }, frozenGroup);
 
   const activeGroup = el("g", { class: "active" }, svg);
   const shown = ACTIVE.flatMap((a) => {
@@ -118,12 +119,22 @@ function draw(container, data, macros) {
 
   if (container.hasAttribute("data-canvit")) {
     const canvit = el("g", { class: "canvit" }, svg);
-    for (const { macro, label, filled } of spec.canvit) {
+    // Named in the margin like the passive lines, under a "CanViT-B" heading below them, each result joined to its
+    // point by a leader.
+    const values = spec.canvit.map(({ macro, ...rest }) => {
       const value = Number(macros[macro]);
       if (!Number.isFinite(value)) throw new Error(`history chart: macro ${macro} is missing`);
-      el("circle", { cx: x(CANVIT_YEAR), cy: y(value), r: 12, class: filled ? "filled" : "hollow" }, canvit);
-      // Below its point, clear of the lines that pass at its height.
-      text(`${label}: ${value}`, { x: x(CANVIT_YEAR) + 12, y: y(value) + 40, "text-anchor": "end", class: "label" }, canvit);
+      return { value, ...rest };
+    });
+    let floor = Math.max(frozenY + 44, y(values[0].value) - 20);
+    text("CanViT-B", { x: labelX, y: floor, class: "label head" }, canvit);
+    for (const { value, label, filled } of values) {
+      const [px, py] = [x(CANVIT_YEAR), y(value)];
+      const ly = Math.max(py + 7, floor + 28);
+      floor = ly;
+      el("path", { d: `M${px + 14},${py}L${labelX - 8},${ly - 7}`, class: "leader" }, canvit);
+      el("circle", { cx: px, cy: py, r: 12, class: filled ? "filled" : "hollow" }, canvit);
+      text(`${label} ${value}`, { x: labelX, y: ly, class: "label" }, canvit);
     }
   }
   container.replaceChildren(svg);

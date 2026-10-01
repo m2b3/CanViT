@@ -17,6 +17,12 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] `#cost`, on "AdaptiveNN 82.2, training compute not disclosed": "??? should be possible to read
+  the code, the paper, etc, and figure this [...] out i think, we shall see". In progress: AdaptiveNN's ImageNet-1k
+  training FLOPs counted from its paper and code under the rebuttal's conventions; AdaGlimpse's ADE20K training too.
+- [Yohaï, 2026-10-01] `#policy-accuracy`: "C2F should be above F-IID not below, since it is better - on in1k". The two
+  end level on ImageNet-1k (81.13 against 81.14% top-1 after 21 glimpses); labels now stack by end value to 0.1 point,
+  ties going to the higher mean over the glimpses, which puts C2F above.
 - [Yohaï, 2026-10-01] `#policies`: "you will have to rethink how precisely each viewing policy is introduced, could go
   through them one after the other instead of overloading the reader with movement, and shouldnt directly show their
   ade20k perf, we have other slides for that, more focused". To do.

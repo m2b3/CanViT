@@ -501,3 +501,7 @@
 #uncertainty.shows-quadrants .quadrants span { opacity: 1; }
 #uncertainty.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }
 
+
+/* The divider before the Backup slides. */
+#backup .divider { display: grid; place-items: center; height: 100%; margin: 0; font-size: 96px; font-weight: 800;
+                   letter-spacing: -.03em; color: var(--muted); }

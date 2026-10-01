@@ -138,23 +138,30 @@ class CanvitPolicyCurves extends HTMLElement {
     const clip = el("clipPath", { id: "plot" }, el("defs", {}, svg));
     el("rect", { x: plot.left, y: plot.top - 6, width: plot.right - plot.left + 8, height: plot.bottom - plot.top + 6 }, clip);
     const lines = el("g", { "clip-path": "url(#plot)" }, svg);
-    // Heads are labeled in order of height, each at least LABEL_GAP below the one above, so close lines stay legible.
-    const heads = [];
-    for (const curve of this.#curves) {
-      const { label, color } = POLICIES[curve.policy];
-      const points = curve.per_timestep.slice(0, shown).map((p) => [x(p.t), y(100 * p.mean)]);
+    // Policies rank by their end value (to 0.1 point; a tie goes to the higher mean over the glimpses shown). The
+    // higher-ranked curve and head are drawn over the others, and heads are labeled in rank order, each label at least
+    // LABEL_GAP below the one above, so close lines stay legible.
+    const ranked = this.#curves.map((curve) => {
+      const shownPoints = curve.per_timestep.slice(0, shown);
+      const means = shownPoints.map((p) => p.mean);
+      return { ...POLICIES[curve.policy], points: shownPoints.map((p) => [x(p.t), y(100 * p.mean)]),
+               end: Math.round(1000 * means.at(-1)), mean: means.reduce((a, b) => a + b) / means.length };
+    }).sort((a, b) => b.end - a.end || b.mean - a.mean);
+    for (const { points, color } of [...ranked].reverse()) {
       el("polyline", { class: "curve", points: points.map((p) => p.join(",")).join(" "), stroke: color }, lines);
-      const [hx, hy] = points.at(-1);
-      if (hy > plot.bottom || hy < plot.top) continue;  // a head below the range is not drawn or named yet
-      el("circle", { class: "head", cx: hx, cy: hy, r: 5.5, fill: color }, svg);
-      heads.push({ hx, hy, label, color });
     }
-    heads.sort((a, b) => a.hy - b.hy);
+    // A head below or above the range is not drawn or named yet.
+    const heads = ranked.filter(({ points }) => points.at(-1)[1] <= plot.bottom && points.at(-1)[1] >= plot.top);
+    for (const { points, color } of [...heads].reverse()) {
+      const [hx, hy] = points.at(-1);
+      el("circle", { class: "head", cx: hx, cy: hy, r: 5.5, fill: color }, svg);
+    }
     let floor = -Infinity;
-    for (const head of heads) {
-      const ly = Math.max(head.hy + 5, floor + LABEL_GAP);
+    for (const { points, label, color } of heads) {
+      const [hx, hy] = points.at(-1);
+      const ly = Math.max(hy + 5, floor + LABEL_GAP);
       floor = ly;
-      el("text", { class: "label", x: head.hx + 10, y: ly, fill: head.color }, svg).textContent = head.label;
+      el("text", { class: "label", x: hx + 10, y: ly, fill: color }, svg).textContent = label;
     }
   }
 }

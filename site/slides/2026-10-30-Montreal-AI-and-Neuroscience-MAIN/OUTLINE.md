@@ -423,6 +423,9 @@ yet reviewed by the authors.
 
 ## Backup (place in the story to be settled)
 
+A divider slide, "Backup", opens the section [Yohaï, 2026-10-01: "add a clear separator for the backup slides portion
+btw (even if it just says 'Backup')"].
+
 ### End-to-end policy learning (reserved)
 - **Title:** to choose with the authors ("What about RL?" was floated as a spoken framing).
 - **Must:** with a good observer, learning a policy becomes easy: a policy trained on top of the frozen CanViT-B

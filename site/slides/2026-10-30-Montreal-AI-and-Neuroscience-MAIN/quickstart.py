@@ -16,7 +16,7 @@ viewpoint = Viewpoint.full_scene(batch_size=1, device=scene.device)
 glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px=128)
 logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)  # [1, 150, 64, 64]
 
-# A second glimpse: zoomed in on the left of the street
+# A second glimpse, zoomed in on the left of the street: centers (row, col), scales
 viewpoint = Viewpoint(centers=torch.tensor([[0.0, -0.4]]), scales=torch.tensor([0.5]))
 glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px=128)
 logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)

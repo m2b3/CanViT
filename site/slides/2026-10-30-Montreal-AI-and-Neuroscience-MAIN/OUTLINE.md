@@ -171,7 +171,7 @@ yet reviewed by the authors.
 - **Says:** a Vision Transformer backbone sees each glimpse; the canvas holds the scene. "I put the intelligence on the
   Vision Transformer side." The canvas answers, "at any point in time and for any position: what does the model think
   is there?" Reads condition the backbone on the canvas: top-down feedback. Blue for the glimpse, red for the canvas.
-  The memory "dumb, but not too dumb" (the canvas never goes through a learned layer), cheap to read and write, is said
+  The memory "dumb, but not too dumb" (the canvas never goes through a learned projection, only a LayerNorm), cheap to read and write, is said
   here, since Canvas Attention is in Backup.
 - **Status:** draft (built 2026-10-01; replaces the paper's figure, `PLAN.md` "Decisions for the authors").
 

@@ -157,6 +157,18 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Next
 
+- An independent cold read of the deck (2026-10-01, `sources/talk-review.md`), its precision fixes applied. Open:
+  - The neuroscience case closes only in the notes ("networks that got good at vision turned out to be good models of
+    the visual cortex; active models were never good enough to enter that comparison"); `#neuro-ai` could call back
+    the Brain-Score figure of `#tradition` on screen.
+  - "Metacognition" on `#uncertainty` is asserted: whether the probe's entropy predicts its errors is not shown. An
+    experiment: entropy against error over ADE20K validation (an AUROC, or accuracy by entropy bin). S.
+  - `#cost` argues cheap adaptation but plots pretraining; the adaptation (0.16 EFLOPs for the ADE20K probe, 4.76 for
+    ImageNet-1k LP-FT) is only in the notes.
+  - `#neuro-ai`'s top-down feedback card (C2F against F2C) also changes the order of writes; the paper's no-reads
+    ablation is a more direct measure of feedback.
+  - Pacing: CanViT first appears about ten minutes in, and four benchmark and cost slides run back to back before
+    `#neuro-ai`, where neuroscientists may drift.
 - [Yohaï, 2026-10-01, an idea for after the rest] Give a sense of how good DINOv3 is and how much went into it: its
   training data (LVD-1689M, 1.7 billion images), the 7B teacher it is distilled from, its compute, where it stands on
   dense benchmarks; every number read in the DINOv3 paper (Siméoni et al. 2025, arXiv:2508.10104). A build state of

@@ -148,7 +148,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   Kauffmann et al. 2015) beside C2F against F2C; uncertainty-driven fixations (Renninger et al. 2007) on
   `#uncertainty`; amodal completion and boundary extension on `#table` and `#extrapolation`; as keywords and a backup
   slide with their figures. S.
-- `#neuro-ai`: three lines of text on a half-empty slide; needs a visual. S–M.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
 - Independent reviews of `OUTLINE.md` (a fresh subagent; `codex exec -m gpt-6-astra`), then the authors'. S.
 

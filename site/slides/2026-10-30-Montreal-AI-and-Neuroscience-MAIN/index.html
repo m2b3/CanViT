@@ -485,12 +485,35 @@
 
 <section id="neuro-ai" data-status="draft">
   <h2>Toward action-aware neuro-AI research on vision</h2>
-  <div class="questions">
-    <p class="fragment">What is kept from one view to the next?</p>
-    <p class="fragment">How does what was seen change how the next view is processed?</p>
-    <p class="fragment">How do human scanpaths compare with policies on the same observer?</p>
+  <!-- Each question beside the demonstration in this talk that shows it can be asked of CanViT, in the colors of the
+       three parts of an active-vision model (#active-vision-model): instantaneous vision, memory, action selection.
+       Top-down feedback: C2F against F2C on ADE20K, the same viewpoints in another order (#policy-accuracy). Memory:
+       the street of #memory after its third glimpse, kept and reset. Scanpaths: Yarbus's record over a face beside
+       EG-C2F's first glimpses on the street of #policies. -->
+  <div class="asks">
+    <article class="ask fragment" style="--accent: var(--glimpse)">
+      <h3>Top-down feedback</h3>
+      <div class="visual"><canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" policies="coarse_to_fine fine_to_coarse" y-range="0 50" x-scale="log"></canvit-policy-curves></div>
+      <p>How does what was seen change how the next view is processed?</p>
+    </article>
+    <article class="ask fragment" style="--accent: var(--canvas)">
+      <h3>Trans-saccadic memory</h3>
+      <div class="visual pair">
+        <figure><img class="pixels" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="After three glimpses, memory kept: the sign, the people and the bicycle"><figcaption>kept</figcaption></figure>
+        <figure><img class="pixels" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="Memory reset before each glimpse: only the bicycle"><figcaption>reset</figcaption></figure>
+      </div>
+      <p>What is kept from one view to the next?</p>
+    </article>
+    <article class="ask fragment" style="--accent: var(--policy)">
+      <h3>Scanpaths</h3>
+      <div class="visual pair">
+        <figure><img class="scanpath" src="assets/figures/yarbus-1967-face.png" alt="An observer's eye movements over a face"><figcaption>Yarbus 1967</figcaption></figure>
+        <figure><canvit-rollout class="policy" src="../../data/street-egc2f" t="5"><canvit-scene trail="past"></canvit-scene></canvit-rollout><figcaption></figcaption></figure>
+      </div>
+      <p>How do human scanpaths compare with policies on the same observer?</p>
+    </article>
   </div>
-  <aside class="notes">So what does this give us? An observer we can use to ask questions about active vision. What is kept from one view to the next. How what was seen changes how the next view is processed. How human scanpaths compare with policies on the same observer. It has limits: static scenes, and it needs a passive teacher. Others are moving this way: Thorat and colleagues trained models to predict the next glimpse along human scanpaths and got representations aligned with 7 tesla fMRI. We hope CanViT is the first of many Active-Vision Foundation Models.</aside>
+  <aside class="notes">So what does this give us? An observer we can ask questions about active vision. [click] Top-down feedback: how what you saw changes how you process what you see next. Coarse-to-fine against fine-to-coarse: by the end, the same views, in another order, and a different result. [click] Trans-saccadic memory: what is kept from one view to the next. With the memory, the sign, the people and the bicycle; without it, only the last thing seen. What it keeps, for which objects, for how long, can now be measured and set beside what people keep across saccades. [click] Scanpaths: on the same observer, a human scanpath is just another policy, so it can be compared with coarse-to-fine or with a policy that looks where it is uncertain. It has limits: static scenes, and it needs a passive teacher. Others are moving this way: Thorat and colleagues trained models to predict the next glimpse along human scanpaths and got representations aligned with 7 tesla fMRI. We hope CanViT is the first of many Active-Vision Foundation Models.</aside>
 </section>
 
 <section id="quickstart" data-status="draft">

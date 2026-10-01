@@ -1,10 +1,11 @@
-// <canvit-policy-curves src task="ade20k|in1k" canvas-grid y-range="LO HI" [x-scale="linear|log"] [t]>: CanViT-B's
-// accuracy under each of the paper's viewing policies, glimpse by glimpse, over a whole validation set (mean over
-// runs), from the paper's exports: ADE20K mIoU (ade20k_seg.json, policy_curves) or frozen ImageNet-1k top-1
-// (in1k_clf_frozen.json, configs). y-range fixes the vertical axis in percent, so charts of the two tasks can share a
-// span of points; lines are clipped to it, so a narrow range shows the end of the rollouts with the low starts
-// entering from below. Lines are drawn up to glimpse t (all without t), each in its policy's color from the paper's
-// figures and named at its head; a slide drives t to grow them in step with recorded rollouts.
+// <canvit-policy-curves src task="ade20k|in1k" canvas-grid y-range="LO HI" [x-scale="linear|log"] [policies] [t]>:
+// CanViT-B's accuracy under the paper's viewing policies (all those the task evaluates, or the ids listed in
+// policies), glimpse by glimpse, over a whole validation set (mean over runs), from the paper's exports: ADE20K mIoU
+// (ade20k_seg.json, policy_curves) or frozen ImageNet-1k top-1 (in1k_clf_frozen.json, configs). y-range fixes the
+// vertical axis in percent, so charts of the two tasks can share a span of points; lines are clipped to it, so a narrow
+// range shows the end of the rollouts with the low starts entering from below. Lines are drawn up to glimpse t (all
+// without t), each in its policy's color from the paper's figures and named at its head; a slide drives t to grow them
+// in step with recorded rollouts.
 
 import { POLICIES } from "./policies.js";
 
@@ -50,7 +51,7 @@ function required(element, name) {
 }
 
 class CanvitPolicyCurves extends HTMLElement {
-  static observedAttributes = ["src", "task", "canvas-grid", "y-range", "x-scale", "t"];
+  static observedAttributes = ["src", "task", "canvas-grid", "policies", "y-range", "x-scale", "t"];
   #curves = null;
   #loadVersion = 0;
 
@@ -90,10 +91,13 @@ class CanvitPolicyCurves extends HTMLElement {
     if (!response.ok) throw new Error(`<canvit-policy-curves>: could not fetch ${src}: HTTP ${response.status}`);
     const data = await response.json();
     if (version !== this.#loadVersion) return;
-    const curves = task.curves(data).filter((c) => c.scene_size === SCENE_SIZE && c.canvas_grid === grid);
+    const wanted = this.getAttribute("policies")?.trim().split(/\s+/) ?? task.policies;
+    const unknown = wanted.filter((policy) => !task.policies.includes(policy));
+    if (unknown.length) throw new Error(`<canvit-policy-curves>: policies "${unknown.join(" ")}" not evaluated on ${this.getAttribute("task")}`);
+    const curves = task.curves(data).filter((c) => c.scene_size === SCENE_SIZE && c.canvas_grid === grid && wanted.includes(c.policy));
     const found = curves.map((c) => c.policy).sort().join(" ");
-    if (found !== [...task.policies].sort().join(" ")) {
-      throw new Error(`<canvit-policy-curves>: ${src} at a ${grid}² canvas has policies "${found}", expected "${task.policies.join(" ")}"`);
+    if (found !== [...wanted].sort().join(" ")) {
+      throw new Error(`<canvit-policy-curves>: ${src} at a ${grid}² canvas has policies "${found}", expected "${wanted.join(" ")}"`);
     }
     this.#curves = curves;
     this.#render();

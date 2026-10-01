@@ -277,8 +277,21 @@
 
 #live .live-stage { width: 1100px; margin: 0 auto; font-size: 15px; zoom: .8; }
 
-#neuro-ai .questions { margin-top: 50px; }
-#neuro-ai .questions p { margin-bottom: 34px; font-size: 34px; font-weight: 650; letter-spacing: -.01em; }
+/* Three questions, each over the demonstration in this talk that shows it can be asked of CanViT; accents of the
+   three parts of an active-vision model. */
+#neuro-ai .asks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 30px; }
+#neuro-ai .ask { display: flex; flex-direction: column; padding: 20px 14px 24px; border: 1px solid var(--rule);
+                 border-top: 6px solid var(--accent); border-radius: 16px; }
+#neuro-ai .ask h3 { color: var(--accent); font-size: 28px; text-align: center; white-space: nowrap; }
+#neuro-ai .visual { display: grid; align-content: center; height: 300px; margin: 14px 0 18px; }
+#neuro-ai .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+#neuro-ai .pair figure { margin: 0; }
+#neuro-ai .pair img, #neuro-ai .pair canvit-rollout { display: block; width: 100%; aspect-ratio: 1; border-radius: 8px; }
+#neuro-ai .pair .scanpath { object-fit: cover; object-position: 50% 100%; }
+#neuro-ai .pair figcaption { margin-top: 6px; font-size: 17px; font-weight: 700; text-align: center; color: var(--muted); }
+#neuro-ai .pair figcaption span { display: none; }
+#neuro-ai .pair figcaption b { color: var(--canvit-glimpse); }
+#neuro-ai .ask p { margin-top: auto; font-size: 24px; font-weight: 650; line-height: 1.3; text-align: center; }
 
 #links .layout { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding-top: 4px; }
 #links .qr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }

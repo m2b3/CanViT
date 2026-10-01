@@ -452,20 +452,22 @@
   <!-- Why cost matters, training first [Yohaï, 2026-10-01: "properly make the case of why anyone would give a [...]
        about efficiency (it's about money, making experiments cheap, etc)"; "for scientists, remember that TRAINING cost
        is main concern; inference can also be relevant tho"]. 166 h, 1 billion glimpses: the paper (abstract, section 6);
-       teacher features 8 H100-equivalent hours: its appendix on pretraining; under 800 USD and 15 h on a TPU v6e-4: its
-       compute declarations. Latencies: cost.js, from the paper's hw_bench.json (minimum latency, 64 x 64 canvas). -->
+       teacher features 8 H100-equivalent hours: its appendix on pretraining; the reported ImageNet-1k fine-tuning run,
+       under 15 wall-clock hours on a TPU v6e-4: its compute declarations (their "under 800 USD" is every ImageNet-1k
+       fine-tuning experiment together, failures and sweeps included, not the cost of a run). Latencies: cost.js, from
+       the paper's hw_bench.json (minimum latency, 64 x 64 canvas). -->
   <div class="costs">
     <div class="cost train"><p class="what">Train once</p><p class="number">166 h</p>
       <p class="detail">one H100 GPU, from scratch,<br>1 billion glimpses</p></div>
-    <div class="cost adapt"><p class="what">Adapt</p><p class="number">&lt; $800</p>
-      <p class="detail">fine-tuning on ImageNet-1k,<br>or just a linear layer</p></div>
+    <div class="cost adapt"><p class="what">Adapt</p><p class="number">&lt; 15 h</p>
+      <p class="detail">fine-tuning on ImageNet-1k,<br>one TPU v6e-4;<br>or just a linear layer</p></div>
     <div class="cost run"><p class="what">Run</p><p class="number"><span data-latency="cuda amp-bf16 16"></span> ms</p>
       <p class="detail">per glimpse on an RTX 4090,<br><span data-latency="cpu fp32 16"></span> ms on a desktop CPU</p></div>
   </div>
   <span class="fragment step-marker" data-shows="train"></span>
   <span class="fragment step-marker" data-shows="adapt"></span>
   <span class="fragment step-marker" data-shows="run"></span>
-  <aside class="notes">Why should you care about cost? Because compute is money and time. A model that is cheap to train, adapt and run makes every experiment cheaper: more scenes, more glimpses, more policies, policies learned by trial and error, and all of it within reach of a lab without a cluster. [click] Training first. CanViT-B was pretrained once, from scratch, in 166 hours on a single GPU, about a billion glimpses; and it's released, so you don't have to. [click] Adapting it to your task: a linear layer on the frozen canvas, as you've seen; or fine-tune the whole model: ImageNet-1k cost us under 800 dollars. [click] Running it: one glimpse in about two milliseconds on a gaming GPU, and under a fifth of a second on a desktop CPU. Now, accuracy against the compute it takes to run.</aside>
+  <aside class="notes">Why should you care about cost? Because compute is money and time. A model that is cheap to train, adapt and run makes every experiment cheaper: more scenes, more glimpses, more policies, policies learned by trial and error, and all of it within reach of a lab without a cluster. [click] Training first. CanViT-B was pretrained once, from scratch, in 166 hours on a single GPU, about a billion glimpses; and it's released, so you don't have to. [click] Adapting it to your task: a linear layer on the frozen canvas, as you've seen; or fine-tune the whole model: our ImageNet-1k fine-tuning run took under 15 hours on four cloud TPU chips. [click] Running it: one glimpse in about two milliseconds on a gaming GPU, and under a fifth of a second on a desktop CPU. Now, accuracy against the compute it takes to run.</aside>
 </section>
 
 <section id="frontier" data-status="draft">

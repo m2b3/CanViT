@@ -200,6 +200,9 @@ From an independent review of the draft (Codex, model gpt-6-astra, 2026-10-01; i
 authors' data and the history data:
 
 - 38.5% mIoU "in a single glimpse" is a single low-resolution glimpse of the *full scene*; say so.
+- "Under 800 USD" (App. H) is everything the ImageNet-1k fine-tuning experiments cost together, never the cost of a
+  fine-tuning run [Yohaï, 2026-10-01: "thats not the cost of a finetuning run thats everything i spent on a few days of
+  experiments including failures and HPs"]. The run itself: under 15 wall-clock hours on a TPU v6e-4.
 - "Perception, not viewpoint selection, was the bottleneck" is the paper's sentence; the evidence is CanViT beating
   the prior models even with F2C.
 - "Any policy" means the tested policies, horizons and resolutions.
@@ -294,8 +297,9 @@ The paper [read 2026-10-01]:
 - App. C: teacher features computed once, about 8 H100-equivalent hours, about 19 TiB in float16.
 - App. G (canvas evolution figure): Write 0's residual follows the glimpse's 8 × 8 patch grid; Write 1's, the
   objects in the glimpse; Write 2's extrapolates beyond the glimpse.
-- App. H: about 2500 H100-equivalent hours for the whole project; ImageNet-1k fine-tuning under 800 USD, under 15 h
-  on a TPU v6e-4.
+- App. H: about 2500 H100-equivalent hours for the whole project; the ImageNet-1k fine-tuning experiments together
+  (failed runs, preliminary experiments and sweeps included) under 800 USD; the reported fine-tuning run under 15
+  wall-clock hours on a TPU v6e-4.
 - Figure exports (SVG, PDF and their JSON data): `~/code/CanViT-Toward-AVFMs/latex/figures/exported/`;
   `../../copy_paper_figures.sh` copies the ones the site shows into `../../assets/paper/`.
 
@@ -328,7 +332,8 @@ received, so the talk may say it:
 - Training compute, as posted: 166 H100-hours of pretraining plus 8 H100-equivalent hours of teacher features (174);
   computing the teacher online instead of caching would make it about 246 and remove the 19 TiB. AdaGlimpse,
   estimated from its repository's "around 1 week on 4x A100 GPUs": 210–410 H100-equivalent hours. ImageNet-1k
-  fine-tuning: under 800 USD (App. H).
+  fine-tuning: the reported run under 15 wall-clock hours on a TPU v6e-4; every fine-tuning experiment together under
+  800 USD (App. H).
 - The architecture control, as posted: CanViT-B 96.5 M parameters against an AdaGlimpse baseline of 112.3 M, both
   from random initialization on the same DINOv3 harness (ImageNet-1k scenes, about 110 M glimpses); 22 against 212
   TPU v6e chip-hours to pretrain; per glimpse 15.8 against 70.2 GFLOPs, so four CanViT glimpses cost less than the
@@ -354,7 +359,7 @@ received, so the talk may say it:
   differences are wall time as disclosed (AdaGlimpse's README about 672 A100-hours; CanViT 166 H100-hours plus 8),
   AME's inherited weights, and that CanViT-B is one task- and policy-agnostic model where the others are trained per
   task. For a scientist the training cost that follows is adapting it: a linear probe on frozen features, or LP-FT
-  (ImageNet-1k fine-tuning under 800 USD, under 15 h on a TPU v6e-4); never claim CanViT-B was cheaper to pretrain
+  (the reported ImageNet-1k run under 15 wall-clock hours on a TPU v6e-4); never claim CanViT-B was cheaper to pretrain
   than every prior model.
 - The VPE token helps at long horizons and fine canvases (+1.28 mIoU at t = 20, 64² canvas); EG-C2F's viewpoint
   selection costs about 1–5 MFLOP, under 0.03% of a glimpse.

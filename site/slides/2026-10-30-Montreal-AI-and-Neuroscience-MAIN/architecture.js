@@ -120,7 +120,7 @@ export async function drawArchitecture(container) {
   const canvasBefore = t === 0 ? `${src}/${manifest.initial_canvas}` : layer(glimpse(t - 1), "canvas");
   image("canvas pixels before now", canvasBefore, before, container);
   image("canvas pixels before next", layer(now, "canvas"), before, container);
-  label("caption canvas-label", [`Canvas, ${manifest.canvas_grid} × ${manifest.canvas_grid}`], before.x + CANVAS.size / 2, CAPTION_Y, container);
+  label("caption canvas-label", ["Canvas"], before.x + CANVAS.size / 2, CAPTION_Y, container);
   svg("line", { class: "canvas-stream", x1: before.x + CANVAS.size / 2, x2: after(writes.at(-1)), y1: RED_Y, y2: RED_Y }, under);
 
   // Reads and writes after the blocks the manifest names, numbered in depth order for the build's timing; above each

@@ -105,7 +105,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   tagline, a metaphor or a slogan of your own.
 - A title is literally true and matches what the slide shows. History is told as the paper tells it: active
   models "have struggled to match" passive ones; they did not "fall behind".
-- A setting detail (the glimpse size, a canvas grid) belongs in the body or the notes, never in a title.
+- A setting detail (the glimpse size, a canvas grid) belongs in the body or the notes, never in a title [Yohaï,
+  2026-10-01, on the caption "Canvas, 64 × 64" in the architecture drawing: "why [...] IS THIS ON THE ARCH SLIDE"].
 - Banish circumlocutions [Yohaï, 2026-10-01, on the caption "A network built on them": "BANISH CIRCUMLOCUTIONS."].
 - Never number slides, sections or items in outlines, plans and notes; refer to a slide by its title or its id
   [Yohaï, 2026-10-01: "I [...] HATE YOUR TENDENCY TO NUMBER EVERYTHING, that creates unnecessarily huge diffs and

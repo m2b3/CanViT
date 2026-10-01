@@ -380,12 +380,30 @@
 #policy-accuracy .ade20k { opacity: 0; }
 
 /* Training and inference cost: one column per click, each a large number with its conditions under it. */
-#cost .costs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 70px; text-align: center; }
-#cost .cost { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
-#cost.shows-train .train, #cost.shows-adapt .adapt, #cost.shows-run .run { opacity: 1; transform: none; }
-#cost .what { font-size: 26px; font-weight: 750; color: var(--muted); }
-#cost .number { margin: 14px 0; white-space: nowrap; font-size: 76px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); }
-#cost .detail { font-size: 21px; line-height: 1.4; color: var(--text); }
+/* Training cost (training-cost.js): ImageNet-1k, then ADE20K beside it; CanViT-B in canvas red, prior active models in
+   the history charts' amber. */
+#cost .cost-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 4px; }
+#cost figure { margin: 0; transition: opacity .6s ease; }
+#cost figure.ade20k { opacity: 0; }
+#cost.shows-ade20k figure.ade20k { opacity: 1; }
+#cost figcaption { font-size: 24px; font-weight: 750; text-align: center; }
+#cost svg { display: block; width: 100%; height: auto; overflow: visible; }
+#cost .grid { stroke: var(--rule); }
+#cost .axis { stroke: var(--muted); stroke-width: 1.5; }
+#cost .tick { font: 500 16px var(--sans); fill: var(--muted); }
+#cost .title { font: 650 17px var(--sans); fill: var(--text); }
+#cost .counted { margin-top: 10px; font-size: 19px; color: var(--muted); text-align: center; }
+#cost .label { font: 700 17px var(--sans); paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
+#cost .prior .label { fill: #b45309; }
+#cost .canvit .label { fill: var(--canvas); font-weight: 800; }
+#cost .prior :is(.filled, .range) { fill: #d97706; stroke: #d97706; }
+#cost .range { stroke-width: 5; stroke-linecap: round; }
+#cost .arrowhead { fill: #d97706; }
+#cost .prior circle { stroke: var(--bg); stroke-width: 2; }
+#cost .canvit circle { stroke: var(--canvas); stroke-width: 4; }
+#cost .canvit .filled { fill: var(--canvas); }
+#cost .canvit .hollow { fill: var(--bg); }
+#cost .undisclosed { stroke: #d97706; stroke-width: 2.5; stroke-dasharray: 8 6; }
 #policy-accuracy.shows-ade20k .ade20k { opacity: 1; }
 
 /* Quickstart: the install line alone and large, then small above the code; the code walked through block by block,

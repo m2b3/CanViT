@@ -17,6 +17,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] "make sure that things work smoothly as well if we skip through slides rapidly back and forth".
+  To do: a check that walks the deck forward and back quickly, every fragment, and verifies each slide's state and the
+  absence of errors.
 - [Yohaï, 2026-10-01] `#architecture`: "the 'Canvas Vision Transformer architecture' slide still looks super broken fyi";
   then "if you're going to show the intermediate reads and writes bro you should capture intermediate values like we
   actually did in one of the paper's supplementary figures - this would be GREAT to visualize on 'Canvas Vision
@@ -31,8 +34,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#cost`: on the Adapt column ("< 15 h, fine-tuning on ImageNet-1k, one TPU v6e-4; or just a
   linear layer"): "no this is horrible"; on the Run column (2.3 ms per glimpse, 175 ms on a CPU): "no one cares";
   "this is marketing as [...] and without comparison points (what about other models? for example could be PEAK
-  PERFORMANCE VS TRAINING COST/exaflops... or whatnot...)". To do: the slide rebuilt as a comparison with the other
-  models.
+  PERFORMANCE VS TRAINING COST/exaflops... or whatnot...)"; then, on the corrected version: "still REALLY don't like
+  this slide as it is right now". Rebuilt 2026-10-01 as best accuracy against each model's own training compute
+  (`OUTLINE.md`); awaiting the authors' look.
 - [Yohaï, 2026-10-01] The live model on the Hub: "you can do huggingface, just do it properly and cleanly and
   consistently"; then, on the export fusing CanViT-B and its ADE20K probe in one graph: "did you fuse the entire
   [...] thing instead of separating the probes from the canvit". Nothing is published. In progress: a CanViT graph

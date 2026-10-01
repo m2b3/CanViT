@@ -463,26 +463,19 @@
 </section>
 
 <section id="cost" data-status="draft">
-  <h2>Training and inference cost</h2>
-  <!-- Why cost matters, training first [Yohaï, 2026-10-01: "properly make the case of why anyone would give a [...]
-       about efficiency (it's about money, making experiments cheap, etc)"; "for scientists, remember that TRAINING cost
-       is main concern; inference can also be relevant tho"]. 166 h, 1 billion glimpses: the paper (abstract, section 6);
-       teacher features 8 H100-equivalent hours: its appendix on pretraining; the reported ImageNet-1k fine-tuning run,
-       under 15 wall-clock hours on a TPU v6e-4: its compute declarations (their "under 800 USD" is every ImageNet-1k
-       fine-tuning experiment together, failures and sweeps included, not the cost of a run). Latencies: cost.js, from
-       the paper's hw_bench.json (minimum latency, 64 x 64 canvas). -->
-  <div class="costs">
-    <div class="cost train"><p class="what">Train once</p><p class="number">166 h</p>
-      <p class="detail">one H100 GPU, from scratch,<br>1 billion glimpses</p></div>
-    <div class="cost adapt"><p class="what">Adapt</p><p class="number">&lt; 15 h</p>
-      <p class="detail">fine-tuning on ImageNet-1k,<br>one TPU v6e-4;<br>or just a linear layer</p></div>
-    <div class="cost run"><p class="what">Run</p><p class="number"><span data-latency="cuda amp-bf16 16"></span> ms</p>
-      <p class="detail">per glimpse on an RTX 4090,<br><span data-latency="cpu fp32 16"></span> ms on a desktop CPU</p></div>
+  <hgroup><h2>Training cost</h2><p>Best accuracy v. each model's own training compute</p></hgroup>
+  <!-- [Yohaï, 2026-10-01, on the train/adapt/run version: "marketing as [...] and without comparison points (what about
+       other models? for example could be PEAK PERFORMANCE VS TRAINING COST/exaflops...)"]. training-cost.js draws
+       ../../data/talk/training-cost.json, which throwaway/training_cost/export.py writes from the rebuttal's training-FLOP
+       accounting (teachers and pretrained weights counted on no side), the paper's macros and sources/sota-history.json.
+       ImageNet-1k first, then ADE20K beside it. -->
+  <div class="cost-charts">
+    <figure class="imagenet"><figcaption>ImageNet-1k classification</figcaption><div data-benchmark="imagenet"></div></figure>
+    <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption><div data-benchmark="ade20k"></div></figure>
   </div>
-  <span class="fragment step-marker" data-shows="train"></span>
-  <span class="fragment step-marker" data-shows="adapt"></span>
-  <span class="fragment step-marker" data-shows="run"></span>
-  <aside class="notes">Why should you care about cost? Because compute is money and time. A model that is cheap to train, adapt and run makes every experiment cheaper: more scenes, more glimpses, more policies, policies learned by trial and error, and all of it within reach of a lab without a cluster. [click] Training first. CanViT-B was pretrained once, from scratch, in 166 hours on a single GPU, about a billion glimpses; and it's released, so you don't have to. [click] Adapting it to your task: a linear layer on the frozen canvas, as you've seen; or fine-tune the whole model: our ImageNet-1k fine-tuning run took under 15 hours on four cloud TPU chips. [click] Running it: one glimpse in about two milliseconds on a gaming GPU, and under a fifth of a second on a desktop CPU. Now, accuracy against the compute it takes to run.</aside>
+  <p class="counted">Teachers and pretrained weights are not counted, on any side.</p>
+  <span class="fragment step-marker" data-shows="ade20k"></span>
+  <aside class="notes">Why should you care what a model costs to train? Because compute is money and time: a model that is cheap to train and adapt makes every experiment cheaper, and puts it within reach of a lab without a cluster. So here is what each active model cost to train, its own training only, against the best accuracy it reached. ImageNet first. CanViT-B, pretrained from scratch: 55 exaflops, that is 166 hours on one H100 plus 8 hours to compute the teacher's features. Frozen, with a linear layer: 81.1. Fine-tuned, 5 exaflops more, under 15 hours on four cloud TPU chips: 84.5. AdaGlimpse spent 63 to 145 exaflops, depending on whether you believe its code or its paper about how many glimpses it pretrained on, for 77.5. AdaptiveNN reaches 82.2, and does not say what its training cost. [click] Segmentation. CanViT-B, the same pretraining and a linear layer: 45.9. AdaGlimpse's pretraining alone is 51 exaflops, for 25.7. AME trains for under 2 exaflops, but it starts from a large Vision Transformer someone else trained, for 27.6. None of this counts the teachers: not DINOv3 for us, not DeiT III for AdaGlimpse. And this is one model, for both tasks and any viewing policy.</aside>
 </section>
 
 <section id="frontier" data-status="draft">
@@ -639,7 +632,7 @@
   import { drawUncertainty } from "./uncertainty.js";
   import { drawDetail } from "./detail.js";
   import { drawDistillation } from "./distillation.js";
-  import { drawCost } from "./cost.js";
+  import { drawTrainingCost } from "./training-cost.js";
   import { drawArchitecture } from "./architecture.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
@@ -677,7 +670,7 @@
   }
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
   await drawArchitecture(document.querySelector("#architecture .arch-build"));
-  await drawCost(document.querySelector("#cost"), "../../assets/paper/hw_bench.json");
+  await drawTrainingCost(document.querySelector("#cost"), "../../data/talk/training-cost.json");
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const uncertainty = document.querySelector("#uncertainty");
   await drawUncertainty(uncertainty, "../../data/talk/metacognition/street");

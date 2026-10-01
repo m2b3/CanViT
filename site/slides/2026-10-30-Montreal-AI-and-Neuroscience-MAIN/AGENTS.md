@@ -361,6 +361,11 @@ received, so the talk may say it:
   task. For a scientist the training cost that follows is adapting it: a linear probe on frozen features, or LP-FT
   (the reported ImageNet-1k run under 15 wall-clock hours on a TPU v6e-4); never claim CanViT-B was cheaper to pretrain
   than every prior model.
+- CanViT-B's adaptation, counted with the rebuttal's formulas (`throwaway/training_cost/export.py`, run 2026-10-01):
+  ImageNet-1k LP-FT 4.76 EFLOPs (100,080 steps × 256 scenes × 4 glimpses, full BPTT, 32² canvas); the ADE20K probe
+  at the 64² canvas 0.16 EFLOPs (40,000 steps × 16 × 10 glimpses, CanViT-B frozen). The pretraining run's average rate:
+  52.5 EFLOPs over 166 h is 87.9 TFLOP/s, 8.9% of an H100 SXM's dense bf16 peak (11.6% for a PCIe H100; which variant
+  ran is not recorded here).
 - The VPE token helps at long horizons and fine canvases (+1.28 mIoU at t = 20, 64² canvas); EG-C2F's viewpoint
   selection costs about 1–5 MFLOP, under 0.03% of a glimpse.
 

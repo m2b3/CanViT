@@ -337,17 +337,25 @@ yet reviewed by the authors.
   (`PLAN.md`).
 - **Status:** draft (built).
 
-### Training and inference cost
-- **Title:** names the slide's content.
+### Training cost
+- **Title:** "Training cost", subtitle "Best accuracy v. each model's own training compute".
 - **Why:** the case for cost before the frontier [Yohaï, 2026-10-01: "properly make the case of why anyone would
   [care] about efficiency (it's about money, making experiments cheap, etc)"; "for scientists, remember that TRAINING
-  cost is main concern; inference can also be relevant tho"].
-- **Builds:** three columns, one per click: train once (166 h on one H100, from scratch, 1 billion glimpses); adapt
-  (the reported ImageNet-1k fine-tuning run, under 15 h on a TPU v6e-4; or a linear layer); run (minimum latency per glimpse on a 64 × 64 canvas,
-  read by `cost.js` from the paper's `hw_bench.json`).
-- **Could:** each system's own training cost against the prior active models (`AGENTS.md`, rebuttal facts: CanViT-B
-  55.3 EFLOPs against AdaGlimpse's 62.9 to 144.6; AME's task training is smaller but sits on pretrained ViT-L weights).
-- **Status:** draft (built).
+  cost is main concern; inference can also be relevant tho"]. The first version (train once, adapt, run: three large
+  numbers) was rejected [Yohaï: "no this is horrible"; on latency: "no one cares"; "this is marketing as [...] and
+  without comparison points (what about other models? for example could be PEAK PERFORMANCE VS TRAINING
+  COST/exaflops...)"].
+- **Shows:** one chart per benchmark, ImageNet-1k first, then ADE20K beside it: each active model's best accuracy
+  against its own training compute (EFLOPs, log), from `throwaway/training_cost/export.py`, which runs the rebuttal's
+  `training_flops.py` and adds CanViT-B's adaptation (ImageNet-1k fine-tuning 4.76 EFLOPs, the ADE20K probe 0.16)
+  with the same formulas. ImageNet-1k: CanViT-B 55.3 frozen (81.1) and 60.1 fine-tuned (84.5); AdaGlimpse 62.9 to
+  144.6 (77.5; its code and its paper differ on pretraining glimpses); AdaptiveNN 82.2, compute not disclosed (dashed).
+  ADE20K: CanViT-B 55.5 (45.9); AME 1.4 to 1.8 on top of pretrained ViT-L weights (27.6); AdaGlimpse at least 50.8,
+  its segmentation training not counted (25.7). One line under both: teachers and pretrained weights are not counted,
+  on any side (the rebuttal's rule).
+- **Says:** compute is money and time; then the comparison; that the teachers are not counted, DINOv3 included; one
+  model for both tasks and any policy.
+- **Status:** draft (built 2026-10-01).
 
 ### Active ADE20K segmentation
 - **Title:** "Active ADE20K segmentation", subtitle "Accuracy v. efficiency" [Yohaï, 2026-10-01]. Before it, the

@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CanViT · MAIN 2026</title>
+  <link rel="icon" href="data:,">
+  <link rel="preload" href="../../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../css/canvit.css">
+  <link rel="stylesheet" href="../deck.css">
+  <link rel="stylesheet" href="talk.css">
+</head>
+<body>
+<div class="reveal">
+<div class="footer"><span class="brand">CanViT</span> · MAIN 2026</div>
+<div class="slides">
+
+<!-- Slide text follows the paper (arXiv:2603.22570), the sources it cites (sources/citations.md) and the authors'
+     own framing for neuro-AI audiences (sources/unique-travel-award.md), in their words: ../AGENTS.md, "Writing
+     slides". Each slide's notes open with its key sentence; `uv run ../outline.py` prints them in order. -->
+
+<section id="title" data-status="draft">
+  <img class="wordmark" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+  <h1>Toward Active-Vision<br>Foundation Models</h1>
+  <p class="expansion">Canvas Vision Transformer</p>
+  <p class="authors">Yohaï-Eliel Berreby · Sabrina Du · Audrey Durand · B. Suresh Krishna</p>
+  <div class="affiliations">
+    <!-- TODO: McGill, Mila and Université Laval logos. -->
+    <span>McGill University</span><span>Mila – Quebec AI Institute</span><span>Université Laval</span>
+  </div>
+  <p class="venue"><img src="../../assets/logos/neurips.svg" alt="">NeurIPS 2026</p>
+  <p class="event">MAIN 2026 · Montréal · October 30, 2026</p>
+  <aside class="notes">CanViT, the Canvas Vision Transformer, is the first task- and policy-agnostic Active-Vision Foundation Model. This is joint work with Sabrina Du, Audrey Durand and Suresh Krishna, at McGill, Mila and Université Laval.</aside>
+</section>
+
+<!-- ============================================================== Human vision, and the models of it (paper §1) -->
+
+<section id="human-vision" data-status="aspirational">
+  <h2>Human vision is fundamentally active</h2>
+  <div class="placeholder">
+    <b>Visual:</b> a scene seen through a fovea: sharp at the fixation, coarse elsewhere, the fixation moving about
+    three times per second.
+    <small>Planned component &lt;canvit-foveate&gt;.</small>
+  </div>
+  <p class="cite">Fixations shift about three times per second: Henderson &amp; Hollingworth 1999, <i>Annu. Rev. Psychol.</i></p>
+  <aside class="notes">Human vision is fundamentally active: we shift our gaze multiple times per second, orienting our high-resolution fovea toward regions of interest, and integrate information from multiple viewpoints into a coherent understanding of our surroundings' spatial and semantic structure.</aside>
+</section>
+
+<section id="sequential" data-status="draft">
+  <h2>Active vision is sequential</h2>
+  <div class="sequential">
+    <figure>
+      <img src="assets/yarbus-the-visitor.jpg" alt="Yarbus's recordings of one observer's eye movements over Repin's painting The Unexpected Visitor, under seven different instructions: each task gives a different scanpath.">
+      <figcaption class="cite">The same painting under seven instructions. Yarbus 1967, <i>Eye Movements and Vision</i>.</figcaption>
+    </figure>
+    <ul>
+      <li class="fragment"><b>Strategic planning</b><span class="cite">Yarbus 1967 · Hoppe &amp; Rothkopf 2019</span></li>
+      <li class="fragment"><b>Integration of evidence across time in visual working memory</b><span class="cite">Baddeley &amp; Hitch 1974 · Melcher 2001</span></li>
+      <li class="fragment"><b>Top-down recurrent feedback</b><span class="cite">Rao &amp; Ballard 1999 · Gilbert &amp; Li 2013 · Kar et al. 2019</span></li>
+    </ul>
+  </div>
+  <aside class="notes">Active vision is inherently sequential, and involves strategic planning, integration of evidence across time in visual working memory, and top-down recurrent feedback. Where we look depends on what we are trying to do: here is one observer looking at the same painting under seven different instructions. What we see is integrated across fixations in visual working memory. And signals from higher areas condition early visual processing, so that each fixation is processed in light of what was seen before, rather than from a blank slate.</aside>
+</section>
+
+<section id="foundation-models" data-status="aspirational">
+  <h2>Vision foundation models</h2>
+  <div class="placeholder">
+    <b>Interactive:</b> a scene, DINOv3 ViT-B's feature map as PCA colors, and the cosine similarity of every patch to
+    the hovered one; a linear probe's segmentation from the same features.
+    <small>Needs a teacher-feature export (canvit_pytorch.viz) and a &lt;canvit-features&gt; component.</small>
+  </div>
+  <p class="cite">DINOv3: Siméoni et al. 2025, arXiv:2508.10104</p>
+  <aside class="notes">A vision foundation model like DINOv3 turns an image into a feature map: one vector per image patch, so rich that a single linear readout gives segmentation, depth or object class. DINOv3 learned it without labels. Point at a patch, and the patches most similar to it light up: parts of the same object, objects of the same kind.</aside>
+</section>
+
+<section id="models-of-vision" data-status="draft">
+  <h2>Vision foundation models as models of human vision</h2>
+  <div class="contrast">
+    <div>
+      <p class="side-title">Used to model brain function</p>
+      <p class="cite">Yamins et al. 2014 · Yamins &amp; DiCarlo 2016 · Schrimpf et al. 2018 · Zhuang et al. 2021</p>
+    </div>
+    <div class="fragment">
+      <p class="side-title">But passive</p>
+      <ul>
+        <li>one frame at a time, all at once</li>
+        <li>no glimpses</li>
+        <li>no memory</li>
+        <li>no top-down recurrent feedback</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">Leading vision foundation models used to model brain function lack the active sensing and top-down recurrent feedback of biological vision. This limits their value as models of human vision, which fundamentally relies on eye movements. They process individual frames independently and passively, without the ability to reuse previous computation to guide further processing.</aside>
+</section>
+
+<!-- ============================================================== Active computer vision (paper §1–2) -->
+
+<section id="history" data-status="aspirational">
+  <h2>Active computer vision</h2>
+  <p class="lead">Models that process visual scenes through sequential, localized glimpses.</p>
+  <div class="placeholder short">
+    <b>Timeline:</b> active perception and animate vision (Bajcsy 1988; Aloimonos et al. 1988; Ballard 1991) ·
+    Larochelle &amp; Hinton 2010 · Recurrent Attention Model (Mnih et al. 2014) · DRAM (Ba et al. 2015) · Saccader
+    (Elsayed et al. 2019) · GFNet (Wang et al. 2020) · AME (Pardyl et al. 2023) · AdaGlimpse (Pardyl et al. 2024) ·
+    AdaptiveNN (Wang et al. 2025). Beside it, passive vision: AlexNet (2012) · ViT (2021) · DINO (2021) · DINOv2 (2024) ·
+    DINOv3 (2025).
+  </div>
+  <aside class="notes">Active computer vision models, which process visual scenes through sequential, localized glimpses, have been proposed for decades. Deep active vision traces back to the Recurrent Attention Model of 2014, trained with reinforcement learning, and remained largely confined to simple tasks such as digit recognition until 2019, when Saccader reached 75 percent ImageNet top-1. GFNet and AdaptiveNN showed efficiency gains on real-world classification, with fixed zoom levels. AME and AdaGlimpse handle dense prediction by expanding encoder outputs with a decoder over the whole scene, which becomes intractable at high resolutions.</aside>
+</section>
+
+<section id="gap" data-status="draft">
+  <h2>Active models have struggled to match passive ones</h2>
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" show="prior"></canvit-frontier></div>
+  <aside class="notes">Despite their theoretical advantages, active models have struggled to match the accuracy, efficiency, flexibility and representational richness of their passive counterparts, most strikingly on dense prediction. On ADE20K semantic segmentation, the best active model reaches 27.6 percent mIoU; a frozen passive DINOv3 ViT-B with a linear probe reaches 47.2 percent, for less compute.</aside>
+</section>
+
+<section id="three-axes" data-status="draft">
+  <h2>Three axes of an active vision model</h2>
+  <div class="axes">
+    <div class="group observer">
+      <div class="jobs">
+        <article class="job" style="--accent: var(--glimpse)"><h3>Instantaneous vision</h3><p>making sense of what it sees at a given moment</p></article>
+        <article class="job" style="--accent: var(--canvas)"><h3>Memory</h3><p>updating a persistent, evolving understanding of the scene</p></article>
+      </div>
+      <p class="role fragment">Observer</p>
+    </div>
+    <div class="group policy">
+      <div class="jobs">
+        <article class="job" style="--accent: var(--policy)"><h3>Action selection</h3><p>deciding where and at what zoom level to look next</p></article>
+      </div>
+      <p class="role fragment">Policy</p>
+    </div>
+  </div>
+  <p class="claim fragment">No policy can make up for a poor observer.</p>
+  <!-- TODO: one component for this diagram and the project page's "What's in an active-vision model?" section. -->
+  <aside class="notes">No policy can make up for a poor observer, yet prior active vision work has often focused on action selection. An active vision model can be considered along three axes: instantaneous vision, memory, and action selection. The first two define an observer; the last defines its sensory policy. Given perfect instantaneous vision and memory, naive and strategic policies should reach the same accuracy after enough glimpses of a static scene.</aside>
+</section>
+
+<section id="goal" data-status="draft">
+  <h2>A task- and policy-agnostic Active-Vision Foundation Model</h2>
+  <p class="lead">A vision model that understands the spatial and semantic structure of scenes across arbitrary
+    sequences of glimpses, with representations that transfer across tasks and viewing policies.</p>
+  <p class="claim fragment">"Learning to see through glimpses", disentangled from "learning where to look".</p>
+  <aside class="notes">We disentangle learning to see through glimpses from learning where to look, which frees active-vision pretraining from the complexity of reinforcement learning. We focused on the observer: a vision model capable of understanding the spatial and semantic structure of scenes across arbitrary sequences of glimpses, with rich representations that transfer across tasks and viewing policies.</aside>
+</section>
+
+<!-- ============================================================== CanViT (paper §3–4) -->
+
+<section id="glimpses" data-status="draft">
+  <h2>Scenes, viewpoints and glimpses</h2>
+  <div class="pair glimpse-pair">
+    <figure><figcaption>Scene and viewpoint (<i>x</i>, <i>y</i>, <i>s</i>)</figcaption>
+      <canvit-scene class="zoom" src="../../data/street-egc2f" t="0" trail="none"></canvit-scene></figure>
+    <figure><figcaption class="term-glimpse">Glimpse, 128 × 128 px</figcaption>
+      <canvit-map class="zoom" src="../../data/street-egc2f" t="0" layer="crop"></canvit-map></figure>
+  </div>
+  <span class="fragment" data-canvit-target=".zoom" data-canvit-t="1"></span>
+  <span class="fragment" data-canvit-target=".zoom" data-canvit-t="5"></span>
+  <aside class="notes">A glimpse is a fixed-resolution crop taken at a viewpoint, a position and a zoom level, so the zoom trades spatial coverage against perception of detail. Whatever the zoom, the crop is resized to 128 by 128 pixels. Outside the glimpse, the model sees nothing.</aside>
+</section>
+
+<section id="architecture" data-status="draft">
+  <h2>The Canvas Vision Transformer</h2>
+  <div class="arch">
+    <img src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
+    <ul>
+      <li class="fragment">A retinotopic <span class="term-glimpse">Vision Transformer backbone</span> processes each glimpse.</li>
+      <li class="fragment">A spatiotopic <span class="term-canvas">canvas</span>, a scene-wide latent workspace, holds working memory.</li>
+      <li class="fragment"><b>Canvas Attention</b> reads from and writes to the canvas.</li>
+    </ul>
+  </div>
+  <!-- TODO: an animated diagram built click by click, in place of the static figure. -->
+  <aside class="notes">CanViT pairs a retinotopic Vision Transformer backbone, which processes each glimpse, with a spatiotopic latent workspace, the canvas. The canvas is a fine-grained, scene-wide spatio-semantic memory, which can function as a cognitive map of the scene. The two streams interact through Canvas Attention, alternating reads, which condition the backbone's processing on the canvas, and writes, which populate the canvas.</aside>
+</section>
+
+<section id="sr-rope" data-status="aspirational">
+  <h2>Scene-Relative RoPE</h2>
+  <div class="placeholder">
+    <b>Animation:</b> the canvas's fixed grid of patch centers and the glimpse's 8 × 8 patch centers in the same scene
+    coordinates: tightly clustered for a zoomed-in glimpse, spread out for a zoomed-out one, moving with the viewpoint.
+  </div>
+  <aside class="notes">Scene-relative rotary position embeddings bind the retinotopic glimpse stream and the spatiotopic canvas in one reference frame. We compute them from the centers of glimpse patches and canvas patches in the scene's coordinates. A zoomed-in glimpse's patches are tightly clustered in a small scene region, while a zoomed-out glimpse's patches span a wider one, so their relative distances implicitly communicate the zoom.</aside>
+</section>
+
+<section id="canvas-attention" data-status="draft">
+  <h2>Canvas Attention</h2>
+  <div class="cols">
+    <div class="attention-kinds">
+      <p><b class="term-glimpse">Read</b>: glimpse tokens query the canvas, so the backbone's processing is conditioned on what the canvas holds.</p>
+      <p class="fragment"><b class="term-canvas">Write</b>: canvas tokens query the glimpse tokens, and the canvas is updated.</p>
+      <p class="fragment">Learned projections only on the glimpse side. Canvas tokens see no MLP and no self-attention.</p>
+    </div>
+    <div class="fragment cost">
+      <p class="muted small">One read–write pair, 64 × 64 canvas</p>
+      <p><span class="big"><span data-macro="cSixFourAsymRwPairGf">2.8</span></span> GFLOPs</p>
+      <p class="muted">with canvas-side projections: <span data-macro="cSixFourFullRwPairGf">37.3</span> GFLOPs</p>
+    </div>
+  </div>
+  <aside class="notes">Canvas Attention is an asymmetric cross-attention that lets a small set of glimpse tokens interact cheaply with a much larger canvas. In a read, glimpse tokens query the canvas: this is top-down recurrent feedback to the backbone's visual processing. In a write, canvas tokens query the glimpse. Query, key, value and output projections are restricted to the glimpse side; canvas tokens get only LayerNorm, RoPE and residual addition, and never go through an MLP or self-attention. With a 64 by 64 canvas, canvas-side projections would take a read-write pair from 2.8 to 37.3 GFLOPs.</aside>
+</section>
+
+<section id="decoupling" data-status="draft">
+  <h2>Decoupling thinking and memory</h2>
+  <div class="placeholder short">
+    <b>Chart:</b> ADE20K mIoU from one 128-px full-scene glimpse, by canvas resolution (8² to 64²), beside DINOv3 ViT-B
+    given the same input (the paper's export: Figure 5A, Table 9).
+  </div>
+  <aside class="notes">We decouple thinking, at the backbone level, from memory, at the canvas level, which makes input resolution independent of output resolution. Canvas resolution is set at inference. Even from a single low-resolution view of the whole scene, a frozen CanViT-B with a finer canvas outperforms its coarser-canvas counterpart, and its input-matched DINOv3 teacher.</aside>
+</section>
+
+<!-- ============================================================== Pretraining (paper §5) -->
+
+<section id="distillation" data-status="aspirational">
+  <h2>Passive-to-active dense latent distillation</h2>
+  <div class="placeholder">
+    <b>Animation:</b> DINOv3's feature map of the whole 512-px scene, beside CanViT's reconstruction of it from the
+    canvas after each glimpse, in the same PCA colors.
+    <small>Needs bundles recording the pretrained readout (canvit_pytorch.viz).</small>
+  </div>
+  <aside class="notes">From sequences of glimpses, CanViT learns to reconstruct the feature map that a high-resolution DINOv3 teacher computes for the whole scene, after every glimpse. The teacher is frozen, so its features are computed once and stored. This rich learning signal lets CanViT quickly inherit much of its teacher's world knowledge, while developing the ability to iteratively refine its understanding of a scene as it ingests glimpses at arbitrary locations and zoom levels.</aside>
+</section>
+
+<section id="targets" data-status="draft">
+  <h2>Reconstruction targets</h2>
+  <div class="teachers">
+    <div class="teacher">
+      <p class="target">Pixels of the whole scene</p>
+      <p class="muted">masked autoencoders; AdaGlimpse</p>
+    </div>
+    <div class="teacher fragment">
+      <p class="target">DINOv3 features of the whole scene</p>
+      <p class="muted">CanViT</p>
+    </div>
+  </div>
+  <!-- TODO: both targets for the same scene: its pixels, and DINOv3's features as PCA colors. -->
+  <aside class="notes">Reconstructing pixels is distillation from the identity teacher; CanViT reconstructs in DINOv3's latent space instead. Scene reconstruction is a natural pretext task for active vision, and masked autoencoders and some active models reconstruct pixels. We want CanViT to build a semantically rich mental image, so we reconstruct DINOv3 features. Either way, the whole scene is only a training target: the model only ever sees glimpses, and no labels are used anywhere.</aside>
+</section>
+
+<section id="policy-agnosticism" data-status="draft">
+  <h2>Policy agnosticism</h2>
+  <ul class="points">
+    <li><b>Random viewpoints</b>: random positions and zoom levels, favoring small glimpses</li>
+    <li class="fragment"><b>Dual rollouts</b>: one from a random viewpoint (R-IID), one from the full scene (F-IID)</li>
+    <li class="fragment"><b>Random lengths</b>: truncated backpropagation over chunks of 2 glimpses, stopping with probability 0.5</li>
+  </ul>
+  <!-- TODO: rollouts sampled live with the paper's viewpoint distribution. -->
+  <aside class="notes">Every training rollout uses random viewpoints, random zoom levels and a random length, so no viewing policy is built into the observer. Each scene gets two rollouts, one starting from a random viewpoint and one from the full-scene view. Scales are sampled to favor small, localized glimpses. Training runs over chunks of two glimpses and stops at each chunk boundary with probability one half: four glimpses on average, occasionally many more, at a constant memory footprint.</aside>
+</section>
+
+<section id="pretraining" data-status="draft">
+  <h2>Pretraining CanViT-B on a single H100</h2>
+  <div class="cols facts">
+    <div><p class="big">13.2 M</p><p>ImageNet-21k scenes, an order of magnitude more than previous active models</p></div>
+    <div><p class="big">1 B</p><p>random glimpses</p></div>
+    <div><p class="big">166 h</p><p>on a single H100, from a random initialization</p></div>
+  </div>
+  <p class="detail fragment">Teacher features for the 13.2 M scenes: about 8 H100-equivalent hours, computed once.</p>
+  <aside class="notes">CanViT-B pretrains from a random initialization in 166 hours on a single H100, on 13.2 million ImageNet-21k scenes, an order of magnitude more than previous active models, with one billion random glimpses. Precomputing the teacher's features for the whole training set took about 8 H100-equivalent hours.</aside>
+</section>
+
+<section id="architecture-vs-pretraining" data-status="draft">
+  <h2>Architecture vs. pretraining</h2>
+  <div class="cols">
+    <div>
+      <h3>Same distillation, two architectures</h3>
+      <p class="muted small">ADE20K mIoU after 4 glimpses; DINOv3 distillation on ImageNet-1k, same glimpse budget</p>
+      <p><span class="big">33.7</span> CanViT-B</p>
+      <p><span class="big muted">15.6</span> AdaGlimpse</p>
+      <!-- XXX: the rebuttal's architecture control (reviewer DjZB, Table R1), promised for the camera-ready; read it
+           from the paper's macros once it is there. -->
+    </div>
+    <div class="fragment">
+      <h3>Same architecture, no dense targets</h3>
+      <p class="muted small">Change in patch reconstruction quality, pretraining ablation (f)</p>
+      <p><span class="big"><span data-macro="ablNoDenseSceneNorm">−98.8%</span></span></p>
+    </div>
+  </div>
+  <aside class="notes">Both the architecture and the pretraining signal matter. Trained with the same DINOv3 distillation on ImageNet-1k, CanViT-B leads AdaGlimpse, the most recent dense active baseline, at every glimpse, by 18 points of mIoU after four glimpses, at about a tenth of the training compute. And without dense supervision, the same architecture loses nearly all of its patch reconstruction quality.</aside>
+</section>
+
+<!-- ============================================================== Experiments (paper §6) -->
+
+<section id="rollout" data-status="draft">
+  <h2>A CanViT rollout</h2>
+  <div class="card episode"><canvit-episode data-play src="../../data/street-riid ../../data/shop-riid ../../data/ferry-riid" readout="labels"></canvit-episode></div>
+  <aside class="notes">After every glimpse, a linear probe decodes a segmentation of the whole scene from the canvas, including regions not yet seen. These are recorded outputs of the pretrained CanViT-B on ADE20K validation scenes, with random viewpoints.</aside>
+</section>
+
+<section id="extrapolation" data-status="aspirational">
+  <h2>Extrapolation to unobserved regions</h2>
+  <div class="placeholder">
+    <b>Recorded:</b> two glimpses at the two ends of an object; the segmentation decoded from the canvas covers the
+    space between them.
+    <small>Needs a recording with chosen viewpoints (canvit_pytorch.viz).</small>
+  </div>
+  <aside class="notes">CanViT integrates broad context and fine detail from variable-scale glimpses, and extrapolates to unobserved regions.</aside>
+</section>
+
+<section id="results" data-status="draft">
+  <h2>Results on ADE20K and ImageNet-1k</h2>
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json"></canvit-frontier></div>
+  <p class="results-line">ADE20K: <b><span data-macro="adeSingleGlimpseMiou">38.5</span>%</b> mIoU in a single glimpse, up to
+    <b><span data-macro="adeBestMiou">45.9</span>%</b> · ImageNet-1k: <b><span data-macro="inkFinetunedBest">84.5</span>%</b> top-1 after fine-tuning</p>
+  <aside class="notes">With frozen weights, CanViT-B reaches 38.5 percent ADE20K mIoU in a single low-resolution glimpse, outperforming the best active model's 27.6 percent with 20 times fewer FLOPs, and 45.9 percent with more glimpses. Its advantage holds even with the fine-to-coarse policy's worse-than-random viewing order: perception, not viewpoint selection, was the bottleneck. On ImageNet-1k, CanViT-B also sets a new active-vision state of the art, with 84.5 percent top-1 after fine-tuning.</aside>
+</section>
+
+<section id="policies" data-status="aspirational">
+  <h2>Viewing policies at inference</h2>
+  <div class="placeholder">
+    <b>Chart:</b> ADE20K mIoU by glimpse for C2F, F2C and RFS, from the paper's export: C2F above F2C although both
+    see the same viewpoints by the last glimpse; RFS improving, then declining.
+  </div>
+  <aside class="notes">Processing order matters: CanViT reaches higher peak accuracy with coarse-to-fine than with fine-to-coarse, although both policies see the same viewpoints by the last glimpse. This highlights the importance of contextually informed processing. Given a constant input, the repeated full scene, accuracy first improves purely from recurrent processing, then declines without new viewpoints.</aside>
+</section>
+
+<!-- ============================================================== Choosing where to look -->
+
+<section id="live" data-status="draft">
+  <h2><span class="brand">CanViT</span>-B in the browser</h2>
+  <div class="live-stage" data-no-advance>
+    <canvit-live model="../../.live-model" scene="../../data/street-path/scene.png" autoload></canvit-live>
+  </div>
+  <aside class="notes">This is the released CanViT-B with its ADE20K probe, running in this browser. Each click takes a glimpse there; scrolling sets the zoom. After every glimpse, the probe decodes the classes and their uncertainty from the canvas.</aside>
+</section>
+
+<section id="entropy-guided" data-status="aspirational">
+  <h2>Entropy-guided viewpoint selection</h2>
+  <div class="placeholder">
+    <b>Live:</b> the uncertainty decoded from the canvas chooses the next glimpse, at any position and zoom level,
+    without EG-C2F's quadtree; the scanpath builds up on the scene.
+    <small>Needs a free-form entropy-guided policy (Python for evaluation, JavaScript for the live model).</small>
+  </div>
+  <aside class="notes">The canvas can guide viewpoint selection, even without reinforcement learning. In the paper, the entropy-guided policy visits next the quadtree tile where the segmentation decoded from the canvas is least certain.</aside>
+</section>
+
+<section id="learned-policy" data-status="aspirational">
+  <h2>Learned viewing policies</h2>
+  <div class="placeholder">
+    <b>Chart:</b> a viewing policy trained on top of frozen CanViT-B against EG-C2F, glimpse by glimpse.
+    <small>Unpublished; whether to show it is the authors' call.</small>
+  </div>
+  <aside class="notes">With a capable observer, viewing policies can be learned on top of it, frozen.</aside>
+</section>
+
+<!-- ============================================================== Conclusion (paper §7) -->
+
+<section id="limitations" data-status="draft">
+  <h2>Limitations and future work</h2>
+  <ul class="points">
+    <li>Static scenes: real-time video and embodied active perception</li>
+    <li>Policy learning, for goal-directed settings such as visual search</li>
+    <li>Active-to-active self-distillation, without a passive teacher</li>
+    <li>Larger models and pretraining datasets</li>
+  </ul>
+  <aside class="notes">Like most active-vision models, CanViT was trained and evaluated on static scenes; its constant-memory recurrent design and efficiency make it a candidate for real-time video and embodied active perception. Reinforcement-learning-based policy learning is a natural extension, particularly in goal-directed settings such as visual search. Our distillation requires a passive teacher, which may limit very high resolutions and video; active-to-active self-distillation is a promising avenue. And we used a single model size with a modest compute budget.</aside>
+</section>
+
+<section id="neuro-ai" data-status="draft">
+  <h2>Toward action-aware neuro-AI research on vision</h2>
+  <p class="lead">Open code, open weights and fast training, for the neuroscience and AI communities alike: the first of
+    many Active-Vision Foundation Models.</p>
+  <aside class="notes">We hope CanViT will serve the neuroscience and AI communities alike as the first of many Active-Vision Foundation Models: a model that pairs retinotopic glimpse processing with spatiotopic memory, with open code, open weights and fast training.</aside>
+</section>
+
+<section id="code" data-status="draft">
+  <h2>Code and models</h2>
+  <pre class="install"><code>pip install canvit-pytorch</code></pre>
+  <div class="placeholder short">
+    <b>Logos and links:</b> GitHub (m2b3/CanViT) · Hugging Face (canvit) · project page with a QR code · PyTorch, and
+    the JAX and MLX ports once ready.
+  </div>
+  <aside class="notes">All our code and checkpoints are released under the MIT license.</aside>
+</section>
+
+<section id="acknowledgments" data-status="draft">
+  <h2>Acknowledgments</h2>
+  <p class="authors">Yohaï-Eliel Berreby · Sabrina Du · Audrey Durand · B. Suresh Krishna</p>
+  <div class="placeholder short">
+    <b>Funders, from the paper:</b> VSRN · UNIQUE · CAMBAM · McGill Department of Physiology and Faculty of Medicine
+    and Health Sciences · NSERC · Canada CIFAR AI Chairs · Calcul Québec · Digital Research Alliance of Canada.
+  </div>
+  <p class="link">m2b3.github.io/CanViT</p>
+  <aside class="notes">Thank you.</aside>
+</section>
+
+</div>
+</div>
+
+<script type="module">
+  import "../../js/canvit/index.js";
+  import "../../js/canvit/episode.js";
+  import "../../js/canvit/frontier.js";
+  import { startDeck } from "../deck.js";
+  await startDeck();
+</script>
+</body>
+</html>

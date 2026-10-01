@@ -297,8 +297,11 @@ yet reviewed by the authors.
   canvas) and 84.5% ImageNet-1k top-1 (fine-tuned).
 - **Status:** ready.
 
-### A new active-vision state of the art in accuracy and efficiency
-- **Title:** the project page's section.
+### Accuracy–efficiency frontier on ADE20K segmentation
+- **Title:** the paper's Figure 3A caption, scoped to what the chart shows; "A new active-vision state of the art in
+  accuracy and efficiency" (the page's section) spoke of more than segmentation [Yohaï, 2026-10-01: "shorten that
+  title ... this plot was ONLY about segmentation but you talk more generally... beware"]. No best-prior reference
+  line [Yohaï: "remove the 'best prior active model' horizontal line"].
 - **Builds** [Yohaï, 2026-10-01: "we should not show everything at once ... our worst policy at 32^2, then at 64^2
   canvas, then we show previous active models, then we show our best policy at both resolutions"]: F2C at 32²; F2C at
   64²; the prior active models (the cost axis widens to 835 GFLOPs as they arrive, pushing CanViT's curves left);

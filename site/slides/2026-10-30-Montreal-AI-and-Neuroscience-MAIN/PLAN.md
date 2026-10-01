@@ -55,6 +55,13 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   the observer makes a great policy easy ("this WILL need work!"), from the CanViT-PyTorch-RL work and possibly new
   experiments before the talk. Also teasers of what's next ("we might want future / teasers etc."). Both in Backup
   until the material exists (`OUTLINE.md`).
+- [Yohaï, 2026-10-01] The results need a breakdown: "this plot was ONLY about segmentation but you talk more
+  generally... what about in1k results and top accuracy? need to think about how to break things down". Proposal
+  (to settle with the authors): top accuracy on both benchmarks (`#results`: ADE20K 45.9 frozen; ImageNet-1k 84.5
+  fine-tuned, 81.1 frozen), then the segmentation frontier (cost, segmentation only), then ImageNet-1k by glimpse and
+  policy (the paper's Figure 3C; its export to copy into `../../assets/paper/` with `copy_paper_figures.sh`):
+  frozen against fine-tuned, how fast accuracy plateaus, C2F against F2C again. No efficiency claim on
+  classification.
 - [Yohaï, 2026-10-01] The memory slide: retitled; rebuilt on a street (sign, people, bicycle) from a sweep of 6,218
   three-object sequences; awaiting the authors' look (alternative: a bedroom).
 - [Yohaï, 2026-10-01] "Spatial coverage and perception of detail" (`#detail`): "the idea ... is good and nice but the

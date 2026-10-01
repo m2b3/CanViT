@@ -6,7 +6,7 @@
 // the paper's Figure 5C), on the same axes. The chart is drawn at its displayed size, so text stays legible on
 // narrow screens; hovering names the nearest point. series, for a talk's step-by-step build, names what to draw:
 // policy-canvas keys (f2c-32, f2c-64, egc2f-32, egc2f-64) and prior (the prior active models); each curve is then
-// labeled at its end (the legend is then left out), the cost axis fits what is shown, and a change of series first
+// labeled at its end (the legend and the best-prior reference line are then left out), the cost axis fits what is shown, and a change of series first
 // glides the axis to its new range, then draws the new curves in. height (px) fixes the chart's height.
 
 import { POLICIES as PAPER_POLICIES } from "./policies.js";
@@ -285,7 +285,7 @@ class CanvitFrontier extends HTMLElement {
       throw new Error("<canvit-frontier>: best_prior is not the highest-mIoU baseline");
     }
     const enterPrior = entering.has("prior") ? " enter-fade" : "";
-    if (baselines.length) {
+    if (baselines.length && !staged) {
       el("line", { class: `reference${enterPrior}`, x1: plot.left, x2: plot.right, y1: y(bestPrior.miou_pct), y2: y(bestPrior.miou_pct) }, svg);
     }
 
@@ -366,7 +366,7 @@ class CanvitFrontier extends HTMLElement {
         count.setAttribute("dy", "1.15em");
       }
     }
-    if (baselines.length) {
+    if (baselines.length && !staged) {
       el("text", { class: `reference-label halo${enterPrior}`, x: plot.right, y: y(bestPrior.miou_pct) - 8, "text-anchor": "end" }, svg)
         .textContent = `${narrow ? "Best prior" : "Best prior active model"}: ${bestPrior.miou_pct.toFixed(1)}%`;
     }

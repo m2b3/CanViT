@@ -1,10 +1,11 @@
 // Year against accuracy on one benchmark, passive against active computer vision. Color is the family (passive ink,
 // active amber, CanViT canvas red); solid lines and filled points are trained end to end, dashed lines and hollow points
-// are frozen features with linear decoding. Everything is labeled where it is drawn, with no key: the two passive lines
+// are frozen self-supervised features with linear decoding. Everything is labeled where it is drawn, with no key: the two passive lines
 // at their ends under one "Passive" heading, each active model at its point with "Active models" under them, CanViT-B's
-// results in the margin under a "CanViT-B" heading, each joined to its point. Points come from sources/sota-history.json (each read in its paper; its _about defines the series),
+// results in the margin under a "CanViT-B" heading, each joined to its point. Points come from sources/sota-history.json
+// (each read in its paper; its _about defines the series),
 // CanViT-B's from the paper's macros. The passive lines are the best base-size model trained end to end (a step line)
-// and the best base-size frozen features (dashed); the active models are those of the timeline slide, each at its
+// and the best base-size frozen self-supervised features (dashed); the active models are those of the timeline slide, each at its
 // paper's best number. A bracket marks the gap between the best active model and the frozen line. With data-canvit,
 // CanViT-B's points are added.
 // Drawn into the light DOM so that a slide's CSS can build it: its groups carry the classes passive, frozen, active,
@@ -93,7 +94,7 @@ function draw(container, data, macros) {
   const frozenGroup = el("g", { class: "frozen" }, svg);
   el("path", { d: step(frozen), class: "line" }, frozenGroup);
   const frozenY = Math.max(y(frozenTop) + 7, passiveY + 28);
-  text("frozen + linear decoding", { x: labelX, y: frozenY, class: "label" }, frozenGroup);
+  text("frozen self-supervised features", { x: labelX, y: frozenY, class: "label" }, frozenGroup);
 
   const activeGroup = el("g", { class: "active" }, svg);
   const shown = ACTIVE.flatMap((a) => {

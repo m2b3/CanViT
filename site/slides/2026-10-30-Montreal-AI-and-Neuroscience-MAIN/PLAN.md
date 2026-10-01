@@ -30,9 +30,16 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   of the street, the policies so far listed beside it; no results. Awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#history`: "i really dont believe your numbers on [...] 'The wide gap between passive and active
   computer vision' where somehow active models would have been above relevant passive competition fyi, you will have
-  to add to todo a thorough review of that [...]". To do: a thorough review of every number on the history charts
-  against its primary source, and of which passive points count as the relevant competition (size, training data,
-  resolution, protocol), before the slide is used.
+  to add to todo a thorough review of that [...]". Reviewed 2026-10-01 (`sources/history-review.md`): no value is
+  wrong; on ImageNet-1k, GFNet (79.8) and Saccader (75.03) sit above the dashed line, which holds only self-supervised
+  backbones read out frozen; no active model is above the line trained end to end, on either chart. Fixed: the dashed
+  line is labeled "frozen self-supervised features" and the notes no longer say "below, every time" of it. For the
+  authors: draw the active models against the end-to-end line only (the dashed line kept for `#results`, where
+  CanViT-B's frozen probe is like for like); the ImageNet-1k end-to-end line mixes in JFT, ImageNet-21k and large
+  teachers from November 2019 on (keep it, saying so, or restrict it to ImageNet-1k); Saccader-NASNet (124.5 M) and
+  AME (a ViT-L from SETR weights already trained on ADE20K) are drawn against base-size lines; the ADE20K "24.2 points"
+  bracket subtracts AME's 2023 score from DINOv3 ViT-B's 2025 score under DINOv3's own protocol (47.19 under the
+  paper's; 10.7 points at AME's date); minor field fixes are listed in the review.
 - [Yohaï, 2026-10-01] `#architecture`: "the 'Canvas Vision Transformer architecture' slide still looks super broken fyi";
   then "if you're going to show the intermediate reads and writes bro you should capture intermediate values like we
   actually did in one of the paper's supplementary figures - this would be GREAT to visualize on 'Canvas Vision

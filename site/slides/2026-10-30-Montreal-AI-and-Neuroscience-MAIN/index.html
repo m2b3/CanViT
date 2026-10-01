@@ -206,35 +206,58 @@
 
 <section id="distillation" data-status="draft">
   <h2>Passive-to-active dense latent distillation</h2>
-  <!-- The training process only: no trained model's output on this slide; the guess is an empty grid to fill
-       [Yohaï, 2026-10-01: "absolutely distinguish the TRAINING PROCESS from the RESULT"]. The bedroom of the result
-       slide (ADE_val_00000124); its first two glimpses from the sweep's random sequence (riid-s124). -->
-  <div class="recipe">
-    <img class="scene" src="../../data/talk/distillation/ADE_val_00000124/scene.png" alt="A bedroom">
-    <img class="scene with-box first" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/scene-0.png" alt="The bedroom with a glimpse's box">
-    <img class="scene with-box second" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/scene-1.png" alt="The bedroom with a second glimpse's box">
-    <div class="box teacher">DINOv3 ViT-B<span>frozen</span></div>
-    <figure class="target"><figcaption>target</figcaption><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3's features of the whole scene, 32 by 32 patches, in PCA colors"></figure>
-    <img class="glimpse pixels first" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/glimpse-0.png" alt="The first glimpse, 128 by 128 pixels">
-    <img class="glimpse pixels second" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/glimpse-1.png" alt="The second glimpse">
-    <div class="box student">CanViT</div>
-    <figure class="guess"><div class="grid"></div><figcaption>guess, whole scene</figcaption></figure>
-    <svg class="arrows" viewBox="0 0 1152 556">
-      <path class="draw teacher-path" pathLength="1" d="M258,232 C340,232 350,122 428,122"/>
-      <path class="draw teacher-path" pathLength="1" d="M652,122 C760,122 760,140 858,140"/>
-      <path class="draw glimpse-path" pathLength="1" d="M258,370 C300,370 300,455 328,455"/>
-      <path class="draw student-path" pathLength="1" d="M482,455 L558,455"/>
-      <path class="draw student-path" pathLength="1" d="M742,455 C800,455 800,430 858,430"/>
-      <path class="draw loss" pathLength="1" d="M970,262 L970,318"/>
-      <text class="loss-label" x="955" y="296" text-anchor="end">squared error, every patch</text>
-    </svg>
+  <!-- A training step unrolled in time, one column per glimpse [Yohaï, 2026-10-01: "unroll the timesteps across time
+       ... show that the model produces a whole-scene prediction at each timestep and that it is scored with mean
+       squared error against the teacher features at each timestep"]. The bedroom of #reconstruction
+       (ADE_val_00000124) and its random glimpses (riid-s124); predictions and target in one PCA basis; views and the
+       loss from throwaway/distillation/training_step.py (loss.json: 0.87 after the first glimpse, 0.36 after the
+       eighth; 1.05 for a prediction of the average target). -->
+  <div class="unrolled">
+    <p class="row-label of-prediction">Prediction,<br>whole scene</p>
+    <p class="row-label of-score">Squared error</p>
+    <p class="row-label of-target">DINOv3,<br>whole scene</p>
+    <p class="ellipsis">…</p>
+    <p class="head t0">Glimpse 1</p>
+    <img class="view t0" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/view-0.png" alt="">
+    <span class="down in t0"></span>
+    <img class="model t0" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="down out t0"></span>
+    <img class="prediction pixels t0" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/prediction-0.png" alt="">
+    <span class="score t0"></span>
+    <img class="target pixels t0" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="">
+    <p class="head t1">Glimpse 2</p>
+    <img class="view t1" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/view-1.png" alt="">
+    <span class="down in t1"></span>
+    <span class="carry t1"></span>
+    <img class="model t1" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="down out t1"></span>
+    <img class="prediction pixels t1" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/prediction-1.png" alt="">
+    <span class="score t1"></span>
+    <img class="target pixels t1" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="">
+    <p class="head t2">Glimpse 3</p>
+    <img class="view t2" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/view-2.png" alt="">
+    <span class="down in t2"></span>
+    <span class="carry t2"></span>
+    <img class="model t2" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="down out t2"></span>
+    <img class="prediction pixels t2" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/prediction-2.png" alt="">
+    <span class="score t2"></span>
+    <img class="target pixels t2" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="">
+    <p class="head t7">Glimpse 8</p>
+    <img class="view t7" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/view-7.png" alt="">
+    <span class="down in t7"></span>
+    <span class="carry t7 skip"></span>
+    <img class="model t7" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="down out t7"></span>
+    <img class="prediction pixels t7" src="../../data/talk/distillation/ADE_val_00000124/riid-s124/prediction-7.png" alt="">
+    <span class="score t7"></span>
+    <img class="target pixels t7" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="">
   </div>
-  <span class="fragment step-marker" data-shows="teacher"></span>
-  <span class="fragment step-marker" data-shows="glimpse"></span>
-  <span class="fragment step-marker" data-shows="student"></span>
-  <span class="fragment step-marker" data-shows="loss"></span>
-  <span class="fragment step-marker" data-shows="again"></span>
-  <aside class="notes">How do you train it? The other thing that made it work was separating the architecture from the problem of learning good representations. We already know what good visual representations look like. Take a scene. [click] A passive teacher, DINOv3, frozen, sees the whole scene, at high resolution, once. Its features for every patch are the target. [click] The student only gets glimpses: here, a small piece of wall. [click] CanViT takes that glimpse and has to output its guess for the whole scene: every patch, including everything it hasn't seen. [click] The loss compares its guess to the teacher's features, everywhere. [click] Then another glimpse, somewhere else, at another zoom, and again. No labels anywhere. Is it cheating to learn from a model that sees everything? Reconstructing pixels from partial views would be distillation too, from the identity teacher. We just picked a teacher whose space means something.</aside>
+  <span class="fragment step-marker" data-shows="score"></span>
+  <span class="fragment step-marker" data-shows="second"></span>
+  <span class="fragment step-marker" data-shows="third"></span>
+  <span class="fragment step-marker" data-shows="last"></span>
+  <aside class="notes">How do you train it? The other thing that made it work was separating the architecture from the problem of learning good representations. We already know what good visual representations look like. Here is a training step, unrolled in time. The model gets one glimpse: a piece of bare wall. From that alone, it has to output a prediction for the whole scene, every patch, seen or not, in DINOv3's feature space. [click] The target: DINOv3, frozen, on the whole scene at high resolution. The prediction is scored by squared error against it, at every patch. [click] Next glimpse, somewhere else, at another zoom: the bottom of the window. The canvas carries over what it had; a new prediction of the whole scene, scored against the same target. [click] Again: the pillow. [click] And so on, here up to the eighth glimpse. In this example the error falls glimpse after glimpse, to less than half of where it started. No labels anywhere. Is it cheating to learn from a model that sees everything? Reconstructing pixels from partial views would be distillation too, from the identity teacher. We just picked a teacher whose space means something.</aside>
 </section>
 
 <section id="policy-agnosticism" data-status="draft">

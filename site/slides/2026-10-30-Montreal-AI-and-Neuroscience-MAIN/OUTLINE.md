@@ -148,17 +148,27 @@ yet reviewed by the authors.
 
 ### Passive-to-active dense latent distillation
 - **Title:** the paper's §5 (without "policy-agnostic", which the next slide carries).
-- **What it shows: the training process only**, never the trained model's output [Yohaï, 2026-10-01: "absolutely
-  distinguish the TRAINING PROCESS from the RESULT with the trained model"].
+- **What it shows: the training process** [Yohaï, 2026-10-01: "absolutely distinguish the TRAINING PROCESS from the
+  RESULT with the trained model"; then: "you basically just want to show that the model produces a whole-scene
+  prediction at each timestep and that it is scored with mean squared error against the teacher features at each
+  timestep"]. The predictions drawn are the released CanViT-B's on that glimpse sequence (real outputs, not
+  placeholders); the result over 21 glimpses is the next part's first slide.
 - **Must:** the teacher, DINOv3 ViT-B, frozen, sees the whole scene at 512 px once and gives a feature vector for every
   patch (32 × 32): the target. The student, CanViT, gets only glimpses (128 px, anywhere, any zoom); after every
   glimpse it must output the teacher's features for the whole scene, seen or not. The loss: squared error between its
   guess and the target, at every position and after every glimpse (plus the CLS token). No labels anywhere.
 - **Could:** pixels as the identity teacher (the same recipe with g = identity); the targets precomputed once (about
   8 H100-hours for 13.2 M scenes); the target per-position z-scored.
-- **Builds:** the scene; the teacher row (scene → frozen DINOv3 → target map, crisp patches); the student row (a
-  glimpse box on the scene → the 128 px glimpse → CanViT → its guess of the whole map, drawn as an empty patch grid
-  to fill); the loss linking guess and target at every patch; a second glimpse: the same loss again.
+- **Builds** [Yohaï, 2026-10-01, on the first version: "completely terrible ... the fancy curved arrows etc do nothing
+  for it. having something relatively static where you unroll the timesteps across time ... you can duplicate the
+  teacher features, we want things to align in terms of columns etc. this should not need curved arrows"; "when you
+  have CanViT in a diagram use the logo"]: a training step unrolled in time, one column per glimpse (1, 2, 3, then 8
+  after an ellipsis), one row per role: the scene faded outside the glimpse, the CanViT logo, its prediction of
+  DINOv3's features for the whole scene, the squared error, the target (DINOv3 on the whole scene) repeated in every
+  column; the canvas carried from logo to logo by a straight arrow. The first column; then its target and error; then
+  a column per click, its rows in order from input to output.
+- **Data:** `throwaway/distillation/training_step.py` (views, loss.json): the pretraining patch loss after each glimpse
+  of this sequence, 0.87, 0.74, 0.52, 0.51, 0.44, 0.38, 0.37, 0.36 (1.05 for a prediction of the average target).
 - **Says:** "We already know what good visual representations look like." "Wherever the model was looking, and at
   whatever zoom, it should be able to produce its best guess about the entire scene." Separate the architecture from
   learning the representation.

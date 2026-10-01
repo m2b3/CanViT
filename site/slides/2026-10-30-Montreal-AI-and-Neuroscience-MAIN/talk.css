@@ -192,40 +192,53 @@
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
 #canvas-attention .canvas-side { fill: none; stroke: var(--canvas); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
 
-/* The recipe: scene, teacher row (DINOv3 -> target), student row (glimpse -> CanViT -> guess), the loss between guess
-   and target. Absolute positions match the arrows' viewBox (1152 x 556). */
-#distillation .recipe { position: relative; height: 556px; }
-#distillation .recipe > * { position: absolute; margin: 0; }
-#distillation .scene { left: 0; top: 150px; width: 256px; height: 256px; border-radius: 8px; transition: opacity .5s ease; }
-#distillation .with-box { opacity: 0; }
-#distillation.shows-glimpse:not(.shows-again) .with-box.first, #distillation.shows-again .with-box.second { opacity: 1; }
-#distillation .box { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 64px;
-                     border: 2.5px solid var(--ink); border-radius: 12px; background: var(--bg); font-size: 22px;
-                     font-weight: 750; opacity: 0; transition: opacity .5s ease .3s; }
-#distillation .box span { font-size: 15px; font-weight: 500; color: var(--muted); }
-#distillation .teacher { left: 430px; top: 90px; width: 220px; }
-#distillation .student { left: 560px; top: 423px; width: 180px; border-color: var(--canvas); color: var(--canvas); }
-#distillation figure figcaption { font-size: 18px; font-weight: 700; text-align: center; }
-#distillation .target { left: 860px; top: 6px; width: 220px; opacity: 0; transition: opacity .5s ease .8s; }
-#distillation .target img { display: block; width: 220px; height: 220px; border-radius: 6px; }
-#distillation .guess { left: 860px; top: 320px; width: 220px; opacity: 0; transition: opacity .5s ease .8s; }
-#distillation .guess .grid { width: 220px; height: 220px; border-radius: 6px; border: 2px dashed var(--canvas);
-  background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
-  background-size: calc(220px / 32) calc(220px / 32); }
-#distillation .glimpse { left: 330px; top: 380px; width: 150px; height: 150px; border: 3px solid var(--glimpse);
-                         border-radius: 4px; opacity: 0; transition: opacity .5s ease .5s; }
-#distillation .arrows { inset: 0; width: 1152px; height: 556px; overflow: visible; pointer-events: none; }
-#distillation .arrows path { stroke: var(--ink); stroke-width: 3; }
-#distillation .arrows .loss { stroke: var(--canvas); stroke-dasharray: 1; }
-#distillation .loss-label { font: 700 18px var(--sans); fill: var(--canvas); opacity: 0; transition: opacity .4s ease .6s; }
-#distillation.shows-teacher :is(.teacher, .target) { opacity: 1; }
-#distillation.shows-teacher .teacher-path { stroke-dashoffset: 0; }
-#distillation.shows-glimpse:not(.shows-again) .glimpse.first, #distillation.shows-again .glimpse.second { opacity: 1; }
-#distillation.shows-glimpse .glimpse-path { stroke-dashoffset: 0; }
-#distillation.shows-student :is(.student, .guess) { opacity: 1; }
-#distillation.shows-student .student-path { stroke-dashoffset: 0; }
-#distillation.shows-loss .loss { stroke-dashoffset: 0; }
-#distillation.shows-loss .loss-label { opacity: 1; }
+/* A training step unrolled in time: one column per glimpse (1, 2, 3, then 8 after an ellipsis), one row per role;
+   the target repeats in every column. Each column appears on its click, its rows in order, input to output. */
+#distillation .unrolled { --col: 176px; --gap: 22px; --ellipsis: 34px; --img: 134px; --logo: 110px;
+  display: grid; grid-template-columns: 190px repeat(3, var(--col)) var(--ellipsis) var(--col);
+  grid-template-rows: 24px var(--img) 22px 26px 22px var(--img) 30px var(--img); column-gap: var(--gap); row-gap: 3px;
+  justify-content: center; align-items: center; justify-items: center; }
+#distillation .unrolled > * { margin: 0; }
+#distillation .t0 { grid-column: 2; } #distillation .t1 { grid-column: 3; }
+#distillation .t2 { grid-column: 4; } #distillation .t7 { grid-column: 6; }
+#distillation .head { grid-row: 1; font-size: 18px; font-weight: 700; color: var(--glimpse); }
+#distillation .view { grid-row: 2; }
+#distillation .in { grid-row: 3; }
+#distillation :is(.model, .carry) { grid-row: 4; }
+#distillation .out { grid-row: 5; }
+#distillation .prediction { grid-row: 6; }
+#distillation .score { grid-row: 7; }
+#distillation .target { grid-row: 8; }
+#distillation :is(.view, .prediction, .target) { width: var(--img); height: var(--img); border-radius: 6px; }
+#distillation .model { width: var(--logo); height: auto; }
+#distillation .row-label { grid-column: 1; justify-self: end; text-align: right; font-size: 19px; font-weight: 700;
+  line-height: 1.2; }
+#distillation .of-prediction { grid-row: 6; } #distillation .of-score { grid-row: 7; } #distillation .of-target { grid-row: 8; }
+#distillation .ellipsis { grid-column: 5; grid-row: 1; font-size: 22px; font-weight: 700; color: var(--glimpse); }
+/* Straight connectors: glimpse to model to prediction (ink), the canvas carried from one model to the next (canvas red),
+   the comparison of prediction and target (dashed). */
+#distillation .down { position: relative; width: 3px; height: 100%; background: var(--ink); }
+#distillation .down::after { content: ""; position: absolute; left: -5px; bottom: -2px;
+  border: 6.5px solid transparent; border-top: 8px solid var(--ink); border-bottom: 0; }
+#distillation .carry { position: relative; justify-self: start; height: 3px; background: var(--canvas);
+  width: calc(var(--gap) + var(--col) - var(--logo) - 8px); margin-left: calc(var(--logo) / 2 - var(--col) / 2 - var(--gap)); }
+#distillation .carry.skip { width: calc(2 * var(--gap) + var(--ellipsis) + var(--col) - var(--logo) - 8px);
+  margin-left: calc(var(--logo) / 2 - var(--col) / 2 - 2 * var(--gap) - var(--ellipsis));
+  background: repeating-linear-gradient(90deg, var(--canvas) 0 8px, transparent 8px 14px); }
+#distillation .carry::after { content: ""; position: absolute; right: -8px; top: -5px;
+  border: 6.5px solid transparent; border-left: 9px solid var(--canvas); border-right: 0; }
+#distillation .carry.t1::before { content: "canvas"; position: absolute; left: 50%; bottom: 6px; translate: -50% 0;
+  font-size: 15px; font-weight: 700; color: var(--canvas); }
+#distillation .score { width: 0; height: 100%; border-left: 3px dashed var(--muted); }
+/* Visibility: the first column without its target, then the target and the error, then one column per click. */
+#distillation .unrolled > :not(.of-prediction) { opacity: 0; transition: opacity .5s ease; }
+#distillation .unrolled > .t0:not(.score, .target) { opacity: 1; }
+#distillation.shows-score .unrolled > :is(.t0, .row-label) { opacity: 1; }
+#distillation.shows-second .unrolled > .t1, #distillation.shows-third .unrolled > .t2,
+#distillation.shows-last .unrolled > :is(.t7, .ellipsis) { opacity: 1; }
+#distillation :is(.view, .head) { --delay: 0s; } #distillation :is(.in, .model, .carry) { --delay: .35s; }
+#distillation :is(.out, .prediction) { --delay: .7s; } #distillation :is(.score, .target) { --delay: 1.05s; }
+#distillation:is(.shows-second, .shows-third, .shows-last) .unrolled > :not(.t0, .row-label) { transition-delay: var(--delay); }
 
 /* Policy agnosticism: R-IID rollouts, then F-IID below them, drawn from the pretraining sampler. */
 #policy-agnosticism .rollout-grid { display: grid; grid-template-columns: 90px repeat(4, 248px); gap: 18px 16px;

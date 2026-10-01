@@ -17,6 +17,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] `#live`: "the live explorer from 'A general-purpose observer lets you use any policy' should be
+  renamed 'Live demo' and the component should be extracted cleanly such that we can have such a thing on the
+  website". To do.
 - [Yohaï, 2026-10-01] `#distillation` "is completely terrible ... needs to be entirely reworked. the fancy curved arrows
   etc do nothing for it. having something relatively static where you unroll the timesteps across time (maybe we
   transition one timestep to next, showing them next to each other, time left-to-right) could work. you basically just

@@ -374,6 +374,12 @@ received, so the talk may say it:
   166.6 EFLOPs over pretraining, reconstruction and segmentation training (32.4 to 33.5 without the pretraining, which
   may come from "Beyond Grids", arXiv:2309.13353, by the same first author). Its segmentation glimpses of 48 px are 9
   patches, which corrects the rebuttal's note that its code always uses 4.
+- The uncertainty read out from the canvas tracks the segmentation's errors [measured 2026-10-01,
+  `throwaway/metacognition/calibration.py`, `../../data/talk/metacognition/calibration.json`]: over the 2,000 ADE20K
+  validation images (7.5 M labeled canvas cells, 64 × 64 canvas, each cell's decoded class against the annotation at
+  its center), after the full-scene glimpse cell accuracy 77.9%, entropy tells wrong cells from right ones with an
+  AUROC of 0.836 (mean 1.96 bits against 0.79), and accuracy falls from 99% in the surest tenth of cells to 37% in the
+  least sure; after C2F's first five glimpses 80.1%, AUROC 0.841, 99% to 41%.
 - The VPE token helps at long horizons and fine canvases (+1.28 mIoU at t = 20, 64² canvas); EG-C2F's viewpoint
   selection costs about 1–5 MFLOP, under 0.03% of a glimpse.
 

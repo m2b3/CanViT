@@ -522,3 +522,12 @@
 /* The divider before the Backup slides. */
 #backup .divider { display: grid; place-items: center; height: 100%; margin: 0; font-size: 96px; font-weight: 800;
                    letter-spacing: -.03em; color: var(--muted); }
+
+/* Accuracy by uncertainty (uncertainty-calibration.js): the full-scene glimpse in gray, five C2F glimpses in C2F's
+   color. */
+#calibration .calibration svg { display: block; width: 100%; height: auto; margin-top: 6px; overflow: visible; }
+#calibration .grid { stroke: var(--rule); }
+#calibration .tick { font: 500 17px var(--sans); fill: var(--muted); }
+#calibration .title { font: 650 18px var(--sans); fill: var(--text); }
+#calibration .series-0 { fill: #94a3b8; }
+#calibration .series-1 { fill: #1f77b4; }

@@ -161,8 +161,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   - The neuroscience case closes only in the notes ("networks that got good at vision turned out to be good models of
     the visual cortex; active models were never good enough to enter that comparison"); `#neuro-ai` could call back
     the Brain-Score figure of `#tradition` on screen.
-  - "Metacognition" on `#uncertainty` is asserted: whether the probe's entropy predicts its errors is not shown. An
-    experiment: entropy against error over ADE20K validation (an AUROC, or accuracy by entropy bin). S.
+  - "Metacognition" on `#uncertainty` was asserted; now measured (AUROC 0.84, 99% to 37% accuracy from the surest
+    tenth of cells to the least sure), said on `#uncertainty` and drawn in Backup (`#calibration`). Whether the number
+    belongs on `#uncertainty`'s screen is the authors' call.
   - `#cost` argues cheap adaptation but plots pretraining; the adaptation (0.16 EFLOPs for the ADE20K probe, 4.76 for
     ImageNet-1k LP-FT) is only in the notes.
   - `#neuro-ai`'s top-down feedback card (C2F against F2C) also changes the order of writes; the paper's no-reads

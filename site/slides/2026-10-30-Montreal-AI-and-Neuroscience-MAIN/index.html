@@ -435,7 +435,7 @@
   <span class="fragment step-marker" data-shows="map"></span>
   <span class="fragment step-marker" data-shows="quadrants"></span>
   <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
-  <aside class="notes">EG-C2F looks first where the model is least sure. How does it know where that is? After one glimpse of the whole street, read out from the canvas what the model thinks is at each position: a probability for each of the 150 classes. [click] Here, on the building: building, almost certain. [click] Here, by the car: car, building, road. It doesn't know. [click] How flat that distribution is, we call its entropy, in bits: zero when one class takes everything; here 3.2 bits, as unsure as choosing among about nine equally likely classes; at most 7.2 bits for all 150. Over the whole scene, that's a map of the model's own uncertainty about what is where. A kind of metacognition, taking the word broadly: a readout of its own uncertainty about what is where. And looking next where you are least certain is a rule people seem to use too: in a shape-learning task, Renninger and colleagues found people's next fixations predicted by just this kind of local rule. [click] EG-C2F averages it over each quarter of the scene, [click] and looks next where it's highest. No reinforcement learning, no training: it reads what the canvas already holds. AME, in the timeline, did something similar with its attention maps.</aside>
+  <aside class="notes">EG-C2F looks first where the model is least sure. How does it know where that is? After one glimpse of the whole street, read out from the canvas what the model thinks is at each position: a probability for each of the 150 classes. [click] Here, on the building: building, almost certain. [click] Here, by the car: car, building, road. It doesn't know. [click] How flat that distribution is, we call its entropy, in bits: zero when one class takes everything; here 3.2 bits, as unsure as choosing among about nine equally likely classes; at most 7.2 bits for all 150. Over the whole scene, that's a map of the model's own uncertainty about what is where. A kind of metacognition, taking the word broadly: a readout of its own uncertainty about what is where, and one that tracks its errors: in the tenth of the scene where it is surest it is right 99 percent of the time, where it is least sure 37. And looking next where you are least certain is a rule people seem to use too: in a shape-learning task, Renninger and colleagues found people's next fixations predicted by just this kind of local rule. [click] EG-C2F averages it over each quarter of the scene, [click] and looks next where it's highest. No reinforcement learning, no training: it reads what the canvas already holds. AME, in the timeline, did something similar with its attention maps.</aside>
 </section>
 
 <!-- ============================================================== Results -->
@@ -622,6 +622,15 @@
   <aside class="notes">Isn't it just DINOv3? Here is DINOv3 itself, the teacher, seeing the whole scene, at more and more pixels: from 128 to 512, its accuracy against what it costs to run. [click] And CanViT-B, from one glimpse of the whole scene at 128 pixels, then more glimpses. At a small budget, CanViT-B is ahead of its own teacher: <span data-macro="adeSingleGlimpseMiou">38.5</span> percent from one glimpse, where DINOv3 at the same compute gets <span data-macro="teacherFlopMatchedMiou">33.2</span>. With the whole scene at 512 pixels, the teacher still ends higher: it sees everything, at full resolution, all at once.</aside>
 </section>
 
+<section id="calibration" data-status="draft">
+  <hgroup><h2>Accuracy by uncertainty</h2><p>ADE20K validation, every canvas cell</p></hgroup>
+  <!-- For "is that uncertainty meaningful?": throwaway/metacognition/calibration.py over the 2,000 ADE20K validation
+       images, CanViT-B and its probe on the 64 x 64 canvas, each cell's decoded class against the annotation at its
+       center; uncertainty-calibration.js draws ../../data/talk/metacognition/calibration.json. -->
+  <div class="calibration"></div>
+  <aside class="notes">Is that uncertainty worth anything? Take every cell of the canvas over all of ADE20K validation, rank them by how unsure the model is, and cut them into tenths. Where it is surest, it is right 99 percent of the time; in the tenth where it is least sure, 37 percent after the full-scene glimpse. Its uncertainty tells its wrong cells from its right ones with an AUROC of 0.84, where chance is 0.5. So when EG-C2F looks where the model is unsure, it looks where the model is likely to be wrong.</aside>
+</section>
+
 <section id="live" data-status="draft">
   <h2>Live demo</h2>
   <div class="live-stage" data-no-advance>
@@ -647,6 +656,7 @@
   import { drawDistillation } from "./distillation.js";
   import { drawTrainingCost } from "./training-cost.js";
   import { drawPolicyAblations } from "./policy-ablations.js";
+  import { drawUncertaintyCalibration } from "./uncertainty-calibration.js";
   import { drawArchitecture } from "./architecture.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
@@ -693,6 +703,7 @@
   }
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
   await drawArchitecture(document.querySelector("#architecture .arch-build"));
+  await drawUncertaintyCalibration(document.querySelector("#calibration .calibration"), "../../data/talk/metacognition/calibration.json");
   await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
   await drawTrainingCost(document.querySelector("#cost"), "../../data/talk/training-cost.json");
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");

@@ -473,6 +473,13 @@ btw (even if it just says 'Backup')"].
   same compute, the paper's macros); with the whole scene at 512 px the teacher ends higher (47.2).
 - **Status:** draft (built), in Backup.
 
+### Accuracy by uncertainty
+- **Title:** names what the chart shows; subtitle "ADE20K validation, every canvas cell".
+- **For:** "is that uncertainty worth anything?" after `#uncertainty`, and the metacognition keyword's scope.
+- **Shows:** accuracy of the decoded class in each tenth of canvas cells ranked by entropy, after the full-scene glimpse
+  and after five C2F glimpses: 99% where surest, 37% (41%) where least sure; AUROC 0.84 in the notes.
+- **Status:** draft (built 2026-10-01), in Backup.
+
 ### Live demo
 - **Title:** "Live demo" [Yohaï, 2026-10-01: "the live explorer from 'A general-purpose observer lets you use any
   policy' should be renamed 'Live demo'"]; a bonus, in Backup [Yohaï, 2026-10-01: "no one [cares] enough for [the

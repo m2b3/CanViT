@@ -17,6 +17,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] The live model on the Hub: "you can do huggingface, just do it properly and cleanly and
+  consistently"; then, on the export fusing CanViT-B and its ADE20K probe in one graph: "did you fuse the entire
+  [...] thing instead of separating the probes from the canvit". Nothing is published. In progress: a CanViT graph
+  and a probe graph, exported, checked and published apart; the page composes them. Also open: whether Sabrina gets
+  the slides' data (`site/data/`, about 80 MB, gitignored) by a commit on the talk branch, a zip, or regeneration.
 - [Yohaï, 2026-10-01] `#glimpses` ("Scenes, viewpoints and glimpses"): "this slide seems unnecessary, instead we should
   have a masterfully done that introduces all the concepts and then how the model itself works / what it does, with
   animations/transitions"; "you can borrow from 'CanViT in action', start from there but fade into the full thing to
@@ -31,9 +36,12 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
   scheme is still not great not great at all". Labels redone 2026-10-01 (no key; each passive line named at its end
   under one "Passive" heading, "linear decoding"; active models named at their points over "Active models"); awaiting
-  the authors' look. Codex (gpt-6-astra) is auditing the data against primary sources: brief and report in
-  `throwaway/history-audit/` (MISSION.md, REPORT.md, proposed_points.json); its findings are to be checked before any
-  enters `sources/sota-history.json`.
+  the authors' look. Codex (gpt-6-astra) audited the data
+  against primary sources (brief and outputs in `throwaway/history-audit/`) until the disk filled: REPORT.md covers
+  missing fields and the active entries; its sections on unverified leads and missing records are empty. Its seven
+  proposals (proposed_points.json) only fill fields from official code (test resolutions of SimCLR, MoCo v3, EsViT,
+  GFNet; DPT-Hybrid 98.2M parameters, base; Prisadnikov ViT-S size unknown); none changes a base-size line. To check
+  and merge; relaunch codex for leads and missing records once the disk has room.
 - [Yohaï, 2026-10-01] `#table`: "we're missing some kind of explanation of what the hell the colors correspond to...
   labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
   yet." Done 2026-10-01: DINOv3's probability of table per glimpse, with a 0-to-1 scale; `#extrapolation` uses the

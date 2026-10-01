@@ -201,6 +201,10 @@ spelling.
   own their facts; a card is never edited by hand on the Hub. The main pages
   (website, READMEs, pyproject) say that CanViT means Canvas Vision
   Transformer.
+- CanViT and its probes are published separately [Yohaï, 2026-10-01, on a
+  live export that fused CanViT-B and its ADE20K probe in one graph: "did
+  you fuse the entire [...] thing instead of separating the probes from the
+  canvit"].
 - Judge everything by leverage per line, tests included. A test earns its place by catching a plausible defect that
   nothing else would: a paper invariant, a numerical equivalence, a released
   checkpoint that must keep loading. Vacuous tests (restating the code) and

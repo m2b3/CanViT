@@ -149,6 +149,26 @@
   <aside class="notes">Here's the setting. A scene, and a glimpse: a crop at a position and a zoom level, always resized to the same 128 by 128 pixels. Zoom out, and you see everything, coarsely. Zoom in, and you see detail, in a small region. Outside the glimpse there's nothing. Not even a blur. There's a world of difference between seeing something blurry and seeing nothing at all.</aside>
 </section>
 
+<section id="detail" data-status="draft">
+  <h2>Spatial coverage and perception of detail</h2>
+  <div class="detail-grid">
+    <div></div><p class="col-label">Scene</p><p class="col-label">Zoomed out</p><p class="col-label">p(object)</p><p class="col-label fragment" data-fragment-index="0">Zoomed in</p><p class="col-label fragment" data-fragment-index="1">p(object)</p>
+    <p class="row-label">Clock</p>
+    <img src="../../data/talk/looking-closer/ADE_val_00000068-clock/scene.png" alt="">
+    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00000068-clock/full_in_box.png" alt="">
+    <img src="../../data/talk/looking-closer/ADE_val_00000068-clock/prob_f_in_box.png" alt="">
+    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/looking-closer/ADE_val_00000068-clock/glimpse_zoom.png" alt="">
+    <img class="fragment" data-fragment-index="1" src="../../data/talk/looking-closer/ADE_val_00000068-clock/prob_fz_in_box.png" alt="">
+    <p class="row-label">Television</p>
+    <img src="../../data/talk/looking-closer/ADE_val_00001195-television/scene.png" alt="">
+    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00001195-television/full_in_box.png" alt="">
+    <img src="../../data/talk/looking-closer/ADE_val_00001195-television/prob_f_in_box.png" alt="">
+    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/looking-closer/ADE_val_00001195-television/glimpse_zoom.png" alt="">
+    <img class="fragment" data-fragment-index="1" src="../../data/talk/looking-closer/ADE_val_00001195-television/prob_fz_in_box.png" alt="">
+  </div>
+  <aside class="notes">Zooming trades spatial coverage for detail. Zoomed out on this bar, the clock is a few pixels of the 128 the model gets, and the canvas has no idea it's there. Zoom in, and it's a clock. Same for the television. These two are picked, but across four thousand small objects in ADE20K the zoomed glimpse almost doubles how much of the object the canvas gets right, from 18 to 32 percent, while seeing the full scene a second time barely helps, 19 percent: it's the zoom, not the extra step.</aside>
+</section>
+
 <section id="architecture" data-status="ready">
   <h2>The <span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span></h2>
   <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">

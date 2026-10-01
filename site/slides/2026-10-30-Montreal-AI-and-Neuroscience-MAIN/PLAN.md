@@ -27,8 +27,6 @@ the talk.
 
 ## Next
 
-- The looking-closer example (`#glimpses`), when `throwaway/looking_closer` reports (blocked while the disk was full).
-  S.
 - The cognition citation on `#table` (`sources/cognition.md`: Intraub & Richardson 1989; Biederman, Mezzanotte &
   Rabinowitz 1982; Torralba et al. 2006) and a backup slide with their figures (`assets/figures/`, extracted). Prepare
   the objection that edge continuation fills the gap without knowledge of tables (amodal completion). S.
@@ -53,7 +51,7 @@ the talk.
 |---|---|---|---|---|
 | Table corners: two glimpses at an object's ends, CanViT against DINOv3 per glimpse, over ADE20K validation (`throwaway/table_corners`); to graduate into `canvit_pytorch.viz` | `#table`, `#extrapolation` | S | page | done |
 | Distillation: DINOv3's features of a scene and CanViT's prediction after each glimpse (`throwaway/distillation`) | `#distillation` | S | page, paper | done |
-| Looking closer: small objects missed by a full-scene glimpse and found by a zoomed one (`throwaway/looking_closer`) | `#glimpses` | S | page | running |
+| Looking closer: small objects missed by a full-scene glimpse and found by a zoomed one (`throwaway/looking_closer`); to graduate into `canvit_pytorch.viz` | `#detail` | S | page | done |
 | Teacher features of the conference room for the browser (similarity to a hovered patch, PCA, probe segmentation) | `#foundation` | M | page | todo |
 
 ## Components and deck primitives

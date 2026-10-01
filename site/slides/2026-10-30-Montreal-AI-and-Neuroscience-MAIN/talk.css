@@ -94,6 +94,13 @@
 #glimpses .glimpse-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; width: 900px; margin: 0 auto; }
 #glimpses figcaption { margin-bottom: 8px; font-size: 22px; font-weight: 700; }
 
+#detail .detail-grid { display: grid; grid-template-columns: 120px repeat(5, 200px); gap: 10px 14px; align-items: center;
+                       justify-content: center; margin-top: 8px; }
+#detail img { width: 200px; height: 200px; border-radius: 8px; }
+#detail img.pixels { image-rendering: pixelated; }
+#detail .col-label { font-size: 18px; font-weight: 700; text-align: center; }
+#detail .row-label { font-size: 20px; font-weight: 700; color: var(--muted); }
+
 #architecture img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
 
 #canvas-attention svg.figure { display: block; height: 480px; width: auto; margin: -10px auto 0; overflow: hidden; }

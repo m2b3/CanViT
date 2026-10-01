@@ -102,12 +102,12 @@
 #canvas-attention .claim { margin-top: 6px; }
 #canvas-attention .cite { text-align: center; }
 
-#distillation .distill { display: flex; justify-content: center; align-items: flex-start; gap: 40px; margin-top: 40px; }
+#distillation .distill { display: flex; justify-content: center; align-items: flex-start; gap: 36px; margin-top: 10px; }
 #distillation .heads { display: flex; gap: 14px; margin-bottom: 8px; font-size: 19px; font-weight: 700; }
-#distillation .heads span { width: 262px; }
+#distillation .heads span { width: 350px; }
 #distillation .frame { display: flex; gap: 14px; }
-#distillation .frame img, #distillation .target img { width: 262px; height: 262px; border-radius: 8px; }
-#distillation .target { padding-left: 40px; border-left: 2px solid var(--rule); }
+#distillation .frame img, #distillation .target img { width: 350px; height: 350px; border-radius: 10px; }
+#distillation .target { padding-left: 36px; border-left: 2px solid var(--rule); }
 #distillation > .cite { margin-top: 18px; text-align: center; }
 
 #rollout .episode { width: 1060px; margin: 0 auto; padding: 14px 20px; }

@@ -32,7 +32,6 @@ the talk.
 - The cognition citation on `#table` (`sources/cognition.md`: Intraub & Richardson 1989; Biederman, Mezzanotte &
   Rabinowitz 1982; Torralba et al. 2006) and a backup slide with their figures (`assets/figures/`, extracted). Prepare
   the objection that edge continuation fills the gap without knowledge of tables (amodal completion). S.
-- `#distillation`: the content fills the top half of the slide; use the space. S.
 - `#neuro-ai`: three lines of text on a half-empty slide; needs a visual. S–M.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
 - Independent reviews of `OUTLINE.md` (a fresh subagent; `codex exec -m gpt-6-astra`), then the authors'. S.

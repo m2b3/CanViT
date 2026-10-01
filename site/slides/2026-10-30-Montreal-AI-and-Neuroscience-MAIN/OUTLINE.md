@@ -393,8 +393,9 @@ yet reviewed by the authors.
   64 × 64 canvas) is said, not shown.
 - **Status:** draft (ring positions to check).
 
-### A general-purpose observer lets you use any policy
-- **Title:** the project page's line; a bonus, in Backup [Yohaï, 2026-10-01: "no one [cares] enough for this
-  to be the title of a main-talk slide, bonus at best. they care about science and what they can do with it"].
+### Live demo
+- **Title:** "Live demo" [Yohaï, 2026-10-01: "the live explorer from 'A general-purpose observer lets you use any
+  policy' should be renamed 'Live demo'"]; a bonus, in Backup [Yohaï, 2026-10-01: "no one [cares] enough for [the
+  page's line] to be the title of a main-talk slide, bonus at best"].
 - **Shows:** `<canvit-live>`: I choose where to look; then EG-C2F chooses, from the uncertainty of the segmentation read out from the canvas.
 - **Status:** ready (layout to fit; offline runtime in `PLAN.md`).

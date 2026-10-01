@@ -426,9 +426,7 @@ scene and CanViT's prediction of them after each glimpse; `export.log` has the c
   appears on the results slide.
 - [Yohaï, 2026-10-01] Slide count and duration follow from correctness and clarity, not a rule.
 - [Yohaï, 2026-10-01] Third-party figures are welcome (fair use in an academic talk), cited on the slide.
-- [Yohaï, 2026-10-01] The live model is a bonus, in Backup, titled by the science it shows (any policy on the same
-  observer), never by the technology ("in the browser"): the audience cares about the science and what they can do
-  with it.
+- [Yohaï, 2026-10-01] The live model is a bonus, in Backup, titled "Live demo".
 - [Yohaï, 2026-10-01] Control experiments (the rebuttal's architecture and data-scale controls) are not slides: a bar
   chart of short-run numbers under two different conditions was "junk" to this audience. They stay in "Checked
   facts" for questions; the idea they support (the architecture and the learning signal are separate problems) is

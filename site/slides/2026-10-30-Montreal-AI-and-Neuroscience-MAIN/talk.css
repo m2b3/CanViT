@@ -402,12 +402,11 @@
 #cost .canvit .label { fill: var(--canvas); font-weight: 800; }
 #cost .prior :is(.filled, .range) { fill: #d97706; stroke: #d97706; }
 #cost .range { stroke-width: 5; stroke-linecap: round; }
-#cost .arrowhead { fill: #d97706; }
 #cost .prior circle { stroke: var(--bg); stroke-width: 2; }
 #cost .canvit circle { stroke: var(--canvas); stroke-width: 4; }
 #cost .canvit .filled { fill: var(--canvas); }
 #cost .canvit .hollow { fill: var(--bg); }
-#cost .undisclosed { stroke: #d97706; stroke-width: 2.5; stroke-dasharray: 8 6; }
+
 #policy-accuracy.shows-ade20k .ade20k { opacity: 1; }
 
 /* Quickstart: the install line alone and large, then small above the code; the code walked through block by block,

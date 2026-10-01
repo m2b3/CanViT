@@ -1,8 +1,8 @@
 // The training-cost slide: each active model's best accuracy against its own training compute, one chart per
 // benchmark, from throwaway/training_cost/export.py's JSON (the rebuttal's FLOP accounting: teachers and pretrained
-// weights counted on no side). A model is a point at its compute, a bar across a range of estimates, a bar with an arrow
-// when only a lower bound is known, or a dashed line at its accuracy when its compute is not disclosed. CanViT-B is in
-// canvas red, filled when fine-tuned and hollow when frozen with a linear probe, as on the history charts.
+// weights counted on no side). A model is a point at its compute, or a bar across a range of counts when its code and
+// paper differ. CanViT-B is in canvas red, filled when fine-tuned and hollow when frozen with a linear probe, as on the
+// history charts.
 
 const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 540, HEIGHT = 420;
@@ -33,10 +33,6 @@ function chart(container, benchmark, entries) {
   const x = (eflops) => PLOT.left + (Math.log(eflops / X_RANGE[0]) / Math.log(X_RANGE[1] / X_RANGE[0])) * (PLOT.right - PLOT.left);
   const y = (value) => PLOT.bottom - ((value - spec.range[0]) / (spec.range[1] - spec.range[0])) * (PLOT.bottom - PLOT.top);
   const svg = el("svg", { viewBox: `0 0 ${WIDTH} ${HEIGHT}`, role: "img", "aria-label": `${spec.title} against training compute` }, container);
-  const defs = el("defs", {}, svg);
-  const head = el("marker", { id: `cost-arrow-${benchmark}`, viewBox: "0 0 10 10", refX: 6, refY: 5, markerWidth: 18,
-                              markerHeight: 18, markerUnits: "userSpaceOnUse", orient: "auto" }, defs);
-  el("path", { d: "M0,0 L10,5 L0,10 Z", class: "arrowhead" }, head);
 
   for (let value = spec.range[0]; value <= spec.range[1]; value += spec.step) {
     el("line", { x1: PLOT.left, x2: PLOT.right, y1: y(value), y2: y(value), class: "grid" }, svg);
@@ -55,18 +51,9 @@ function chart(container, benchmark, entries) {
     const group = el("g", { class: ours ? "entry canvit" : "entry prior" }, svg);
     const vy = y(entry.accuracy);
     const value = entry.accuracy.toFixed(1);
-    if (entry.eflops === null) {  // compute not disclosed: a dashed line at its accuracy
-      el("line", { x1: PLOT.left, x2: PLOT.right, y1: vy, y2: vy, class: "undisclosed" }, group);
-      text(`${entry.model} ${value}, training compute not disclosed`, { x: PLOT.left + 8, y: vy - 9, class: "label" }, group);
-      continue;
-    }
     const [low, high] = entry.eflops;
-    const lowerBound = high === null, range = !lowerBound && high > low;
-    if (lowerBound) {  // only a lower bound: from it to the edge, with an arrow
-      el("line", { x1: x(low), x2: PLOT.right - 4, y1: vy, y2: vy, class: "range", "marker-end": `url(#cost-arrow-${benchmark})` }, group);
-    } else if (range) {
-      el("line", { x1: x(low), x2: x(high), y1: vy, y2: vy, class: "range" }, group);
-    }
+    const range = high > low;
+    if (range) el("line", { x1: x(low), x2: x(high), y1: vy, y2: vy, class: "range" }, group);
     const cx = range ? (x(low) + x(high)) / 2 : x(low); // a range's point at its geometric mean
     el("circle", { cx, cy: vy, r: 8, class: ours && entry.readout.startsWith("frozen") ? "hollow" : "filled" }, group);
     const name = ours ? `${entry.model}, ${entry.readout.split(",")[0]}` : entry.model;

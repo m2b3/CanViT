@@ -366,6 +366,14 @@ received, so the talk may say it:
   at the 64² canvas 0.16 EFLOPs (40,000 steps × 16 × 10 glimpses, CanViT-B frozen). The pretraining run's average rate:
   52.5 EFLOPs over 166 h is 87.9 TFLOP/s, 8.9% of an H100 SXM's dense bf16 peak (11.6% for a PCIe H100; which variant
   ran is not recorded here).
+- The prior active models' own training compute, counted from their code, papers and released checkpoints under the
+  rebuttal's conventions [a subagent, 2026-10-01, `sources/baseline-training-compute.md`, script
+  `throwaway/training_cost/baselines.py`]: AdaptiveNN-DeiT-S on ImageNet-1k 22.6 EFLOPs per training run (1.53 B
+  fixations of 112 px; its count reproduces the paper's inference-cost curve within 1.3%, whose "GFLOPs" are
+  multiply-adds; whether its 82.2 ± 0.12 averages five training runs is not determined); AdaGlimpse on ADE20K 83.7 to
+  166.6 EFLOPs over pretraining, reconstruction and segmentation training (32.4 to 33.5 without the pretraining, which
+  may come from "Beyond Grids", arXiv:2309.13353, by the same first author). Its segmentation glimpses of 48 px are 9
+  patches, which corrects the rebuttal's note that its code always uses 4.
 - The VPE token helps at long horizons and fine canvases (+1.28 mIoU at t = 20, 64² canvas); EG-C2F's viewpoint
   selection costs about 1–5 MFLOP, under 0.03% of a glimpse.
 

@@ -423,22 +423,28 @@
 
 <section id="detail" data-status="draft">
   <h2>Spatial coverage and perception of detail</h2>
-  <div class="detail-grid">
-    <div></div><p class="col-label">Scene</p><p class="col-label">Zoomed out</p><p class="col-label">p(object)</p><p class="col-label fragment" data-fragment-index="0">Zoomed in</p><p class="col-label fragment" data-fragment-index="1">p(object)</p>
-    <p class="row-label">Clock</p>
-    <img src="../../data/talk/looking-closer/ADE_val_00000068-clock/scene.png" alt="">
-    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00000068-clock/full_in_box.png" alt="">
-    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00000068-clock/prob_f_in_box.png" alt="">
-    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/looking-closer/ADE_val_00000068-clock/glimpse_zoom.png" alt="">
-    <img class="pixels fragment" data-fragment-index="1" src="../../data/talk/looking-closer/ADE_val_00000068-clock/prob_fz_in_box.png" alt="">
-    <p class="row-label">Television</p>
-    <img src="../../data/talk/looking-closer/ADE_val_00001195-television/scene.png" alt="">
-    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00001195-television/full_in_box.png" alt="">
-    <img class="pixels" src="../../data/talk/looking-closer/ADE_val_00001195-television/prob_f_in_box.png" alt="">
-    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/looking-closer/ADE_val_00001195-television/glimpse_zoom.png" alt="">
-    <img class="pixels fragment" data-fragment-index="1" src="../../data/talk/looking-closer/ADE_val_00001195-television/prob_fz_in_box.png" alt="">
+  <!-- ADE_val_00001715, chosen among 4,151 small objects of ADE20K validation (throwaway/looking_closer): a television
+       CanViT-B misses after the full-scene glimpse (p 0.03) and finds after a zoomed one (p 0.77), with few false
+       positives. The input panel zooms into the zoomed glimpse's box (geometry from meta.json, detail.js), then the
+       zoomed glimpse itself replaces it. -->
+  <div class="detail-row">
+    <figure class="scene"><figcaption>Scene</figcaption>
+      <div class="frame"><img src="../../data/talk/looking-closer-clean/ADE_val_00001715-television/scene.png" alt="A billiard room with a television on the far wall"><img class="boxed" src="../../data/talk/looking-closer/ADE_val_00001715-television/scene.png" alt="The same room with the zoomed glimpse's box around the television"></div></figure>
+    <figure class="input"><figcaption>The model's input, 128 px</figcaption>
+      <div class="frame">
+        <img class="pixels full" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_full.png" alt="The whole scene in 128 by 128 pixels">
+        <img class="pixels zoomed" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_zoom.png" alt="The zoomed glimpse in 128 by 128 pixels: a television">
+        <span class="object-ring"></span>
+      </div></figure>
+    <figure class="prob"><figcaption data-class-caption></figcaption>
+      <div class="frame"><img class="pixels f" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_f.png" alt="After the full-scene glimpse: nothing"><img class="pixels fz" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_fz.png" alt="After the zoomed glimpse: the television"></div></figure>
   </div>
-  <aside class="notes">Zooming trades spatial coverage for detail. Zoomed out on this bar, the clock is a few pixels of the 128 the model gets, and the canvas has no idea it's there. Zoom in, and it's a clock. Same for the television. These two are picked, but across four thousand small objects in ADE20K the zoomed glimpse almost doubles how much of the object the canvas gets right, from 18 to 32 percent, while seeing the full scene a second time barely helps, 19 percent: it's the zoom, not the extra step.</aside>
+  <span class="fragment step-marker" data-shows="full"></span>
+  <span class="fragment step-marker" data-shows="prob-full"></span>
+  <span class="fragment step-marker" data-shows="loupe"></span>
+  <span class="fragment step-marker" data-shows="zoom"></span>
+  <span class="fragment step-marker" data-shows="prob-zoom"></span>
+  <aside class="notes">Whatever the zoom, the model gets 128 by 128 pixels. That's the trade-off: spatial coverage against perception of detail. Here's a billiard room. [click] Look at the whole scene, and this is what the model receives: everything, coarsely. [click] Is there a television? The model says no. [click] Because here is all it had of the television: a few pixels. [click] Now zoom in on that spot: same number of pixels, all on the television. [click] And now the model sees it. A passive model given the whole scene in 128 pixels is stuck where we were two clicks ago; an active one can go and look. This example is a clean one. Over four thousand small objects in ADE20K, a zoomed glimpse almost doubles how much of the object the model gets right, from 18 to 32 percent, while showing the whole scene a second time barely helps, 19 percent: it's the zoom, not the extra step.</aside>
 </section>
 
 </div>
@@ -454,6 +460,7 @@
   import { drawTimeline } from "./timeline.js";
   import { drawMapNames } from "./labeled-map.js";
   import { drawUncertainty } from "./uncertainty.js";
+  import { drawDetail } from "./detail.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
   function colorByPolicy(rollout) {
@@ -478,6 +485,7 @@
   await drawHistoryCharts();
   await drawTimeline(document.querySelector("#timeline .timeline"));
   await drawMapNames();
+  await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
   const uncertainty = document.querySelector("#uncertainty");
   await drawUncertainty(uncertainty, "../../data/talk/metacognition/street");
   uncertainty.style.setProperty("--canvit-glimpse", POLICIES.entropy_coarse_to_fine.color);

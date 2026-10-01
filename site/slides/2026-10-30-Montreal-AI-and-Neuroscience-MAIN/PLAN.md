@@ -37,13 +37,16 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   ADE20K probe, `hub.repos.released_dinov3_ade20k_probe("dv3b", input_size_px=128)`), on the rollout, extrapolation
   and detail slides; the paper's numbers for the matched comparison (passive_comparison_rows: DINOv3 ViT-B at 128 px
   28.8 mIoU against CanViT-B's 29.3 to 39.6 from one full-scene glimpse) say why it matters.
+- [Yohaï, 2026-10-01] `#distillation`: replace the conference room (natively 256 px, shown upscaled; chosen for
+  convenience). The sweep (`throwaway/distillation`, 2026-10-01) proposes ADE_val_00000124 (bedroom: the unseen upper
+  window and the unseen side of the bed fill in), then 00001140, 00001784, 00001847; build with the sequential
+  pattern of `OUTLINE.md`.
 - [Yohaï, 2026-10-01] The memory slide: "why would a slide be called that" (now "A persistent, evolving understanding
   of the scene") and "the example you chose really doesn't look inspiring": a three-object example in a lively scene
   is being swept (`OUTLINE.md`, its example properties).
 - [Yohaï, 2026-10-01] "Spatial coverage and perception of detail" (`#detail`): "the idea ... is good and nice but the
-  way it is showed is really not good atm". Try several presentations (the full-scene glimpse with a loupe on the
-  object, the zoom animated, the object's probability before and after, recall against object size with the
-  full-scene-twice control), side by side and one after the other, with the `#history` segmentation intro as the bar.
+  way it is showed is really not good atm". Rebuilt 2026-10-01 (one example, a zoom into the model's own input);
+  awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#uncertainty`: "metacognition" said with its scope (`sources/concepts.md`: Fleming 2024 keeps
   "sensitivity to uncertainty" apart from metacognition; Renninger, Verghese & Coughlan 2007: people fixate where
   uncertainty is highest, EG-C2F's rule); decide the wording with the authors.

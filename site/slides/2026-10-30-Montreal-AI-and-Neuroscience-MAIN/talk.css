@@ -158,11 +158,30 @@
 #glimpses .glimpse-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; width: 900px; margin: 0 auto; }
 #glimpses figcaption { margin-bottom: 8px; font-size: 22px; font-weight: 700; }
 
-#detail .detail-grid { display: grid; grid-template-columns: 120px repeat(5, 200px); gap: 10px 14px; align-items: center;
-                       justify-content: center; margin-top: 8px; }
-#detail img { width: 200px; height: 200px; border-radius: 8px; }
-#detail .col-label { font-size: 18px; font-weight: 700; text-align: center; }
-#detail .row-label { font-size: 20px; font-weight: 700; color: var(--muted); }
+/* Spatial coverage and perception of detail: scene, the model's 128 px input, p(class); the input zooms into the
+   zoomed glimpse's box (--zoom-*, detail.js), then the zoomed glimpse replaces it at the same framing. */
+#detail .detail-row { display: grid; grid-template-columns: repeat(3, 368px); gap: 24px; justify-content: center; margin-top: 24px; }
+#detail figure { margin: 0; }
+#detail figcaption { margin-bottom: 8px; font-size: 22px; font-weight: 750; white-space: nowrap; }
+#detail .frame { position: relative; width: 368px; height: 368px; overflow: hidden; border-radius: 8px; }
+#detail .frame img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .6s ease; }
+#detail .scene .boxed { opacity: 0; }
+#detail.shows-loupe .scene .boxed { opacity: 1; }
+#detail.shows-full .scene .frame { outline: 4px solid var(--glimpse); outline-offset: -4px; }
+#detail.shows-loupe .scene .frame { outline: none; }
+#detail .input, #detail .prob { opacity: 0; transition: opacity .6s ease; }
+#detail.shows-full .input, #detail.shows-prob-full .prob { opacity: 1; }
+#detail .input .full { transform-origin: 0 0; transition: transform 1.4s ease, opacity .6s ease; }
+#detail.shows-loupe .input .full {
+  transform: translate(calc(-100% * var(--zoom-left) / var(--zoom-side)), calc(-100% * var(--zoom-top) / var(--zoom-side)))
+             scale(calc(1 / var(--zoom-side))); }
+#detail .input .zoomed, #detail .prob .fz { opacity: 0; }
+#detail.shows-zoom .input .zoomed, #detail.shows-prob-zoom .prob .fz { opacity: 1; }
+#detail .object-ring { position: absolute; box-sizing: border-box; border: 3px solid #fff; border-radius: 50%;
+                       box-shadow: 0 0 0 3px rgba(0, 0, 0, .35); opacity: 0; transition: opacity .4s ease;
+                       top: calc(100% * (var(--object-top) - .03)); left: calc(100% * (var(--object-left) - .03));
+                       height: calc(100% * (var(--object-height) + .06)); width: calc(100% * (var(--object-width) + .06)); }
+#detail.shows-prob-full:not(.shows-loupe) .object-ring { opacity: 1; }
 
 #architecture img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
 

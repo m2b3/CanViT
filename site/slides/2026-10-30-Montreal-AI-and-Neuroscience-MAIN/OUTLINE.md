@@ -321,13 +321,18 @@ yet reviewed by the authors.
 
 ### Spatial coverage and perception of detail
 - **Title:** the paper's §3 ("s_t smoothly controls the tradeoff between spatial coverage and perception of detail").
-- **Shows:** two small objects (a clock, a television; ADE_val_00000068, ADE_val_00001195): the scene with the zoomed
-  glimpse's box; the zoomed-out glimpse's few pixels of the object; CanViT's probability of its class after the
-  zoomed-out glimpse (near zero); on a click, the zoomed-in glimpse; on the next, the probability after it (high).
-  Each panel right of the scene shows the box's region.
-- **Says:** over 4,151 small objects of ADE20K validation, recall of the object's pixels goes from 18% after the
-  full-scene glimpse to 32% after a zoomed one, against 19% for the full scene seen twice: the zoom, not the extra
-  step. The two examples are picked; the object is a few pixels when zoomed out, not invisible to a person.
-- **Data:** `throwaway/looking_closer` (`summary.log`; panels in `../../data/talk/looking-closer/`).
-- **Status:** in Backup in this form [Yohaï, 2026-10-01: "a good start ... just having black vs centered blob
-  doesn't say much"]; presentations being tried (`PLAN.md`).
+- **Must:** the model always gets 128 × 128 pixels; zoomed out, a small object is a few pixels and the model misses
+  it; zoomed in on it, the same budget shows it and the model finds it. A passive model given the whole scene at that
+  budget cannot go and look.
+- **Could:** the average (said: recall of the object's pixels 0.18 after the full-scene glimpse, 0.32 after a zoomed
+  one, 0.19 for the full scene twice, over 4,151 small objects); DINOv3 ViT-B at 128 px on the same scene, beside it
+  (`PLAN.md`).
+- **Example properties** [stated 2026-10-01]: an object everyone names; a few pixels in the full-scene glimpse; the
+  model's p(class) near zero after it and high after the zoom, with few false positives; a scene read at a glance.
+  Chosen: ADE_val_00001715, a television in a billiard room (p 0.03 → 0.77; `throwaway/looking_closer`, ranked over
+  all qualifying objects; runners-up: a basket of soaps, ADE_val_00001081; bottles on a counter, ADE_val_00000439).
+- **Builds:** the scene; its full-scene glimpse as the model receives it (128 px, hard nearest) and p(television),
+  dark; the input zooms into the zoomed glimpse's box, showing the few pixels it had of the television; the zoomed
+  glimpse replaces it at the same framing; p(television) lights up.
+- **Status:** draft (built), in Backup [Yohaï, 2026-10-01: "the idea ... is good and nice but the way it is showed is
+  really not good atm"]: rebuilt; place in the story to decide.

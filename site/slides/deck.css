@@ -30,6 +30,10 @@ html, body { background: var(--bg); }
 .reveal p { margin: 0; }
 .reveal strong, .reveal b { font-weight: 700; color: var(--ink); }
 .reveal h2 .term-glimpse, .reveal h2 .term-canvas, .reveal h2 .term-policy { font-weight: inherit; }
+/* A title with a subtitle: <hgroup><h2>…</h2><p>…</p></hgroup>. */
+.reveal hgroup { margin-bottom: 22px; }
+.reveal hgroup h2 { margin-bottom: 2px; }
+.reveal hgroup p { font-size: 28px; font-weight: 600; line-height: 1.2; color: var(--muted); }
 .reveal code { font-family: var(--mono); font-size: .86em; }
 
 /* Layout helpers. */

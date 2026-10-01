@@ -119,7 +119,7 @@
 <!-- ============================================================== Active computer vision -->
 
 <section id="timeline" data-status="draft">
-  <h2>Deep active vision</h2>
+  <h2>A brief history of deep active computer vision</h2>
   <!-- Drawn by timeline.js from sources/active-vision-timeline.json; each model a fragment, then how each chose where
        to look. Evidence for every entry: sources/active-vision-timeline.md. -->
   <div class="timeline"></div>
@@ -156,9 +156,7 @@
   <span class="fragment step-marker" data-shows="map"></span>
   <span class="fragment step-marker" data-shows="ade20k"></span>
   <span class="fragment step-marker" data-shows="gap"></span>
-  <!-- XXX: the passive lines are to be restricted to base-size models (sources/sota-history.json, size_class); the
-       notes say "at the size of the active models" for that version. -->
-  <aside class="notes">How do you measure how smart a vision model is? Two standard tests. The first is classification, on ImageNet: one photo, one label for the whole image, out of a thousand classes, as fine as the breed of a dog. [click] English springer. One good look at the right part, here the head, and you have it. [click] Passive models over the years, trained end to end. [click] And frozen features with just a linear layer on top: that's how foundation models are read out. [click] Now the active models from the timeline. Below, every time. [click] The second test is much harder: semantic segmentation, on ADE20K. [click] A label for every pixel: wall, floor, sofa, the book on the coffee table; 150 classes. You have to know what is everywhere, including where you haven't looked closely. For a model that sees one glimpse at a time, that means remembering what it saw where, and guessing the rest. Most active models can't produce it at all. The score is mIoU: for each class, how much the predicted region overlaps the true one, averaged over classes. [click] Passive, frozen features, and the two active models that do it. [click] That's the gap. Active computer vision was not nearly as smart as passive computer vision. Even with lots of training, lots of data and lots of inference compute, it was terrible. The whole point was supposed to be efficiency; instead, worse accuracy and worse efficiency at every level.</aside>
+  <aside class="notes">How do you measure how smart a vision model is? Two standard tests. The first is classification, on ImageNet: one photo, one label for the whole image, out of a thousand classes, as fine as the breed of a dog. [click] English springer. One good look at the right part, here the head, and you have it. [click] Passive models of the same size as the active ones, over the years, trained end to end. [click] And frozen features with just a linear layer on top: that's how foundation models are read out. [click] Now the active models from the timeline. Below, every time. [click] The second test is much harder: semantic segmentation, on ADE20K. [click] A label for every pixel: wall, floor, sofa, the book on the coffee table; 150 classes. You have to know what is everywhere, including where you haven't looked closely. For a model that sees one glimpse at a time, that means remembering what it saw where, and guessing the rest. Most active models can't produce it at all. The score is mIoU: for each class, how much the predicted region overlaps the true one, averaged over classes. [click] Passive, frozen features, and the two active models that do it. [click] That's the gap. Active computer vision was not nearly as smart as passive computer vision. Even with lots of training, lots of data and lots of inference compute, it was terrible. The whole point was supposed to be efficiency; instead, worse accuracy and worse efficiency at every level.</aside>
 </section>
 
 <section id="active-vision-model" data-status="ready">
@@ -197,27 +195,13 @@
   </div>
   <span class="fragment" data-canvit-target=".zoom" data-canvit-t="1"></span>
   <span class="fragment" data-canvit-target=".zoom" data-canvit-t="5"></span>
-  <!-- TODO (PLAN.md): the looking-closer example, an object invisible zoomed out and found zoomed in. -->
   <aside class="notes">Here's the setting. A scene, and a glimpse: a crop at a position and a zoom level, always resized to the same 128 by 128 pixels. Zoom out, and you see everything, coarsely. Zoom in, and you see detail, in a small region. Outside the glimpse there's nothing. Not even a blur. There's a world of difference between seeing something blurry and seeing nothing at all.</aside>
 </section>
 
 <section id="architecture" data-status="ready">
   <h2>The <span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span></h2>
   <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
-  <aside class="notes">This is CanViT. A Vision Transformer, in purple, processes each glimpse, in blue. The canvas, in red, is a memory for the whole scene: a grid of tokens tiling the scene, each staying at its place in the scene whatever the glimpse. I put the intelligence on the Vision Transformer side. The two streams talk all the time. In a read, the glimpse stream queries the canvas, so what you saw before shapes how you process what you see now: top-down feedback. In a write, the canvas queries the glimpse stream. After every glimpse I can ask, at any point in time and for any position: what does the model think is there?</aside>
-</section>
-
-<section id="canvas-attention" data-status="draft">
-  <h2>Canvas Attention</h2>
-  <svg class="figure" viewBox="0 0 250 216" role="img" aria-label="A Canvas Attention read–write pair: learned projections on the glimpse side only">
-    <image href="../../assets/paper/canvas_attention_combined.svg" width="396" height="216"/>
-    <g class="fragment rings">
-      <ellipse cx="84.5" cy="65" rx="8" ry="6"/><ellipse cx="84.5" cy="76" rx="8" ry="6"/>
-      <ellipse cx="84" cy="148" rx="8" ry="6"/><ellipse cx="142.6" cy="120.5" rx="8" ry="6"/>
-    </g>
-    <rect class="fragment canvas-side" x="158" y="60" width="58" height="102" rx="6"/>
-  </svg>
-  <aside class="notes">The canvas talks to the glimpse stream through Canvas Attention. In a write, the canvas queries the glimpse; in a read, the glimpse queries the canvas. Here's the trick: it's asymmetric. Every learned projection, the queries, keys, values and outputs, sits on the glimpse side. The canvas side only gets a LayerNorm and its position. The canvas never goes through a learned layer: no MLP, no self-attention, no projection. So the memory is dumb, on purpose. But not too dumb. Just dumb enough that I could interact with it cheaply, while leaving it flexible enough to reconstruct unseen things from world-knowledge priors, like the table. That's what lets the canvas be large and fine-grained, and read after every glimpse. Previous dense models had a cheap encoder and a massive decoder. Here, a read and a write on a 64 by 64 canvas cost <span data-macro="cSixFourAsymRwPairGf">2.8</span> gigaflops; with projections on both sides it would be <span data-macro="cSixFourFullRwPairGf">37.3</span>.</aside>
+  <aside class="notes">This is CanViT. A Vision Transformer, in purple, processes each glimpse, in blue. The canvas, in red, is a memory for the whole scene: a grid of tokens tiling the scene, each staying at its place in the scene whatever the glimpse. I put the intelligence on the Vision Transformer side, and made the memory dumb, but not too dumb: the canvas never goes through a learned layer. Just dumb enough that I can read and write it cheaply, after every glimpse, at high resolution; flexible enough to fill in unseen things from what it knows of the world, like the table. The two streams talk all the time. In a read, the glimpse stream queries the canvas, so what you saw before shapes how you process what you see now: top-down feedback. In a write, the canvas queries the glimpse stream. After every glimpse I can ask, at any point in time and for any position: what does the model think is there?</aside>
 </section>
 
 <section id="distillation" data-status="draft">
@@ -274,7 +258,7 @@
   <aside class="notes">One more thing about training: no policy is built in. Every glimpse is random: anywhere in the scene, at any zoom from the whole scene down to a quarter of a percent of it, with small glimpses more likely; and the number of glimpses is random too: two, four, six, sometimes many more, four on average. [click] Each scene is seen twice: once like this, and once starting from the whole scene, then random. These are the actual draws of our training code. So the model never learns one way of looking: C2F, F2C, the entropy-guided policy, none of them were ever seen in training. We pretrained CanViT-B this way from scratch, on 13.2 million ImageNet-21k scenes and about a billion random glimpses, in 166 hours on a single H100.</aside>
 </section>
 
-<!-- ============================================================== Evidence -->
+<!-- ============================================================== What it does -->
 
 <section id="reconstruction" data-status="draft">
   <h2>Reconstructing scene-wide DINOv3 embeddings</h2>
@@ -316,7 +300,7 @@
 <section id="rollout" data-status="ready">
   <h2><span class="brand">CanViT</span> in action</h2>
   <div class="card episode"><canvit-episode data-play src="../../data/street-riid ../../data/shop-riid ../../data/ferry-riid" readout="labels"></canvit-episode></div>
-  <aside class="notes">Here it is. It takes glimpses and gradually paints its understanding. What you see is a single linear layer reading ADE20K classes off the canvas, after every glimpse, including places it hasn't looked at yet.</aside>
+  <aside class="notes">Now read the canvas the way we read DINOv3: one linear layer, trained on ADE20K, says what is where, after every glimpse. It takes glimpses and gradually paints its understanding, including places it hasn't looked at yet.</aside>
 </section>
 
 <section id="memory" data-status="draft">
@@ -360,6 +344,32 @@
     <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_ab.png" alt="">
   </div>
   <aside class="notes">Back to the table. The passive model, glimpse by glimpse. Now CanViT. From the far end alone, it already extends the table toward us. From the near end alone, it runs the table back along the room's perspective. With both, the table is continuous, and it never looked at the middle. This one is a clean example. Over 1,436 large objects in ADE20K, after both ends the canvas gets 65 percent of the unseen middle, against 53 after one end; it also spills: 46 percent of the other pixels in between get the object's label too.</aside>
+</section>
+
+<section id="detail" data-status="draft">
+  <h2>Spatial coverage and perception of detail</h2>
+  <!-- ADE_val_00001715, chosen among 4,151 small objects of ADE20K validation (throwaway/looking_closer): a television
+       CanViT-B misses after the full-scene glimpse (p 0.03) and finds after a zoomed one (p 0.77), with few false
+       positives. The input panel zooms into the zoomed glimpse's box (geometry from meta.json, detail.js), then the
+       zoomed glimpse itself replaces it. -->
+  <div class="detail-row">
+    <figure class="scene"><figcaption>Scene</figcaption>
+      <div class="frame"><img src="../../data/talk/looking-closer-clean/ADE_val_00001715-television/scene.png" alt="A billiard room with a television on the far wall"><img class="boxed" src="../../data/talk/looking-closer/ADE_val_00001715-television/scene.png" alt="The same room with the zoomed glimpse's box around the television"></div></figure>
+    <figure class="input"><figcaption>The model's input, 128 px</figcaption>
+      <div class="frame">
+        <img class="pixels full" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_full.png" alt="The whole scene in 128 by 128 pixels">
+        <img class="pixels zoomed" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_zoom.png" alt="The zoomed glimpse in 128 by 128 pixels: a television">
+        <span class="object-ring"></span>
+      </div></figure>
+    <figure class="prob"><figcaption data-class-caption></figcaption>
+      <div class="frame"><img class="pixels f" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_f.png" alt="After the full-scene glimpse: nothing"><img class="pixels fz" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_fz.png" alt="After the zoomed glimpse: the television"></div></figure>
+  </div>
+  <span class="fragment step-marker" data-shows="full"></span>
+  <span class="fragment step-marker" data-shows="prob-full"></span>
+  <span class="fragment step-marker" data-shows="loupe"></span>
+  <span class="fragment step-marker" data-shows="zoom"></span>
+  <span class="fragment step-marker" data-shows="prob-zoom"></span>
+  <aside class="notes">Remember: whatever the zoom, the model gets 128 by 128 pixels. That's the trade-off: spatial coverage against perception of detail. Here's a billiard room. [click] Look at the whole scene, and this is what the model receives: everything, coarsely. [click] Is there a television? The model says no. [click] Because here is all it had of the television: a few pixels. [click] Now zoom in on that spot: same number of pixels, all on the television. [click] And now the model sees it. A passive model given the whole scene in 128 pixels is stuck where we were two clicks ago; an active one can go and look. This example is a clean one. Over four thousand small objects in ADE20K, a zoomed glimpse almost doubles how much of the object the model gets right, from 18 to 32 percent, while showing the whole scene a second time barely helps, 19 percent: it's the zoom, not the extra step.</aside>
 </section>
 
 <section id="policies" data-status="draft">
@@ -411,6 +421,8 @@
   <aside class="notes">EG-C2F was ahead of C2F for most of the race: same views, a different order within each level. How does it choose? After one glimpse of the whole street, read out from the canvas what the model thinks is at each position: a probability for each of the 150 classes. [click] Here, on the building: building, almost certain. [click] Here, by the car: car, building, road. It doesn't know. [click] How flat that distribution is, we call its entropy, in bits: zero when one class takes everything; here 3.2 bits, as unsure as choosing among about nine equally likely classes; at most 7.2 bits for all 150. Over the whole scene, that's a map of the model's own uncertainty about what is where. A kind of metacognition: it knows what it doesn't know. [click] EG-C2F averages it over each quarter of the scene, [click] and looks next where it's highest. No reinforcement learning, no training: it reads what the canvas already holds. AME, in the timeline, did something similar with its attention maps.</aside>
 </section>
 
+<!-- ============================================================== Results -->
+
 <section id="results" data-status="draft">
   <h2>Benchmark results on ADE20K and ImageNet-1k</h2>
   <div class="stage">
@@ -424,12 +436,12 @@
 </section>
 
 <section id="frontier" data-status="draft">
-  <h2>Active-vision accuracy–efficiency frontier on ADE20K segmentation</h2>
+  <hgroup><h2>Active ADE20K segmentation</h2><p>Accuracy v. efficiency</p></hgroup>
   <!-- Built step by step [Yohaï, 2026-10-01: "our worst policy at 32^2, then at 64^2 canvas, then we show previous
        active models, then we show our best policy at both resolutions"]: the frontier's series attribute, set by the
        fragments; the cost axis glides to fit what is shown. Best policy: EG-C2F, the frontier policy of the paper's
        Figure 3A. -->
-  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="f2c-32" height="450"></canvit-frontier></div>
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="f2c-32" height="480"></canvit-frontier></div>
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
@@ -494,38 +506,25 @@
 
 <!-- ============================================================== Backup: slides whose place in the story is not settled -->
 
+<section id="canvas-attention" data-status="draft">
+  <h2>Canvas Attention</h2>
+  <svg class="figure" viewBox="0 0 250 216" role="img" aria-label="A Canvas Attention read–write pair: learned projections on the glimpse side only">
+    <image href="../../assets/paper/canvas_attention_combined.svg" width="396" height="216"/>
+    <g class="fragment rings">
+      <ellipse cx="84.5" cy="65" rx="8" ry="6"/><ellipse cx="84.5" cy="76" rx="8" ry="6"/>
+      <ellipse cx="84" cy="148" rx="8" ry="6"/><ellipse cx="142.6" cy="120.5" rx="8" ry="6"/>
+    </g>
+    <rect class="fragment canvas-side" x="158" y="60" width="58" height="102" rx="6"/>
+  </svg>
+  <aside class="notes">The canvas talks to the glimpse stream through Canvas Attention. In a write, the canvas queries the glimpse; in a read, the glimpse queries the canvas. Here's the trick: it's asymmetric. Every learned projection, the queries, keys, values and outputs, sits on the glimpse side. The canvas side only gets a LayerNorm and its position. The canvas never goes through a learned layer: no MLP, no self-attention, no projection. So the memory is dumb, on purpose. But not too dumb. Just dumb enough that I could interact with it cheaply, while leaving it flexible enough to reconstruct unseen things from world-knowledge priors, like the table. That's what lets the canvas be large and fine-grained, and read after every glimpse. Previous dense models had a cheap encoder and a massive decoder. Here, a read and a write on a 64 by 64 canvas cost <span data-macro="cSixFourAsymRwPairGf">2.8</span> gigaflops; with projections on both sides it would be <span data-macro="cSixFourFullRwPairGf">37.3</span>.</aside>
+</section>
+
 <section id="live" data-status="draft">
   <h2>A general-purpose observer lets you use any policy</h2>
   <div class="live-stage" data-no-advance>
     <canvit-live data-load-near model="../../.live-model" scene="../../data/street-path/scene.png"></canvit-live>
   </div>
   <aside class="notes">This is the released CanViT-B, running live. Right now, I am the policy: I click where to look, at whatever zoom, and the canvas integrates what it sees. Now I hand over to a policy, EG-C2F: it looks where the segmentation read from the canvas is least certain. Same observer, any policy.</aside>
-</section>
-
-<section id="detail" data-status="draft">
-  <h2>Spatial coverage and perception of detail</h2>
-  <!-- ADE_val_00001715, chosen among 4,151 small objects of ADE20K validation (throwaway/looking_closer): a television
-       CanViT-B misses after the full-scene glimpse (p 0.03) and finds after a zoomed one (p 0.77), with few false
-       positives. The input panel zooms into the zoomed glimpse's box (geometry from meta.json, detail.js), then the
-       zoomed glimpse itself replaces it. -->
-  <div class="detail-row">
-    <figure class="scene"><figcaption>Scene</figcaption>
-      <div class="frame"><img src="../../data/talk/looking-closer-clean/ADE_val_00001715-television/scene.png" alt="A billiard room with a television on the far wall"><img class="boxed" src="../../data/talk/looking-closer/ADE_val_00001715-television/scene.png" alt="The same room with the zoomed glimpse's box around the television"></div></figure>
-    <figure class="input"><figcaption>The model's input, 128 px</figcaption>
-      <div class="frame">
-        <img class="pixels full" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_full.png" alt="The whole scene in 128 by 128 pixels">
-        <img class="pixels zoomed" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_zoom.png" alt="The zoomed glimpse in 128 by 128 pixels: a television">
-        <span class="object-ring"></span>
-      </div></figure>
-    <figure class="prob"><figcaption data-class-caption></figcaption>
-      <div class="frame"><img class="pixels f" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_f.png" alt="After the full-scene glimpse: nothing"><img class="pixels fz" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_fz.png" alt="After the zoomed glimpse: the television"></div></figure>
-  </div>
-  <span class="fragment step-marker" data-shows="full"></span>
-  <span class="fragment step-marker" data-shows="prob-full"></span>
-  <span class="fragment step-marker" data-shows="loupe"></span>
-  <span class="fragment step-marker" data-shows="zoom"></span>
-  <span class="fragment step-marker" data-shows="prob-zoom"></span>
-  <aside class="notes">Whatever the zoom, the model gets 128 by 128 pixels. That's the trade-off: spatial coverage against perception of detail. Here's a billiard room. [click] Look at the whole scene, and this is what the model receives: everything, coarsely. [click] Is there a television? The model says no. [click] Because here is all it had of the television: a few pixels. [click] Now zoom in on that spot: same number of pixels, all on the television. [click] And now the model sees it. A passive model given the whole scene in 128 pixels is stuck where we were two clicks ago; an active one can go and look. This example is a clean one. Over four thousand small objects in ADE20K, a zoomed glimpse almost doubles how much of the object the model gets right, from 18 to 32 percent, while showing the whole scene a second time barely helps, 19 percent: it's the zoom, not the extra step.</aside>
 </section>
 
 </div>

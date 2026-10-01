@@ -15,6 +15,14 @@ things".] Each slide states or shows one step; a slide that does neither goes. T
 neuro-AI tradition, then vision is active, then why knowledge of the world matters (cognition first, then foundation
 models), then what active computer vision tried and why it stalled, and only then CanViT.
 
+CanViT comes in three parts: what it is, briefly (the setting, the architecture as two streams, the pretraining and
+its policy agnosticism), then what it does, then the results. How it was built serves what it does [Yohaï, 2026-10-01:
+"I'm thinking that 'how we built it' should be subordinate to 'here's what we built / what it can do / why it's so
+cool'"; then: "the overall arch and policy-agnostic pretraining should probably still come first i guess, but details
+like canvas attention might not be fully relevant, I don't know... maybe we don't even show them in the talk, or only
+as backup? you must think critically"]. A mechanism whose point fits in a spoken sentence is said where it matters and
+its slide goes to Backup: Canvas Attention's point, a memory cheap to read and write, is said on the architecture slide.
+
 - Deep networks became models of the visual system; the ones used today see each image whole, once.
 - Human vision is active: sharp central vision, blurry periphery, the eyes moving to what matters, and what was
   seen carried from one fixation to the next.
@@ -26,8 +34,9 @@ models), then what active computer vision tried and why it stalled, and only the
 - CanViT is that observer: a Vision Transformer for the glimpse, a canvas for the scene, memory dumb but not too
   dumb.
 - It learns by passive-to-active distillation: wherever it looks, its best guess about the whole scene.
-- It works: it paints the scene glimpse by glimpse, keeps what it saw, extends what it did not see, and beats the
-  prior active models with any of the tested policies, even a worse-than-random one.
+- It works: it paints the scene glimpse by glimpse, keeps what it saw, extends what it did not see, makes out detail
+  when it zooms in, runs under any of the tested policies (one of them guided by its own uncertainty), and beats the
+  prior active models with any of them, even a worse-than-random one.
 - What this opens for neuro-AI.
 
 Efficiency is a link in this chain, never a selling point [Yohaï, 2026-10-01: "they dont [care] about
@@ -129,7 +138,7 @@ transcript and Yohaï's requests, 2026-10-01; to be confirmed by the authors]:
   does are the wording to aim for [Yohaï, 2026-10-01: "the idea of trans-saccadic integration is great, see, this is
   more the kind of wording and analogy we want to go toward"]; `sources/concepts.md` collects them.
 - **The canvas**: a scene-wide memory in scene coordinates (spatiotopic) beside a backbone that sees glimpses
-  (retinotopic), bound by SR-RoPE; memory "dumb, but not too dumb", cheap to read and write (`#architecture`,
+  (retinotopic), bound by SR-RoPE; memory "dumb, but not too dumb", cheap to read and write (`#architecture`; Backup:
   `#canvas-attention`). It holds; it never acts.
 - **Passive-to-active distillation**: wherever it looks, its best guess about the whole scene, in a passive teacher's
   feature space; pixels would be the identity teacher (`#distillation`).

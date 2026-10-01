@@ -17,6 +17,17 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] "where are acknowledgements, QR codes, etc btw": `#links` (QR codes, homepage, funders) renders
+  blank, its content one slide height below the viewport; in progress.
+- [Yohaï, 2026-10-01] `#distillation` "is completely terrible ... needs to be entirely reworked. the fancy curved arrows
+  etc do nothing for it. having something relatively static where you unroll the timesteps across time (maybe we
+  transition one timestep to next, showing them next to each other, time left-to-right) could work. you basically just
+  want to show that the model produces a whole-scene prediction at each timestep and that it is scored with mean
+  squared error against the teacher features at each timestep. you can duplicate the teacher features, we want things
+  to align in terms of columns etc. this should not need curved arrows"; and "be visually consistent, when you have
+  CanViT in a diagram use the logo". In progress.
+- [Yohaï, 2026-10-01] `#quickstart`: "the quickstart example is bad, don't define both glimpses upfront, don't use a
+  for loop, inline, and improve the viz / animation". To do.
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:
   Aborted(InternalError: out of memory)". Measured on 2026-10-01 in headless Chromium (`throwaway/live_memory.py`,
   `slide_memory.py`, `live_wasm.py`): the deck with no slide 376 MB RSS; every slide without the model 1.46 GB (static
@@ -86,10 +97,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#history` and `#results` fail at their jobs: overloaded, hard to parse, not showing the right
   things; make end-to-end training against frozen features with a linear readout explicit. ImageNet-1k and ADE20K one
   after the other, never side by side from the start, after explaining classification against segmentation and why
-  segmentation is harder (`AGENTS.md`, "Visual decisions"). Passive lines restricted to base-size models, like the
-  active ones ("comparing to nonsensically large models is indeed stupid and counterproductive"): the base-size
-  passive points are being collected and verified into `sources/sota-history.json`; then filter the chart's passive
-  lines by `size_class` and fix the notes (XXX in `index.html`). Built: the named-state slide with its examples. M.
+  segmentation is harder (`AGENTS.md`, "Visual decisions"). Built: the named-state slide with its examples, the passive
+  lines restricted to base-size models ("comparing to nonsensically large models is indeed stupid and
+  counterproductive"); `#results` still to rework. M.
 - [Yohaï, 2026-10-01] An exploration page for the history data: `_explore-history.html` (untracked) shows every point
   with series, size and numeric axes; extend it with training and inference cost once those fields exist. S.
 - [Yohaï, 2026-10-01] A training-cost view ("having a 'training flops' graph could be interesting as well idk. or
@@ -112,7 +122,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - `#neuro-ai`: three lines of text on a half-empty slide; needs a visual. S–M.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
 - Independent reviews of `OUTLINE.md` (a fresh subagent; `codex exec -m gpt-6-astra`), then the authors'. S.
-- Commit the talk (staged by name; no reference to the September deck or its organization). S.
 
 ## Known issues
 
@@ -154,6 +163,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   page's abstract and the README copy it and follow.
 
 ## Decisions for the authors
+
+- `#architecture` shows the paper's full figure (recurrent CLS, VPE token, registers); with Canvas Attention in Backup,
+  a drawing of just the two streams and the canvas may serve the talk better.
 
 - LookWhere (NeurIPS 2025; 83.0 ImageNet-1k, 44.6 ADE20K, patches selected once from a low-resolution view): address
   it in the talk, or only if asked.

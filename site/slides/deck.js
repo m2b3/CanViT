@@ -202,6 +202,12 @@ export async function startDeck(options = {}) {
   if (!printing && !params.has("receiver")) for (const event of ["ready", "slidechanged"]) deck.on(event, () => loadNear(deck));
   replayButton(deck);
   await deck.initialize();
+  // reveal.js positions every slide absolutely; a slide given another position joins the page's flow and pushes every
+  // later slide below the viewport, blank.
+  if (!printing) for (const section of slides.querySelectorAll(":scope > section")) {
+    const { position } = getComputedStyle(section);
+    if (position !== "absolute") throw new Error(`#${section.id}: position: ${position}; reveal.js needs every slide absolute`);
+  }
   // A click on a slide advances like the space bar, except on controls and interactive figures, after a text
   // selection, with a modifier held, and in the speaker view's previews.
   if (!params.has("receiver")) {

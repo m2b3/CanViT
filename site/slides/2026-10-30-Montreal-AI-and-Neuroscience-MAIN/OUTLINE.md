@@ -68,8 +68,8 @@ yet reviewed by the authors.
 
 ## Active computer vision
 
-### Deep active vision
-- **Title:** the paper's related-work heading ("Deep active vision models").
+### A brief history of deep active computer vision
+- **Title:** Yohaï's [2026-10-01]; it replaced the paper's related-work heading ("Deep active vision").
 - **Must:** what active computer vision tried, from RAM (2014) to AdaptiveNN (2025), each model in a few words; that
   almost all learned where to look by reinforcement learning (the paper: prior work "has often focused on action
   selection").
@@ -130,12 +130,11 @@ yet reviewed by the authors.
 
 ### Scenes, viewpoints and glimpses
 - **Title:** the paper's §3 heading.
-- **Shows:** a scene and the glimpse taken at a viewpoint (position and zoom), the model's 128 px input beside it;
-  then the looking-closer example: an object invisible in the zoomed-out glimpse, found by a zoomed-in one.
+- **Shows:** a scene and the glimpse taken at a viewpoint (position and zoom), the model's 128 px input beside it.
+  The looking-closer example is its own slide (Spatial coverage and perception of detail).
 - **Says:** zooming out trades detail for coverage. Outside the glimpse there is nothing, not even a blur: "a world
   of difference between seeing something blurry and seeing nothing at all".
-- **Data:** `throwaway/looking_closer` (running).
-- **Status:** ready, example pending.
+- **Status:** ready.
 
 ### The Canvas Vision Transformer
 - **Title:** the paper's.
@@ -143,20 +142,9 @@ yet reviewed by the authors.
 - **Says:** a Vision Transformer backbone sees each glimpse; the canvas holds the scene. "I put the intelligence on the
   Vision Transformer side." The canvas answers, "at any point in time and for any position: what does the model think
   is there?" Reads condition the backbone on the canvas: top-down feedback. Blue for the glimpse, red for the canvas.
+  The memory "dumb, but not too dumb" (the canvas never goes through a learned layer), cheap to read and write, is said
+  here, since Canvas Attention is in Backup.
 - **Status:** ready.
-
-### Canvas Attention
-- **Title:** the paper's; "dumb, but not too dumb" is said.
-- **Takeaway:** the asymmetry: every learned projection is on the glimpse side; the canvas side has only LayerNorm and
-  RoPE.
-- **Shows:** a Canvas Attention read–write pair (the paper's Fig. 3A), as large as the slide allows; a click rings the
-  four learned projections (glimpse side); the next marks the canvas side; then the line "Learned projections on the
-  glimpse side only".
-- **Says:** "dumb, but not too dumb": "Just dumb enough that I could interact with it cheaply, while leaving it
-  flexible enough to reconstruct unseen things from world-knowledge priors, like the table example." Prior dense
-  models had "a cheap encoder and a massive decoder". The cost (2.8 against 37.3 GFLOPs per read–write pair on a
-  64 × 64 canvas) is said, not shown.
-- **Status:** draft (ring positions to check).
 
 ### Passive-to-active dense latent distillation
 - **Title:** the paper's §5 (without "policy-agnostic", which the next slide carries).
@@ -190,6 +178,8 @@ yet reviewed by the authors.
   and exported, never re-implemented in the page.
 - **Status:** to build.
 
+## What it does
+
 ### Reconstructing scene-wide DINOv3 embeddings
 - **Title:** the abstract's ("reconstructing scene-wide DINOv3 embeddings from sequences of low-resolution
   glimpses"); "Its best guess about the entire scene", from the transcript, was rejected [Yohaï, 2026-10-01:
@@ -209,13 +199,13 @@ yet reviewed by the authors.
   distinct regions; random glimpses (pretraining's distribution) that leave large parts unseen; a guess that visibly
   improves, also where never seen. Chosen: ADE_val_00000124 (sweep over ADE20K validation, `throwaway/distillation`).
 - **Status:** to build (data exported).
-## Evidence
 
 ### CanViT in action
 - **Title:** the project page's "See it in action", with the model named [Yohaï, 2026-10-01].
 - **Shows:** `<canvit-episode>` on recorded scenes: the glimpse, the canvas decoded into a segmentation after every
   glimpse.
-- **Says:** "It takes glimpses and gradually paints its understanding."
+- **Says:** the canvas read out with a linear layer, as DINOv3 was on DINOv3 feature maps; "It takes glimpses and
+  gradually paints its understanding."
 - **Status:** ready.
 
 ### A persistent, evolving understanding of the scene
@@ -247,6 +237,25 @@ yet reviewed by the authors.
 - **Says:** from the far end alone, the canvas already runs the table toward the near end; with both ends, the table
   is continuous though the middle was never seen. Give the average with its spill (`AGENTS.md`).
 - **Status:** ready.
+
+### Spatial coverage and perception of detail
+- **Title:** the paper's §3 ("s_t smoothly controls the tradeoff between spatial coverage and perception of detail").
+- **Must:** the model always gets 128 × 128 pixels; zoomed out, a small object is a few pixels and the model misses
+  it; zoomed in on it, the same budget shows it and the model finds it. A passive model given the whole scene at that
+  budget cannot go and look.
+- **Could:** the average (said: recall of the object's pixels 0.18 after the full-scene glimpse, 0.32 after a zoomed
+  one, 0.19 for the full scene twice, over 4,151 small objects); DINOv3 ViT-B at 128 px on the same scene, beside it
+  (`PLAN.md`).
+- **Example properties** [stated 2026-10-01]: an object everyone names; a few pixels in the full-scene glimpse; the
+  model's p(class) near zero after it and high after the zoom, with few false positives; a scene read at a glance.
+  Chosen: ADE_val_00001715, a television in a billiard room (p 0.03 → 0.77; `throwaway/looking_closer`, ranked over
+  all qualifying objects; runners-up: a basket of soaps, ADE_val_00001081; bottles on a counter, ADE_val_00000439).
+- **Builds:** the scene; its full-scene glimpse as the model receives it (128 px, hard nearest) and p(television),
+  dark; the input zooms into the zoomed glimpse's box, showing the few pixels it had of the television; the zoomed
+  glimpse replaces it at the same framing; p(television) lights up.
+- **Status:** draft (built; rebuilt after "the idea ... is good and nice but the way it is showed is really not good
+  atm"). In the main talk, after Extrapolation [Yohaï, 2026-10-01: "the 'Spatial coverage and perception of detail'
+  stuff is really great and should be in main pres"].
 
 ### Viewing policies
 - **Must:** what each policy does and why it is in the paper, in its paper color; the same CanViT-B works under all
@@ -291,15 +300,18 @@ yet reviewed by the authors.
   sure canvas cells chosen by entropy (`throwaway/metacognition`).
 - **Status:** draft (built).
 
+## Results
+
 ### Benchmark results on ADE20K and ImageNet-1k
 - **Title:** the paper's Fig. 3 caption.
 - **Shows:** the history chart of `#history`, now with CanViT-B: 45.9% ADE20K mIoU (frozen, linear probe, C2F, 64²
   canvas) and 84.5% ImageNet-1k top-1 (fine-tuned).
 - **Status:** ready.
 
-### Active-vision accuracy–efficiency frontier on ADE20K segmentation
-- **Title:** the paper's Figure 3A caption, scoped to what the chart shows: active models only [Yohaï, 2026-10-01, on
-  the caption alone: "ACTIVE. ACTIVE."], segmentation only; "A new active-vision state of the art in
+### Active ADE20K segmentation
+- **Title:** "Active ADE20K segmentation", subtitle "Accuracy v. efficiency" [Yohaï, 2026-10-01]. Before it, the
+  paper's Figure 3A caption scoped to what the chart shows: active models only [Yohaï, on the caption alone: "ACTIVE.
+  ACTIVE."], segmentation only; "A new active-vision state of the art in
   accuracy and efficiency" (the page's section) spoke of more than segmentation [Yohaï, 2026-10-01: "shorten that
   title ... this plot was ONLY about segmentation but you talk more generally... beware"]. No best-prior reference
   line [Yohaï: "remove the 'best prior active model' horizontal line"].
@@ -365,26 +377,24 @@ yet reviewed by the authors.
   teasers etc."].
 - **Status:** reserved.
 
+### Canvas Attention
+- **Title:** the paper's; "dumb, but not too dumb" is said.
+- **Place:** Backup [Yohaï, 2026-10-01: "details like canvas attention might not be fully relevant, I don't know...
+  maybe we don't even show them in the talk, or only as backup?"]: its point for this audience fits in a sentence,
+  said on The Canvas Vision Transformer; the read–write pair and its projections are machine-learning detail.
+- **Takeaway:** the asymmetry: every learned projection is on the glimpse side; the canvas side has only LayerNorm and
+  RoPE.
+- **Shows:** a Canvas Attention read–write pair (the paper's Fig. 3A), as large as the slide allows; a click rings the
+  four learned projections (glimpse side); the next marks the canvas side; then the line "Learned projections on the
+  glimpse side only".
+- **Says:** "dumb, but not too dumb": "Just dumb enough that I could interact with it cheaply, while leaving it
+  flexible enough to reconstruct unseen things from world-knowledge priors, like the table example." Prior dense
+  models had "a cheap encoder and a massive decoder". The cost (2.8 against 37.3 GFLOPs per read–write pair on a
+  64 × 64 canvas) is said, not shown.
+- **Status:** draft (ring positions to check).
+
 ### A general-purpose observer lets you use any policy
 - **Title:** the project page's line; a bonus, in Backup [Yohaï, 2026-10-01: "no one [cares] enough for this
   to be the title of a main-talk slide, bonus at best. they care about science and what they can do with it"].
 - **Shows:** `<canvit-live>`: I choose where to look; then EG-C2F chooses, from the uncertainty of the segmentation read out from the canvas.
 - **Status:** ready (layout to fit; offline runtime in `PLAN.md`).
-
-### Spatial coverage and perception of detail
-- **Title:** the paper's §3 ("s_t smoothly controls the tradeoff between spatial coverage and perception of detail").
-- **Must:** the model always gets 128 × 128 pixels; zoomed out, a small object is a few pixels and the model misses
-  it; zoomed in on it, the same budget shows it and the model finds it. A passive model given the whole scene at that
-  budget cannot go and look.
-- **Could:** the average (said: recall of the object's pixels 0.18 after the full-scene glimpse, 0.32 after a zoomed
-  one, 0.19 for the full scene twice, over 4,151 small objects); DINOv3 ViT-B at 128 px on the same scene, beside it
-  (`PLAN.md`).
-- **Example properties** [stated 2026-10-01]: an object everyone names; a few pixels in the full-scene glimpse; the
-  model's p(class) near zero after it and high after the zoom, with few false positives; a scene read at a glance.
-  Chosen: ADE_val_00001715, a television in a billiard room (p 0.03 → 0.77; `throwaway/looking_closer`, ranked over
-  all qualifying objects; runners-up: a basket of soaps, ADE_val_00001081; bottles on a counter, ADE_val_00000439).
-- **Builds:** the scene; its full-scene glimpse as the model receives it (128 px, hard nearest) and p(television),
-  dark; the input zooms into the zoomed glimpse's box, showing the few pixels it had of the television; the zoomed
-  glimpse replaces it at the same framing; p(television) lights up.
-- **Status:** draft (built), in Backup [Yohaï, 2026-10-01: "the idea ... is good and nice but the way it is showed is
-  really not good atm"]: rebuilt; place in the story to decide.

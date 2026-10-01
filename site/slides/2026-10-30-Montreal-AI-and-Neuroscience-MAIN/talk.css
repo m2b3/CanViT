@@ -294,7 +294,6 @@
 
 
 /* Quickstart: the install line alone and large, then small above the code. */
-#quickstart { position: relative; }
 #quickstart .install { position: absolute; left: 0; right: 0; top: 300px; text-align: center; transition: top .7s ease, font-size .7s ease;
                        font-size: 44px; }
 #quickstart .install code { padding: .3em .7em; border-radius: .3em; background: var(--ink); color: #fff; font-size: 1em; }

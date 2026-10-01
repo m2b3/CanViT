@@ -6,13 +6,17 @@ sessions; a done item is deleted (git keeps it). Each slide's status is in `OUTL
 in `index.html`. Difficulty: S (hours), M (a day), L (days). The NeurIPS camera-ready is due 2026-11-06, a week after
 the talk.
 
+## Goal
+
+[Yohaï, 2026-10-01] "Make the slides better and better and better, build tools we might need, improve the backup
+slides portion, be more precise, more impactful, anticipate questions, think about the audience, keep track of
+everything that might be relevant, keywords, key ideas, what is worth spending more time on, etc. Do not
+over-obsess about timing for now, focus on content, logic, clarity, importance of concepts, WHY something might
+matter, visual storytelling, convincing the audience, making things cool and easy and understandable, etc. You MUST
+understand before you try to COMMUNICATE." Questions to anticipate and the key ideas live in `AGENTS.md`.
+
 ## Open requests
 
-- [Yohaï, 2026-10-01] `#policies`: a race between the policies: one line per policy, in the paper's colors, growing
-  glimpse by glimpse as the six animations play, against the ground truth. Plan: the paper's ADE20K mIoU per policy
-  and glimpse (`../../assets/paper/ade20k_seg.json`, `policy_curves`; all of ADE20K validation), labeled as such; the
-  bundles' own per-glimpse pixel accuracy on the street scene separates the policies too little (87–89% for four of
-  six). S–M.
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:
   Aborted(InternalError: out of memory)". Measured on 2026-10-01 in headless Chromium (`throwaway/live_memory.py`,
   `slide_memory.py`, `live_wasm.py`): the deck with no slide 376 MB RSS; every slide without the model 1.46 GB (static
@@ -21,6 +25,12 @@ the talk.
   current or next slide (`data-load-near`, `../deck.js`), never in the speaker view's previews; with WebGPU disabled the
   model then starts on WebAssembly in the deck (peak about 1.9 GB). Open: whether Yohaï's browser (which one, speaker
   view open?) still fails; releasing the model when the slide is left; making the rollouts load only near their slide.
+- [Yohaï, 2026-10-01] Metacognition on the policies, above all EG-C2F: the model's own uncertainty about what is
+  where, explained (class probabilities at a position as bars, peaked or flat; entropy; the entropy map; the tile
+  EG-C2F visits next), before or within `#policies` (`OUTLINE.md`). Data: bundles carry an entropy layer per glimpse;
+  per-position class probabilities need an export (`canvit_pytorch.viz`). M.
+- [Yohaï, 2026-10-01] Careful, step-by-step, visually supported storytelling on every slide: introduce what a visual
+  needs before showing it (`../AGENTS.md`, "Writing slides"). Review every slide for it.
 - [Yohaï, 2026-10-01] Reuse the well-received primitives of the September deck, ported (never imported): see
   "Components and deck primitives".
 - [Yohaï, 2026-10-01] Keep every TODO, known issue and request in this file.
@@ -28,18 +38,32 @@ the talk.
 ## Next
 
 - [Yohaï, 2026-10-01] `#history` and `#results` fail at their jobs: overloaded, hard to parse, not showing the right
-  things; make end-to-end training against frozen features with a linear readout explicit. A timeline slide of the
-  key works of deep active vision before them, from RAM, each with what it did and why it mattered (facts being
-  verified: `sources/active-vision-timeline.md`), in the spirit of Yohaï's typst timeline
-  (github.com/yberreby/typst-snippets, `timeline.typ`: a year axis, dots at true dates, labels above and below on
-  dashed leaders). M.
+  things; make end-to-end training against frozen features with a linear readout explicit. ImageNet-1k and ADE20K one
+  after the other, never side by side from the start, after explaining classification against segmentation and why
+  segmentation is harder (`AGENTS.md`, "Visual decisions"). Passive lines restricted to base-size models, like the
+  active ones ("comparing to nonsensically large models is indeed stupid and counterproductive"): the base-size
+  passive points are being collected and verified into `sources/sota-history.json`; then filter the chart's passive
+  lines by `size_class` and fix the notes (XXX in `index.html`). Built: the named-state slide with its examples. M.
+- [Yohaï, 2026-10-01] An exploration page for the history data: `_explore-history.html` (untracked) shows every point
+  with series, size and numeric axes; extend it with training and inference cost once those fields exist. S.
+- [Yohaï, 2026-10-01] A training-cost view ("having a 'training flops' graph could be interesting as well idk. or
+  training cost"): training compute or cost of the active models and of CanViT-B, from their papers and the rebuttal
+  (training glimpses, epochs, GPU-hours); what each paper reports differs, so the qualifiers stay with each number. M.
+- [Yohaï, 2026-10-01] `#frontier` (accuracy against cost) must first make the case for why anyone cares about cost:
+  money, cheap experiments (`AGENTS.md`, "The story"); training cost first, the main concern for scientists, then
+  inference. Training: pretrained once and released; adapting it is a linear probe or a fine-tuning under 800 USD;
+  its pretraining is comparable to AdaGlimpse's own, not cheaper than every prior model (`AGENTS.md`, rebuttal facts).
+  Gather verified facts that make cost concrete: inference GFLOPs
+  per glimpse and per rollout against AME and AdaGlimpse (`../../assets/paper/ade20k_seg.json`), wall time per glimpse
+  measured on a laptop and in the browser, the paper's training costs (§6, App. H); then design how the slide shows
+  the case (a build state before the chart, or the chart's cost axis translated into time or money). M.
 - [Yohaï, 2026-10-01] Zoom and detail (`#detail`, now in Backup): try several presentations (segmentation instead of a
   probability blob, the full-scene glimpse with a loupe on the object, recall against object size with the
   full-scene-twice control, an animated zoom), render them, integrate. M.
 
-- The cognition citation on `#table` (`sources/cognition.md`: Intraub & Richardson 1989; Biederman, Mezzanotte &
-  Rabinowitz 1982; Torralba et al. 2006) and a backup slide with their figures (`assets/figures/`, extracted). Prepare
-  the objection that edge continuation fills the gap without knowledge of tables (amodal completion). S.
+- The cognition links on `#table` and `#extrapolation`: amodal completion, boundary extension, trans-saccadic
+  integration (`sources/cognition.md`; `sources/concepts.md` being researched), as keywords and a backup slide with
+  their figures (`assets/figures/`, extracted). S.
 - `#neuro-ai`: three lines of text on a half-empty slide; needs a visual. S–M.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
 - Independent reviews of `OUTLINE.md` (a fresh subagent; `codex exec -m gpt-6-astra`), then the authors'. S.
@@ -47,10 +71,9 @@ the talk.
 
 ## Known issues
 
-- The disk is nearly full (about 250 MB free on 2026-10-01, shrinking from processes outside this work). Two caches
+- The disk is nearly full (2.7 GB free at the end of 2026-10-01, shrinking from processes outside this work). Two caches
   are the user's to clear or keep: `~/.cache/uv` (18 GB; `uv cache prune` drops unreferenced entries) and
   `~/.cache/huggingface/hub` (8.1 GB, including twelve ablation checkpoints the talk does not use).
-- `#memory`: `<canvit-path>` is shrunk with `zoom: .72` to fit; a slide-sized layout of the component would be cleaner.
 - `#live` (Backup): shrunk with `zoom: .8`.
 - `assets/figures/`: 21 MB, many figures unused by the current slides; downscale the used ones to slide size and leave
   the rest uncommitted.

@@ -1,27 +1,37 @@
-// Year against accuracy, passive and active computer vision (slides "Active computer vision was not nearly as smart
-// as passive computer vision" and "Results on ADE20K and ImageNet-1k"). Points come from sources/sota-history.json
-// (each read in its paper; its _about defines the series), CanViT-B's from the paper's macros. The chart is drawn
-// into the light DOM, so a slide's CSS builds it click by click: its groups carry the classes passive, frozen,
-// active and canvit.
+// Year against accuracy on one benchmark, passive against active computer vision. Points come from
+// sources/sota-history.json (each read in its paper; its _about defines the series), CanViT-B's from the paper's
+// macros. Three series, each labeled where it ends: the best passive model trained end to end (a step line), the best
+// frozen passive features read by a linear layer (dashed), and the sequential active models of the timeline slide,
+// each at its paper's best number, as named points. A bracket marks the gap between the best active model and the
+// frozen line. With data-canvit, CanViT-B's points are added, and on ADE20K its frozen DINOv3 ViT-B teacher, probed
+// alike. Drawn into the light DOM so that a slide's CSS can build it: its groups carry the classes passive, frozen,
+// active, gap, canvit and teacher.
 
 const SVG = "http://www.w3.org/2000/svg";
+const WIDTH = 1120, HEIGHT = 540, M = { left: 56, right: 250, top: 40, bottom: 40 };
+const END = 2026.6;
+const CANVIT_YEAR = 2026.2;
 
 const BENCHMARKS = {
-  imagenet: { key: "imagenet_top1", title: "ImageNet-1k classification", unit: "top-1 accuracy (%)",
-              years: [2012, 2026.9], range: [55, 95], ticks: [60, 70, 80, 90],
-              canvit: { macro: "inkFinetunedBest" } },
-  ade20k: { key: "ade20k_miou", title: "ADE20K semantic segmentation", unit: "mIoU (%)",
-            years: [2016, 2026.9], range: [0, 70], ticks: [0, 20, 40, 60],
-            canvit: { macro: "adeBestMiou" } },
+  imagenet: { key: "imagenet_top1", unit: "ImageNet-1k top-1 accuracy (%)", years: [2012, END], range: [60, 95], step: 10,
+              canvit: [{ macro: "inkFinetunedBest", label: "CanViT-B, fine-tuned", filled: true },
+                       { macro: "inkFrozenBest", label: "CanViT-B, frozen", filled: false }] },
+  ade20k: { key: "ade20k_miou", unit: "ADE20K mIoU (%)", years: [2016, END], range: [10, 70], step: 10,
+            canvit: [{ macro: "adeBestMiou", label: "CanViT-B, frozen", filled: false }],
+            teacher: /^DINOv3 ViT-B\/16, probed by Berreby/ },
 };
 
 // Entries sota-history.md flags as unreproduced or as two-model systems; the frontier is drawn without them.
 const FLAGGED = new Set(["OmniVec (fine-tuned)", "OmniVec2 (fine-tuned)", "ViT-P on InternImage-H + Mask2Former"]);
-// The sequential active models named on the chart, at their best point: label offset (px) and anchor.
-const LABELED = { "Saccader": [-10, 22, "end"], "STAM": [0, -14, "middle"], "AdaGlimpse": [10, 5, "start"],
-                  "AdaptiveNN": [0, -14, "middle"], "AME": [-10, 5, "end"] };
-
-const WIDTH = 540, HEIGHT = 400, M = { left: 52, right: 18, top: 16, bottom: 40 };
+// The active models of the timeline slide: the entries of each paper, its label's offset from the point (px), anchor.
+const ACTIVE = [
+  { model: /^Saccader/, name: "Saccader", dx: -16, dy: 8, anchor: "end" },
+  { model: /^GFNet/, name: "GFNet", dx: 0, dy: 34, anchor: "middle" },
+  { model: /^STAM/, name: "STAM", dx: 0, dy: -18, anchor: "middle" },
+  { model: /^AdaGlimpse/, name: "AdaGlimpse", dx: 0, dy: 34, anchor: "middle" },
+  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: 0, dy: -18, anchor: "middle" },
+  { model: /^AME/, name: "AME", dx: 0, dy: 34, anchor: "middle" },
+];
 
 function el(name, attributes, parent) {
   const node = document.createElementNS(SVG, name);
@@ -30,77 +40,102 @@ function el(name, attributes, parent) {
   return node;
 }
 
-const yearOf = (point) => Number(String(point.date).slice(0, 4)) + (Number(String(point.date).slice(5, 7) || 6) - 0.5) / 12;
+function text(content, attributes, parent) {
+  const node = el("text", attributes, parent);
+  node.textContent = content;
+  return node;
+}
 
-/** The best value published by each date: a step line through the points that set a new record. */
+const yearOf = (point) => {
+  const date = String(point.date);
+  return Number(date.slice(0, 4)) + (date.length >= 7 ? (Number(date.slice(5, 7)) - 0.5) / 12 : 0.5);
+};
+
+/** The best value published by each date: the points that set a new record, in time order. */
 function frontier(points) {
-  const sorted = [...points].sort((a, b) => yearOf(a) - yearOf(b));
   const records = [];
-  for (const p of sorted) if (!records.length || p.value > records.at(-1).value) records.push(p);
+  for (const p of [...points].sort((a, b) => yearOf(a) - yearOf(b))) if (!records.length || p.value > records.at(-1).value) records.push(p);
+  if (!records.length) throw new Error("history chart: an empty series");
   return records;
 }
 
-function stepPath(records, x, y, endYear) {
-  let d = "";
-  records.forEach((p, i) => {
-    d += i === 0 ? `M${x(yearOf(p))},${y(p.value)}` : `H${x(yearOf(p))}V${y(p.value)}`;
-  });
-  return `${d}H${x(endYear)}`;
-}
-
-function draw(container, data, macros, benchmark) {
-  const spec = BENCHMARKS[benchmark];
-  if (!spec) throw new Error(`history chart: unknown benchmark "${benchmark}"`);
+function draw(container, data, macros) {
+  const spec = BENCHMARKS[container.dataset.benchmark];
+  if (!spec) throw new Error(`history chart: unknown data-benchmark "${container.dataset.benchmark}"`);
   const points = data[spec.key];
-  if (!Array.isArray(points)) throw new Error(`history chart: sota-history.json has no "${spec.key}"`);
   const x = (year) => M.left + (year - spec.years[0]) / (spec.years[1] - spec.years[0]) * (WIDTH - M.left - M.right);
   const y = (v) => HEIGHT - M.bottom - (v - spec.range[0]) / (spec.range[1] - spec.range[0]) * (HEIGHT - M.top - M.bottom);
-  const svg = el("svg", { viewBox: `0 0 ${WIDTH} ${HEIGHT}`, role: "img", "aria-label": spec.title });
+  const step = (records) => records.map((p, i) => (i ? `H${x(yearOf(p))}V${y(p.value)}` : `M${x(yearOf(p))},${y(p.value)}`)).join("") + `H${x(END)}`;
+  const svg = el("svg", { viewBox: `0 0 ${WIDTH} ${HEIGHT}`, role: "img", "aria-label": spec.unit });
+  const labelX = x(END) + 18;
+  const seriesLabel = (group, lines, top) => lines.forEach((line, i) => text(line, { x: labelX, y: top + i * 25, class: i ? "label" : "label head" }, group));
 
   const axes = el("g", { class: "axes" }, svg);
-  for (const tick of spec.ticks) {
-    el("line", { x1: M.left, x2: WIDTH - M.right, y1: y(tick), y2: y(tick), class: "grid" }, axes);
-    el("text", { x: M.left - 8, y: y(tick) + 5, "text-anchor": "end" }, axes).textContent = tick;
+  for (let v = spec.range[0]; v <= spec.range[1]; v += spec.step) {
+    el("line", { x1: M.left, x2: x(END), y1: y(v), y2: y(v), class: "grid" }, axes);
+    text(v, { x: M.left - 12, y: y(v) + 7, "text-anchor": "end" }, axes);
   }
-  for (let year = Math.ceil(spec.years[0] / 2) * 2; year <= spec.years[1]; year += 2)
-    el("text", { x: x(year + 0.5), y: HEIGHT - M.bottom + 24, "text-anchor": "middle" }, axes).textContent = year;
-  el("text", { x: M.left, y: M.top - 2, class: "unit" }, axes).textContent = spec.unit;
+  for (let year = Math.ceil(spec.years[0] / 2) * 2; year <= 2026; year += 2) text(year, { x: x(year + 0.5), y: HEIGHT - 8, "text-anchor": "middle" }, axes);
+  text(spec.unit, { x: M.left, y: M.top - 14, class: "unit" }, axes);
 
-  const passive = points.filter((p) => p.kind === "passive" && p.series !== "frozen_ssl" && !FLAGGED.has(p.model));
-  const best = frontier(passive);
-  const group = el("g", { class: "passive" }, svg);
-  el("path", { d: stepPath(best, x, y, spec.years[1]), class: "line" }, group);
-
+  const passive = frontier(points.filter((p) => p.kind === "passive" && p.series !== "frozen_ssl" && !FLAGGED.has(p.model)));
   const frozen = frontier(points.filter((p) => p.series === "frozen_ssl" && p.protocol !== "linear probe + ms"));
+  const passiveTop = passive.at(-1).value, frozenTop = frozen.at(-1).value;
+  const passiveGroup = el("g", { class: "passive" }, svg);
+  el("path", { d: step(passive), class: "line" }, passiveGroup);
+  const passiveY = y(passiveTop) - 2;
+  seriesLabel(passiveGroup, ["Passive", "trained end to end"], passiveY);
   const frozenGroup = el("g", { class: "frozen" }, svg);
-  el("path", { d: stepPath(frozen, x, y, spec.years[1]), class: "line" }, frozenGroup);
+  el("path", { d: step(frozen), class: "line" }, frozenGroup);
+  const frozenY = Math.max(y(frozenTop) + 6, passiveY + 62);
+  seriesLabel(frozenGroup, ["Passive", "frozen + a linear layer"], frozenY);
 
-  const active = el("g", { class: "active" }, svg);
-  for (const p of points.filter((p) => p.series === "active")) {
-    el("circle", { cx: x(yearOf(p)), cy: y(p.value), r: 6 }, active);
-    const name = p.model.split(/[ (-]/)[0];
-    const top = Math.max(...points.filter((q) => q.series === "active" && q.model.split(/[ (-]/)[0] === name).map((q) => q.value));
-    if (name in LABELED && p.value === top) {
-      const [dx, dy, anchor] = LABELED[name];
-      el("text", { x: x(yearOf(p)) + dx, y: y(p.value) + dy, "text-anchor": anchor, class: "label" }, active).textContent = name;
+  const activeGroup = el("g", { class: "active" }, svg);
+  const shown = ACTIVE.flatMap((a) => {
+    const entries = points.filter((p) => p.series === "active" && a.model.test(p.model));
+    return entries.length ? [{ ...a, point: entries.reduce((best, p) => (p.value > best.value ? p : best)) }] : [];
+  });
+  if (!shown.length) throw new Error(`history chart: no active model of the timeline in ${spec.key}`);
+  for (const { point, name, dx, dy, anchor } of shown) {
+    el("circle", { cx: x(yearOf(point)), cy: y(point.value), r: 9 }, activeGroup);
+    text(name, { x: x(yearOf(point)) + dx, y: y(point.value) + dy, "text-anchor": anchor, class: "label" }, activeGroup);
+  }
+  const bestActive = Math.max(...shown.map((a) => a.point.value));
+  seriesLabel(activeGroup, ["Active"], Math.max(y(bestActive) + 8, frozenY + 62));
+
+  // The gap, from the best active model up to the frozen line, at the plot's right edge.
+  const gap = el("g", { class: "gap" }, svg);
+  const gx = x(END) - 8;
+  el("path", { d: `M${gx - 12},${y(frozenTop)}H${gx}V${y(bestActive)}H${gx - 12}`, class: "bracket" }, gap);
+  text(`${(frozenTop - bestActive).toFixed(1)} points`, { x: gx - 20, y: (y(frozenTop) + y(bestActive)) / 2 + 10,
+                                                         "text-anchor": "end", class: "gap-label" }, gap);
+
+  if (container.hasAttribute("data-canvit")) {
+    const canvit = el("g", { class: "canvit" }, svg);
+    for (const { macro, label, filled } of spec.canvit) {
+      const value = Number(macros[macro]);
+      if (!Number.isFinite(value)) throw new Error(`history chart: macro ${macro} is missing`);
+      el("circle", { cx: x(CANVIT_YEAR), cy: y(value), r: 12, class: filled ? "filled" : "hollow" }, canvit);
+      text(`${label}: ${value}`, { x: x(CANVIT_YEAR) - 22, y: y(value) + 8, "text-anchor": "end", class: "label" }, canvit);
+    }
+    if (spec.teacher) {
+      const teacher = points.find((p) => spec.teacher.test(p.model));
+      if (!teacher) throw new Error(`history chart: no ${spec.teacher} in ${spec.key}`);
+      const group = el("g", { class: "teacher" }, svg);
+      el("line", { x1: x(CANVIT_YEAR) - 20, x2: x(CANVIT_YEAR) + 20, y1: y(teacher.value), y2: y(teacher.value), class: "tick" }, group);
+      text(`its teacher, DINOv3 ViT-B, frozen: ${teacher.value.toFixed(1)}`, { x: x(CANVIT_YEAR) - 22, y: y(teacher.value) - 14,
+                                                                             "text-anchor": "end", class: "label" }, group);
     }
   }
-
-  const value = Number(macros[spec.canvit.macro]);
-  if (!Number.isFinite(value)) throw new Error(`history chart: macro ${spec.canvit.macro} is missing`);
-  const canvit = el("g", { class: "canvit" }, svg);
-  el("circle", { cx: x(2026.25), cy: y(value), r: 9 }, canvit);
-  el("text", { x: x(2026.25), y: y(value) - 16, "text-anchor": "end", class: "label" }, canvit).textContent = "CanViT-B";
-
   container.replaceChildren(svg);
 }
 
-/** Draw every .history-chart of the page: data-benchmark="imagenet" or "ade20k". */
+/** Draw every .history-chart of the page: data-benchmark="imagenet" or "ade20k"; data-canvit adds CanViT-B. */
 export async function drawHistoryCharts({ data = "sources/sota-history.json", macros = "../../assets/paper/data_macros.json" } = {}) {
   const [history, values] = await Promise.all([data, macros].map(async (url) => {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`history chart: ${url} answered ${response.status}`);
     return response.json();
   }));
-  for (const container of document.querySelectorAll(".history-chart")) draw(container, history, values, container.dataset.benchmark);
+  for (const container of document.querySelectorAll(".history-chart")) draw(container, history, values);
 }

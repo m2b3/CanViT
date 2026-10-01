@@ -33,7 +33,15 @@ models), then what active computer vision tried and why it stalled, and only the
 Efficiency is a link in this chain, never a selling point [Yohaï, 2026-10-01: "they dont [care] about
 efficiency unless you make them understand why you need efficiency (because you need scale. why do you need scale?
 etc)"]: knowledge of the world comes with scale; scale needs cheap training and cheap reading of the memory; active
-models had neither. Cost numbers appear only in that role.
+models had neither. Cost numbers appear only in that role. The accuracy-against-cost chart (`#frontier`) makes that
+case before it shows a cost axis [Yohaï, 2026-10-01: "you WILL have to properly make the case of why anyone would
+[care] about efficiency (it's about money, making experiments cheap, etc)"]: compute is money and time, so a
+cheaper model makes every experiment cheaper (more scenes, more glimpses, more policies tried, policy learning by
+trial and error) and puts it within reach of a lab without a GPU cluster. Every cost number said comes from the
+paper, its exports or a measurement noted in "Checked facts". For this audience the cost that matters most is
+training: what it takes to train or adapt a model for their own experiment; inference cost matters too, second
+[Yohaï, 2026-10-01: "for cost, for scientists, remember that TRAINING cost is main concern; inference can also be
+relevant tho"].
 
 ## Yohaï's words
 
@@ -106,6 +114,76 @@ His written framings (`sources/unique-travel-award.md`; the 2025 UNIQUE, FRQNT a
 - "A foundation for action-first deep models of human vision" (citing Rothkopf et al. 2023); "the first of many
   Active-Vision Foundation Models"; "a major step toward action-aware neuro-AI research on vision".
 
+## Key ideas
+
+The words the audience should leave with, each with the slide that carries it [CC synthesis from the paper, the
+transcript and Yohaï's requests, 2026-10-01; to be confirmed by the authors]:
+
+- **Active vision**: glimpses at chosen viewpoints (position and zoom), one after another (`#human-vision`,
+  `#glimpses`).
+- **Observer and policy**: "No policy can make up for a poor observer"; "a general-purpose observer lets you use any
+  policy" (`#active-vision-model`, `#policies`).
+- **Trans-saccadic integration**: the canvas accumulates what each glimpse brings into one understanding of the scene,
+  the machine counterpart of integrating information across fixations (the paper cites Melcher 2001 for integration
+  across time in visual working memory). Established terms from the audience's own fields that name what the model
+  does are the wording to aim for [Yohaï, 2026-10-01: "the idea of trans-saccadic integration is great, see, this is
+  more the kind of wording and analogy we want to go toward"]; `sources/concepts.md` collects them.
+- **The canvas**: a scene-wide memory in scene coordinates (spatiotopic) beside a backbone that sees glimpses
+  (retinotopic), bound by SR-RoPE; memory "dumb, but not too dumb", cheap to read and write (`#architecture`,
+  `#canvas-attention`). It holds; it never acts.
+- **Passive-to-active distillation**: wherever it looks, its best guess about the whole scene, in a passive teacher's
+  feature space; pixels would be the identity teacher (`#distillation`).
+- **Inferring what was not seen**: completing the scene from what was seen and from knowledge of the world (the
+  paper: "extrapolates to unobserved regions"); the table between two glimpses (`#table`, `#extrapolation`). The
+  model guesses, infers, completes; it never "sees" what it did not sample [Yohaï, 2026-10-01: "it's not SEEING
+  it's guessing, inferring, completing"]. The audience's words for it include amodal completion and boundary
+  extension (`sources/cognition.md`; more such links, each read in its primary source, in `sources/concepts.md`)
+  [Yohaï, 2026-10-01: "'amodal completion' can be a great keyword no? think of great keywords and concepts and things
+  to link to that I MIGHT NOT HAVE IN MIND or EVEN KNOW"].
+- **Metacognition**: the model's own uncertainty about what is where, which a policy (EG-C2F) uses to choose where to
+  look (`#policies`) [Yohaï, 2026-10-01: "a keyword i really want to see emphasized on the policy stuff, particularly
+  EG-C2F, is the idea of metacognition"].
+- **Order matters**: C2F against F2C, same views; what was seen changes how the next view is processed (top-down
+  feedback) (`#policies`) [Yohaï, 2026-10-01: "that IS a good point"].
+- **Foundation model, cheap to use**: trained once, adapted with a linear layer; what it costs to train and to run
+  (`#frontier`, `#quickstart`).
+
+## Questions to anticipate
+
+Questions an informed member of this audience would ask, in the words they would use: from the reviews and the
+meta-review, from Yohaï's own objections, or from a literature the audience knows (name it), and that this audience
+cares about: benchmark minutiae a NeurIPS reviewer raised (COCO detection, classification efficiency against
+AdaptiveNN) are not [Yohaï, 2026-10-01: "no one [cares]"]. A question nobody competent would ask in that form
+is a strawman and does not belong here [Yohaï, 2026-10-01, on "Is the canvas a brain area?": "WHAT ARE
+THESE [...] QUESTIONS"]. Each answer points to its facts (below) [CC,
+2026-10-01; the authors decide what to prepare as backup slides]:
+
+- "Isn't it just DINOv3?" The architecture control (same teacher and data, an AdaGlimpse-derived design: 15.6 against
+  33.7 mIoU at t = 3, a quarter of the cost per glimpse); the frozen teacher probed alike reaches 47.2, CanViT-B 45.9,
+  and CanViT-B beats its input- or FLOP-matched teacher at low budgets. The teacher's absolute share is not isolated;
+  say so.
+- "Is learning from a model that sees everything cheating?" Pixels are the identity teacher; the student only ever
+  gets glimpses.
+- "Change blindness says people keep little detail across saccades (the change-blindness literature; Rensink,
+  O'Regan and colleagues: to be read before answering). Why a dense, scene-wide memory?" To prepare with the
+  authors: the canvas holds features, a best guess rather than a picture, and it is dense so that any position can be
+  read out; what it keeps across views is measurable, and comparing that with trans-saccadic memory is the kind of
+  question the closing slide proposes. Not yet read: do not answer from memory.
+- "Where does the viewpoint come from? The brain has to compute it (corollary discharge, remapping)." CanViT is given
+  each glimpse's position and scale; it does not model how they are computed.
+- "LookWhere?" Select-once, not sequential; its numbers (Claims, below).
+- "AME already chose glimpses by uncertainty." Yes: by the entropy of its decoder's attention maps (2023, the timeline
+  slide). EG-C2F uses the entropy of the class probabilities read out from the canvas, with no policy training; the
+  paper's point is that what the canvas holds can guide where to look.
+- "Video, moving objects, forgetting?" Static scenes only; the rebuttal's answer (gating, remapping-inspired updates,
+  a 3D canvas) is future work.
+- "Learned policies? Reinforcement learning?" Left to future work; the VPE token is there for it; unpublished
+  learned-policy results are the authors' call (Decisions).
+- "Can my lab use it? On what hardware?" Released checkpoints, a linear probe or LP-FT; inference on a laptop
+  (`#quickstart`, run on an M4 Pro on 2026-10-01).
+- "Is it ImageNet-21k doing the work?" The ImageNet-1k-only control: 43.4 against 45.9 mIoU, still above every prior
+  active model.
+
 ## Claims to state with their scope
 
 From an independent review of the draft (Codex, model gpt-6-astra, 2026-10-01; its report is not committed), the
@@ -114,26 +192,30 @@ authors' data and the history data:
 - 38.5% mIoU "in a single glimpse" is a single low-resolution glimpse of the *full scene*; say so.
 - "Perception, not viewpoint selection, was the bottleneck" is the paper's sentence; the evidence is CanViT beating
   the prior models even with F2C.
-- Transfer to "any policy" is empirical: across the tested policies, horizons and resolutions.
+- "Any policy" means the tested policies, horizons and resolutions.
 - The architecture control (Checked facts, the rebuttal) compares two complete designs; it does not isolate the
   canvas, nor measure the teacher's share of absolute performance.
 - The canvas resolution result uses a separately trained linear probe per resolution.
-- Predicting unobserved regions is not amodal completion; "cognitive map", "workspace" and "belief state" are
-  functional analogies, not claims about hippocampus, consciousness or calibrated posteriors.
-- The canvas's geometry is given (each glimpse's position and scale), so CanViT does not model how the brain
-  computes remapping; it addresses what to keep and how to integrate across views.
+- The canvas's geometry is given (each glimpse's position and scale): CanViT addresses what to keep and how to
+  integrate across views, not how the brain computes remapping.
 - The 45.9% headline is C2F at a 64² canvas; a chart showing it must show that curve.
 - Never say CanViT saw "an order of magnitude more" data than previous active models [Yohaï, 2026-10-01: "SHOULD
-  BE REMOVED"]: it saw ten times more scenes than ImageNet-1k-trained models, but AdaGlimpse's pipeline saw 37 to
-  150 billion glimpses against CanViT's 1 billion (rebuttal tables, section 10). Training compute is "comparable or
+  BE REMOVED"]: it saw ten times more scenes than ImageNet-1k-trained models, but AdaGlimpse's pipeline saw 38 to
+  150 billion glimpses against CanViT's 1 billion (the posted responses; Checked facts). Training compute is "comparable or
   lower" against AdaGlimpse only, and higher than AME's own task training.
 - Table corners [measured 2026-10-01, `throwaway/table_corners/run.log` and `examples.json`]: over 1,436 large
   objects of ADE20K validation, after glimpses at both ends the canvas labels on average 65% of the unseen middle as
   the object (53% after one end), and it also labels as the object 46% of the other pixels in the band between the
   glimpses (mean; median 41%). The extrapolation is real and imprecise. The conference-table example was selected
   for few false positives (8%); say so when giving the average.
-- The history chart (`sources/sota-history.md`, "Caveats"): the passive frontier after 2019 uses far larger models,
-  higher resolutions and up to billions of extra images; show the ImageNet-1k-only and frozen-probe lines beside it.
+- Compare like with like: never against far larger models [Yohaï, 2026-10-01, on a gap drawn between a frozen 7B
+  model and the best active model: "comparing to nonsensically large models is indeed stupid and counterproductive"].
+  The history chart's passive lines are restricted to models of the active models' size (base size, ViT-B or
+  smaller backbones), each point with its parameter count and test resolution known (`sources/sota-history.md`); the
+  all-sizes frontier (up to billions of parameters, 475–800 px, billions of extra images) is not drawn. The sizes of
+  the active incumbents are recorded as precisely as the passive ones, every network they run at test time
+  (`params_detail` in `sources/sota-history.json`) [Yohaï, 2026-10-01: "keep track of the SIZES of the active-vision
+  incumbents precisely as well"].
   Most active models start from passive networks or teachers. LookWhere (NeurIPS 2025; 83.0 ImageNet-1k, 44.6 ADE20K)
   selects patches once from a low-resolution view: not a sequential glimpse model under the paper's definition, but
   close to CanViT-B's numbers and not cited by the paper; expect the question.
@@ -148,6 +230,14 @@ authors' data and the history data:
   toward the far end, along the room's perspective.
 - [Yohaï, 2026-10-01] Viewing policies always wear the paper's per-policy colors (`../../js/canvit/policies.js`,
   read at runtime): their labels and their glimpse boxes. Their name is the caption; what each does is said.
+- [Yohaï, 2026-10-01] ImageNet-1k and ADE20K one after the other, never side by side from the start ("don't try to
+  have in1k and ade20k side by side together from get go, one after the other"), and the talk explains the key
+  differences between classification and segmentation and why segmentation is harder before showing a number on
+  either. The paper's words: "non-spatial, global prediction tasks like object classification or spatially-grounded,
+  dense tasks like semantic segmentation" (§3); dense prediction "is unsupported by most existing active vision
+  models; the few exceptions lag dramatically behind passive models" (§1); dense outputs "require explicit
+  architectural handling, as the active vision setting breaks the direct, connectivity-based mapping between input
+  and output feature maps" (§3).
 - [Yohaï, 2026-10-01] The authors' faces on the title slide, round; QR codes, large, with the GitHub and Hugging
   Face logos, at the end.
 
@@ -213,6 +303,52 @@ the paper's macros) [read 2026-10-01]:
   ImageNet-1k 0.2 to 0.9 points higher; after LP-FT 84.19 against 84.44 (C2F).
 - A teacher-free control (RGB reconstruction for both designs) separates them less than the DINOv3 pair does.
 
+The posted responses and the decision (`rebuttal/response_drafts_2026-07-26/response_*.md`,
+`follow_up_drafts_2026_07_31/response_DjZB.md`, `ac_comment_2026-08-03/response_AC.md`,
+`../camera_ready/decision_2026-09-24.md`, all under `~/code/CanViT-Toward-AVFMs/`) [read 2026-10-01]; what reviewers
+received, so the talk may say it:
+- The reviewers' and the AC's central concerns: attribution (architecture against the DINOv3 teacher against the
+  pretraining scale) and one-time offline cost (the 19 TiB feature cache, ImageNet-21k pretraining) against
+  deployment cost. Accepted as a poster on 2026-09-24; DjZB raised to Accept; "the absolute contribution of DINOv3
+  is not fully isolated" stays a stated limitation, as do static scenes.
+- Training scale, as posted: CanViT-B saw 1 B glimpses; AdaptiveNN about 1.9 B (estimated from its released
+  parameters and code, 300 ImageNet-1k epochs); AdaGlimpse 38 to 150 B (600 epochs); AME about 16 M in its
+  active-vision adaptation, on top of pretrained MAE or SETR backbones. CanViT, AdaptiveNN and AdaGlimpse start from
+  random initialization.
+- Training compute, as posted: 166 H100-hours of pretraining plus 8 H100-equivalent hours of teacher features (174);
+  computing the teacher online instead of caching would make it about 246 and remove the 19 TiB. AdaGlimpse,
+  estimated from its repository's "around 1 week on 4x A100 GPUs": 210–410 H100-equivalent hours. ImageNet-1k
+  fine-tuning: under 800 USD (App. H).
+- The architecture control, as posted: CanViT-B 96.5 M parameters against an AdaGlimpse baseline of 112.3 M, both
+  from random initialization on the same DINOv3 harness (ImageNet-1k scenes, about 110 M glimpses); 22 against 212
+  TPU v6e chip-hours to pretrain; per glimpse 15.8 against 70.2 GFLOPs, so four CanViT glimpses cost less than the
+  baseline's first. COCO detection on these checkpoints (CenterNet head, about 35 epochs, preliminary): 19.02 against
+  8.12 AP at t = 4; the flagship reaches 32.42 AP at t = 20 (C2F).
+- Efficiency claims are scoped to dense prediction: "We do not expect CanViT to lead on accuracy-efficiency in
+  classification". On ImageNet-1k (Tables R5–R6, recomputed from released code): CanViT-B 95.2 M active parameters,
+  15.48 GFLOPs per glimpse; AdaptiveNN (DeiT-S) 2.15 GFLOPs for its first glimpse, 83.2 M parameters in all;
+  GFNet (EfficientNet-B3) 0.86 GFLOPs, 39.1 M in all.
+- Passive efficient segmenters for context (Table R2 of DjZB, single-scale, their own settings): EfficientViT-L2 51 M,
+  90 GFLOPs, 50.7 mIoU; FocalNet-B 126 M, 2384 GFLOPs, 50.5; CanViT-B 15.8 GFLOPs for 38.5 at t = 0, 464.1 GFLOPs
+  for 45.89 at t = 20 (64² canvas).
+- Training FLOPs, each system's own training only (`rebuttal/training_flops.py`, run 2026-10-01 into the session
+  scratchpad; 1 MAC = 2 FLOPs, backward = 2 × forward, measured 1.996; inherited pretrained weights and teachers
+  are not counted on any side, so DINOv3's own pretraining is not counted for CanViT either): CanViT-B 52.5 EFLOPs of
+  pretraining plus 2.84 of teacher features (55.3), from random initialization; AdaGlimpse 62.9 to 144.6 (its
+  600-epoch reconstruction pretraining by its code or by its paper, plus 100 epochs of classification), from random
+  initialization with a DeiT-III-21k teacher; AME 1.4 to 1.8 for its segmentation training, on top of MAE-L or
+  SETR-ADE20K weights whose training is not counted. AdaptiveNN discloses no training cost; its ImageNet-1k run is
+  from scratch, 300 epochs, four 112 px fixations plus a glance and a regularization pass per image per step
+  (`rebuttal/adaptivenn_training_facts.md`). The dossier's own reading ("Training-FLOP accounting vs baselines"):
+  own-training compute is comparable between CanViT-B and AdaGlimpse's ImageNet-1k pipeline; the defensible
+  differences are wall time as disclosed (AdaGlimpse's README about 672 A100-hours; CanViT 166 H100-hours plus 8),
+  AME's inherited weights, and that CanViT-B is one task- and policy-agnostic model where the others are trained per
+  task. For a scientist the training cost that follows is adapting it: a linear probe on frozen features, or LP-FT
+  (ImageNet-1k fine-tuning under 800 USD, under 15 h on a TPU v6e-4); never claim CanViT-B was cheaper to pretrain
+  than every prior model.
+- The VPE token helps at long horizons and fine canvases (+1.28 mIoU at t = 20, 64² canvas); EG-C2F's viewpoint
+  selection costs about 1–5 MFLOP, under 0.03% of a glimpse.
+
 The history data [assembled 2026-10-01]: `sources/sota-history.json` (every point read in its paper; `_about`
 defines the fields and series) and `sources/sota-history.md` (sources, leads, caveats). Sequential active models top
 out at 82.2 on ImageNet-1k (AdaptiveNN, 2025) and 27.6 mIoU on ADE20K (AME, 2023); passive models reach 91.1 and
@@ -242,6 +378,13 @@ The machine [checked 2026-10-01]: `ADE20K_ROOT=/Users/yberreby/datasets/ADEChall
 shell, pass it; the Hugging Face cache holds every released checkpoint and probe and DINOv3 ViT-S/B; MPS inference
 matches CPU (relative L2 5e-6, identical argmax; `throwaway/bench_episode.log`); the disk is nearly full (under
 1 GB free on 2026-10-01).
+
+Memory reset [measured 2026-10-01, `throwaway/memory_reset/`, summary in `../../data/talk/memory/overall-k1.json`,
+read]: every "thing" object covering 1–15% of an ADE20K validation scene (2,781 objects); one glimpse on the object
+(its box about half the glimpse), then three glimpses as far as possible, none containing the object's class; mean
+p(class) over the object's pixels after the last glimpse: 0.462 ± 0.006 with the canvas carried, 0.031 reset before
+each glimpse, 0.038 when the object's own glimpse is skipped. Among objects recognized after their glimpse (p ≥ 0.5,
+1,579): 0.683 against 0.038.
 
 Experiments behind slides (gitignored `throwaway/`, outputs under `../../data/talk/`): `table_corners/` (two
 glimpses at the ends of large ADE20K objects; `run.log` has the averages), `distillation/` (DINOv3 features of a

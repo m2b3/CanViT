@@ -3,7 +3,9 @@
 The talk slide by slide (`../AGENTS.md`, "Workflow"). The story, Yohaï's wording and the scoped claims are in
 `AGENTS.md`; the open work in `PLAN.md`. Each slide (by its title; its id in `index.html` where cited): where the title's wording comes from, what the screen shows
 and how it builds, what is said (notes, in Yohaï's voice), and its status: **ready**, **build** (the visual must be
-made from data we have), **data** (an export or experiment is missing), **decide** (the authors' call).
+made from data we have), **data** (an export or experiment is missing), **decide** (the authors' call). **Must**
+lists what the slide has to show, say or carry across; **Could** what would be interesting or good to show as well
+(`../AGENTS.md`, "Workflow"); entries not yet split are being converted.
 
 Revision: 2026-10-01, rewritten by Claude Code after reading the reconstructed September transcript in full. Not
 yet reviewed by the authors.
@@ -37,7 +39,7 @@ yet reviewed by the authors.
   points and citations).
 - **Status:** ready. TODO (`PLAN.md`): a foveated scene, the fixation moving.
 
-## Seeing beyond what you sample
+## Knowledge of the world
 
 ### Integrating multiple viewpoints into a coherent understanding
 - **Title:** the UNIQUE application ("integrate information from multiple viewpoints into a coherent understanding");
@@ -66,16 +68,50 @@ yet reviewed by the authors.
 
 ## Active computer vision
 
+### Deep active vision
+- **Title:** the paper's related-work heading ("Deep active vision models").
+- **Must:** what active computer vision tried, from RAM (2014) to AdaptiveNN (2025), each model in a few words; that
+  almost all learned where to look by reinforcement learning (the paper: prior work "has often focused on action
+  selection").
+- **Could:** the precursors (Larochelle & Hinton 2010; Bajcsy 1988 "We do not just see, we look") said; the empty
+  years before 2019 (digits only); STAM and the McGill connection.
+- **Builds:** a year axis; the models arrive one per click at their release dates (name, what it did, citation);
+  then the markers of those whose policy is learned by reinforcement learning turn policy teal.
+- **Data:** `sources/active-vision-timeline.json` (evidence in `.md`).
+- **Status:** draft (built).
+
 ### The wide gap between passive and active computer vision
 - **Title:** the abstract and the UNIQUE application ("narrows the wide gap between passive and active computer
   vision"); "Active computer vision was not nearly as smart as passive computer vision" is said.
-- **Shows:** a chart, year against accuracy, ImageNet-1k top-1 and ADE20K mIoU side by side: the passive frontier
-  (with the ImageNet-1k-only and frozen-probe lines), then the sequential active models appearing (DRAM, Saccader,
-  GFNet, STAM, AdaGlimpse, AdaptiveNN; AME and AdaGlimpse on ADE20K). No CanViT.
-- **Says:** active computer vision goes back to the Recurrent Attention Model, 2014. "Even with lots of training,
-  lots of data, and lots of inference compute, it was terrible. The whole point was supposed to be efficiency ...
-  Instead, there was worse peak accuracy and worse efficiency at every level." The gap is widest where you need to
-  understand the whole scene: segmentation.
+- **Must:** what classification and segmentation ask, and why segmentation is harder for a model that sees parts of
+  the scene; on each benchmark, active models below passive models of the same size (never against far larger
+  ones); end to end against frozen features read by a linear layer, so CanViT's frozen results later read right.
+- **Could:** how much training the active models got (glimpses, compute; `AGENTS.md`, rebuttal facts), backing "even
+  with lots of training"; a training-cost view; the all-sizes frontier and the select-once models (LookWhere) for
+  questions.
+- **Builds** one benchmark after the other, never both at once [Yohaï, 2026-10-01], each introduced by its task
+  before its chart: the classification example, large (an ImageNet-1k photo and its one label); it shrinks to the
+  chart's corner as the ImageNet-1k chart (year against top-1) draws the passive models trained end to end; then the
+  frozen features with a linear layer; then the sequential active models, named. Then the segmentation example, large
+  (an ADE20K scene and its labeled map, a few class names written on their regions); it shrinks as the ADE20K chart
+  (year against mIoU) draws the same three series; then the bracket of the gap between the best active model and the
+  frozen line. No CanViT (`#results`).
+- **Says:** the two tasks [Yohaï, 2026-10-01: "we must explain the key differences between classification and
+  segmentation and why one is harder"]: classification gives one label to the whole image, one of 1000, and ImageNet
+  photos mostly show one object; one good look at the right part can be enough. Segmentation gives a label to every
+  pixel of a scene, one of 150 classes, large and small things, wall and floor included: you have to know what is
+  everywhere, including where you did not look closely, so an active model needs a memory of the whole scene. Most
+  active models cannot produce it at all (§1). The score, mIoU: for each class, the overlap between the predicted and
+  true regions over their union, averaged over classes. Then the history: active computer vision goes back to the
+  Recurrent Attention Model, 2014. "Even with lots of training, lots of data, and lots of inference compute, it was
+  terrible. The whole point was supposed to be efficiency ... Instead, there was worse peak accuracy and worse
+  efficiency at every level." The gap is widest on segmentation.
+- **Examples** (chosen by sweeps, `PLAN.md`). Classification: a photo the audience names at a glance, one dominant
+  object, typical of ImageNet-1k; its label in plain words and as fine as ImageNet's (a dog's breed shows that the
+  1000 classes are fine-grained); a passive classifier confident and right on it. Segmentation: a scene everyone
+  recognizes, with many labeled classes of all sizes (large regions such as wall and floor, several small objects),
+  nearly no unlabeled pixels, and class names that fit on their regions; not the conference room, which the audience
+  will see under other claims.
 - **Data:** `sources/sota-history.json`; caveats in `AGENTS.md`.
 - **Status:** build.
 
@@ -146,9 +182,19 @@ yet reviewed by the authors.
 - **Status:** ready.
 
 ### Resetting the memory
-- **Shows:** `<canvit-path>`: the same smooth path of viewpoints, canvas carried and canvas reset at every glimpse.
-- **Says:** reset the memory, and "unless you get a good look at something, the representation is bad".
-- **Status:** ready (layout to fit).
+- **Must:** what the memory buys: an object seen once stays in the canvas after glimpses elsewhere, and is gone when
+  the canvas is reset before each glimpse.
+- **Could:** the average over ADE20K validation (said); a pair of objects (toilet and sink, ADE_val_00001082; painting
+  and lamp, ADE_val_00000150) for two classes at once; the glimpses one by one.
+- **Example properties** [stated 2026-10-01, before the sweep]: an object everyone names; the canvas sure of it after
+  one glimpse; the other glimpses far from it, none showing its class; its shape readable in the probability map;
+  carried and reset far apart. Chosen: ADE_val_00001425, a person (p 0.93 after its glimpse, 0.88 kept and 0.006
+  reset after three glimpses away), by a sweep over 2,781 objects (`throwaway/memory_reset`, `AGENTS.md`).
+- **Builds:** the glimpse on the person and p(person) after it; three glimpses away, the silhouette stays; the reset
+  panel, empty. Inferno, 0 to 1, with its scale.
+- **Says:** "unless you get a good look at something, the representation is bad"; the average, as a clean example's
+  context.
+- **Status:** draft (built).
 
 ### Extrapolation to unobserved regions
 - **Title:** the paper's Fig. 1 caption.
@@ -159,16 +205,33 @@ yet reviewed by the authors.
 - **Status:** ready.
 
 ### Viewing policies
+- **Must:** what each policy does and why it is in the paper, in its paper color; the same CanViT-B works under all
+  of them without retraining; C2F against F2C: the same viewpoints in another order give a worse result, so what was
+  seen changes how the next view is processed.
+- **Must** [Yohaï, 2026-10-01: "a keyword i really want to see emphasized on the policy stuff, particularly EG-C2F,
+  is the idea of metacognition, and the model's own uncertainty about what's where"]: EG-C2F as metacognition, the
+  model's own uncertainty about what is where, explained before it is used: at one position, the class
+  probabilities read out from the canvas as bars, peaked (confident) or flat (uncertain); entropy as the number for
+  how flat; the entropy map over the scene; EG-C2F visiting next the tile of highest mean entropy; the policy reads the
+  uncertainty, the canvas does not act.
+- **Could:** the race over all of ADE20K validation; EG-C2F, whose viewpoints follow the uncertainty of the
+  segmentation read out from the canvas, without reinforcement learning; RFS, more processing without new input, helping then declining.
+- **Builds** [Yohaï, 2026-10-01: "we shouldn't go straight up to the animation, we should have a sort of grid with
+  the colors and titles of each policy explaining what it is and why we [care], and then fade into the animation
+  of them, and then perhaps show the race between them"]: first a grid, one cell per policy in its paper color, with
+  its name, what it does and why it is in the paper, each with a small picture of its viewpoints; the cells then fade
+  into the policies' animations on the scene, in the same places; then the race.
 - **Shows:** the same scene under each of the paper's policies, glimpse boxes appearing one by one: R-IID and F-IID
   (random viewpoints, as in pretraining; F-IID starts from the full scene), C2F (a quadtree, coarse to fine, random
   order within a level), F2C (the same viewpoints, reversed), EG-C2F (C2F, visiting the most uncertain tile first),
   RFS (the full scene, repeated).
 - **Says:** why each exists: R-IID and F-IID are the training distribution; C2F is the natural order; F2C isolates the
   order (same viewpoints by the end, worse result: what was seen changes how the next view is processed); EG-C2F
-  shows the canvas can choose where to look without reinforcement learning; RFS separates more processing from new
+  shows that what the canvas holds can guide where to look, without reinforcement learning; RFS separates more processing from new
   input (it helps, then declines).
 - **Data:** recorded bundles of one scene per policy (`canvit_pytorch.viz`, same seed).
-- **Status:** draft (built; race against the paper's ADE20K curves).
+- **Status:** draft (built: the six policies named over their first glimpses, then playing, then the race; the
+  metacognition explanation to add).
 
 ### Benchmark results on ADE20K and ImageNet-1k
 - **Title:** the paper's Fig. 3 caption.
@@ -180,8 +243,19 @@ yet reviewed by the authors.
 - **Title:** the project page's section.
 - **Shows:** `<canvit-frontier>`: 38.5% from one low-resolution glimpse of the full scene; even fine-to-coarse beats
   the prior models.
-- **Says:** "Even our worst policy, a policy worse than random ... got better performance at lower cost."
-- **Status:** ready.
+- **Must:** why cost matters (money and time per experiment), training cost first, the main concern for scientists
+  [Yohaï, 2026-10-01]: what CanViT-B cost to train against the prior active models, each system's own training
+  (`AGENTS.md`, rebuttal facts: hours, EFLOPs, glimpses, with their qualifiers); then inference: from a single glimpse
+  of the full scene, CanViT-B beats the best prior active model with 20 times fewer inference FLOPs, and even F2C
+  beats it; scoped to segmentation (the rebuttal: no efficiency claim on classification).
+- **Could:** cost per glimpse and to train against an AdaGlimpse-style design on the same harness (22 against 212
+  TPU chip-hours); the model running on a laptop or in a browser.
+- **Says:** first why cost matters to this audience [Yohaï, 2026-10-01: "properly make the case of why anyone would
+  [care] about efficiency (it's about money, making experiments cheap, etc)"]: compute is money and time; a
+  model twenty times cheaper to run makes every experiment twenty times cheaper (more scenes, glimpses and policies,
+  policies learned by trial and error) and runs on a laptop. Then: "Even our worst policy, a policy worse than random
+  ... got better performance at lower cost."
+- **Status:** draft: the case for cost is not on the slide yet (`PLAN.md`).
 
 ## Closing
 
@@ -192,6 +266,16 @@ yet reviewed by the authors.
 - **Says:** limitations in passing (static scenes, a passive teacher); related work (Thorat et al. 2025, FOVI); "the
   first of many Active-Vision Foundation Models".
 - **Status:** ready (visual to find).
+
+### Quickstart
+- **Title:** the README's heading.
+- **Must:** that using CanViT takes a few lines anyone can read: install, load, glimpse, read the canvas
+  [Yohaï, 2026-10-01: "the point is to show them it's trivial to start using this"].
+- **Could:** what the code produces, beside it: the two glimpses on a street and the canvas after them.
+- **Builds:** `uv add canvit-pytorch` alone and large; the code (`quickstart.py`, which runs as shown); a band
+  walks through it: the model, the scene and state, the viewpoints (the scene with their boxes appears), the loop, the
+  canvas (the canvas appears).
+- **Status:** draft.
 
 ### The last slide: paper, code, models and funding
 - **Shows:** three QR codes, largest, labeled in a word: "Paper" (arXiv), "Code" (GitHub), "Models" (Hugging
@@ -204,7 +288,7 @@ yet reviewed by the authors.
 ### A general-purpose observer lets you use any policy
 - **Title:** the project page's line; a bonus, in Backup [Yohaï, 2026-10-01: "no one [cares] enough for this
   to be the title of a main-talk slide, bonus at best. they care about science and what they can do with it"].
-- **Shows:** `<canvit-live>`: I choose where to look; then the canvas's own uncertainty chooses.
+- **Shows:** `<canvit-live>`: I choose where to look; then EG-C2F chooses, from the uncertainty of the segmentation read out from the canvas.
 - **Status:** ready (layout to fit; offline runtime in `PLAN.md`).
 
 ### Spatial coverage and perception of detail

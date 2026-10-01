@@ -1,7 +1,7 @@
-# Perception beyond the information sampled: sources for the talk
+# Inference from knowledge of the world: sources for the talk
 
 [Compiled 2026-10-01 by a Claude Code research subagent; read by Claude Code, not by the authors.] For the slide
-"Perception goes beyond the information sampled" (OUTLINE.md, slide 6). Each entry names what was read: the full
+"Integrating multiple viewpoints into a coherent understanding" (`#table`). Each entry names what was read: the full
 PDF, the abstract (PubMed, Crossref or the publisher page), or only the metadata. Citation metadata (authors, year,
 venue, volume, pages, DOI) come from Crossref or PubMed unless stated. Quotes are verbatim. UNVERIFIED marks what was
 not checked against the source itself. "Zotero" is a PDF in the user's library. The CanViT paper cites none of these

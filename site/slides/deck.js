@@ -4,19 +4,25 @@
 //   <script type="module">import { startDeck } from "../deck.js"; await startDeck();</script>
 //
 // Slide markup conventions, all handled here:
-//   data-play on an element      play() when its slide is shown (restart() when it has one), pause() when it is left
+//   data-play on an element      play() when its slide is shown (restart() when it has one), pause() when it is left;
+//     data-play="NAME"           only while its slide shows the named state (data-shows below)
 //   data-canvit-target="SEL"     on a fragment: while shown, set t="data-canvit-t" on the slide's elements matching SEL;
 //     data-canvit-t="T"          with none shown, a target keeps the t of its markup
-//   <section data-step>          gets data-step="N" and classes step-1 … step-N, N the number of fragments shown, so
-//                                its CSS can build a diagram click by click
+//   data-shows="NAME"            on a fragment: while it is shown, its slide has the class shows-NAME, so the slide's CSS
+//                                builds a diagram click by click, keyed on named states
 //   <section data-status="…">    how far the slide is from presentable: shown as a corner badge unless ?present
 //   data-load-near               on an element that loads something heavy when given `autoload` (<canvit-live>): the
 //                                attribute is added once its slide is the current one or the next, never at page load
+//   <code data-src="FILE">       filled with the file's text before reveal.js highlights it (class="language-…"), so
+//                                a snippet on a slide is a file that runs
+//   data-lines="A-B"             on a fragment: while it is the last shown one with data-lines, a band marks lines A
+//                                to B of its slide's code block
 // Elements a slide can use besides the project page's components: <deck-sequence> (sequence.js), its children shown
 // one at a time, played with data-play.
 
 import Reveal from "./node_modules/reveal.js/dist/reveal.mjs";
 import RevealNotes from "./node_modules/reveal.js/dist/plugin/notes.mjs";
+import RevealHighlight from "./node_modules/reveal.js/dist/plugin/highlight.mjs";
 
 const STATUSES = {
   ready: "ready",
@@ -31,14 +37,23 @@ const printing = params.has("print-pdf");
 // Clicks on these never advance the deck: controls, links and the live model's scene.
 const INTERACTIVE = "a, button, input, select, textarea, label, video[controls], canvit-live, canvit-episode, canvit-frontier, canvit-rollout, [data-no-advance]";
 
-/** Play the slide's animations from the start; pause every other slide's. */
+// The animations playing since their slide or state was shown; they start over only when shown anew.
+const started = new Set();
+
+/** Play the animations the current slide shows, each from the start when it appears; pause every other one. */
 async function syncPlayback(deck) {
   const current = deck.getCurrentSlide();
   for (const element of document.querySelectorAll(".reveal .slides [data-play]")) {
     await customElements.whenDefined(element.localName).catch(() => {});
-    const shown = !printing && current?.contains(element);
-    if (shown) (element.restart ?? element.play).call(element);
-    else element.pause?.();
+    const state = element.dataset.play;
+    const shown = !printing && !!current?.contains(element) && (!state || current.classList.contains(`shows-${state}`));
+    if (shown && !started.has(element)) {
+      started.add(element);
+      (element.restart ?? element.play).call(element);
+    } else if (!shown) {
+      started.delete(element);
+      element.pause?.();
+    }
   }
 }
 
@@ -70,13 +85,37 @@ function syncTargets(deck) {
   }
 }
 
-function syncSteps(deck) {
+/** A shown fragment with data-shows="NAME" gives its slide the class shows-NAME; hidden, it takes it away. */
+function syncStates(deck) {
   const slide = deck.getCurrentSlide();
-  if (!slide?.hasAttribute("data-step")) return;
-  const fragments = slide.querySelectorAll(".fragment");
-  const step = slide.querySelectorAll(".fragment.visible").length;
-  slide.dataset.step = String(step);
-  for (let n = 1; n <= fragments.length; n++) slide.classList.toggle(`step-${n}`, n <= step);
+  if (!slide) return;
+  for (const fragment of slide.querySelectorAll(".fragment[data-shows]")) {
+    slide.classList.toggle(`shows-${fragment.dataset.shows}`, fragment.classList.contains("visible"));
+  }
+}
+
+async function fillCode(slides) {
+  for (const code of slides.querySelectorAll("code[data-src]")) {
+    const response = await fetch(code.dataset.src);
+    if (!response.ok) throw new Error(`<code data-src="${code.dataset.src}">: HTTP ${response.status}`);
+    code.textContent = (await response.text()).trimEnd();
+  }
+}
+
+/** The last shown data-lines fragment of the current slide puts a band behind those lines of the slide's <pre>. */
+function syncLines(deck) {
+  const slide = deck.getCurrentSlide();
+  const fragments = [...(slide?.querySelectorAll(".fragment[data-lines]") ?? [])];
+  if (fragments.length === 0) return;
+  const pre = slide.querySelector("pre");
+  if (!pre) throw new Error(`#${slide.id}: data-lines fragments, but no <pre> to mark`);
+  const range = fragments.filter((f) => f.classList.contains("visible")).at(-1)?.dataset.lines;
+  pre.classList.toggle("marked", Boolean(range));
+  if (!range) return;
+  const match = /^(\d+)-(\d+)$/.exec(range);
+  if (!match || Number(match[2]) < Number(match[1])) throw new Error(`#${slide.id}: data-lines="${range}" is not "A-B" with A ≤ B`);
+  pre.style.setProperty("--line-from", match[1]);
+  pre.style.setProperty("--line-count", String(Number(match[2]) - Number(match[1]) + 1));
 }
 
 function statusBadges(slides) {
@@ -110,6 +149,7 @@ function replayButton(deck) {
     button.blur();
     const { h, v } = deck.getIndices();
     deck.slide(h, v, -1);
+    for (const element of deck.getCurrentSlide().querySelectorAll("[data-play]")) started.delete(element);
     syncPlayback(deck);
   });
 }
@@ -117,6 +157,7 @@ function replayButton(deck) {
 export async function startDeck(options = {}) {
   const slides = document.querySelector(".reveal .slides");
   statusBadges(slides);
+  await fillCode(slides);
   const deck = new Reveal({
     width: 1280,
     height: 720,
@@ -131,15 +172,16 @@ export async function startDeck(options = {}) {
     transition: "fade",
     transitionSpeed: "fast",
     pdfSeparateFragments: false,
-    plugins: [RevealNotes],
+    plugins: [RevealNotes, RevealHighlight],
     ...options,
   });
   const sync = () => {
     syncTargets(deck);
-    syncSteps(deck);
+    syncStates(deck);
+    syncLines(deck);
   };
   for (const event of ["ready", "slidechanged", "fragmentshown", "fragmenthidden"]) deck.on(event, sync);
-  for (const event of ["ready", "slidechanged"]) deck.on(event, () => syncPlayback(deck));
+  for (const event of ["ready", "slidechanged", "fragmentshown", "fragmenthidden"]) deck.on(event, () => syncPlayback(deck));
   // The speaker view's previews (?receiver) and print never load heavy elements: each preview is a whole deck.
   if (!printing && !params.has("receiver")) for (const event of ["ready", "slidechanged"]) deck.on(event, () => loadNear(deck));
   replayButton(deck);

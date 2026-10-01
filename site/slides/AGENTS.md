@@ -3,12 +3,18 @@
 The repository's `AGENTS.md` and `site/AGENTS.md` apply here too. This guide holds what is specific to the talks,
 and it is kept current: when the workflow or a convention changes, change it here in the same commit.
 
+The overarching principle [Yohaï, 2026-10-01]: "NEVER TAKE ANYTHING AT FACE VALUE. YOU CANNOT PRESENT WHAT YOU DON'T
+FULLY UNDERSTAND. READ AND UNDERSTAND FIRST." Before a slide shows a number, a model, a figure or a claim, read its
+primary source (the paper's text and tables, the code, the data file and how it was made) until you can explain what
+it measures, under which conditions, and what it does not show. A summary, a data file's label, an agent's report or
+an earlier note is a pointer to that source, never a substitute for reading it.
+
 ## What lives where
 
 - `deck.js`, `deck.css`, `sequence.js`: the deck every talk runs on (reveal.js at 1280 × 720, the page's light
   identity from `../css/canvit.css`) and its own elements (`<deck-sequence>`); `deck.css` also holds the utilities
   every talk may use (`.draw` arrows, `.marks` rings, `.step-marker`). Slide conventions are documented at the top of `deck.js`: `data-play`,
-  `data-canvit-target`/`data-canvit-t`, `<section data-step>`, `<section data-status>`.
+  `data-canvit-target`/`data-canvit-t`, `data-shows`, `<section data-status>`.
 - `package.json`: reveal.js, pinned and installed locally (`npm ci --prefix site/slides`), so a talk runs offline.
 - `shoot.py`: screenshots of every slide in Chromium, and the browser errors (below).
 - `YYYY-MM-DD-Event/`: one directory per talk: `AGENTS.md` (the talk's audience, framings, scoped claims and
@@ -33,7 +39,10 @@ it naming its source.
 
 [Yohaï, 2026-10-01] A talk is designed in its `OUTLINE.md` before it becomes slides: for every slide, the
 proposition it states or proves, what is on screen, the visual and how it builds, what is said, the keywords, the
-sources and the status. The outline is reviewed (independent reviewers: fresh subagents, `codex exec` with model
+sources and the status. Each entry separates what the slide must show, say or carry across (without it the story
+breaks or a claim goes unsupported) from what would be interesting or good to show; both get made, and the first
+is never cut for the second [Yohaï, 2026-10-01: "distinguishing what MUST be shown/said/carried across from what
+would be cool/interesting/worth showing, while doing both"]. The outline is reviewed (independent reviewers: fresh subagents, `codex exec` with model
 `gpt-6-astra`, asked open questions about understanding, key messages and what they would do) and revised until
 the authors are confident in it; slides are built from it, and an outline change comes before a slide change.
 
@@ -45,6 +54,15 @@ uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-30-Montre
     --out site/.screens/main-2026 > site/.screens/shoot.log 2>&1
 python3 site/check_paper_numbers.py
 ```
+
+Gather the primary material before deciding what a slide shows, and keep its nuance and ambiguity in the data
+until the authors have looked at it [Yohaï, 2026-10-01: "in your slide-prep process, try to avoid collapsing nuance
+and ambiguity upfront, gather primary material and do things in such a way that it is easy for me and you to do quick
+back and forth on views into the data"]. A data file keeps every point with what qualifies it (model size,
+resolution, training data, protocol, training cost) rather than only the points a first chart needs; an untracked
+exploration page in the talk's directory shows it under switchable views (which series, which axis: year, parameters,
+training cost, inference cost) so a view can be proposed, looked at and changed in minutes. The slide is drawn from
+the view the authors choose.
 
 Every fact a talk needed checked in the paper, the code or the data is noted in the talk's `AGENTS.md` ("Checked
 facts") with where it lives, the same day [Yohaï, 2026-10-01: "save notes for yourself ... for anything and
@@ -107,6 +125,11 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   almost no one in the audience understands or cares about, with wrong emphasis ... WHAT IS THE TAKEAWAY HERE? it's
   the asymmetry"]. A paper figure that carries the point is shown as large as the slide allows, with annotations
   (rings, `.marks`) pointing at the part that matters.
+- No obvious caveats, in slides, notes or guides: a caveat earns its place only when a competent listener could
+  believe the opposite [Yohaï, 2026-10-01, on "not claims about hippocampus, consciousness or calibrated posteriors":
+  "obviously. please get rid of all [...] unnecessary and obvious caveats"].
+- Never overload a slide with text [Yohaï, 2026-10-01]: a label is a few words; what something is for, how it works
+  and why it matters are said, in the notes. A slide whose visual needs sentences beside it to be read is not done.
 - Quality over quantity [Yohaï, 2026-10-01: "still so much useless, ugly, poorly presented [stuff] in your
   slides"]. The deck holds only slides whose visual carries the point. A slide that would be a list of lines, a
   paragraph or a placeholder box stays out of `index.html` until its visual exists; its plan lives in `OUTLINE.md`
@@ -114,6 +137,30 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - The neuroscience is the paper's: human vision is active (gaze shifts toward regions of interest, sequential,
   with strategic planning, integration across time in visual working memory, and top-down recurrent
   feedback), each point with its citation.
+- Under one title, direct attention in sequence rather than showing everything at once [Yohaï, 2026-10-01: "I really
+  like when you have, for a given slide title, fade-in fadeout where you can have like the question, then the viz,
+  etc, like, dynamic cutouts and zooms and arrows and having something big that then becomes small ... give attention
+  sequentially under the same title and use animations intelligently"]: one element large while it is the subject,
+  then smaller as the next arrives; arrows that draw themselves between what relates; fades between states. Built
+  with named states: a fragment `<span class="fragment step-marker" data-shows="teacher">` gives its slide the class
+  `shows-teacher` while it is shown, and the slide's CSS keys on those names (`deck.js`); `.draw` arrows (`deck.css`).
+  Build states are named, never numbered [Yohaï, 2026-10-01, on `step-N` classes: "I HATE NUMBERINGS"]. Introduce
+  before showing: what the audience needs to read a visual (what each colored line or panel is, why it matters) comes
+  first, in its own state, laid out where the visual will be, then fades into it [Yohaï, 2026-10-01, on the policies
+  slide: "we shouldn't go straight up to the animation ... a grid with the colors and titles of each policy explaining
+  what it is and why we [care], and then fade into the animation ... and generally have this sort of careful,
+  step-by-step, visually-supported storytelling throughout"]; "use and abuse transitions, step-by-step reveals,
+  highlights" [Yohaï, 2026-10-01]. Code is walked through the same way: a fragment with `data-lines="A-B"` highlights
+  those lines of its slide's code block (`deck.js`).
+- Choose every example image because, out of the whole validation set, it illustrates the point best, found by a
+  sweep that measures the point, and checked by eye; never because it is convenient or already in use [Yohaï,
+  2026-10-01: "never be wedded to any given example image ... choose ... because out of the whole val set they
+  illustrate your point the best"]. Before the sweep, the slide's `OUTLINE.md` entry states the properties a good
+  example must have (what must be visible, what the model must do, what the audience must recognize, what must not
+  mislead), and the sweep measures them [Yohaï, 2026-10-01: "always be clear, for each example image, what properties
+  the image should have to make it into a good example"].
+- Show what the model thinks of a few named classes (their probabilities or logits, two or three at a time) rather
+  than a full segmentation map, whose class colors the audience cannot read [Yohaï, 2026-10-01, on the memory slide].
 - For any slide that matters, try several ways to present its point, render each (screenshot, or play the
   animation), compare what works and what does not, then integrate the best parts [Yohaï, 2026-10-01: "in general i
   would recommend trying a bunch of different ways to do something, rendering them / playing with it, then seeing

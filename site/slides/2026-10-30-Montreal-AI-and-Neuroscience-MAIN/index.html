@@ -67,7 +67,7 @@
   <aside class="notes">That is not how we see. We have sharp central vision and blurry peripheral vision, and we move our eyes several times per second, toward what matters. Yarbus recorded it in the sixties: on a face, the eyes keep going back to the eyes and the mouth. And where we look depends on what we are trying to do: one painting, seven questions, seven scanpaths. It's sequential. There's planning; there's working memory, carrying evidence from one fixation to the next; and there's top-down feedback: what you saw before shapes how you process what you see now.</aside>
 </section>
 
-<!-- ============================================================== Seeing beyond what you sample -->
+<!-- ============================================================== Knowledge of the world -->
 
 <section id="table" data-status="draft">
   <h2>Integrating multiple viewpoints into a coherent understanding</h2>
@@ -99,14 +99,47 @@
 
 <!-- ============================================================== Active computer vision -->
 
-<section id="history" data-status="draft" data-step>
+<section id="timeline" data-status="draft">
+  <h2>Deep active vision</h2>
+  <!-- Drawn by timeline.js from sources/active-vision-timeline.json; each model a fragment, then how each chose where
+       to look. Evidence for every entry: sources/active-vision-timeline.md. -->
+  <div class="timeline"></div>
+  <p class="legend fragment" data-shows="rl"><span class="dot"></span>where to look, learned by reinforcement learning</p>
+  <aside class="notes">Machines that look around have a history too. In deep learning it starts in 2014 with the Recurrent Attention Model: take a glimpse, decide where to look next, and the computation no longer grows with the size of the image. [click] DRAM took it from toy digits to house numbers in photographs. [click] Then not much on real images until 2019: Saccader reached 75 percent on ImageNet, thanks to a pretraining step that made the reinforcement learning work. [click] GFNet: glance at the whole image, then focus on patches only when needed; active vision as a speed-up. [click] STAM never sees the whole image; it learns from a teacher that does. [click] AME produces dense outputs, and looks where its attention is most uncertain. [click] AdaGlimpse chooses both where to look and how much to zoom. [click] And AdaGlimpse's successor in spirit, AdaptiveNN, last year: coarse-to-fine fixations across many tasks, compared with where people look. [click] Notice one thing: all but one learn where to look by reinforcement learning. Most of the effort went into choosing where to look.</aside>
+</section>
+
+<section id="history" data-status="draft">
   <h2>The wide gap between passive and active computer vision</h2>
-  <div class="charts">
-    <figure><figcaption>ImageNet-1k classification</figcaption><div class="history-chart" data-benchmark="imagenet"></div></figure>
-    <figure><figcaption>ADE20K semantic segmentation</figcaption><div class="history-chart" data-benchmark="ade20k"></div></figure>
+  <!-- One benchmark after the other, each introduced by its task. Examples chosen by sweeps (OUTLINE.md, this slide;
+       throwaway/history_examples): an ImageNet-1k validation photo the passive classifier names with p = 0.994, and an
+       ADE20K validation living room with 13 named classes and 0.9% unlabeled pixels. -->
+  <div class="stage">
+    <figure class="example classification">
+      <figcaption>Classification</figcaption>
+      <div class="frame"><img src="../../data/talk/history/classification/ILSVRC2012_val_00037182/image.png" alt="An English springer spaniel lying down"><span class="tag">English springer</span></div>
+    </figure>
+    <div class="history-chart imagenet" data-benchmark="imagenet"></div>
+    <figure class="example segmentation">
+      <figcaption>Semantic segmentation</figcaption>
+      <div class="frame">
+        <img src="../../data/talk/history/segmentation/ADE_val_00001509/image.png" alt="A living room">
+        <img class="map" src="../../data/talk/history/segmentation/ADE_val_00001509/map.png" alt="The living room's annotation: a class for every pixel">
+        <div class="names" data-src="../../data/talk/history/segmentation/ADE_val_00001509/names.json"></div>
+      </div>
+    </figure>
+    <div class="history-chart ade20k" data-benchmark="ade20k"></div>
   </div>
-  <p class="legend"><span class="key passive"></span>passive, best published <span class="key frozen"></span>passive, frozen features + a linear layer <span class="key active fragment"></span><span class="fragment" data-fragment-index="0">active: sequential glimpses</span></p>
-  <aside class="notes">Machines that look around have a long history. In deep learning it starts in 2014 with the Recurrent Attention Model, on digits. Here's how it went. Passive models, year after year. Now the active ones. Active computer vision was not nearly as smart as passive computer vision. Even with lots of training, lots of data and lots of inference compute, it was terrible. The whole point was supposed to be efficiency; instead, worse peak accuracy and worse efficiency at every level. Look at segmentation, where you have to understand the whole scene: the best active model is at 27.6 percent; a frozen passive model with one linear layer on top does around 50. To be fair, the passive line uses much bigger models and more data. That's part of the point: active models never got to that scale.</aside>
+  <span class="fragment step-marker" data-shows="label"></span>
+  <span class="fragment step-marker" data-shows="imagenet"></span>
+  <span class="fragment step-marker" data-shows="frozen"></span>
+  <span class="fragment step-marker" data-shows="active"></span>
+  <span class="fragment step-marker" data-shows="segmentation"></span>
+  <span class="fragment step-marker" data-shows="map"></span>
+  <span class="fragment step-marker" data-shows="ade20k"></span>
+  <span class="fragment step-marker" data-shows="gap"></span>
+  <!-- XXX: the passive lines are to be restricted to base-size models (sources/sota-history.json, size_class); the
+       notes say "at the size of the active models" for that version. -->
+  <aside class="notes">How do you measure how smart a vision model is? Two standard tests. The first is classification, on ImageNet: one photo, one label for the whole image, out of a thousand classes, as fine as the breed of a dog. [click] English springer. One good look at the right part, here the head, and you have it. [click] Passive models over the years, trained end to end. [click] And frozen features with just a linear layer on top: that's how foundation models are read out. [click] Now the active models from the timeline. Below, every time. [click] The second test is much harder: semantic segmentation, on ADE20K. [click] A label for every pixel: wall, floor, sofa, the book on the coffee table; 150 classes. You have to know what is everywhere, including where you haven't looked closely. For a model that sees one glimpse at a time, that means remembering what it saw where, and guessing the rest. Most active models can't produce it at all. The score is mIoU: for each class, how much the predicted region overlaps the true one, averaged over classes. [click] Passive, frozen features, and the two active models that do it. [click] That's the gap. Active computer vision was not nearly as smart as passive computer vision. Even with lots of training, lots of data and lots of inference compute, it was terrible. The whole point was supposed to be efficiency; instead, worse accuracy and worse efficiency at every level.</aside>
 </section>
 
 <section id="active-vision-model" data-status="ready">
@@ -202,8 +235,20 @@
 
 <section id="memory" data-status="draft">
   <h2>Resetting the memory</h2>
-  <div class="card path"><canvit-path data-play src="../../data/street-path" readout="labels"></canvit-path></div>
-  <aside class="notes">Same path, two conditions. In the middle, the canvas is kept from glimpse to glimpse; on the right, it's reset before every glimpse. Reset the memory, and unless you get a good look at something, the representation is bad. Keep it, and what you saw stays and gets better.</aside>
+  <!-- ADE_val_00001425, chosen by a sweep over every object covering 1–15% of an ADE20K validation scene
+       (throwaway/memory_reset): one glimpse on the object, three far from it, none showing its class; the canvas
+       carried, or reset before each glimpse. Its gap is among the largest; the average is in the notes. -->
+  <div class="memory-demo">
+    <figure><figcaption>Glimpses</figcaption>
+      <div class="swap"><img src="../../data/talk/memory/ADE_val_00001425-person/scene_t0.png" alt="A person in front of a rock, the first glimpse on the person"><img class="later" src="../../data/talk/memory/ADE_val_00001425-person/scene_t3.png" alt="The same scene with three more glimpses, far from the person"></div></figure>
+    <figure><figcaption>Memory kept</figcaption>
+      <div class="swap"><img src="../../data/talk/memory/ADE_val_00001425-person/person_carried_t0.png" alt="The probability of person after the first glimpse: a bright silhouette"><img class="later" src="../../data/talk/memory/ADE_val_00001425-person/person_carried_t3.png" alt="After three glimpses away, the silhouette remains"></div></figure>
+    <figure class="reset"><figcaption>Memory reset</figcaption><img src="../../data/talk/memory/ADE_val_00001425-person/person_reset_t3.png" alt="With the memory reset before each glimpse, nothing remains"></figure>
+  </div>
+  <p class="scale"><span>p(person)</span><span class="bar"></span><span>0</span><span>1</span></p>
+  <span class="fragment step-marker" data-shows="away"></span>
+  <span class="fragment step-marker" data-shows="reset"></span>
+  <aside class="notes">What does the memory buy you? One glimpse, on the person. The map shows, at every position, how likely the model thinks it is that there's a person there: bright means yes. [click] Now three more glimpses, all far from the person. The canvas keeps it. [click] Same four glimpses, but the memory is reset before each one. Gone. Unless you get a good look at something, the representation is bad. This is a clean example. Over 2,781 objects in ADE20K validation, after three glimpses elsewhere, the probability on the object is 0.46 on average when the memory is kept, and 0.03 when it's reset: no better than never having looked at it.</aside>
 </section>
 
 <section id="extrapolation" data-status="ready">
@@ -226,27 +271,39 @@
 
 <section id="policies" data-status="draft">
   <h2>Viewing policies</h2>
-  <div class="race-layout">
-    <div class="policies">
-      <figure><figcaption></figcaption><canvit-rollout class="policy" data-play src="../../data/street-riid" interval="800"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-      <figure><figcaption></figcaption><canvit-rollout class="policy" data-play src="../../data/street-fiid" interval="800"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-      <figure><figcaption></figcaption><canvit-rollout class="policy" data-play src="../../data/street-c2f" interval="800"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-      <figure><figcaption></figcaption><canvit-rollout class="policy" data-play src="../../data/street-f2c" interval="800"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-      <figure><figcaption></figcaption><canvit-rollout class="policy" data-play src="../../data/street-egc2f" interval="800"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-      <figure><figcaption></figcaption><canvit-rollout class="policy" data-play src="../../data/street-rfs" interval="800"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-    </div>
+  <!-- Each policy first as a card (its label, its name, its first five glimpses; why it is in the paper is said),
+       then the six rollouts playing in step, then the race beside them. Captions take the policy's label, name and
+       color from js/canvit/policies.js, keyed by the bundle's manifest (script below). -->
+  <div class="policy-stage">
+    <figure style="--col: 0; --row: 0"><figcaption></figcaption>
+      <canvit-rollout class="policy" data-play="play" src="../../data/street-riid" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
+    <figure style="--col: 0; --row: 1"><figcaption></figcaption>
+      <canvit-rollout class="policy" data-play="play" src="../../data/street-fiid" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
+    <figure style="--col: 1; --row: 0"><figcaption></figcaption>
+      <canvit-rollout class="policy" data-play="play" src="../../data/street-c2f" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
+    <figure style="--col: 1; --row: 1"><figcaption></figcaption>
+      <canvit-rollout class="policy" data-play="play" src="../../data/street-f2c" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
+    <figure style="--col: 2; --row: 0"><figcaption></figcaption>
+      <canvit-rollout class="policy" data-play="play" src="../../data/street-egc2f" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
+    <figure style="--col: 2; --row: 1"><figcaption></figcaption>
+      <canvit-rollout class="policy" data-play="play" src="../../data/street-rfs" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
     <figure class="race"><canvit-policy-race src="../../assets/paper/ade20k_seg.json" canvas-grid="64" t="0"></canvit-policy-race></figure>
   </div>
-  <aside class="notes">Because CanViT was pretrained with no policy built in, we can try any policy on it. These are the ones in the paper. R-IID and F-IID are the training distribution: random viewpoints, with F-IID starting from the full scene. C2F is the natural order: the whole scene, then quarters, then sixteenths. F2C is the same set of viewpoints in reverse: by the end it has seen exactly what C2F saw, and it does worse, so the order matters: what was seen changes how the next view is processed. EG-C2F follows C2F's levels but looks first where the canvas is most uncertain: the canvas can choose where to look, without reinforcement learning. And RFS shows the full scene again and again: more processing with no new input helps at first, then declines. On the right, the race: each policy's accuracy over all of ADE20K validation, glimpse by glimpse, growing as the panels play (mean over runs, 64 by 64 canvas).</aside>
+  <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-rollout.policy" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="race" data-canvit-target="canvit-rollout.policy" data-canvit-t="0"></span>
+  <aside class="notes">Because CanViT was pretrained with no policy built in, we can try any policy on it. These are the six in the paper, each in its color from the paper's figures. R-IID and F-IID are how it was pretrained: random places and zoom levels; F-IID starts with the full scene. C2F is the natural order: the whole scene, then quarters, then sixteenths. F2C uses exactly C2F's viewpoints, in reverse, finest first: by the end it has seen the same thing, so any difference comes from the order. EG-C2F follows C2F's levels but looks first where the segmentation read from the canvas is least certain: what the canvas holds can guide where to look, without reinforcement learning. And RFS shows the full scene again and again: more processing, no new input. [click] Here they are on the same street, glimpse by glimpse. [click] And the race: each policy's accuracy over all of ADE20K validation, glimpse by glimpse (mean over runs, 64 by 64 canvas). C2F ends above F2C with the same viewpoints: what was seen changes how the next view is processed. RFS improves at first, then declines.</aside>
 </section>
 
 <section id="results" data-status="draft">
   <h2>Benchmark results on ADE20K and ImageNet-1k</h2>
-  <div class="charts with-canvit">
-    <figure><figcaption>ImageNet-1k classification</figcaption><div class="history-chart" data-benchmark="imagenet"></div></figure>
-    <figure><figcaption>ADE20K semantic segmentation</figcaption><div class="history-chart" data-benchmark="ade20k"></div></figure>
+  <div class="stage">
+    <div class="history-chart imagenet" data-benchmark="imagenet" data-canvit></div>
+    <div class="history-chart ade20k" data-benchmark="ade20k" data-canvit></div>
   </div>
-  <aside class="notes">Back to the chart. CanViT-B: 84.5 percent on ImageNet after fine-tuning, and 45.9 percent mIoU on ADE20K, frozen, with a linear layer on top. On segmentation, that's 18 points above the best previous active model.</aside>
+  <span class="fragment step-marker" data-shows="canvit-imagenet"></span>
+  <span class="fragment step-marker" data-shows="ade20k"></span>
+  <span class="fragment step-marker" data-shows="canvit-ade20k"></span>
+  <aside class="notes">Back to the charts. ImageNet first. [click] CanViT-B: 81.1 percent frozen, with a linear layer, and 84.5 after fine-tuning, above every active model. [click] Segmentation. [click] 45.9 percent mIoU, frozen, with a linear layer on top: 18 points above the best previous active model, and close to its own teacher, DINOv3, probed the same way, which sees the whole image at once.</aside>
 </section>
 
 <section id="frontier" data-status="ready">
@@ -265,6 +322,26 @@
     <p class="fragment">How do human scanpaths compare with policies on the same observer?</p>
   </div>
   <aside class="notes">So what does this give us? An observer we can use to ask questions about active vision. What is kept from one view to the next. How what was seen changes how the next view is processed. How human scanpaths compare with policies on the same observer. It has limits: static scenes, and it needs a passive teacher. Others are moving this way: Thorat and colleagues trained models to predict the next glimpse along human scanpaths and got representations aligned with 7 tesla fMRI. We hope CanViT is the first of many Active-Vision Foundation Models.</aside>
+</section>
+
+<section id="quickstart" data-status="draft">
+  <h2>Quickstart</h2>
+  <p class="install"><code>uv add canvit-pytorch</code></p>
+  <!-- quickstart.py runs as shown (checked 2026-10-01 on ADE_val_00001780, M4 Pro, canvas [1, 64, 64, 1024]). -->
+  <pre class="fragment" data-shows="code"><code class="language-python" data-src="quickstart.py"></code></pre>
+  <!-- What the code computes, from the street bundle recorded with the same checkpoint, 64² canvas and viewpoints (C2F's
+       first two: the full scene, then the top-left quarter); its scene.png is the 512 px scene the code would read. -->
+  <canvit-rollout class="result" src="../../data/street-c2f" t="1">
+    <figure class="glimpses"><figcaption>Two glimpses</figcaption><canvit-scene trail="past"></canvit-scene></figure>
+    <figure class="canvas"><figcaption class="term-canvas">The canvas</figcaption><canvit-map layer="canvas"></canvit-map></figure>
+  </canvit-rollout>
+  <!-- Line ranges of quickstart.py: the model, the scene and state, the viewpoints, the loop, the canvas. -->
+  <span class="fragment step-marker" data-lines="7-9"></span>
+  <span class="fragment step-marker" data-lines="10-11"></span>
+  <span class="fragment step-marker" data-shows="viewpoints" data-lines="13-14"></span>
+  <span class="fragment step-marker" data-lines="16-19"></span>
+  <span class="fragment step-marker" data-shows="canvas" data-lines="21-21"></span>
+  <aside class="notes">And it's easy to use. One line to install. [click] The code. [click] Load the model from the Hub. [click] Load an image, start a state. [click] Pick viewpoints: here the whole scene, then its top-left quarter; on this street, these two. [click] For each, take the glimpse, run the model, keep the state. [click] At the end you have the canvas: a 64 by 64 map of features of the whole scene, after two glimpses, here in PCA colors, ready for a linear layer for whatever you care about. This runs on a laptop.</aside>
 </section>
 
 <section id="links" data-status="draft">
@@ -298,7 +375,7 @@
   <div class="live-stage" data-no-advance>
     <canvit-live data-load-near model="../../.live-model" scene="../../data/street-path/scene.png"></canvit-live>
   </div>
-  <aside class="notes">This is the released CanViT-B, running live. Right now, I am the policy: I click where to look, at whatever zoom, and the canvas integrates what it sees. Now I hand over to the canvas: it looks where its own prediction is most uncertain. Same observer, any policy.</aside>
+  <aside class="notes">This is the released CanViT-B, running live. Right now, I am the policy: I click where to look, at whatever zoom, and the canvas integrates what it sees. Now I hand over to a policy, EG-C2F: it looks where the segmentation read from the canvas is least certain. Same observer, any policy.</aside>
 </section>
 
 <section id="detail" data-status="draft">
@@ -331,6 +408,8 @@
   import "../../js/canvit/policy-race.js";
   import "../sequence.js";
   import { drawHistoryCharts } from "./history.js";
+  import { drawTimeline } from "./timeline.js";
+  import { drawMapNames } from "./labeled-map.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
   function colorByPolicy(rollout) {
@@ -339,7 +418,10 @@
     if (!policy) throw new Error(`${rollout.getAttribute("src")}: policy "${name}" is not in js/canvit/policies.js`);
     const figure = rollout.closest("figure");
     figure.style.setProperty("--canvit-glimpse", policy.color);
-    figure.querySelector("figcaption").textContent = policy.label;
+    const label = document.createElement("b"), full = document.createElement("span");
+    label.textContent = policy.label;
+    full.textContent = policy.name;
+    figure.querySelector("figcaption").replaceChildren(label, full);
   }
   for (const rollout of document.querySelectorAll("canvit-rollout.policy")) {
     if (rollout.bundle) colorByPolicy(rollout);
@@ -350,6 +432,8 @@
   document.querySelector("#policies canvit-rollout.policy").addEventListener("canvit-change", (event) => race.setAttribute("t", event.detail.t));
   import { startDeck } from "../deck.js";
   await drawHistoryCharts();
+  await drawTimeline(document.querySelector("#timeline .timeline"));
+  await drawMapNames();
   await startDeck();
 </script>
 </body>

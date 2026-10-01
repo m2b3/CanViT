@@ -220,6 +220,10 @@ uv run just            # lint, typecheck, test
 - The released models' glimpse size, scene size and canvas grid are
   `hub.repos.RELEASED_*`; read them from there.
 - Never read out the raw canvas; always the layer-normalized canvas.
+- The canvas never acts: it is memory. A policy chooses viewpoints; EG-C2F chooses the tile where the segmentation
+  read out from the canvas is least certain, so the canvas guides that choice (the paper's "guide viewpoint
+  selection"). Never write that the canvas picks, chooses, looks or decides [Yohaï, 2026-10-01: "THE CANVAS NEVER
+  PICKS ANYTHING ... THE CANVAS DOES NOT ACT"].
 - `torch.compile`: call `model(x)`, never `model.forward(x)`, which bypasses
   the compiled wrapper.
 - Numbers reported anywhere (README, site, papers) come from saved evaluation

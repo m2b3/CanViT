@@ -44,8 +44,7 @@ html, body { background: var(--bg); }
 /* The highlighter of the project page, for the one phrase a slide must leave behind. */
 .reveal .hl { padding: 0 .1em; border-radius: 3px; background: linear-gradient(transparent 58%, var(--highlight) 58%); }
 
-/* Click-by-click builds without a visible element: a fragment that only counts the click, for <section data-step>
-   rules keyed on step-N (deck.js). */
+/* A fragment that only names a build state (data-shows, deck.js), without a visible element of its own. */
 .reveal .step-marker { display: none; }
 
 /* An SVG path that draws itself when its fragment (or its own .fragment class) becomes visible. pathLength="1" on the
@@ -69,6 +68,22 @@ html, body { background: var(--bg); }
 deck-sequence { display: grid; }
 deck-sequence > * { grid-area: 1 / 1; visibility: hidden; }
 deck-sequence > [data-current] { visibility: visible; }
+
+/* Code, highlighted by reveal.js's highlight plugin, in light colors that avoid the glimpse, canvas and policy hues. */
+.reveal pre { position: relative; margin: 0; padding: 18px 24px; border-radius: 14px; box-shadow: none; background: var(--soft);
+               color: var(--ink); font: 500 17px/1.55 var(--mono); }
+.reveal pre code.hljs { position: relative; display: block; padding: 0; background: none; font: inherit; white-space: pre;
+                        overflow: visible; max-height: none; }
+/* The band behind the lines a data-lines fragment marks (deck.js); 1lh is one line of the block. */
+.reveal pre::before { content: ""; position: absolute; left: 10px; right: 10px; border-radius: 6px; background: var(--highlight);
+                      top: calc(18px + (var(--line-from, 1) - 1) * 1lh); height: calc(var(--line-count, 1) * 1lh);
+                      opacity: 0; transition: top .45s ease, height .45s ease, opacity .3s ease; }
+.reveal pre.marked::before { opacity: 1; }
+.reveal .hljs-keyword, .reveal .hljs-built_in, .reveal .hljs-literal { color: #7c3aed; font-weight: 650; }
+.reveal .hljs-string { color: #15803d; }
+.reveal .hljs-number { color: #c2410c; }
+.reveal .hljs-comment { color: var(--muted); font-style: italic; }
+.reveal .hljs-title { color: var(--ink); font-weight: 700; }
 
 /* A light card holding a component, so its own surfaces line up with the slide's. */
 .reveal .card { padding: 18px 22px; border-radius: 16px; background: var(--soft); --canvit-surface: var(--soft); }

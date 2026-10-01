@@ -1,0 +1,13 @@
+{
+  "_about": "The deep active vision models of the timeline slide, each read in its paper (evidence, quotes and figure pages in active-vision-timeline.md). date: first public release (arXiv v1). name: the model's name. did: what it did, in a few words. cite: authors, venue and venue year. policy: how it chooses where to look: 'rl' when the choice is learned by reinforcement learning (named in method), else what it uses. row: where the label sits, -2 and -1 above the axis, 1 and 2 below, chosen so that labels do not overlap.",
+  "models": [
+    { "date": "2014-06-24", "name": "RAM", "did": "Recurrent glimpses on digits", "cite": "Mnih et al., NeurIPS 2014", "policy": "rl", "method": "REINFORCE", "row": -2 },
+    { "date": "2014-12-24", "name": "DRAM", "did": "House numbers from glimpses", "cite": "Ba et al., ICLR 2015", "policy": "rl", "method": "REINFORCE (variational bound)", "row": 2 },
+    { "date": "2019-08-20", "name": "Saccader", "did": "75% on ImageNet", "cite": "Elsayed et al., NeurIPS 2019", "policy": "rl", "method": "REINFORCE, after a pretraining step", "row": -1 },
+    { "date": "2020-10-11", "name": "GFNet", "did": "Glance, then focus", "cite": "Wang et al., NeurIPS 2020", "policy": "rl", "method": "PPO", "row": 2 },
+    { "date": "2022-04-01", "name": "STAM", "did": "Never sees the whole image", "cite": "Rangrej et al., CVPR 2022", "policy": "rl", "method": "one-step actor-critic", "row": -2 },
+    { "date": "2023-03-11", "name": "AME", "did": "Dense outputs; looks where uncertain", "cite": "Pardyl et al., IJCAI 2023", "policy": "attention entropy", "method": "the unobserved patch whose decoder attention map has the highest entropy", "row": 1 },
+    { "date": "2024-04-04", "name": "AdaGlimpse", "did": "Chooses position and zoom", "cite": "Pardyl et al., ECCV 2024", "policy": "rl", "method": "Soft Actor-Critic", "row": -1 },
+    { "date": "2025-09-18", "name": "AdaptiveNN", "did": "Coarse-to-fine, many tasks", "cite": "Wang et al., Nat. Mach. Intell. 2025", "policy": "rl", "method": "PPO, self-rewarding", "row": 2 }
+  ]
+}

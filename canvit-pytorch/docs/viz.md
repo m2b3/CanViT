@@ -73,6 +73,7 @@ A change that breaks readers gets a new identifier.
   "canvas_grid": 64,
   "glimpse_px": 128,
   "pca": {"protocol": "fixed-limits", "basis": "last-glimpse"},
+  "initial_canvas": "initial_canvas.png",
   "glimpses": [
     {"t": 0,
      "viewpoint": {"row": 0.0, "col": 0.0, "scale": 1.0},
@@ -93,7 +94,13 @@ center pixel of each canvas cell (255 where unlabeled), and each glimpse's
 with the logits upsampled bilinearly to the scene as in the paper's evaluation.
 With `--capture-writes`, each glimpse also has `write0`, `write1`, … layers:
 a PCA image of what each Canvas Attention Write added to the canvas, one basis
-per Write, as in the paper's canvas-evolution figure.
+per Write, as in the paper's canvas-evolution figure; and `write0_canvas`,
+`write1_canvas`, … layers: the canvas after that Write, in the `canvas` layer's
+basis and color limits, the last one equal to the glimpse's `canvas`.
+
+`initial_canvas` is the canvas before the first glimpse, every patch the same
+learned vector, in the `canvas` layers' basis and the color limits they share
+under `"fixed-limits"`.
 
 `pca.protocol` is `"paper"` (basis fitted on the last glimpse's canvas,
 min-max per frame, as in the paper's Figure 1) or `"fixed-limits"` (same

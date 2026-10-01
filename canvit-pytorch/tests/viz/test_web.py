@@ -16,20 +16,22 @@ def _viewpoint(row: float, col: float, scale: float) -> Viewpoint:
 
 
 def _rollout(capture_writes: bool) -> Rollout:
+    """Three glimpses; with capture_writes, two Writes each, whose residuals add up to the next canvas as in CanViT."""
     rng = np.random.default_rng(0)
     tokens = lambda: rng.normal(size=(G * G, D)).astype(np.float32)  # noqa: E731
-    glimpses = tuple(
-        GlimpseRecord(
+    initial = tokens()
+    glimpses, canvas = [], initial
+    for t in range(3):
+        writes = (tokens(), tokens()) if capture_writes else ()
+        canvas = canvas + sum(writes) if capture_writes else tokens()
+        glimpses.append(GlimpseRecord(
             t=t, viewpoint=_viewpoint(0.5, -0.5, 0.5),
             crop=rng.integers(0, 256, size=(PX, PX, 3), dtype=np.uint8),
-            canvas=tokens(), logits=rng.normal(size=(C, G, G)).astype(np.float32),
-            write_residuals=(tokens(), tokens()) if capture_writes else (),
-        )
-        for t in range(3)
-    )
+            canvas=canvas, logits=rng.normal(size=(C, G, G)).astype(np.float32), write_residuals=writes,
+        ))
     annotation = rng.integers(0, C, size=(32, 32)).astype(np.int64)
-    return Rollout(scene=rng.integers(0, 256, size=(32, 32, 3), dtype=np.uint8), initial_canvas=tokens(),
-                   annotation=annotation, glimpses=glimpses, canvas_grid_size=G, glimpse_size_px=PX)
+    return Rollout(scene=rng.integers(0, 256, size=(32, 32, 3), dtype=np.uint8), initial_canvas=initial,
+                   annotation=annotation, glimpses=tuple(glimpses), canvas_grid_size=G, glimpse_size_px=PX)
 
 
 def test_glimpse_box_geometry():
@@ -54,9 +56,13 @@ def test_bundle_is_self_describing_and_lossless(tmp_path):
     manifest = json.loads(path.read_text())
     assert manifest["schema"] == SCHEMA and len(manifest["glimpses"]) == 3
     first = manifest["glimpses"][0]
-    assert set(first["layers"]) == {"crop", "canvas", "labels", "entropy", "change", "write0", "write1"}
-    for rel in first["layers"].values():
+    assert set(first["layers"]) == {"crop", "canvas", "labels", "entropy", "change", "write0", "write1",
+                                    "write0_canvas", "write1_canvas"}
+    for rel in [*first["layers"].values(), manifest["initial_canvas"]]:
         assert (tmp_path / rel).is_file()
+    # The canvas after the last Write is the glimpse's canvas, drawn the same way.
+    image = lambda name: np.asarray(Image.open(tmp_path / first["layers"][name]))  # noqa: E731
+    np.testing.assert_array_equal(image("write1_canvas"), image("canvas"))
     labels = np.asarray(Image.open(tmp_path / first["layers"]["labels"]))
     np.testing.assert_array_equal(labels, rollout.glimpses[0].logits.argmax(axis=0))
     entropy = np.asarray(Image.open(tmp_path / first["layers"]["entropy"]))

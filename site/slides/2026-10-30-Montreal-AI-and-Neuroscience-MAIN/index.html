@@ -209,16 +209,19 @@
 
 <section id="architecture" data-status="draft">
   <h2><span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span> architecture</h2>
-  <!-- The paper's two streams drawn on the street of #rollout (street-riid), its second glimpse and then its third
-       (architecture.js): the blocks, reads and writes from the bundle's manifest; the canvas shown as in the paper, its
-       features in three principal components as colors, before and after each glimpse. The paper's full figure, with
-       the CLS, VPE and register tokens, is in Backup (#architecture-paper). -->
-  <div class="arch-build" data-src="../../data/street-riid" data-t="1"></div>
+  <!-- The paper's two streams drawn on the street of #rollout, its first glimpse and then its second (architecture.js),
+       from the same rollout recorded with each Write's canvas (data/talk/architecture/street-riid: the street-riid
+       command of record_bundles.sh with --capture-writes and --scene.out there): the blocks, reads and writes from the
+       bundle's manifest; the canvas before the glimpse and after each Write, its features in three principal
+       components as colors, as in the paper's canvas-evolution figure [Yohaï, 2026-10-01: "for the viz only the
+       intermediate canvases make sense"]. The paper's full figure, with the CLS, VPE and register tokens, is in Backup
+       (#architecture-paper). -->
+  <div class="arch-build" data-src="../../data/talk/architecture/street-riid" data-t="0"></div>
   <span class="fragment step-marker" data-shows="canvas"></span>
   <span class="fragment step-marker" data-shows="write"></span>
   <span class="fragment step-marker" data-shows="read"></span>
   <span class="fragment step-marker" data-shows="next"></span>
-  <aside class="notes">How does it work inside? The street again, and a glimpse of it. A Vision Transformer, the architecture behind DINOv3 and most vision models today, processes the glimpse, cut into small patches, through twelve blocks. [click] Beside it, the canvas: a memory for the whole scene, a grid of vectors, one per small region of the scene, each staying at its place in the scene whatever the glimpse. Here it holds what the first glimpse left. It is 32 by 32 in training, and I can make it finer, 64 by 64, at test time, without retraining. [click] Every few blocks, a write: the canvas queries the glimpse stream and adds what it finds. After the glimpse, the canvas has changed. [click] In between, reads: the glimpse stream queries the canvas, so what you saw before shapes how you process what you see now: top-down feedback. I put the intelligence on the Vision Transformer side, and made the memory dumb, but not too dumb: the canvas never goes through a learned layer. Just dumb enough that I can read and write it cheaply, after every glimpse, at high resolution; flexible enough to fill in unseen things from what it knows of the world, like the table. [click] The next glimpse: the glimpse stream starts over, the canvas carries over. Read, write, read, write, up through the network. After every glimpse I can ask, at any point in time and for any position: what does the model think is there?</aside>
+  <aside class="notes">How does it work inside? The street again, and its first glimpse. A Vision Transformer, the architecture behind DINOv3 and most vision models today, processes the glimpse, cut into small patches, through twelve blocks. [click] Beside it, the canvas: a memory for the whole scene, a grid of vectors, one per small region of the scene, each staying at its place in the scene whatever the glimpse. It is 32 by 32 in training, and I can make it finer, 64 by 64, at test time, without retraining. Before the first glimpse, it's the same everywhere. [click] Every four blocks, a write: the canvas queries the glimpse stream and adds what it finds. Watch it fill: after the first write, the glimpse's own square; after the second, shapes of the things inside it; after the third, structure beyond the glimpse, across the street. [click] In between, reads: the glimpse stream queries the canvas, so what you saw before shapes how you process what you see now: top-down feedback. I put the intelligence on the Vision Transformer side, and made the memory dumb, but not too dumb: the canvas never goes through a learned layer. Just dumb enough that I can read and write it cheaply, after every glimpse, at high resolution; flexible enough to fill in unseen things from what it knows of the world, like the table. [click] The next glimpse: the glimpse stream starts over, the canvas carries over, and the writes add the buildings. Read, write, read, write, up through the network. After every glimpse I can ask, at any point in time and for any position: what does the model think is there?</aside>
 </section>
 
 <section id="distillation" data-status="draft">

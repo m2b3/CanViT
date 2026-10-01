@@ -53,6 +53,8 @@ export function layerSpec(name) {
   if (Object.hasOwn(LAYERS, name)) return LAYERS[name];
   const write = /^write(\d+)$/.exec(name);
   if (write) return { kind: "rgb", grid: true, title: `Write ${write[1]}`, note: () => "PCA of one Canvas Attention Write" };
+  const after = /^write(\d+)_canvas$/.exec(name);
+  if (after) return { kind: "rgb", grid: true, title: `Canvas after Write ${after[1]}`, note: () => "PCA of the canvas, as in its features layer" };
   throw new Error(`Unknown bundle layer "${name}": add it to LAYERS in js/canvit/layers.js`);
 }
 

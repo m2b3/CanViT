@@ -77,7 +77,7 @@ the error in place of the element and logs it.
 |---|---|---|
 | `canvit-rollout` | `src t autoplay interval layers` | Owns `t` and playback. Empty: the full default layout. With children: drives them. |
 | `canvit-scene` | `src t trail="past\|none"` | Photo, current glimpse box (animated), earlier boxes, outside dimmed |
-| `canvit-map` | `src t layer domain` | One layer: `crop`, `canvas`, `labels`, `entropy`, `change`, `writeK` |
+| `canvit-map` | `src t layer domain` | One layer: `crop`, `canvas`, `labels`, `entropy`, `change`, `writeK`, `writeK_canvas` |
 | `canvit-legend` | `src t layer max domain` | Largest classes, or colormap and range, or what the colors mean |
 | `canvit-mosaic` | `src t` | Every glimpse so far, pasted where it was taken at the resolution it was seen |
 | `canvit-decision` | `src t` | EG-C2F bundles only: uncertainty after glimpse `t`, candidate tiles, the tile chosen for `t + 1` |

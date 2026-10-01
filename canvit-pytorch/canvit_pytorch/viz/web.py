@@ -108,6 +108,9 @@ def write_bundle(
     def limits(i: int) -> ColorLimits:
         return shared if pca_protocol == "fixed-limits" else color_limits(projections[i])
 
+    # The canvas before the first glimpse, every patch the same learned vector, in the shared basis and limits.
+    _save(to_rgb(project(basis, rollout.initial_canvas), shared).reshape(grid, grid, 3), out_dir / "initial_canvas.png")
+
     entries = []
     previous = rollout.initial_canvas
     for i, glimpse in enumerate(rollout.glimpses):
@@ -120,12 +123,17 @@ def write_bundle(
         _save(labels.astype(np.uint8), out_dir / layers["labels"])
         _save(_gray16(entropy_fraction(glimpse.logits)), out_dir / layers["entropy"])
         _save(_gray16(canvas_change(previous, glimpse.canvas) / 2).reshape(grid, grid), out_dir / layers["change"])
+        canvas = previous
         for k, residual in enumerate(glimpse.write_residuals):
             # One basis per Write, as in the paper's canvas-evolution figure.
             residual_projection = project(fit_pca(residual), residual)
             layers[f"write{k}"] = f"{d}/write{k}.png"
             rgb = to_rgb(residual_projection, color_limits(residual_projection)).reshape(grid, grid, 3)
             _save(rgb, out_dir / layers[f"write{k}"])
+            # The canvas after this Write, in the canvas layer's basis and limits, so a renderer can show it change.
+            canvas = canvas + residual
+            layers[f"write{k}_canvas"] = f"{d}/write{k}_canvas.png"
+            _save(to_rgb(project(basis, canvas), limits(i)).reshape(grid, grid, 3), out_dir / layers[f"write{k}_canvas"])
         previous = glimpse.canvas
         row, col = glimpse.viewpoint.centers[0].tolist()
         entry: dict[str, Any] = {
@@ -149,6 +157,7 @@ def write_bundle(
         "canvas_grid": grid,
         "glimpse_px": rollout.glimpse_size_px,
         "pca": {"protocol": pca_protocol, "basis": "last-glimpse"},
+        "initial_canvas": "initial_canvas.png",
         "glimpses": entries,
         "provenance": provenance,
     }

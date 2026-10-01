@@ -81,16 +81,24 @@ def record(
     assert len(residuals) == (num_writes * num_glimpses if capture_writes else 0)
 
     glimpses = []
+    previous = canvas_patches(initial.canvas)
     for step in steps:
+        canvas = canvas_patches(step.state.canvas)
+        writes = tuple(canvas_patches(r) for r in residuals[step.t * num_writes : (step.t + 1) * num_writes])
+        # Writes are the only change to the canvas patches: their residuals add up to the next canvas.
+        assert not writes or np.allclose(previous + sum(writes), canvas, rtol=1e-4, atol=1e-3 * float(np.abs(canvas).max())), (
+            f"glimpse {step.t}: the canvas before it plus its Write residuals is not the canvas after it, "
+            f"max difference {float(np.abs(previous + sum(writes) - canvas).max())}")
+        previous = canvas
         viewpoint = Viewpoint(centers=step.viewpoint.centers[:1].cpu(), scales=step.viewpoint.scales[:1].cpu())
         crop = sample_at_viewpoint(spatial=image, viewpoint=step.viewpoint, glimpse_size_px=glimpse_size_px)
         glimpses.append(GlimpseRecord(
             t=step.t,
             viewpoint=viewpoint,
             crop=_uint8_image(crop[0]),
-            canvas=canvas_patches(step.state.canvas),
+            canvas=canvas,
             logits=model.logits(step.state.canvas)[0].cpu().numpy(),
-            write_residuals=tuple(canvas_patches(r) for r in residuals[step.t * num_writes : (step.t + 1) * num_writes]),
+            write_residuals=writes,
         ))
     return Rollout(
         scene=_uint8_image(image[0]),

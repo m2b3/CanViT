@@ -17,6 +17,14 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Open requests
 
+- [Yohaï, 2026-10-01] `#architecture`: "the 'Canvas Vision Transformer architecture' slide still looks super broken fyi";
+  then "if you're going to show the intermediate reads and writes bro you should capture intermediate values like we
+  actually did in one of the paper's supplementary figures - this would be GREAT to visualize on 'Canvas Vision
+  Transformer architecture' (but ensure the overall layout works)"; "for the viz only the intermediate canvases make
+  sense"; "the top is cut off basically". Rebuilt 2026-10-01: the first glimpse of the street from the initial canvas,
+  the canvas after each write level with it (bundles now record `writeK_canvas` and `initial_canvas`), the next
+  glimpse in place; the drawing 500 px tall, checked at 1280 × 720 and in a 1512 × 860 window. Awaiting the authors'
+  look.
 - [Yohaï, 2026-10-01] "you will make sure, once you are satisfied with the slides etc, that they are force-pushed into
   gh pages rendered website". To do with `../../deploy.sh` (the `gh-pages` branch's single commit), after checking
   what it ships from this branch (the talk, its data under `../../data/talk/`, the project page as it stands here).

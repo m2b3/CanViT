@@ -49,12 +49,12 @@
   <h2>Computational models of biological visual processing</h2>
   <div class="lineage">
     <figure class="fragment"><img src="assets/figures/hubel-wiesel-1962-receptive-fields.png" alt="Receptive field maps of simple cells in cat visual cortex"><figcaption><b>Receptive fields</b><span class="cite">Hubel &amp; Wiesel 1962, <i>J. Physiol.</i></span></figcaption></figure>
-    <figure class="fragment"><img src="assets/figures/fukushima-1980-neocognitron.png" alt="The Neocognitron's hierarchy of S and C layers"><figcaption><b>A network built on them</b><span class="cite">Fukushima 1980, <i>Biol. Cybern.</i></span></figcaption></figure>
-    <figure class="fragment"><img src="assets/figures/felleman-van-essen-1991-hierarchy.png" alt="The hierarchy of primate visual areas"><figcaption><b>A hierarchy of visual areas</b><span class="cite">Felleman &amp; Van Essen 1991, <i>Cereb. Cortex</i></span></figcaption></figure>
+    <figure class="fragment"><img src="assets/figures/fukushima-1980-neocognitron.png" alt="The Neocognitron's hierarchy of S and C layers"><figcaption><b>Neocognitron</b><span class="cite">Fukushima 1980, <i>Biol. Cybern.</i></span></figcaption></figure>
+    <figure class="fragment"><img src="assets/figures/felleman-van-essen-1991-hierarchy.png" alt="The hierarchy of primate visual areas"><figcaption><b>The primate visual hierarchy</b><span class="cite">Felleman &amp; Van Essen 1991, <i>Cereb. Cortex</i></span></figcaption></figure>
     <figure class="fragment wide"><img src="assets/figures/yamins-2014-performance-vs-it.png" alt="Categorization performance against IT neural predictivity for thousands of models"><figcaption><b>Better at recognizing objects, better at predicting IT</b><span class="cite">Yamins et al. 2014, <i>PNAS</i></span></figcaption></figure>
-    <figure class="fragment wide"><img src="assets/figures/brain-score-2018.png" alt="Brain-Score against ImageNet top-1 accuracy for many networks"><figcaption><b>Ranking networks by brain similarity</b><span class="cite">Schrimpf et al. 2018, Brain-Score</span></figcaption></figure>
+    <figure class="fragment wide"><img src="assets/figures/brain-score-2018.png" alt="Brain-Score against ImageNet top-1 accuracy for many networks"><figcaption><b>Brain-Score</b><span class="cite">Schrimpf et al. 2018, <i>bioRxiv</i></span></figcaption></figure>
   </div>
-  <aside class="notes">Modeling vision with neural networks is an old idea. Hubel and Wiesel found receptive fields in cat visual cortex. Fukushima built a network on that idea, layer after layer. Felleman and Van Essen mapped the hierarchy of visual areas. Then deep networks trained to recognize objects turned out to predict responses in inferotemporal cortex, and the better a network was at the task, the better it predicted the brain. Brain-Score now ranks hundreds of networks that way; look at the inset: past about 70 percent on ImageNet, the relation flattens. Today, vision foundation models are among the models used to model brain function. And all of these models see an image the same way: the whole image, all at once.</aside>
+  <aside class="notes">Modeling vision with neural networks is an old idea. Hubel and Wiesel found receptive fields in cat visual cortex. Fukushima built the Neocognitron on that idea, layer after layer. Felleman and Van Essen mapped the hierarchy of visual areas. Then deep networks trained to recognize objects turned out to predict responses in inferotemporal cortex, and the better a network was at the task, the better it predicted the brain. Brain-Score now ranks hundreds of networks that way; look at the inset: past about 70 percent on ImageNet, the relation flattens. Today, vision foundation models are among the models used to model brain function. And all of these models see an image the same way: the whole image, all at once.</aside>
 </section>
 
 <section id="human-vision" data-status="ready">
@@ -190,7 +190,7 @@
   <div class="pair glimpse-pair">
     <figure><figcaption>Scene and viewpoint</figcaption>
       <canvit-scene class="zoom" src="../../data/street-egc2f" t="0" trail="none"></canvit-scene></figure>
-    <figure><figcaption class="term-glimpse">Glimpse, the model's input</figcaption>
+    <figure><figcaption class="term-glimpse">Glimpse, CanViT's input</figcaption>
       <canvit-map class="zoom" src="../../data/street-egc2f" t="0" layer="crop"></canvit-map></figure>
   </div>
   <span class="fragment" data-canvit-target=".zoom" data-canvit-t="1"></span>
@@ -317,7 +317,7 @@
 <section id="extrapolation" data-status="ready">
   <h2>Extrapolation to unobserved regions</h2>
   <div class="extrapolation">
-    <div></div><p class="col-label">Passive, each glimpse</p><p class="col-label">CanViT, far end</p><p class="col-label">CanViT, near end</p><p class="col-label">CanViT, both</p>
+    <div></div><p class="col-label">DINOv3, each glimpse</p><p class="col-label">CanViT, far end</p><p class="col-label">CanViT, near end</p><p class="col-label">CanViT, both</p>
     <p class="row-label">Classes</p>
     <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/dinov3.png" alt="">
     <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/table/ADE_val_00001271-table/a.png" alt="">
@@ -341,7 +341,7 @@
   <div class="detail-row">
     <figure class="scene"><figcaption>Scene</figcaption>
       <div class="frame"><img src="../../data/talk/looking-closer-clean/ADE_val_00001715-television/scene.png" alt="A billiard room with a television on the far wall"><img class="boxed" src="../../data/talk/looking-closer/ADE_val_00001715-television/scene.png" alt="The same room with the zoomed glimpse's box around the television"></div></figure>
-    <figure class="input"><figcaption>The model's input, 128 px</figcaption>
+    <figure class="input"><figcaption>CanViT's input, 128 px</figcaption>
       <div class="frame">
         <img class="pixels full" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_full.png" alt="The whole scene in 128 by 128 pixels">
         <img class="pixels zoomed" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_zoom.png" alt="The zoomed glimpse in 128 by 128 pixels: a television">

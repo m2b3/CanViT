@@ -117,6 +117,9 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   drawn over active models only is the "Active-vision" frontier) [Yohaï, 2026-10-01, on "Accuracy–efficiency
   frontier on ADE20K segmentation": "ACTIVE. ACTIVE."]. Without it, the audience reads a claim over all models.
 - A setting detail (the glimpse size, a canvas grid) belongs in the body or the notes, never in a title.
+- Call a thing by its name on screen: "Neocognitron", "Brain-Score", "DINOv3", "CanViT's input"; never a phrase that
+  circles it ("a network built on them", "ranking networks by brain similarity", "passive", "the model") [Yohaï,
+  2026-10-01, on "A network built on them": "BANISH CIRCUMLOCUTIONS."].
 - Never number slides, sections or items in outlines, plans and notes; refer to a slide by its title or its id
   [Yohaï, 2026-10-01: "I [...] HATE YOUR TENDENCY TO NUMBER EVERYTHING, that creates unnecessarily huge diffs and
   wastes of tokens just because you move slides around and can be highly misleading"].

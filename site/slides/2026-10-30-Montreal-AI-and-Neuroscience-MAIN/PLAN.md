@@ -27,9 +27,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   animations/transitions"; "you can borrow from 'CanViT in action', start from there but fade into the full thing to
   make complexity appear gradually and explain first scene, then a glimpse which is sampled at a viewpoint, then what
   we do with it, etc, gradually building up". Built 2026-10-01: `#rollout` ("CanViT in action") moved to its place
-  and staged part by part (`<canvit-episode stage>`); awaiting the authors' look. Open: the canvas's segmentation
-  colors are unnamed on screen, the complaint made of `#table`; options: class names on the map, or a readout of one
-  class's probability.
+  and staged part by part (`<canvit-episode stage>`), its segmentation's largest classes named beside the canvas;
+  awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#timeline`: "remove the [bad] subtitles like 'Recurrent glimpses on digits' (a GLIMPSE IS NOT
   RECURRENT ANYWAY) and add to TODO to question PRECISELY what was interesting/new/notable about each of these works".
   Subtitles: removing. TODO: for each model, what was new or notable, read in its paper.
@@ -67,8 +66,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   64 × 64 grids (`#architecture`); distillation, dense, latent (`#distillation`); R-IID and F-IID by name, later
   policies not named early (`#policy-agnosticism`); fine-tuning, the same linear readout (`#results`); FLOPs
   (`#frontier`). On screen, still open: `#architecture` shows the paper's figure with CLS, VPE and register tokens the
-  talk never names (a two-stream drawing, under "Decisions for the authors"); `#rollout`'s segmentation colors are
-  unnamed (above).
+  talk never names (a two-stream drawing, under "Decisions for the authors").
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:
   Aborted(InternalError: out of memory)". Measured on 2026-10-01 in headless Chromium (`throwaway/live_memory.py`,
   `slide_memory.py`, `live_wasm.py`): the deck with no slide 376 MB RSS; every slide without the model 1.46 GB (static

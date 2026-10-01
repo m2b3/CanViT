@@ -42,6 +42,7 @@ class CanvitRollout extends CanvitView {
 
   pointer = null;
   #timer = null;
+  #playRequested = false; // play() came before the bundle: it starts once the bundle loads
   #userPaused = false;
   #visible = false;
 
@@ -60,7 +61,11 @@ class CanvitRollout extends CanvitView {
       this.update();
     });
     this.addEventListener("keydown", (event) => this.#key(event));
-    this.addEventListener("canvit-load", (event) => event.composedPath()[0] === this && this.#autoplay());
+    this.addEventListener("canvit-load", (event) => {
+      if (event.composedPath()[0] !== this) return;
+      if (this.#playRequested) this.play();
+      else this.#autoplay();
+    });
   }
 
   /** A rollout is the root of its views. */
@@ -111,6 +116,7 @@ class CanvitRollout extends CanvitView {
   }
 
   play() {
+    this.#playRequested = !this.bundle;
     if (this.#timer || !this.bundle) return;
     if (!(this.interval > 0)) return this.fail(new Error(`interval="${this.getAttribute("interval")}" is not a positive number of milliseconds`));
     this.setAttribute("playing", "");
@@ -119,6 +125,7 @@ class CanvitRollout extends CanvitView {
   }
 
   pause() {
+    this.#playRequested = false;
     clearTimeout(this.#timer);
     this.#timer = null;
     if (this.hasAttribute("playing")) {

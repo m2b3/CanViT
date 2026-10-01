@@ -78,9 +78,10 @@ yet reviewed by the authors.
 - **Builds:** a year axis; the models arrive one per click at their release dates (name, citation) [Yohaï, 2026-10-01, on the descriptions: "remove the [bad]
   subtitles"];
   then the markers of those whose policy is learned by reinforcement learning turn policy teal. Last click [Yohaï,
-  2026-10-01: "an animation that extends the timeline and then highlights canvit, neurips 2026"]: the axis, stopped
-  after AdaptiveNN, extends into 2026, and CanViT arrives in the brand's gradient (arXiv v1, 23 March 2026;
-  NeurIPS 2026).
+  2026-10-01: "an animation that extends the timeline and then highlights canvit, neurips 2026"; then "keep it same
+  width but reposition things dynamically so everything squishes to make space for canvit"]: the axis keeps its
+  width, the years squeeze to make room for 2026, every model slides to its new place, and CanViT arrives in the
+  brand's gradient (arXiv v1, 23 March 2026; NeurIPS 2026).
 - **Data:** `sources/active-vision-timeline.json` (evidence in `.md`).
 - **Status:** draft (built).
 
@@ -153,11 +154,15 @@ yet reviewed by the authors.
 ### Canvas Vision Transformer architecture
 - **Title:** says it is the architecture [Yohaï, 2026-10-01: "this slide should be renamed to make it clear this is
   architecture"]; the paper's Figure 2 is "CanViT architecture diagram".
-- **Shows:** the paper's two streams drawn for the talk (`architecture.js`) on the street of `#rollout`, its second
+- **Shows:** the paper's two streams drawn for the talk (`architecture.js`) on the street of `#rollout`, its first
   glimpse: the scene and the viewpoint, the glimpse cut into its 8 × 8 patches, the Vision Transformer's twelve
-  blocks; then the canvas before the glimpse (64 × 64, PCA colors); then the writes after the 4th, 8th and 12th
-  blocks (the bundle's manifest) and the canvas after; then the reads after the 2nd, 6th and 10th; then the third glimpse, the canvas
-  carried over and the reads and writes redrawn in depth order. The paper's full figure is in Backup.
+  blocks; then the canvas before it (the initial canvas, the same everywhere; 64 × 64, PCA colors); then the writes
+  after the 4th, 8th and 12th blocks, each followed by the canvas it leaves, level with it, as in the paper's
+  canvas-evolution figure [Yohaï, 2026-10-01: "capture intermediate values like we actually did in one of the paper's
+  supplementary figures"; "for the viz only the intermediate canvases make sense"]: the glimpse's own square, then
+  shapes inside it, then structure beyond it; then the reads after the 2nd, 6th and 10th blocks; then the second
+  glimpse in place, the canvas carried over and the reads, writes and canvases redrawn in depth order. The paper's
+  full figure is in Backup.
 - **Says:** a Vision Transformer backbone sees each glimpse; the canvas holds the scene. "I put the intelligence on the
   Vision Transformer side." The canvas answers, "at any point in time and for any position: what does the model think
   is there?" Reads condition the backbone on the canvas: top-down feedback. Blue for the glimpse, red for the canvas.

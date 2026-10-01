@@ -362,21 +362,20 @@
 
 /* The policies: each still at its fifth glimpse with its full name, then playing, then smaller beside the race. Each
    card sits at (--col, --row) of a grid whose pitch and panel scale change with the state, so the cards glide. */
-#policies { --x0: 171px; --dx: 290px; --y0: 0px; --dy: 282px; --panel: 1; --caption: 26px; }
-#policies.shows-race { --x0: 0px; --dx: 196px; --y0: 64px; --dy: 220px; --panel: .72; --caption: 21px; }
-#policies .policy-stage { position: relative; height: 556px; }
-#policies .policy-stage > figure:not(.race) { position: absolute; width: 230px; height: 270px; margin: 0;
-  left: calc(var(--x0) + var(--col) * var(--dx)); top: calc(var(--y0) + var(--row) * var(--dy));
-  transition: left .8s ease, top .8s ease; }
-#policies figcaption { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; line-height: 36px; }
-#policies figcaption b { color: var(--canvit-glimpse); font-size: var(--caption); font-weight: 800; transition: font-size .8s ease; }
-#policies figcaption span { color: var(--muted); font-size: 18px; transition: opacity .4s ease; }
-#policies.shows-play figcaption span { opacity: 0; }
-#policies canvit-rollout { position: absolute; left: 0; top: 40px; width: 230px; transform-origin: 0 0;
-                           transform: scale(var(--panel)); transition: transform .8s ease; }
-#policies .race { position: absolute; left: 610px; top: 24px; width: 540px; margin: 0; opacity: 0;
-                  transition: opacity .6s ease .3s; }
-#policies.shows-race .race { opacity: 1; }
+/* Viewing policies, one at a time: the street's rollout under the current policy, left; the policies so far, right,
+   the current one in its color, the earlier ones dimmed. */
+#policies .policy-stage { display: grid; grid-template-columns: 480px 1fr; gap: 64px; align-items: center; margin-top: 6px; }
+#policies figure { margin: 0; }
+#policies canvit-rollout { display: block; width: 480px; }
+#policies .policy-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+#policies .policy-list li { display: flex; align-items: baseline; gap: 14px; opacity: 0; transition: opacity .5s ease; }
+#policies .policy-list b { min-width: 92px; color: var(--policy-color); font-size: 28px; font-weight: 800; }
+#policies .policy-list span { color: var(--text); font-size: 22px; }
+#policies li.riid, #policies.shows-fiid li.fiid, #policies.shows-c2f li.c2f, #policies.shows-f2c li.f2c,
+#policies.shows-egc2f li.egc2f, #policies.shows-rfs li.rfs { opacity: .35; }
+#policies:not(.shows-fiid) li.riid, #policies.shows-fiid:not(.shows-c2f) li.fiid, #policies.shows-c2f:not(.shows-f2c) li.c2f,
+#policies.shows-f2c:not(.shows-egc2f) li.f2c, #policies.shows-egc2f:not(.shows-rfs) li.egc2f,
+#policies.shows-rfs li.rfs { opacity: 1; }
 
 /* Accuracy by viewing policy: ImageNet-1k, then ADE20K beside it. */
 #policy-accuracy .charts { display: grid; grid-template-columns: repeat(2, 540px); gap: 48px; justify-content: center; }

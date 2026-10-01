@@ -302,10 +302,13 @@ def _graph_row(graph: dict[str, Any]) -> tuple[str, str]:
 def _live_rows(manifest: dict[str, Any], parity: dict[str, Any]) -> list[tuple[str, str]]:
     """The rows both live cards share: the parity check against PyTorch and the export's provenance."""
     worst = parity["worst"]
+    agreement = worst["min_argmax_agreement"]
+    classes = ("every cell keeps its class" if agreement == 1
+               else f"in every glimpse, at least {100 * agreement:.2f}% of cells keep their class")
     return [
         ("Parity with PyTorch", (f"{parity['comparison']}, over {len(parity['per_glimpse'])} glimpses: relative L2 "
                                  f"error at most {worst['canvas']:.1e} (canvas) and {worst['logits']:.1e} (logits); "
-                                 f"{100 * worst['min_argmax_agreement']:.2f}% of cells or more keep their class")),
+                                 f"{classes}")),
         ("Exported with", (f"`python -m canvit_pytorch.viz.live export`, torch {manifest['provenance']['torch']}, "
                            f"onnx {manifest['provenance']['onnx']}; checked with onnxruntime {parity['onnxruntime']}")),
         ("Manifest", f"`manifest.json`, schema `{manifest['schema']}`: every size, shape and name the page uses"),

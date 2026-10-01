@@ -286,22 +286,18 @@ yet reviewed by the authors.
   uncertainty, the canvas does not act.
 - **Could:** the race over all of ADE20K validation; EG-C2F, whose viewpoints follow the uncertainty of the
   segmentation read out from the canvas, without reinforcement learning; RFS, more processing without new input, helping then declining.
-- **Builds** [Yohaï, 2026-10-01: "we shouldn't go straight up to the animation, we should have a sort of grid with
-  the colors and titles of each policy explaining what it is and why we [care], and then fade into the animation
-  of them, and then perhaps show the race between them"]: first a grid, one cell per policy in its paper color, with
-  its name, what it does and why it is in the paper, each with a small picture of its viewpoints; the cells then fade
-  into the policies' animations on the scene, in the same places; then the race.
-- **Shows:** the same scene under each of the paper's policies, glimpse boxes appearing one by one: R-IID and F-IID
-  (random viewpoints, as in pretraining; F-IID starts from the full scene), C2F (a quadtree, coarse to fine, random
-  order within a level), F2C (the same viewpoints, reversed), EG-C2F (C2F, visiting the most uncertain tile first),
-  RFS (the full scene, repeated).
+- **Builds** [Yohaï, 2026-10-01: "you will have to rethink how precisely each viewing policy is introduced, could go
+  through them one after the other instead of overloading the reader with movement, and shouldnt directly show their
+  ade20k perf, we have other slides for that, more focused"]: one policy per click, R-IID, F-IID, C2F, F2C, EG-C2F,
+  RFS, each a recorded rollout of the street played in its color on one scene (the deck switches the bundle); beside
+  it the policies so far, label and name, the current one in its color. No accuracy here (`#policy-accuracy`). The
+  earlier build (a grid of cards, the six rollouts playing together, then the race) asked for "a grid with the colors
+  and titles of each policy ... then fade into the animation ... and then perhaps show the race".
 - **Says:** why each exists: R-IID and F-IID are the training distribution; C2F is the natural order; F2C isolates the
-  order (same viewpoints by the end, worse result: what was seen changes how the next view is processed); EG-C2F
-  shows that what the canvas holds can guide where to look, without reinforcement learning; RFS separates more processing from new
-  input (it helps, then declines).
-- **Data:** recorded bundles of one scene per policy (`canvit_pytorch.viz`, same seed).
-- **Status:** draft (built: the six policies named over their first glimpses, then playing, then the race; the
-  metacognition explanation to add).
+  order (same viewpoints by the end); EG-C2F looks first where the model is least sure, without reinforcement learning
+  (the next slide explains how); RFS separates more processing from new input.
+- **Data:** the street's recorded bundles, one per policy (`canvit_pytorch.viz`, seed 0).
+- **Status:** draft (rebuilt 2026-10-01).
 
 ### Uncertainty-based viewpoint selection
 - **Title:** the paper's §6 ("EG-C2F's uncertainty-based viewpoint selection"), proposed 2026-10-01 after "The
@@ -479,4 +475,6 @@ btw (even if it just says 'Backup')"].
   policy' should be renamed 'Live demo'"]; a bonus, in Backup [Yohaï, 2026-10-01: "no one [cares] enough for [the
   page's line] to be the title of a main-talk slide, bonus at best"].
 - **Shows:** `<canvit-live>`: I choose where to look; then EG-C2F chooses, from the uncertainty of the segmentation read out from the canvas.
+  It runs CanViT-B and its ADE20K probe from the Hub (`canvit/…-c64-onnx-fp32`, `canvit/probe-…-onnx-fp32`, published
+  2026-10-01 after parity and browser checks).
 - **Status:** ready (layout to fit; offline runtime in `PLAN.md`).

@@ -382,27 +382,29 @@
 
 <section id="policies" data-status="draft">
   <h2>Viewing policies</h2>
-  <!-- Each policy first as a card (its label, its name, its first five glimpses; why it is in the paper is said),
-       then the six rollouts playing in step, then the race beside them. Captions take the policy's label, name and
-       color from js/canvit/policies.js, keyed by the bundle's manifest (script below). -->
+  <!-- One policy at a time [Yohaï, 2026-10-01: "rethink how precisely each viewing policy is introduced, could go
+       through them one after the other instead of overloading the reader with movement, and shouldnt directly show
+       their ade20k perf, we have other slides for that, more focused"]: one rollout on the street, its recorded bundle
+       switched on each click, its viewpoints in the policy's color; beside it the policies so far, the current one in
+       its color. Labels, names and colors from js/canvit/policies.js (script below). Results: #policy-accuracy. -->
   <div class="policy-stage">
-    <figure style="--col: 0; --row: 0"><figcaption></figcaption>
-      <canvit-rollout class="policy" data-play="play" src="../../data/street-riid" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-    <figure style="--col: 0; --row: 1"><figcaption></figcaption>
-      <canvit-rollout class="policy" data-play="play" src="../../data/street-fiid" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-    <figure style="--col: 1; --row: 0"><figcaption></figcaption>
-      <canvit-rollout class="policy" data-play="play" src="../../data/street-c2f" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-    <figure style="--col: 1; --row: 1"><figcaption></figcaption>
-      <canvit-rollout class="policy" data-play="play" src="../../data/street-f2c" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-    <figure style="--col: 2; --row: 0"><figcaption></figcaption>
-      <canvit-rollout class="policy" data-play="play" src="../../data/street-egc2f" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-    <figure style="--col: 2; --row: 1"><figcaption></figcaption>
-      <canvit-rollout class="policy" data-play="play" src="../../data/street-rfs" interval="800" t="4"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
-    <figure class="race"><canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" y-range="0 50" t="4"></canvit-policy-curves></figure>
+    <figure class="current">
+      <canvit-rollout class="policy" data-play src="../../data/street-riid" interval="700"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
+    <ul class="policy-list">
+      <li class="riid" data-policy="random"></li>
+      <li class="fiid" data-policy="full_then_random"></li>
+      <li class="c2f" data-policy="coarse_to_fine"></li>
+      <li class="f2c" data-policy="fine_to_coarse"></li>
+      <li class="egc2f" data-policy="entropy_coarse_to_fine"></li>
+      <li class="rfs" data-policy="repeated_full_scene"></li>
+    </ul>
   </div>
-  <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-rollout.policy" data-canvit-t="0"></span>
-  <span class="fragment step-marker" data-shows="race" data-canvit-target="canvit-rollout.policy" data-canvit-t="0"></span>
-  <aside class="notes">Because CanViT was pretrained with no policy built in, we can try any policy on it. These are the six in the paper, each in its color from the paper's figures. R-IID and F-IID are how it was pretrained: random places and zoom levels; F-IID starts with the full scene. C2F is the natural order: the whole scene, then quarters, then sixteenths. F2C uses exactly C2F's viewpoints, in reverse, finest first: by the end it has seen the same thing, so any difference comes from the order. EG-C2F follows C2F's levels but looks first where the segmentation read from the canvas is least certain: what the canvas holds can guide where to look, without reinforcement learning. And RFS shows the full scene again and again: more processing, no new input. [click] Here they are on the same street, glimpse by glimpse. [click] And the race: each policy's accuracy over all of ADE20K validation, glimpse by glimpse (mean over runs, 64 by 64 canvas). C2F ends above F2C with the same viewpoints: what was seen changes how the next view is processed. RFS improves at first, then declines.</aside>
+  <span class="fragment step-marker" data-shows="fiid" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-fiid" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="c2f" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-c2f" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="f2c" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-f2c" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="egc2f" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-egc2f" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="rfs" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-rfs" data-canvit-t="0"></span>
+  <aside class="notes">Because CanViT was pretrained with no policy built in, we can try any policy on it. Here are the six in the paper, one at a time, on the same street, each in its color from the paper's figures. R-IID: random places and zoom levels, exactly how it was pretrained. [click] F-IID: the same, but the first glimpse is the full scene; that's the other half of pretraining. [click] C2F, coarse to fine: the whole scene, then the four quarters, then the sixteenths, in random order within each level. The natural order. [click] F2C: exactly C2F's viewpoints, in reverse, finest first. By the end it has seen the same thing; any difference comes from the order. [click] EG-C2F: C2F's levels, but within each level it looks first where the model is least sure about what's there. More on that in a second. [click] And RFS: the full scene, again and again. More processing, no new input; it separates thinking longer from seeing more.</aside>
 </section>
 
 <section id="uncertainty" data-status="draft">
@@ -426,7 +428,7 @@
   <span class="fragment step-marker" data-shows="map"></span>
   <span class="fragment step-marker" data-shows="quadrants"></span>
   <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
-  <aside class="notes">EG-C2F was ahead of C2F for most of the race: same views, a different order within each level. How does it choose? After one glimpse of the whole street, read out from the canvas what the model thinks is at each position: a probability for each of the 150 classes. [click] Here, on the building: building, almost certain. [click] Here, by the car: car, building, road. It doesn't know. [click] How flat that distribution is, we call its entropy, in bits: zero when one class takes everything; here 3.2 bits, as unsure as choosing among about nine equally likely classes; at most 7.2 bits for all 150. Over the whole scene, that's a map of the model's own uncertainty about what is where. A kind of metacognition: it knows what it doesn't know. [click] EG-C2F averages it over each quarter of the scene, [click] and looks next where it's highest. No reinforcement learning, no training: it reads what the canvas already holds. AME, in the timeline, did something similar with its attention maps.</aside>
+  <aside class="notes">EG-C2F looks first where the model is least sure. How does it know where that is? After one glimpse of the whole street, read out from the canvas what the model thinks is at each position: a probability for each of the 150 classes. [click] Here, on the building: building, almost certain. [click] Here, by the car: car, building, road. It doesn't know. [click] How flat that distribution is, we call its entropy, in bits: zero when one class takes everything; here 3.2 bits, as unsure as choosing among about nine equally likely classes; at most 7.2 bits for all 150. Over the whole scene, that's a map of the model's own uncertainty about what is where. A kind of metacognition: it knows what it doesn't know. [click] EG-C2F averages it over each quarter of the scene, [click] and looks next where it's highest. No reinforcement learning, no training: it reads what the canvas already holds. AME, in the timeline, did something similar with its attention maps.</aside>
 </section>
 
 <!-- ============================================================== Results -->
@@ -616,7 +618,7 @@
 <section id="live" data-status="draft">
   <h2>Live demo</h2>
   <div class="live-stage" data-no-advance>
-    <canvit-live data-load-near model="../../.live-model/canvit" probe="../../.live-model/probe" scene="../../data/street-path/scene.png"></canvit-live>
+    <canvit-live data-load-near scene="../../data/street-path/scene.png"></canvit-live>
   </div>
   <aside class="notes">This is the released CanViT-B, running live. Right now, I am the policy: I click where to look, at whatever zoom, and the canvas integrates what it sees. Now I hand over to a policy, EG-C2F: it looks where the segmentation read from the canvas is least certain. Same observer, any policy.</aside>
 </section>
@@ -646,18 +648,27 @@
     if (!policy) throw new Error(`${rollout.getAttribute("src")}: policy "${name}" is not in js/canvit/policies.js`);
     const figure = rollout.closest("figure");
     figure.style.setProperty("--canvit-glimpse", policy.color);
+    // A figure with a caption names its policy there; the policies slide names it in its list instead.
+    const caption = figure.querySelector("figcaption");
+    if (caption === null) return;
     const label = document.createElement("b"), full = document.createElement("span");
     label.textContent = policy.label;
     full.textContent = policy.name;
-    figure.querySelector("figcaption").replaceChildren(label, full);
+    caption.replaceChildren(label, full);
   }
+  // A policy rollout recolors on every bundle it loads: the policies slide switches its bundle on each click.
   for (const rollout of document.querySelectorAll("canvit-rollout.policy")) {
+    rollout.addEventListener("canvit-load", (event) => event.target === rollout && colorByPolicy(rollout));
     if (rollout.bundle) colorByPolicy(rollout);
-    else rollout.addEventListener("canvit-load", (event) => event.target === rollout && colorByPolicy(rollout));
   }
-  // The race grows with the panels: it shows the glimpse the first panel is at.
-  const race = document.querySelector("#policies canvit-policy-curves");
-  document.querySelector("#policies canvit-rollout.policy").addEventListener("canvit-change", (event) => race.setAttribute("t", event.detail.t));
+  // The policies slide's list: each policy's label and name, in its color.
+  for (const item of document.querySelectorAll("#policies .policy-list li")) {
+    const policy = POLICIES[item.dataset.policy];
+    if (!policy) throw new Error(`#policies: policy "${item.dataset.policy}" is not in js/canvit/policies.js`);
+    const label = Object.assign(document.createElement("b"), { textContent: policy.label });
+    item.replaceChildren(label, Object.assign(document.createElement("span"), { textContent: policy.name }));
+    item.style.setProperty("--policy-color", policy.color);
+  }
   import { startDeck } from "../deck.js";
   await drawHistoryCharts();
   await drawTimeline(document.querySelector("#timeline .timeline"));

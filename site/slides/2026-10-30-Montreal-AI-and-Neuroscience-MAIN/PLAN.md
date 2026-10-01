@@ -29,7 +29,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   ties going to the higher mean over the glimpses, which puts C2F above.
 - [Yohaï, 2026-10-01] `#policies`: "you will have to rethink how precisely each viewing policy is introduced, could go
   through them one after the other instead of overloading the reader with movement, and shouldnt directly show their
-  ade20k perf, we have other slides for that, more focused". To do.
+  ade20k perf, we have other slides for that, more focused". Rebuilt 2026-10-01: one policy per click on one rollout
+  of the street, the policies so far listed beside it; no results. Awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#history`: "i really dont believe your numbers on [...] 'The wide gap between passive and active
   computer vision' where somehow active models would have been above relevant passive competition fyi, you will have
   to add to todo a thorough review of that [...]". To do: a thorough review of every number on the history charts
@@ -52,11 +53,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   PERFORMANCE VS TRAINING COST/exaflops... or whatnot...)"; then, on the corrected version: "still REALLY don't like
   this slide as it is right now". Rebuilt 2026-10-01 as best accuracy against each model's own training compute
   (`OUTLINE.md`); awaiting the authors' look.
-- [Yohaï, 2026-10-01] The live model on the Hub: "you can do huggingface, just do it properly and cleanly and
-  consistently"; then, on the export fusing CanViT-B and its ADE20K probe in one graph: "did you fuse the entire
-  [...] thing instead of separating the probes from the canvit". Nothing is published. In progress: a CanViT graph
-  and a probe graph, exported, checked and published apart; the page composes them. Also open: whether Sabrina gets
-  the slides' data (`site/data/`, about 80 MB, gitignored) by a commit on the talk branch, a zip, or regeneration.
+- [Yohaï, 2026-10-01] Whether Sabrina gets the slides' data (`site/data/`, gitignored) by a commit on the talk branch, a
+  zip, or regeneration; the deployed site (`site/deploy.sh`) now carries it at https://m2b3.github.io/CanViT/ once
+  deployed.
 - [Yohaï, 2026-10-01] `#glimpses` ("Scenes, viewpoints and glimpses"): "this slide seems unnecessary, instead we should
   have a masterfully done that introduces all the concepts and then how the model itself works / what it does, with
   animations/transitions"; "you can borrow from 'CanViT in action', start from there but fade into the full thing to

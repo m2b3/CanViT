@@ -33,7 +33,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   to add to todo a thorough review of that [...]". Reviewed 2026-10-01 (`sources/history-review.md`): no value is
   wrong; on ImageNet-1k, GFNet (79.8) and Saccader (75.03) sit above the dashed line, which holds only self-supervised
   backbones read out frozen; no active model is above the line trained end to end, on either chart. Fixed: the dashed
-  line is labeled "frozen self-supervised features" and the notes no longer say "below, every time" of it. For the
+  line is labeled "frozen self-supervised" and the notes no longer say "below, every time" of it. For the
   authors: draw the active models against the end-to-end line only (the dashed line kept for `#results`, where
   CanViT-B's frozen probe is like for like); the ImageNet-1k end-to-end line mixes in JFT, ImageNet-21k and large
   teachers from November 2019 on (keep it, saying so, or restrict it to ImageNet-1k); Saccader-NASNet (124.5 M) and

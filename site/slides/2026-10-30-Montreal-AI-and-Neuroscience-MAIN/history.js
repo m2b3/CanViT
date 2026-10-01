@@ -94,7 +94,7 @@ function draw(container, data, macros) {
   const frozenGroup = el("g", { class: "frozen" }, svg);
   el("path", { d: step(frozen), class: "line" }, frozenGroup);
   const frozenY = Math.max(y(frozenTop) + 7, passiveY + 28);
-  text("frozen self-supervised features", { x: labelX, y: frozenY, class: "label" }, frozenGroup);
+  text("frozen self-supervised", { x: labelX, y: frozenY, class: "label" }, frozenGroup);
 
   const activeGroup = el("g", { class: "active" }, svg);
   const shown = ACTIVE.flatMap((a) => {

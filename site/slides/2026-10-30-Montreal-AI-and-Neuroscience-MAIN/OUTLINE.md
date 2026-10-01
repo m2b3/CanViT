@@ -308,6 +308,18 @@ yet reviewed by the authors.
   canvas) and 84.5% ImageNet-1k top-1 (fine-tuned).
 - **Status:** ready.
 
+### Training and inference cost
+- **Title:** names the slide's content.
+- **Why:** the case for cost before the frontier [Yohaï, 2026-10-01: "properly make the case of why anyone would
+  [care] about efficiency (it's about money, making experiments cheap, etc)"; "for scientists, remember that TRAINING
+  cost is main concern; inference can also be relevant tho"].
+- **Builds:** three columns, one per click: train once (166 h on one H100, from scratch, 1 billion glimpses); adapt
+  (under $800 to fine-tune on ImageNet-1k, or a linear layer); run (minimum latency per glimpse on a 64 × 64 canvas,
+  read by `cost.js` from the paper's `hw_bench.json`).
+- **Could:** each system's own training cost against the prior active models (`AGENTS.md`, rebuttal facts: CanViT-B
+  55.3 EFLOPs against AdaGlimpse's 62.9 to 144.6; AME's task training is smaller but sits on pretrained ViT-L weights).
+- **Status:** draft (built).
+
 ### Active ADE20K segmentation
 - **Title:** "Active ADE20K segmentation", subtitle "Accuracy v. efficiency" [Yohaï, 2026-10-01]. Before it, the
   paper's Figure 3A caption scoped to what the chart shows: active models only [Yohaï, on the caption alone: "ACTIVE.

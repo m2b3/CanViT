@@ -442,6 +442,27 @@
   <aside class="notes">How much does the viewing policy matter, and for which task? The same frozen model, the same policies, glimpse by glimpse, on a log scale. ImageNet first. The policies that start from the whole scene start high; fine-to-coarse, starting from the finest detail, starts low. But give them a few glimpses and they all end up together: by the end, within about a point of each other, except the full scene repeated. [click] Now segmentation, on a window of the same height. Here the policies stay apart, and they keep climbing all the way: coarse-to-fine reaches <span data-macro="adeBestMiou">45.9</span>, the random policies and fine-to-coarse end about three points lower. For classification, where you look matters early on; for segmentation, it keeps mattering.</aside>
 </section>
 
+<section id="cost" data-status="draft">
+  <h2>Training and inference cost</h2>
+  <!-- Why cost matters, training first [Yohaï, 2026-10-01: "properly make the case of why anyone would give a [...]
+       about efficiency (it's about money, making experiments cheap, etc)"; "for scientists, remember that TRAINING cost
+       is main concern; inference can also be relevant tho"]. 166 h, 1 billion glimpses: the paper (abstract, section 6);
+       teacher features 8 H100-equivalent hours: its appendix on pretraining; under 800 USD and 15 h on a TPU v6e-4: its
+       compute declarations. Latencies: cost.js, from the paper's hw_bench.json (minimum latency, 64 x 64 canvas). -->
+  <div class="costs">
+    <div class="cost train"><p class="what">Train once</p><p class="number">166 h</p>
+      <p class="detail">one H100 GPU, from scratch,<br>1 billion glimpses</p></div>
+    <div class="cost adapt"><p class="what">Adapt</p><p class="number">&lt; $800</p>
+      <p class="detail">fine-tuning on ImageNet-1k,<br>or just a linear layer</p></div>
+    <div class="cost run"><p class="what">Run</p><p class="number"><span data-latency="cuda amp-bf16 16"></span> ms</p>
+      <p class="detail">per glimpse on an RTX 4090,<br><span data-latency="cpu fp32 16"></span> ms on a desktop CPU</p></div>
+  </div>
+  <span class="fragment step-marker" data-shows="train"></span>
+  <span class="fragment step-marker" data-shows="adapt"></span>
+  <span class="fragment step-marker" data-shows="run"></span>
+  <aside class="notes">Why should you care about cost? Because compute is money and time. A model that is cheap to train, adapt and run makes every experiment cheaper: more scenes, more glimpses, more policies, policies learned by trial and error, and all of it within reach of a lab without a cluster. [click] Training first. CanViT-B was pretrained once, from scratch, in 166 hours on a single GPU, about a billion glimpses; and it's released, so you don't have to. [click] Adapting it to your task: a linear layer on the frozen canvas, as you've seen; or fine-tune the whole model: ImageNet-1k cost us under 800 dollars. [click] Running it: one glimpse in about two milliseconds on a gaming GPU, and under a fifth of a second on a desktop CPU. Now, accuracy against the compute it takes to run.</aside>
+</section>
+
 <section id="frontier" data-status="draft">
   <hgroup><h2>Active ADE20K segmentation</h2><p>Accuracy v. efficiency</p></hgroup>
   <!-- Built step by step [Yohaï, 2026-10-01: "our worst policy at 32^2, then at 64^2 canvas, then we show previous
@@ -535,7 +556,7 @@
 <section id="live" data-status="draft">
   <h2>Live demo</h2>
   <div class="live-stage" data-no-advance>
-    <canvit-live data-load-near model="../../.live-model" scene="../../data/street-path/scene.png"></canvit-live>
+    <canvit-live data-load-near model="../../.live-model/canvit" probe="../../.live-model/probe" scene="../../data/street-path/scene.png"></canvit-live>
   </div>
   <aside class="notes">This is the released CanViT-B, running live. Right now, I am the policy: I click where to look, at whatever zoom, and the canvas integrates what it sees. Now I hand over to a policy, EG-C2F: it looks where the segmentation read from the canvas is least certain. Same observer, any policy.</aside>
 </section>
@@ -555,6 +576,7 @@
   import { drawUncertainty } from "./uncertainty.js";
   import { drawDetail } from "./detail.js";
   import { drawDistillation } from "./distillation.js";
+  import { drawCost } from "./cost.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
   function colorByPolicy(rollout) {
@@ -590,6 +612,7 @@
     }));
   }
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
+  await drawCost(document.querySelector("#cost"), "../../assets/paper/hw_bench.json");
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const uncertainty = document.querySelector("#uncertainty");
   await drawUncertainty(uncertainty, "../../data/talk/metacognition/street");

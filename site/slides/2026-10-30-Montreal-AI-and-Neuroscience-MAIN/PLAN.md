@@ -136,7 +136,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] A training-cost view ("having a 'training flops' graph could be interesting as well idk. or
   training cost"): training compute or cost of the active models and of CanViT-B, from their papers and the rebuttal
   (training glimpses, epochs, GPU-hours); what each paper reports differs, so the qualifiers stay with each number. M.
-- [Yohaï, 2026-10-01] `#frontier` (accuracy against cost) must first make the case for why anyone cares about cost:
+- [Yohaï, 2026-10-01] A first draft is `#cost`, before `#frontier` (train, adapt, run); awaiting the authors' look. `#frontier` (accuracy against cost) must first make the case for why anyone cares about cost:
   money, cheap experiments (`AGENTS.md`, "The story"); training cost first, the main concern for scientists, then
   inference. Training: pretrained once and released; adapting it is a linear probe or a fine-tuning under 800 USD;
   its pretraining is comparable to AdaGlimpse's own, not cheaper than every prior model (`AGENTS.md`, rebuttal facts).

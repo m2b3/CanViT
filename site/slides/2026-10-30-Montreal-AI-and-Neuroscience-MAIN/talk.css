@@ -316,6 +316,14 @@
 #policy-accuracy figure { margin: 0; transition: opacity .6s ease; }
 #policy-accuracy figcaption { margin-bottom: 6px; font-size: 22px; font-weight: 750; }
 #policy-accuracy .ade20k { opacity: 0; }
+
+/* Training and inference cost: one column per click, each a large number with its conditions under it. */
+#cost .costs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 70px; text-align: center; }
+#cost .cost { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
+#cost.shows-train .train, #cost.shows-adapt .adapt, #cost.shows-run .run { opacity: 1; transform: none; }
+#cost .what { font-size: 26px; font-weight: 750; color: var(--muted); }
+#cost .number { margin: 14px 0; white-space: nowrap; font-size: 76px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); }
+#cost .detail { font-size: 21px; line-height: 1.4; color: var(--text); }
 #policy-accuracy.shows-ade20k .ade20k { opacity: 1; }
 
 /* Quickstart: the install line alone and large, then small above the code; the code walked through block by block,

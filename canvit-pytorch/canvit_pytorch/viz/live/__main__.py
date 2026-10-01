@@ -1,8 +1,9 @@
-"""Export CanViT-B for <canvit-live> and check the export against PyTorch (docs/viz.md, "Live model").
+"""Export CanViT-B and its ADE20K probe for <canvit-live>, check the export, publish it (docs/viz.md, "Live model").
 
     uv run --extra live python -m canvit_pytorch.viz.live export --out-dir ../site/.live-model
     uv run --extra live python -m canvit_pytorch.viz.live parity --model-dir ../site/.live-model --image IMAGE
-    uv run --extra live python -m canvit_pytorch.viz.live check-browser --page-url URL --backend webgpu --out REPORT
+    uv run --extra live python -m canvit_pytorch.viz.live check-browser --page-url URL --reference-url URL \
+        --backend webgpu --out REPORT
     uv run --extra live python -m canvit_pytorch.viz.live publish --model-dir ../site/.live-model --out-dir STAGING [--push]
 """
 

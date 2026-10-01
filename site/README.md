@@ -101,10 +101,11 @@ and the maps with the canvas carried and reset; `readout` is `labels`,
 of them and names the classes there. Setting `src` loads another bundle;
 methods `play()` and `pause()`; event `canvit-load` `{manifest}`.
 
-`<canvit-live model scene autoload>` runs the model exported by
-`canvit_pytorch.viz.live` (`model`, its directory, by default the published
-export on the Hub, `PUBLISHED_MODEL` in `js/canvit/live-model.js`; `scene`, an
-image URL, center-cropped to a square). A click takes a glimpse centered there; the
+`<canvit-live model probe scene autoload>` runs CanViT-B and its ADE20K probe
+as exported, apart, by `canvit_pytorch.viz.live` (`model` and `probe`, their
+directories, by default the exports published on the Hub, `PUBLISHED_CANVIT`
+and `PUBLISHED_PROBE` in `js/canvit/live-model.js`; `scene`, an image URL,
+center-cropped to a square). A click takes a glimpse centered there; the
 wheel, a drag (a box centered where it starts) or the slider set its size,
 from the whole scene down to pretraining's smallest scale; arrow keys, `+`/`−`
 and Enter do the same from the keyboard. The canvas carries over until
@@ -153,12 +154,14 @@ git).
 
 ## Live model
 
-`live.html` runs the export published on the Hub
-(`canvit_pytorch.hub.repos.LIVE_MODEL`, whose URL is `PUBLISHED_MODEL` in
-`js/canvit/live-model.js`). A new export goes to `site/.live-model/` (ignored
-by git: the graph is hundreds of MB and is never committed), is checked
-against PyTorch and in the browser (with `model=".live-model"` on the page),
-then published, as `canvit-pytorch/docs/viz.md` ("Live model") describes.
+`live.html` runs the exports published on the Hub
+(`canvit_pytorch.hub.repos.LIVE_CANVIT` and `LIVE_PROBE`, whose URLs are
+`PUBLISHED_CANVIT` and `PUBLISHED_PROBE` in `js/canvit/live-model.js`). A new
+export goes to `site/.live-model/` (ignored by git: the CanViT graph is
+hundreds of MB and is never committed), is checked against PyTorch and in
+the browser (with `model=".live-model/canvit" probe=".live-model/probe"` on
+the page), then published, as `canvit-pytorch/docs/viz.md` ("Live model")
+describes.
 
 ## Paper numbers
 

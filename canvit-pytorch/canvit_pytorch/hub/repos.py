@@ -36,10 +36,6 @@ RELEASED_CANVAS_GRID_SIZE = 32
 # The Hub tag on each checkpoint released before canvit-pytorch 0.2: its files in the format 0.1 code reads.
 OLD_FORMAT_REVISION = "canvit-pytorch-0.1"
 
-# The flagship and its ADE20K probe on a 64×64 canvas as one float32 ONNX graph per glimpse (canvit_pytorch.viz.live),
-# which <canvit-live> downloads from the Hub.
-LIVE_MODEL = hub_repo("canvitb16-in21k-ade20k-s512-c64-onnx-fp32")
-
 # The flagship fine-tuned on ImageNet-1k classification (LP-FT, TPU).
 FINETUNED_IN1K = hub_repo("canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06")
 
@@ -79,3 +75,12 @@ def released_ade20k_probe(model: str, *, scene_size_px: int, canvas_grid_size: i
 
 def released_dinov3_ade20k_probe(model: str, *, input_size_px: int) -> str:
     return hub_repo(dinov3_ade20k_probe_name(model, input_size_px=input_size_px, steps=RELEASED_PROBE_STEPS))
+
+
+# The canvas grid of the project page's visualizations and of the browser exports: that of the probe they read.
+VIZ_CANVAS_GRID_SIZE = 64
+
+# The flagship and its ADE20K probe as float32 ONNX graphs for the browser (canvit_pytorch.viz.live), published apart,
+# each named after the checkpoint it exports; <canvit-live> runs one glimpse through the first, then the second.
+LIVE_CANVIT = f"{FLAGSHIP}-c{VIZ_CANVAS_GRID_SIZE}-onnx-fp32"
+LIVE_PROBE = f"{released_ade20k_probe('in21k', scene_size_px=RELEASED_SCENE_SIZE_PX, canvas_grid_size=VIZ_CANVAS_GRID_SIZE)}-onnx-fp32"

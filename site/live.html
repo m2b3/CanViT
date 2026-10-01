@@ -31,10 +31,11 @@
       <span class="hint">Everything runs in this browser: nothing below was recorded in advance.</span>
       <label class="photo">Use your own photo<input type="file" accept="image/*"></label>
     </div>
-    <!-- XXX: the local export (site/README.md, "Live model") until canvit_pytorch.viz.live publish has run; then drop model. -->
-    <canvit-live model=".live-model" scene="data/street-path/scene.png"></canvit-live>
+    <!-- XXX: the local export (site/README.md, "Live model") until canvit_pytorch.viz.live publish has run; then drop
+         model and probe. -->
+    <canvit-live model=".live-model/canvit" probe=".live-model/probe" scene="data/street-path/scene.png"></canvit-live>
   </div>
-  <p class="caption"><b>The released CanViT-B</b> (pretrained on ImageNet-21k) with its ADE20K linear probe on a 64&nbsp;×&nbsp;64 canvas, exported to ONNX in float32 and run by ONNX Runtime Web: on the GPU through WebGPU where the browser supports it, on the CPU through WebAssembly otherwise. EG-C2F chooses glimpses from the model's own uncertainty; it takes the full scene, then 4 quadrants, then 16 tiles. Default scene from the ADE20K validation set.</p>
+  <p class="caption"><b>The released CanViT-B</b> (pretrained on ImageNet-21k) and its ADE20K linear probe on a 64&nbsp;×&nbsp;64 canvas, exported apart to ONNX in float32 and run by ONNX Runtime Web, the probe after each glimpse: on the GPU through WebGPU where the browser supports it, on the CPU through WebAssembly otherwise. EG-C2F chooses glimpses from the model's own uncertainty; it takes the full scene, then 4 quadrants, then 16 tiles. Default scene from the ADE20K validation set.</p>
 </main>
 
 <script type="module">

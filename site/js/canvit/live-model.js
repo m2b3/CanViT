@@ -1,11 +1,16 @@
-// CanViT-B with its ADE20K probe, one glimpse per call, in ONNX Runtime Web. The model directory is written by
-// `python -m canvit_pytorch.viz.live export` (schema below; canvit-pytorch/docs/viz.md, "Live model").
-// On WebGPU the scene, canvas and recurrent CLS token live in fixed GPU buffers: each step writes the next state
-// to output buffers, which a GPU copy moves onto the input buffers; only the maps shown are read back.
+// CanViT-B and its ADE20K probe, one glimpse per call, in ONNX Runtime Web: the CanViT graph, then the probe graph on
+// the new canvas. Both directories are written by `python -m canvit_pytorch.viz.live export`, and published apart
+// (schemas below; canvit-pytorch/docs/viz.md, "Live model"). On WebGPU the scene, canvas and recurrent CLS token live
+// in fixed GPU buffers: each step writes the next state to output buffers, which a GPU copy moves onto the input
+// buffers, and the probe reads the new canvas there; only the maps shown are read back.
 
-const SCHEMA = "canvit-live-model-2ef08388-92e1-4d7d-b5ac-2922601b5aa0";
-// The published export, canvit_pytorch.hub.repos.LIVE_MODEL on the Hub (`python -m canvit_pytorch.viz.live publish`).
-export const PUBLISHED_MODEL = "https://huggingface.co/canvit/canvitb16-in21k-ade20k-s512-c64-onnx-fp32/resolve/main";
+const CANVIT_SCHEMA = "canvit-live-canvit-0a49b16e-2f86-41ae-8b08-f83d94fb1732";
+const PROBE_SCHEMA = "canvit-live-probe-23117c20-1e8e-4edb-a56d-21018d157b8d";
+// The published exports, canvit_pytorch.hub.repos.LIVE_CANVIT and LIVE_PROBE on the Hub
+// (`python -m canvit_pytorch.viz.live publish`).
+export const PUBLISHED_CANVIT =
+  "https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02-c64-onnx-fp32/resolve/main";
+export const PUBLISHED_PROBE = "https://huggingface.co/canvit/probe-ade20k-40k-s512-c64-in21k-onnx-fp32/resolve/main";
 // The exported graph relies on this version's WebGPU kernels (docs/viz.md, "Live model"): after changing it,
 // rerun `canvit_pytorch.viz.live check-browser` on both backends.
 const ORT_VERSION = "1.30.0";
@@ -61,13 +66,28 @@ async function verifiedBytes(base, file, onProgress) {
   return bytes;
 }
 
-/** The manifest of the model directory at url (relative to the page). */
-export async function loadManifest(url) {
+async function loadManifest(url, schema) {
   const base = new URL(url.endsWith("/") ? url : `${url}/`, document.baseURI);
   const manifest = await (await fetchOk(new URL("manifest.json", base))).json();
-  if (manifest.schema !== SCHEMA) throw new Error(`${base}manifest.json: schema ${manifest.schema}, expected ${SCHEMA}`);
+  if (manifest.schema !== schema) throw new Error(`${base}manifest.json: schema ${manifest.schema}, expected ${schema}`);
   return { base, manifest };
 }
+
+/** The manifests of a CanViT export and a probe export (URLs relative to the page), checked to fit together. */
+export async function loadManifests(canvitUrl, probeUrl) {
+  const [canvit, probe] = await Promise.all([loadManifest(canvitUrl, CANVIT_SCHEMA), loadManifest(probeUrl, PROBE_SCHEMA)]);
+  const a = canvit.manifest, b = probe.manifest;
+  if (JSON.stringify(b.graph.inputs.canvas) !== JSON.stringify(a.graph.outputs.next_canvas)
+      || b.canvas_grid !== a.canvas_grid || b.num_canvas_registers !== a.num_canvas_registers) {
+    throw new Error(`${probe.base} reads a ${b.canvas_grid}² canvas ${JSON.stringify(b.graph.inputs.canvas)}; ` +
+                    `${canvit.base} writes a ${a.canvas_grid}² one ${JSON.stringify(a.graph.outputs.next_canvas)}`);
+  }
+  return { canvit, probe };
+}
+
+/** Bytes to download before the first glimpse. */
+export const downloadBytes = ({ canvit, probe }) =>
+  canvit.manifest.graph.bytes + canvit.manifest.initial_state.bytes + probe.manifest.graph.bytes;
 
 // The registers, then the canvas patch broadcast over the grid, as CanViT.init_state builds them.
 function initialState(manifest, flat) {
@@ -123,37 +143,45 @@ async function webgpuAvailable() {
 
 export class LiveModel {
   /**
-   * Download, verify and start the model at url: WebGPU when the browser has an adapter, WebAssembly otherwise.
-   * onProgress(stage, received, total) reports the download. `fallback` names why WebGPU was not used, if it failed.
+   * Download, verify and start the CanViT export at canvitUrl and the probe export at probeUrl: WebGPU when the
+   * browser has an adapter, WebAssembly otherwise. onProgress(stage, received, total) reports the download.
+   * `fallback` names why WebGPU was not used, if it failed.
    */
-  static async load(url, { onProgress = () => {} } = {}) {
-    const { base, manifest } = await loadManifest(url);
-    const [stateBytes, graphBytes] = await Promise.all([
-      verifiedBytes(base, manifest.initial_state),
-      verifiedBytes(base, manifest.graph, (received, total) => onProgress("download", received, total)),
+  static async load(canvitUrl, probeUrl, { onProgress = () => {} } = {}) {
+    const manifests = await loadManifests(canvitUrl, probeUrl);
+    const { canvit, probe } = manifests;
+    const total = downloadBytes(manifests);
+    const received = { canvit: 0, probe: 0 };
+    const progress = (part) => (bytes) => { received[part] = bytes; onProgress("download", received.canvit + received.probe, total); };
+    const [stateBytes, canvitBytes, probeBytes] = await Promise.all([
+      verifiedBytes(canvit.base, canvit.manifest.initial_state),
+      verifiedBytes(canvit.base, canvit.manifest.graph, progress("canvit")),
+      verifiedBytes(probe.base, probe.manifest.graph, progress("probe")),
     ]);
-    const init = initialState(manifest, new Float32Array(stateBytes.buffer));
+    const init = initialState(canvit.manifest, new Float32Array(stateBytes.buffer));
+    const graphs = { canvit: canvitBytes, probe: probeBytes };
     let fallback = null;
     if (await webgpuAvailable()) {
       onProgress("start", 0, 0);
       try {
-        return await LiveModel.#start("webgpu", manifest, graphBytes, init, null);
+        return await LiveModel.#start("webgpu", manifests, graphs, init, null);
       } catch (error) {
         console.error("CanViT on WebGPU failed; using WebAssembly", error);
         fallback = `WebGPU failed: ${error.message}`;
       }
     }
     onProgress("start", 0, 0);
-    return LiveModel.#start("wasm", manifest, graphBytes, init, fallback);
+    return LiveModel.#start("wasm", manifests, graphs, init, fallback);
   }
 
-  static async #start(backend, manifest, graphBytes, init, fallback) {
+  static async #start(backend, manifests, graphs, init, fallback) {
     const ort = await loadOrt(backend);
     const options = { executionProviders: [backend], graphOptimizationLevel: "all" };
     if (backend === "webgpu") options.preferredOutputLocation = "gpu-buffer";
     const started = performance.now();
-    const session = await ort.InferenceSession.create(graphBytes, options);
-    const model = new LiveModel(ort, backend, manifest, session, init, fallback);
+    const step = await ort.InferenceSession.create(graphs.canvit, options);
+    const probe = await ort.InferenceSession.create(graphs.probe, options);
+    const model = new LiveModel(ort, backend, manifests, { step, probe }, init, fallback);
     model.sessionCreateMs = performance.now() - started;
     if (backend === "webgpu") await model.#allocateGpu();
     model.reset();
@@ -162,14 +190,15 @@ export class LiveModel {
 
   #ort; #init; #gpu = null; #cpu = null; #scene = null;
 
-  constructor(ort, backend, manifest, session, init, fallback) {
+  constructor(ort, backend, manifests, sessions, init, fallback) {
     this.#ort = ort;
     this.#init = init;
     this.backend = backend;
     this.backendName = BACKENDS[backend].name;
     this.fallback = fallback;
-    this.manifest = manifest;
-    this.session = session;
+    this.manifest = manifests.canvit.manifest;
+    this.probeManifest = manifests.probe.manifest;
+    this.sessions = sessions;
   }
 
   async #allocateGpu() {
@@ -180,6 +209,7 @@ export class LiveModel {
       device,
       inputs: Object.fromEntries(Object.entries(inputs).map(([name, dims]) => [name, make(dims)])),
       outputs: Object.fromEntries(Object.entries(outputs).map(([name, dims]) => [name, make(dims)])),
+      readout: Object.fromEntries(Object.entries(this.probeManifest.graph.outputs).map(([name, dims]) => [name, make(dims)])),
       initCanvas: make(inputs.canvas),
       initCls: make(inputs.recurrent_cls),
     };
@@ -222,27 +252,28 @@ export class LiveModel {
     const centers = Float32Array.of(row, col);
     const scales = Float32Array.of(scale);
     if (this.#gpu) {
-      const { inputs, outputs, device } = this.#gpu;
+      const { inputs, outputs, readout, device } = this.#gpu;
       inputs.centers.write(centers);
       inputs.scales.write(scales);
-      const feeds = Object.fromEntries(Object.entries(inputs).map(([name, t]) => [name, t.tensor]));
-      const fetches = Object.fromEntries(Object.entries(outputs).map(([name, t]) => [name, t.tensor]));
+      const tensors = (buffers) => Object.fromEntries(Object.entries(buffers).map(([name, t]) => [name, t.tensor]));
       const started = performance.now();
-      await this.session.run(feeds, fetches);
-      const runMs = performance.now() - started;
+      await this.sessions.step.run(tensors(inputs), tensors(outputs));
       this.#copy([[outputs.next_canvas, inputs.canvas], [outputs.next_recurrent_cls, inputs.recurrent_cls]]);
-      const [logits, entropy, glimpse] = await readBack(device, [outputs.logits, outputs.entropy, outputs.glimpse]);
+      await this.sessions.probe.run({ canvas: inputs.canvas.tensor }, tensors(readout));
+      const runMs = performance.now() - started;
+      const [logits, entropy, glimpse] = await readBack(device, [readout.logits, readout.entropy, outputs.glimpse]);
       return { logits, entropy, glimpse, runMs };
     }
     const ort = this.#ort;
     const started = performance.now();
-    const out = await this.session.run({
+    const out = await this.sessions.step.run({
       scene: this.#scene, canvas: this.#cpu.canvas, recurrent_cls: this.#cpu.cls,
       centers: new ort.Tensor("float32", centers, [1, 2]), scales: new ort.Tensor("float32", scales, [1]),
     });
+    const read = await this.sessions.probe.run({ canvas: out.next_canvas });
     const runMs = performance.now() - started;
     this.#cpu = { canvas: out.next_canvas, cls: out.next_recurrent_cls };
-    return { logits: out.logits.data, entropy: out.entropy.data, glimpse: out.glimpse.data, runMs };
+    return { logits: read.logits.data, entropy: read.entropy.data, glimpse: out.glimpse.data, runMs };
   }
 
   /** The current canvas [R + G², D], for checks against PyTorch. */

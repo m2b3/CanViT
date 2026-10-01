@@ -293,23 +293,16 @@ def _hub_link(record: dict[str, Any]) -> str:
     return f"[{record['repo']}](https://huggingface.co/{record['repo']}/tree/{record['revision']}) at `{record['revision'][:7]}`"
 
 
-def live_model_card(*, repo: str, manifest: dict[str, Any], parity: dict[str, Any]) -> str:
-    """The card of a canvit_pytorch.viz.live export: manifest.json and its parity/report.json state every fact."""
-    grid, graph = manifest["canvas_grid"], manifest["graph"]
+def _graph_row(graph: dict[str, Any]) -> tuple[str, str]:
+    return ("Graph", (f"`{graph['path']}`: ONNX opset {graph['opset']}, float32, weights embedded, "
+                      f"{graph['bytes'] / 1e6:.2f} MB; inputs {', '.join(graph['inputs'])}; outputs "
+                      f"{', '.join(graph['outputs'])}"))
+
+
+def _live_rows(manifest: dict[str, Any], parity: dict[str, Any]) -> list[tuple[str, str]]:
+    """The rows both live cards share: the parity check against PyTorch and the export's provenance."""
     worst = parity["worst"]
-    install = f"""<script type="module" src="{project.PAGE_URL}js/canvit/index.js"></script>"""
-    usage = f"""<canvit-live model="https://huggingface.co/{repo}/resolve/main" scene="scene.jpg"></canvit-live>"""
-    details = [
-        ("Model", _hub_link(manifest["model"])),
-        ("Readout", f"{_hub_link(manifest['readout'])}, {manifest['readout']['num_classes']} ADE20K classes"),
-        ("Geometry", (f"{manifest['scene_px']} px scenes, {manifest['glimpse_px']} px glimpses, "
-                      f"a {grid} × {grid} canvas")),
-        ("Graph", (f"`{graph['path']}`: one glimpse, ONNX opset {graph['opset']}, float32, weights embedded, "
-                   f"{graph['bytes'] / 1e6:.0f} MB; inputs {', '.join(graph['inputs'])}; outputs "
-                   f"{', '.join(graph['outputs'])}")),
-        ("Initial state", (f"`{manifest['initial_state']['path']}`: float32, "
-                           f"{', '.join(part['name'] for part in manifest['initial_state']['parts'])}")),
-        ("Policy", f"{manifest['policy']['paper_name']}: {manifest['policy']['description']}"),
+    return [
         ("Parity with PyTorch", (f"{parity['comparison']}, over {len(parity['per_glimpse'])} glimpses: relative L2 "
                                  f"error at most {worst['canvas']:.1e} (canvas) and {worst['logits']:.1e} (logits); "
                                  f"{100 * worst['min_argmax_agreement']:.2f}% of cells or more keep their class")),
@@ -317,12 +310,60 @@ def live_model_card(*, repo: str, manifest: dict[str, Any], parity: dict[str, An
                            f"onnx {manifest['provenance']['onnx']}; checked with onnxruntime {parity['onnxruntime']}")),
         ("Manifest", f"`manifest.json`, schema `{manifest['schema']}`: every size, shape and name the page uses"),
     ]
+
+
+def _live_usage(canvit_repo: str, probe_repo: str) -> tuple[str, str]:
+    """(install, usage): <canvit-live> from the project page, with both exports named."""
+    install = f"""<script type="module" src="{project.PAGE_URL}js/canvit/index.js"></script>"""
+    usage = (f"""<canvit-live model="https://huggingface.co/{canvit_repo}/resolve/main"\n"""
+             f"""             probe="https://huggingface.co/{probe_repo}/resolve/main" scene="scene.jpg"></canvit-live>""")
+    return install, usage
+
+
+def live_canvit_card(*, repo: str, probe_repo: str, manifest: dict[str, Any], parity: dict[str, Any]) -> str:
+    """The card of the CanViT half of a canvit_pytorch.viz.live export: its manifest and the parity report."""
+    grid = manifest["canvas_grid"]
+    install, usage = _live_usage(repo, probe_repo)
+    details = [
+        ("Model", _hub_link(manifest["model"])),
+        ("Geometry", (f"{manifest['scene_px']} px scenes, {manifest['glimpse_px']} px glimpses, "
+                      f"a {grid} × {grid} canvas")),
+        _graph_row(manifest["graph"]),
+        ("Initial state", (f"`{manifest['initial_state']['path']}`: float32, "
+                           f"{', '.join(part['name'] for part in manifest['initial_state']['parts'])}")),
+        ("Readout", f"[{probe_repo}](https://huggingface.co/{probe_repo}), published apart"),
+        *_live_rows(manifest, parity),
+    ]
     data = ModelCardData(
-        license="mit", library_name="onnx", pipeline_tag="image-segmentation", tags=TAGS + ["ade20k", "onnx"],
-        datasets=[ADE20K_HUB_ID], base_model=[manifest["model"]["repo"], manifest["readout"]["repo"]],
+        license="mit", library_name="onnx", pipeline_tag="image-feature-extraction", tags=TAGS + ["onnx"],
+        base_model=manifest["model"]["repo"],
     )
-    summary = (f"The released CanViT-B and its ADE20K probe on a {grid} × {grid} canvas as one ONNX graph per "
-               f"glimpse, for `<canvit-live>`: the [live demo]({project.PAGE_URL}live.html) of the project page, "
-               f"which runs it in the browser with ONNX Runtime Web (WebGPU, else WebAssembly).")
-    return _card(data=data, title="CanViT-B with its ADE20K probe, for the browser", summary=summary, usage=usage,
+    summary = (f"The released CanViT-B as an ONNX graph of one glimpse on a {grid} × {grid} canvas, for "
+               f"`<canvit-live>`: the [live demo]({project.PAGE_URL}live.html) of the project page, which runs it in the "
+               f"browser with ONNX Runtime Web (WebGPU, else WebAssembly) and reads the canvas with "
+               f"[an ADE20K probe](https://huggingface.co/{probe_repo}), exported apart.")
+    return _card(data=data, title="CanViT-B, one glimpse, for the browser", summary=summary, usage=usage,
+                 details=details, install=install, install_language="html", usage_language="html")
+
+
+def live_probe_card(*, repo: str, canvit_repo: str, manifest: dict[str, Any], parity: dict[str, Any]) -> str:
+    """The card of the probe half of a canvit_pytorch.viz.live export: its manifest and the parity report."""
+    grid = manifest["canvas_grid"]
+    install, usage = _live_usage(canvit_repo, repo)
+    details = [
+        ("Probe", f"{_hub_link(manifest['readout'])}, {manifest['readout']['num_classes']} ADE20K classes"),
+        ("Canvas", (f"{grid} × {grid}, from [{canvit_repo}](https://huggingface.co/{canvit_repo}), "
+                    f"published apart")),
+        _graph_row(manifest["graph"]),
+        ("Policy", f"{manifest['policy']['paper_name']}: {manifest['policy']['description']}"),
+        *_live_rows(manifest, parity),
+    ]
+    data = ModelCardData(
+        license="mit", library_name="onnx", pipeline_tag="image-segmentation",
+        tags=TAGS + ["ade20k", "linear-probe", "onnx"], datasets=[ADE20K_HUB_ID], base_model=manifest["readout"]["repo"],
+    )
+    summary = (f"The released ADE20K probe on CanViT-B's {grid} × {grid} canvas as an ONNX graph (canvas in, class "
+               f"logits and their entropy out), for `<canvit-live>`: the [live demo]({project.PAGE_URL}live.html) "
+               f"of the project page, which runs it after [CanViT-B's glimpse graph](https://huggingface.co/{canvit_repo}).")
+    return _card(data=data, title="ADE20K probe on CanViT's canvas, for the browser", summary=summary, usage=usage,
                  details=details, install=install, install_language="html", usage_language="html")

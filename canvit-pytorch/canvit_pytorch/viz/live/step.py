@@ -1,7 +1,8 @@
-"""One glimpse of CanViT with its ADE20K probe, as a module on plain tensors for export to ONNX.
+"""One glimpse of CanViT, and the readout of its canvas by a probe, as modules on plain tensors for export to ONNX.
 
-The browser runs this graph once per glimpse. The state goes in and comes out, so the page keeps it
-between calls; the glimpse is cropped inside the graph, so the scene is uploaded once.
+The browser runs the step graph once per glimpse, then the probe graph on the new canvas. The state goes in and
+comes out, so the page keeps it between calls; the glimpse is cropped inside the step graph, so the scene is
+uploaded once. CanViT and the probe are exported and published separately.
 """
 
 from typing import NamedTuple
@@ -9,7 +10,7 @@ from typing import NamedTuple
 import torch
 from torch import Tensor, nn
 
-from canvit_pytorch.model.canvit import RecurrentState
+from canvit_pytorch.model.canvit import CanViT, RecurrentState
 from canvit_pytorch.model.segmentation import CanViTForSemanticSegmentation
 from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
 
@@ -25,9 +26,16 @@ class StepInputs(NamedTuple):
 class StepOutputs(NamedTuple):
     next_canvas: Tensor
     next_recurrent_cls: Tensor
-    logits: Tensor  # [1, num_classes, G, G], decoded from the next canvas
-    entropy: Tensor  # [1, G, G]: predictive entropy of each cell, in nats
     glimpse: Tensor  # [1, 3, g, g]: the model's input, ImageNet-normalized
+
+
+class ReadoutInputs(NamedTuple):
+    canvas: Tensor  # [1, num_canvas_registers + G*G, canvas_dim]
+
+
+class ReadoutOutputs(NamedTuple):
+    logits: Tensor  # [1, num_classes, G, G]
+    entropy: Tensor  # [1, G, G]: predictive entropy of each cell, in nats
 
 
 def predictive_entropy_via_logsumexp(logits: Tensor) -> Tensor:
@@ -39,23 +47,36 @@ def predictive_entropy_via_logsumexp(logits: Tensor) -> Tensor:
 
 
 class GlimpseStep(nn.Module):
-    def __init__(self, model: CanViTForSemanticSegmentation, *, glimpse_size_px: int) -> None:
+    def __init__(self, canvit: CanViT, *, glimpse_size_px: int) -> None:
         super().__init__()
-        assert isinstance(model.probe.ln, nn.LayerNorm), "the probe must decode the layer-normalized canvas"
-        self.model = model
+        self.canvit = canvit
         self.glimpse_size_px = glimpse_size_px
 
     def forward(self, scene: Tensor, canvas: Tensor, recurrent_cls: Tensor, centers: Tensor, scales: Tensor) -> StepOutputs:
         viewpoint = Viewpoint(centers=centers, scales=scales)
         glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px=self.glimpse_size_px)
-        state = RecurrentState(canvas=canvas, recurrent_cls=recurrent_cls)
-        logits, state = self.model(glimpse=glimpse, state=state, viewpoint=viewpoint)
-        return StepOutputs(state.canvas, state.recurrent_cls, logits, predictive_entropy_via_logsumexp(logits), glimpse)
+        state = self.canvit(glimpse=glimpse, state=RecurrentState(canvas=canvas, recurrent_cls=recurrent_cls),
+                            viewpoint=viewpoint).state
+        return StepOutputs(state.canvas, state.recurrent_cls, glimpse)
 
 
-def initial_inputs(model: CanViTForSemanticSegmentation, scene: Tensor, *, canvas_grid_size: int) -> StepInputs:
+class ProbeReadout(nn.Module):
+    """The probe on a canvas, through CanViTForSemanticSegmentation.logits, the code path PyTorch users run; only the
+    probe's weights reach the exported graph."""
+
+    def __init__(self, model: CanViTForSemanticSegmentation) -> None:
+        super().__init__()
+        assert isinstance(model.probe.ln, nn.LayerNorm), "the probe must decode the layer-normalized canvas"
+        self.model = model
+
+    def forward(self, canvas: Tensor) -> ReadoutOutputs:
+        logits = self.model.logits(canvas)
+        return ReadoutOutputs(logits, predictive_entropy_via_logsumexp(logits))
+
+
+def initial_inputs(canvit: CanViT, scene: Tensor, *, canvas_grid_size: int) -> StepInputs:
     """The first glimpse's inputs, at the full scene."""
-    state = model.init_state(batch_size=1, canvas_grid_size=canvas_grid_size)
+    state = canvit.init_state(batch_size=1, canvas_grid_size=canvas_grid_size)
     viewpoint = Viewpoint.full_scene(batch_size=1, device=scene.device)
     return StepInputs(
         scene, state.canvas.detach().clone(), state.recurrent_cls.detach().clone(), viewpoint.centers, viewpoint.scales,

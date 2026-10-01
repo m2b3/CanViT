@@ -1,7 +1,8 @@
 """<canvit-live> in headless Chrome against the parity reference: outputs, EG-C2F's choices, pointer input, timings.
 
-Needs a page with one <canvit-live> served over HTTP together with its model directory, where `parity`
-has written the reference (<model>/parity/), and Google Chrome installed (Playwright's channel "chrome").
+Needs a page with one <canvit-live> served over HTTP, the reference `parity` wrote (<export>/parity/) served over
+HTTP too, and Google Chrome installed (Playwright's channel "chrome"). The page may run a local export or the
+published ones: the reference is the same as long as the graphs are.
 The element is driven as a visitor drives it: its download button, clicks, the wheel, a drag, the keyboard.
 """
 
@@ -29,9 +30,9 @@ in scene coordinates: pointer positions are rounded to CSS pixels, a few thousan
 
 # Replays the reference viewpoints through the element, then lets its EG-C2F choose, then times whole episodes.
 REPLAY_JS = r"""
-async ({ timedEpisodes }) => {
+async ({ timedEpisodes, referenceUrl }) => {
   const el = document.querySelector("canvit-live");
-  const base = new URL("parity/", new URL(el.getAttribute("model").replace(/\/?$/, "/"), document.baseURI));
+  const base = new URL(referenceUrl.replace(/\/?$/, "/"), document.baseURI);
   const fetchOk = async (url) => { const r = await fetch(url); if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`); return r; };
   const episode = await (await fetchOk(new URL("episode.json", base))).json();
   const reference = async (name, t) =>
@@ -46,7 +47,7 @@ async ({ timedEpisodes }) => {
     }
     return { max_abs: maxAbs, max_abs_over_max_ref: maxAbs / maxRef, rel_l2: Math.sqrt(diff2 / ref2) };
   };
-  const numClasses = (await (await fetchOk(new URL("../manifest.json", base))).json()).readout.num_classes;
+  const numClasses = episode.num_classes;
   const argmax = (logits) => {
     const n = logits.length / numClasses, labels = new Uint8Array(n), best = logits.slice(0, n);
     for (let c = 1; c < numClasses; c++) for (let i = 0; i < n; i++) if (logits[c * n + i] > best[i]) { best[i] = logits[c * n + i]; labels[i] = c; }
@@ -112,6 +113,8 @@ class CheckBrowser:
 
     page_url: str
     """A page with one <canvit-live>, e.g. http://127.0.0.1:8020/live.html."""
+    reference_url: str
+    """The parity directory of the export the page runs, e.g. http://127.0.0.1:8020/.live-model/parity/."""
     backend: Backend
     out: Path
     """Report (JSON); screenshots go next to it."""
@@ -153,7 +156,8 @@ class CheckBrowser:
             backend = await page.evaluate("document.querySelector('canvit-live').backend")
             log.info("%s ready in %.0f ms; replaying the reference", backend, load_ms)
 
-            result = await page.evaluate(REPLAY_JS, {"timedEpisodes": self.timed_episodes})
+            result = await page.evaluate(REPLAY_JS, {"timedEpisodes": self.timed_episodes,
+                                                     "referenceUrl": self.reference_url})
             pointer = await self._pointer(page)
             await page.screenshot(path=f"{screens}-pointer.png", full_page=True)
             await page.locator("canvit-live [data-policy-run]").click()
@@ -163,7 +167,7 @@ class CheckBrowser:
             resources = await page.evaluate(
                 "performance.getEntriesByType('resource').map((e) => ({name: e.name, ms: e.duration, bytes: e.decodedBodySize}))")
             report = {
-                "page": self.page_url, "chrome": browser.version, "headless": self.headless, "backend": backend,
+                "page": self.page_url, "reference": self.reference_url, "chrome": browser.version, "headless": self.headless, "backend": backend,
                 "adapter": await page.evaluate(
                     "(async () => { const a = await navigator.gpu?.requestAdapter(); return a ? a.info.vendor + ' ' + a.info.architecture : null })()"),
                 "load_ms": load_ms,

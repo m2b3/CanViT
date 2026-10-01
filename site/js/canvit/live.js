@@ -1,16 +1,18 @@
-// <canvit-live model scene [autoload]>: CanViT-B running in the browser. Click anywhere on the scene to take a
-// glimpse there, at any scale: scroll over the scene, drag out a box, or use the slider. The canvas carries over
+// <canvit-live model probe scene [autoload]>: CanViT-B running in the browser. Click anywhere on the scene to take
+// a glimpse there, at any scale: scroll over the scene, drag out a box, or use the slider. The canvas carries over
 // from glimpse to glimpse until reset, and EG-C2F can choose the next glimpse instead. Shows the model's input,
 // the ADE20K classes decoded from the canvas, and their entropy on a fixed scale from 0 to log(num_classes).
-// `model` is a directory written by `python -m canvit_pytorch.viz.live export`, relative to the page; without it, the
-// published export on the Hub (PUBLISHED_MODEL). `scene` is an image URL, relative to the page. The download starts from a button that states its size, or as soon as `autoload` is
-// present (also when it is added later, as a deck does when the slide comes near).
-// Events: canvit-load {manifest, backend}, canvit-glimpse {t, viewpoint, chosenBy, stepMs, runMs}, canvit-error.
+// `model` and `probe` are the canvit/ and probe/ directories `python -m canvit_pytorch.viz.live export` writes,
+// relative to the page; without them, the exports published on the Hub (PUBLISHED_CANVIT, PUBLISHED_PROBE). `scene`
+// is an image URL, relative to the page. The download starts from a button that states its size, or as soon as
+// `autoload` is present (also when it is added later, as a deck does when the slide comes near).
+// Events: canvit-load {manifest, probeManifest, backend}, canvit-glimpse {t, viewpoint, chosenBy, stepMs, runMs},
+// canvit-error.
 
 import { ADE20K_PALETTE } from "./ade20k.js";
 import { COLORMAPS } from "./colormaps.js";
 import { EntropyGuidedC2F } from "./entropy-guided-c2f.js";
-import { LiveModel, PUBLISHED_MODEL, loadManifest, sceneFromImage } from "./live-model.js";
+import { LiveModel, PUBLISHED_CANVIT, PUBLISHED_PROBE, downloadBytes, loadManifests, sceneFromImage } from "./live-model.js";
 import { frameCss, sheet } from "./view.js";
 
 const DEFAULT_SCALE = 0.25;
@@ -101,9 +103,11 @@ function argmaxLabels(logits, numClasses) {
 const paletteRgb = (c) => [ADE20K_PALETTE[3 * c], ADE20K_PALETTE[3 * c + 1], ADE20K_PALETTE[3 * c + 2]];
 
 class CanvitLive extends HTMLElement {
-  static observedAttributes = ["model", "scene", "autoload"];
+  static observedAttributes = ["model", "probe", "scene", "autoload"];
 
-  #manifest = null;
+  #manifest = null; // CanViT's export
+  #probe = null; // the probe's export
+  #downloadBytes = 0;
   #model = null;
   #scene = null; // {picture, tensor}
   #history = []; // viewpoints since the last reset
@@ -130,7 +134,9 @@ class CanvitLive extends HTMLElement {
     this.#ready.promise.catch(() => {}); // failures are shown in place; awaiting `ready` still rejects
   }
 
-  get #modelUrl() { return this.getAttribute("model") ?? PUBLISHED_MODEL; }
+  get #modelUrl() { return this.getAttribute("model") ?? PUBLISHED_CANVIT; }
+
+  get #probeUrl() { return this.getAttribute("probe") ?? PUBLISHED_PROBE; }
 
   /** Resolves when the model and the scene are loaded. */
   get ready() { return this.#ready.promise; }
@@ -150,7 +156,7 @@ class CanvitLive extends HTMLElement {
       if (value !== null && this.#manifest && !this.#loading) this.load();
       return;
     }
-    if (name === "model") this.#prepare();
+    if (name === "model" || name === "probe") this.#prepare();
     else if (this.#manifest) this.#loadScene().catch((error) => this.#fail(error));
   }
 
@@ -162,9 +168,11 @@ class CanvitLive extends HTMLElement {
     this.#ready = Promise.withResolvers();
     this.#ready.promise.catch(() => {});
     try {
-      const { manifest } = await loadManifest(this.#modelUrl);
+      const manifests = await loadManifests(this.#modelUrl, this.#probeUrl);
       if (generation !== this.#generation) return;
-      this.#manifest = manifest;
+      this.#manifest = manifests.canvit.manifest;
+      this.#probe = manifests.probe.manifest;
+      this.#downloadBytes = downloadBytes(manifests);
       this.#build();
       await this.#loadScene();
       if (this.hasAttribute("autoload")) await this.load();
@@ -180,18 +188,18 @@ class CanvitLive extends HTMLElement {
     if (this.#model || this.#downloading) return;
     this.#downloading = true;
     const generation = this.#generation;
-    const manifest = this.#manifest;
+    const manifest = this.#manifest, probeManifest = this.#probe, bytes = this.#downloadBytes;
     const button = this.shadowRoot.querySelector("[data-load]");
     button.disabled = true;
     const progress = this.shadowRoot.querySelector("progress");
     progress.hidden = false;
     try {
-      const model = await LiveModel.load(this.#modelUrl, {
+      const model = await LiveModel.load(this.#modelUrl, this.#probeUrl, {
         onProgress: (stage, received, total) => {
           if (stage === "download") {
-            progress.max = total || manifest.graph.bytes;
+            progress.max = total || bytes;
             progress.value = received;
-            this.#setStatus(`Downloading CanViT-B: <b>${(received / 1e6).toFixed(0)}</b> / ${(manifest.graph.bytes / 1e6).toFixed(0)} MB`);
+            this.#setStatus(`Downloading CanViT-B and its probe: <b>${(received / 1e6).toFixed(0)}</b> / ${(bytes / 1e6).toFixed(0)} MB`);
           } else {
             progress.removeAttribute("value");
             this.#setStatus("Checked the download; starting ONNX Runtime Web…");
@@ -208,7 +216,7 @@ class CanvitLive extends HTMLElement {
       this.#updateControls();
       this.#setStatus();
       this.#ready.resolve();
-      this.dispatchEvent(new CustomEvent("canvit-load", { detail: { manifest, backend: model.backendName }, bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent("canvit-load", { detail: { manifest, probeManifest, backend: model.backendName }, bubbles: true, composed: true }));
     } catch (error) {
       this.#fail(error);
     } finally {
@@ -284,7 +292,7 @@ class CanvitLive extends HTMLElement {
     if (!this.#model) throw new Error("the model is not loaded yet");
     const started = performance.now();
     const out = await this.#model.step(viewpoint);
-    const labels = argmaxLabels(out.logits, this.#manifest.readout.num_classes);
+    const labels = argmaxLabels(out.logits, this.#probe.readout.num_classes);
     const stepMs = performance.now() - started;
     this.#history.push(viewpoint);
     this.#shown = { labels, entropy: out.entropy, glimpse: out.glimpse, stepMs, runMs: out.runMs, chosenBy };
@@ -305,8 +313,7 @@ class CanvitLive extends HTMLElement {
     this.#model?.reset();
     this.#history = [];
     this.#shown = null;
-    const { policy, canvas_grid: grid } = this.#manifest;
-    this.#policy = new EntropyGuidedC2F({ levels: policy.levels, grid });
+    this.#policy = new EntropyGuidedC2F({ levels: this.#probe.policy.levels, grid: this.#manifest.canvas_grid });
     this.#drawScene();
     this.#drawMaps();
     this.#legend();
@@ -323,7 +330,7 @@ class CanvitLive extends HTMLElement {
     const empty = `<div class="empty" data-empty>No glimpse yet</div>`;
     const mapFigure = (key, title, note) => `<figure><figcaption>${title}<small>${note}</small></figcaption>
       <div class="frame" data-aligned><canvas class="pixels" data-${key} width="${grid}" height="${grid}"></canvas>${empty}${pointer}</div></figure>`;
-    const policy = m.policy;
+    const policy = this.#probe.policy;
     this.shadowRoot.innerHTML = `
       <div class="panels">
         <figure class="scene"><figcaption>Scene<small>click to look · scroll or drag to size the glimpse</small></figcaption>
@@ -343,7 +350,7 @@ class CanvitLive extends HTMLElement {
         <div class="readouts"><div class="legend"></div><div class="status" aria-live="polite"></div></div>
       </div>
       <div class="controls">
-        <button type="button" class="primary" data-load>Run CanViT-B here (${(m.graph.bytes / 1e6).toFixed(0)} MB download)</button>
+        <button type="button" class="primary" data-load>Run CanViT-B here (${(this.#downloadBytes / 1e6).toFixed(0)} MB download)</button>
         <progress hidden></progress>
         <button type="button" data-reset data-needs-model hidden>Reset canvas</button>
         <button type="button" data-policy-step data-needs-model hidden title="${policy.description}">${policy.paper_name}: next glimpse</button>
@@ -369,7 +376,7 @@ class CanvitLive extends HTMLElement {
     };
     this.#setScale(this.#scale);
     this.#legend();
-    this.#setStatus(`CanViT-B, fp32: ${(m.graph.bytes / 1e6).toFixed(0)} MB to download. Runs on WebGPU where the browser has it, on WebAssembly (slower) otherwise.`);
+    this.#setStatus(`CanViT-B and its ADE20K probe, fp32: ${(this.#downloadBytes / 1e6).toFixed(0)} MB to download. Runs on WebGPU where the browser has it, on WebAssembly (slower) otherwise.`);
   }
 
   // ---- pointer, wheel and keyboard on the scene ----
@@ -553,7 +560,7 @@ class CanvitLive extends HTMLElement {
     paint("[data-labels]", grid, (i) => paletteRgb(shown.labels[i]));
     // One fixed scale for every glimpse: entropy over its maximum, log(num_classes).
     const lut = COLORMAPS.viridis;
-    const maxEntropy = Math.log(m.readout.num_classes);
+    const maxEntropy = Math.log(this.#probe.readout.num_classes);
     paint("[data-entropy]", grid, (i) => {
       const k = 3 * Math.round(255 * clamp(shown.entropy[i] / maxEntropy, 0, 1));
       return [lut[k], lut[k + 1], lut[k + 2]];
@@ -566,7 +573,6 @@ class CanvitLive extends HTMLElement {
   #legend() {
     const legend = this.shadowRoot.querySelector(".legend");
     if (!legend) return;
-    const m = this.#manifest;
     const lut = COLORMAPS.viridis;
     const stops = Array.from({ length: 8 }, (_, i) => { const k = 3 * Math.round((i / 7) * 255); return `rgb(${lut[k]} ${lut[k + 1]} ${lut[k + 2]})`; });
     let classes = "";
@@ -575,11 +581,11 @@ class CanvitLive extends HTMLElement {
       for (const c of this.#shown.labels) counts.set(c, (counts.get(c) ?? 0) + 1);
       const total = this.#shown.labels.length;
       classes = [...counts.keys()].sort((a, b) => counts.get(b) - counts.get(a)).slice(0, LEGEND_CLASSES)
-        .map((c) => `<span class="class"><i style="background:rgb(${paletteRgb(c).join(" ")})"></i>${m.readout.class_names[c]} ${percent(counts.get(c) / total)}</span>`).join("");
+        .map((c) => `<span class="class"><i style="background:rgb(${paletteRgb(c).join(" ")})"></i>${this.#probe.readout.class_names[c]} ${percent(counts.get(c) / total)}</span>`).join("");
     }
     legend.innerHTML = `Linear probe on the layer-normalized canvas, decoded after every glimpse, including regions not yet seen. Hover a map to name any cell.
       ${classes ? `<div class="classes">${classes}</div>` : ""}
-      <p>Uncertainty: 0 <span class="bar" style="background:linear-gradient(90deg,${stops.join(",")})"></span> log ${m.readout.num_classes}, its maximum; the same scale at every glimpse.</p>`;
+      <p>Uncertainty: 0 <span class="bar" style="background:linear-gradient(90deg,${stops.join(",")})"></span> log ${this.#probe.readout.num_classes}, its maximum; the same scale at every glimpse.</p>`;
   }
 
   #showPointer() {
@@ -617,8 +623,8 @@ class CanvitLive extends HTMLElement {
       const grid = this.#manifest.canvas_grid;
       const i = Math.min(grid - 1, Math.floor(this.#pointer.y * grid)) * grid + Math.min(grid - 1, Math.floor(this.#pointer.x * grid));
       const entropy = this.#shown.entropy[i];
-      line += `<br>here: <b>${this.#manifest.readout.class_names[this.#shown.labels[i]]}</b> · ` +
-        `uncertainty ${(entropy / Math.log(this.#manifest.readout.num_classes)).toFixed(2)} (${entropy.toFixed(2)} nats)`;
+      line += `<br>here: <b>${this.#probe.readout.class_names[this.#shown.labels[i]]}</b> · ` +
+        `uncertainty ${(entropy / Math.log(this.#probe.readout.num_classes)).toFixed(2)} (${entropy.toFixed(2)} nats)`;
     }
     status.innerHTML = line;
   }

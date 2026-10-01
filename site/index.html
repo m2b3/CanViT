@@ -14,10 +14,9 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="CanViT">
   <meta name="twitter:card" content="summary">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="style.css">
+  <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/canvit.css">
+  <link rel="stylesheet" href="css/page.css">
   <script type="module" src="js/canvit/episode.js"></script>
   <script type="module" src="js/canvit/frontier.js"></script>
 </head>
@@ -30,8 +29,8 @@
     <p class="affiliations"><span><sup>1</sup>McGill University</span><span><sup>2</sup>Mila – Quebec AI Institute</span><span><sup>3</sup>Université Laval</span></p>
     <p class="venue"><img src="assets/logos/neurips.svg" alt="" width="94" height="42">NeurIPS 2026</p>
     <nav class="links" aria-label="Paper, code and models">
-      <a class="button arxiv" href="https://arxiv.org/abs/2603.22570"><span class="icon" style="--icon: url(assets/logos/arxiv.svg)"></span>Paper</a>
-      <a class="button" href="https://github.com/m2b3/CanViT"><span class="icon" style="--icon: url(assets/logos/github.svg)"></span>Code</a>
+      <a class="button arxiv" href="https://arxiv.org/abs/2603.22570"><span class="icon arxiv"></span>Paper</a>
+      <a class="button" href="https://github.com/m2b3/CanViT"><span class="icon github"></span>Code</a>
       <a class="button" href="https://huggingface.co/canvit"><img class="logo" src="assets/logos/huggingface-color.svg" alt="" width="20" height="19">Models</a>
     </nav>
   </header>
@@ -118,8 +117,8 @@
 
 
     <nav class="cta" aria-label="Paper and code">
-      <a class="button big" href="https://arxiv.org/abs/2603.22570"><span class="icon" style="--icon: url(assets/logos/arxiv.svg)"></span>Read the paper</a>
-      <a class="button big secondary" href="https://github.com/m2b3/CanViT"><span class="icon" style="--icon: url(assets/logos/github.svg)"></span>Get the code</a>
+      <a class="button big" href="https://arxiv.org/abs/2603.22570"><span class="icon arxiv"></span>Read the paper</a>
+      <a class="button big secondary" href="https://github.com/m2b3/CanViT"><span class="icon github"></span>Get the code</a>
       <a class="button big secondary" href="https://huggingface.co/canvit"><img class="logo" src="assets/logos/huggingface-color.svg" alt="" width="22" height="20">Download the models</a>
     </nav>
 

@@ -1,0 +1,30 @@
+/* The live page (live.html). Tokens and fonts come from canvit.css; the demo sits on a dark stage. */
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: var(--glimpse); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+:focus-visible { outline: 2px solid var(--glimpse); outline-offset: 3px; border-radius: 4px; }
+h1 { margin: 0; text-wrap: balance; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding-inline: 16px; }
+@media (min-width: 720px) { .wrap { padding-inline: 32px; } }
+
+.stage {
+  --stage: #0f0f15;
+  --stage-ink: #ededf3;
+  --stage-muted: #a4a4b4;
+  --stage-rule: #26262f;
+  --canvit-ink: var(--stage-ink);
+  --canvit-on-ink: var(--stage);
+  --canvit-muted: var(--stage-muted);
+  --canvit-focus: var(--glimpse);
+  --canvit-radius: 8px;
+  background: var(--stage); color: var(--stage-ink);
+  border-radius: 18px; padding: 16px; border: 1px solid var(--stage-rule);
+  box-shadow: 0 30px 70px -40px rgb(10 10 30 / .5);
+}
+@media (min-width: 720px) { .stage { padding: 26px; } }
+.stage-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; margin-bottom: 18px; }
+.stage-head .hint { font-size: 12.5px; line-height: 1.4; color: var(--stage-muted); }
+.caption { margin: 14px 2px 0; color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 62rem; }
+.caption b { color: var(--ink); font-weight: 600; }

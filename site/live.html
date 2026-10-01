@@ -5,17 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CanViT-B in your browser</title>
   <meta name="description" content="The released CanViT-B running in your browser: take a glimpse anywhere in the scene, at any scale, and watch the canvas fill.">
-  <script>try { const theme = localStorage.getItem("theme"); if (theme) document.documentElement.dataset.theme = theme; } catch {}</script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200..700&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
-  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/canvit.css">
+  <link rel="stylesheet" href="css/live.css">
   <style>
     .live-head { padding-block: clamp(28px, 6vh, 56px) 22px; }
-    .live-head a { font: 500 14px/1 var(--display); text-decoration: none; }
-    .live-head h1 { margin-top: 14px; font: 250 clamp(2rem, 4.8vw, 3.2rem)/1.05 var(--display); letter-spacing: -.035em; }
-    .live-head p { margin: 14px 0 0; max-width: 46rem; font: 16px/1.6 var(--display); color: var(--muted); }
-    .photo { font: 500 13px/1 var(--display); padding: 7px 14px; border-radius: 999px; cursor: pointer;
+    .live-head a { font: 500 14px/1 var(--sans); text-decoration: none; }
+    .live-head h1 { margin-top: 14px; font: 250 clamp(2rem, 4.8vw, 3.2rem)/1.05 var(--sans); letter-spacing: -.035em; }
+    .live-head p { margin: 14px 0 0; max-width: 46rem; font: 16px/1.6 var(--sans); color: var(--muted); }
+    .photo { font: 500 13px/1 var(--sans); padding: 7px 14px; border-radius: 999px; cursor: pointer;
              color: var(--stage-ink); border: 1px solid var(--stage-rule); }
     .photo:focus-within { outline: 2px solid var(--glimpse); outline-offset: 2px; }
     .photo input { position: absolute; opacity: 0; width: 1px; height: 1px; }

@@ -20,9 +20,9 @@ done
 [ -f site/assets/paper/arch_overview.svg ] || { echo "site/assets/paper/arch_overview.svg is missing: run site/copy_paper_figures.sh" >&2; exit 1; }
 
 out=$(mktemp -d)
-cp -R site/index.html site/style.css site/js "$out/"
+cp -R site/index.html site/css site/js "$out/"
 mkdir "$out/data" && for bundle in $bundles; do cp -R "site/$bundle" "$out/data/"; done
-mkdir "$out/assets" && cp -R site/assets/logos site/assets/paper site/assets/social-preview.png "$out/assets/"
+mkdir "$out/assets" && cp -R site/assets/fonts site/assets/logos site/assets/paper site/assets/social-preview.png "$out/assets/"
 find "$out" -type f | sed "s|^$out/||" | sort
 du -sh "$out"
 

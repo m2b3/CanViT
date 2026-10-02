@@ -1,56 +1,79 @@
 # FLOPs (`canvit_pytorch.flops`)
 
-Analytic forward FLOP counts of [CanViT](../../README.md), the Canvas Vision
-Transformer, and of the DINOv3 ViTs it is compared with. CanViT's come from a
-`CanViTConfig` and the backbone it names, DINOv3's from the model's Hugging
-Face config.
+`canvit_pytorch.flops` computes analytic forward floating-point operation
+counts for CanViT and the DINOv3 ViTs used in the evaluations. CanViT counts
+come from a `CanViTConfig` and its backbone specification. DINOv3 counts come
+from a `DINOv3ViTConfig` loaded from the model configuration.
 
-## Conventions
+## Setup
 
-- One multiply-accumulate is two FLOPs.
-- Forward passes only. CanViT's costs are per glimpse; a rollout of T glimpses
-  costs T times as much.
-- Counted: what `torch.utils.flop_counter` counts, matrix products and
-  convolutions. That is every linear layer, both products of each attention
-  (4 N_q N_k D for N_q queries, N_k keys and width D over all heads), the patch
-  embedding, the Viewpoint Encoding's random Fourier features and a
-  segmentation probe's 1×1 convolution.
-- Left out: normalization (LayerNorm, BatchNorm), softmax, RoPE, GELU,
-  LayerScale, residual additions, glimpse extraction and the viewing policy.
+The CanViT functions use the base package. The DINOv3 example and the network
+test need the optional transformer dependency:
 
-| Function | Cost of |
-|---|---|
-| `glimpse_flops` | One CanViT forward: patch embedding, VPE, backbone blocks, Canvas Attention |
-| `canvas_attention_read_flops`, `canvas_attention_write_flops` | One Canvas Attention Read, one Write |
-| `segmentation_probe_flops` | A `SegmentationProbe` on a feature grid |
-| `dinov3_flops` | A DINOv3 ViT on a square image |
-| `num_glimpse_tokens`, `num_canvas_tokens` | Token counts N_g and N_can (no FLOPs) |
+```bash
+uv sync --all-extras
+```
 
-The paper's per-glimpse costs of CanViT, in its ADE20K results and its
-ablation table, are `glimpse_flops` plus `segmentation_probe_flops` for the
-ADE20K probe on the canvas.
+## Counting convention
+
+One multiply-accumulate counts as two FLOPs. The functions count the matrix
+products and convolutions covered by `torch.utils.flop_counter`:
+
+- every linear layer and patch-embedding convolution;
+- both products in each attention operation, with
+  `4 * num_queries * num_keys * dimension` FLOPs over all heads;
+- the Viewpoint Encoding (VPE) random Fourier feature projection; and
+- the segmentation probe's 1×1 convolution.
+
+Normalization, softmax, rotary position embeddings (RoPE), activations,
+LayerScale, residual additions, glimpse extraction and viewing-policy work are
+outside the count. CanViT counts are per glimpse. A rollout with `T` glimpses
+of the same geometry therefore performs `T` times this CanViT count before any
+downstream readout.
+
+| Function | Count |
+| --- | --- |
+| `glimpse_flops` | One CanViT forward, including patch embedding, VPE, backbone blocks, and scheduled Canvas Attention Reads and Writes. |
+| `canvas_attention_read_flops` | One Canvas Attention Read. |
+| `canvas_attention_write_flops` | One Canvas Attention Write. |
+| `segmentation_probe_flops` | A `SegmentationProbe` on one feature grid. |
+| `dinov3_flops` | One DINOv3 ViT forward on a square RGB image. |
+| `num_glimpse_tokens` | The number of tokens in the glimpse stream. |
+| `num_canvas_tokens` | The number of canvas registers and canvas patches. |
+
+For the paper's ADE20K per-glimpse cost, add the CanViT count to the linear
+segmentation probe count:
 
 ```python
 from canvit_pytorch import CanViTConfig
 from canvit_pytorch.benchmarks.ade20k import NUM_CLASSES
 from canvit_pytorch.flops import glimpse_flops, segmentation_probe_flops
 
-config = CanViTConfig()  # CanViT-B
-glimpse = glimpse_flops(config, glimpse_size_px=128, canvas_grid_size=32)
-probe = segmentation_probe_flops(grid_size=32, embed_dim=config.canvas_dim, num_classes=NUM_CLASSES)
-print(f"{(glimpse + probe) / 1e9:.1f} GFLOPs per glimpse")
+config = CanViTConfig()
+canvit = glimpse_flops(config, glimpse_size_px=128, canvas_grid_size=32)
+probe = segmentation_probe_flops(
+    grid_size=32,
+    embed_dim=config.canvas_dim,
+    num_classes=NUM_CLASSES,
+)
+print(f"{(canvit + probe) / 1e9:.1f} GFLOPs per glimpse")
 ```
 
-DINOv3's config comes from the Hub, where the repositories are gated: accept
-their license there first.
+Load a DINOv3 configuration before calling `dinov3_flops`:
 
 ```python
 from transformers import AutoConfig
+
 from canvit_pytorch.flops import dinov3_flops
 from canvit_pytorch.teacher import DINOV3_REPOS
 
-dinov3_flops(AutoConfig.from_pretrained(DINOV3_REPOS["vitb16"]), input_size_px=512)
+config = AutoConfig.from_pretrained(DINOV3_REPOS["vitb16"])
+print(dinov3_flops(config, input_size_px=512))
 ```
+
+The model configuration repositories are gated on the [Hugging Face
+Hub](https://huggingface.co/facebook/dinov3-vitb16-pretrain-lvd1689m) and
+require an accepted license and a token.
 
 ## Tests
 
@@ -58,6 +81,6 @@ dinov3_flops(AutoConfig.from_pretrained(DINOV3_REPOS["vitb16"]), input_size_px=5
 uv run --all-extras pytest -q tests/test_flops.py
 ```
 
-They check every count against `torch.utils.flop_counter` on real forwards
-(with the math attention backend, as the counter misses fused CPU attention),
-and reproduce the paper's FLOP counts of CanViT-B, its ablations and DINOv3.
+The tests compare the analytic counts with real forwards measured by
+`torch.utils.flop_counter` under the math attention backend. They also cover
+CanViT's released geometry, its ablations and DINOv3 configurations.

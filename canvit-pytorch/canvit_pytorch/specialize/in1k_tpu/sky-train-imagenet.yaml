@@ -32,9 +32,9 @@ resources:
     strategy: EAGER_NEXT_REGION
     max_restarts_on_errors: 2
 
-# workdir = canvit-pytorch/ (`.` when launched from there). The whole
-# directory ships to the VM so setup_tpu.sh can build the tpu/ environment
-# and install the local package into it.
+# Launch from the monorepo root. The whole checkout ships to the VM so the
+# canvit-pytorch build hook and its editable canvit-core dependency can resolve.
+# The setup and run blocks then enter canvit-pytorch/.
 workdir: .
 
 # Checkpoints: MOUNT_CACHED (rclone-backed local-disk + async GCS sync).
@@ -82,12 +82,12 @@ envs:
   CHUNK_SIZE: "4"
 
 setup: |
-  cd ~/sky_workdir
+  cd ~/sky_workdir/canvit-pytorch
   bash canvit_pytorch/specialize/in1k_tpu/setup_tpu.sh
 
 run: |
   export PATH="$HOME/.local/bin:$PATH"
-  cd ~/sky_workdir
+  cd ~/sky_workdir/canvit-pytorch
   RUN_START_NS=$(date +%s%N)
   ts() { local now=$(date +%s%N); echo "$(( (now - RUN_START_NS) / 1000000 ))ms | $*"; }
 

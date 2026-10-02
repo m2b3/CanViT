@@ -103,6 +103,12 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #foundation .prob figcaption { grid-column: 2; grid-row: 1; font-size: 22px; font-weight: 750; white-space: nowrap; }
 #foundation.shows-decode .prob { opacity: 1; }
 #foundation > .cite { position: absolute; left: var(--slide-pad-x); bottom: 50px; }
+/* How much went into DINOv3: three facts under the feature map, on the last click. */
+#foundation .scale-facts { position: absolute; left: 0; top: 446px; width: 600px; margin: 0; display: grid;
+  grid-template-columns: repeat(3, 1fr); gap: 18px; opacity: 0; transition: opacity .6s ease; }
+#foundation.shows-scale .scale-facts { opacity: 1; }
+#foundation .scale-facts dt { font-size: 30px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+#foundation .scale-facts dd { margin: 4px 0 0; font-size: 15px; line-height: 1.3; color: var(--muted); }
 
 /* The history charts (history.js), one benchmark at a time on a stage: passive (ink), frozen features (dashed slate),
    active models (amber), the gap (amber bracket), CanViT-B (canvas red; hollow when frozen). */

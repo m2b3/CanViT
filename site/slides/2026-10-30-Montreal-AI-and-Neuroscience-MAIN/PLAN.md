@@ -157,6 +157,13 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] Reuse the well-received primitives of the September deck, ported (never imported): see
   "Components and deck primitives".
 - [Yohaï, 2026-10-01] Keep every TODO, known issue and request in this file.
+- [Yohaï, 2026-10-01] `#policy-agnosticism`: "the policy agnosticism slide online has / had missing data for some
+  reason (but tbh that slide sucks and is unclear + redundant anyway soooo)". The missing data: its four photographs,
+  which the deck did not name, so `deploy.sh` did not ship them (fixed: the element now names its directory). The
+  slide moved to Backup; its facts are in the notes of `#distillation` and `#policies`.
+- [Yohaï, 2026-10-01] `#memory`: "also looks nice but its exact role / contribution is somewhat unclear so maybe backup /
+  to be reevaluated etc". Moved to Backup, to be reevaluated with the authors: it carries "trans-saccadic integration"
+  (`AGENTS.md`, "Key ideas"), and `#neuro-ai`'s memory card reuses its maps.
 - [Yohaï, 2026-10-01] On the deck's data coming from gitignored `throwaway/` scripts: "time for you to read all the
   throwaway scripts etc and begin with the easy version of having scripts committed alongside the website. for
   refactoring, that affects the core package so we will see. also, beware of polluting the core-package API with

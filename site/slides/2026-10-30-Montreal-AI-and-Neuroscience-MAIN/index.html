@@ -137,14 +137,25 @@
     <figure class="prob" style="--row: 0"><figcaption>television</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-television.png" alt="The probability of television: bright on the TV only"></figure>
     <figure class="prob" style="--row: 1"><figcaption>fireplace</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-fireplace.png" alt="The probability of fireplace: bright on the fireplace only"></figure>
     <figure class="prob" style="--row: 2"><figcaption>armchair</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-armchair.png" alt="The probability of armchair: bright on the armchair only"></figure>
+    <!-- How much went into DINOv3 [Yohaï, 2026-10-01: "give a sense of how good DINOv3 is and how much went into it"],
+         read in Siméoni et al. 2025, arXiv:2508.10104v1: LVD-1689M, 1,689 million images curated from about 17
+         billion (§3.1); the ViT-7B teacher, 6,716M parameters (Fig. 16a), trained for 61,440 H100-hours (Table 20);
+         the ViT-B shown here is distilled from it (§5.2). -->
+    <dl class="scale-facts">
+      <div><dt>1.7 billion</dt><dd>training images, no labels</dd></div>
+      <div><dt>6.7 billion</dt><dd>parameters in the teacher this ViT-B is distilled from</dd></div>
+      <div><dt>61,440</dt><dd>H100-hours to train that teacher</dd></div>
+    </dl>
   </div>
   <p class="cite">DINOv3 ViT-B/16, Siméoni et al. 2025</p>
   <span class="fragment step-marker" data-shows="features"></span>
   <span class="fragment step-marker" data-shows="decode"></span>
+  <span class="fragment step-marker" data-shows="scale"></span>
   <aside class="notes"><ul>
     <li>DINOv3 ViT-B/16 (Meta, 2025): self-supervised, no labels.</li>
     <li>Colors: PCA of the patch features (components 2 to 4).</li>
     <li>A linear probe on the frozen features, trained with ADE20K labels: p(television), p(fireplace), p(armchair).</li>
+    <li>DINOv3 (arXiv:2508.10104): 1,689 million images curated from about 17 billion; a 7B teacher (6.7 billion parameters), 61,440 H100-hours; about 9 million GPU-hours for the whole project. The ViT-B is distilled from the 7B. CanViT-B's pretraining: 166 H100-hours.</li>
   </ul></aside>
 </section>
 
@@ -367,70 +378,14 @@
     <li>Separating the architecture problem from the problem of learning good representations.</li>
     <li>Teacher: DINOv3 ViT-B, frozen, the whole scene at 512 px. Student: CanViT, from glimpses.</li>
     <li>Targets: DINOv3's patch features, predicted from the canvas, and its CLS token. Squared error. No labels.</li>
-    <li>Pretraining: ImageNet-21k, 4 glimpses on average. This example: the released model on an ADE20K bedroom, 21 random glimpses.</li>
+    <li>Pretraining: every viewpoint random (anywhere, zoom down to 0.25% of the scene, small glimpses more likely); random rollout length, 4 glimpses on average; each scene in a batch gets an R-IID and an F-IID rollout (F-IID starts with the full scene).</li>
+    <li>13.2M ImageNet-21k scenes, about 1 billion glimpses, 166 hours on a single H100.</li>
+    <li>This example: the released model on an ADE20K bedroom, 21 random glimpses.</li>
     <li>Patch loss 0.87 after the first glimpse, 0.31 after the last; 1.05 for predicting the average target.</li>
   </ul></aside>
 </section>
 
-<section id="policy-agnosticism" data-status="draft">
-  <h2>Policy agnosticism</h2>
-  <!-- Viewpoints drawn by the package's pretraining sampler for four ImageNet photographs (experiments/pretraining):
-       rollout lengths from the pretraining config's process (K = 2, p_stop = 0.5), F-IID and R-IID as in pretraining.
-       Labels and colors from js/canvit/policies.js. -->
-  <div class="rollout-grid">
-    <p class="row-label" data-policy-label="random"></p>
-    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="dog" policy="random"></pretraining-rollout>
-    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="church" policy="random"></pretraining-rollout>
-    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="truck" policy="random"></pretraining-rollout>
-    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="parachute" policy="random"></pretraining-rollout>
-    <p class="row-label fiid" data-policy-label="full_then_random"></p>
-    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="dog" policy="full_then_random"></pretraining-rollout>
-    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="church" policy="full_then_random"></pretraining-rollout>
-    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="truck" policy="full_then_random"></pretraining-rollout>
-    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="parachute" policy="full_then_random"></pretraining-rollout>
-  </div>
-  <span class="fragment step-marker" data-shows="fiid"></span>
-  <aside class="notes"><ul>
-    <li>Random locations and zoom levels; scale down to 0.05 (0.25% of the area); small glimpses more likely.</li>
-    <li>Random rollout length: 4 glimpses on average.</li>
-    <li>Each scene in a batch: an R-IID and an F-IID rollout; F-IID starts with the full scene.</li>
-    <li>C2F, F2C, EG-C2F, RFS: inference only.</li>
-    <li>13.2M ImageNet-21k scenes, about 1 billion glimpses, 166 hours on a single H100.</li>
-  </ul></aside>
-</section>
-
 <!-- ============================================================== What it does -->
-
-<section id="memory" data-status="draft">
-  <h2>A persistent, evolving understanding of the scene</h2>
-  <!-- ADE_val_00000836, a street, from a sweep of 6,218 three-object sequences in ADE20K validation
-       (experiments/memory): a glimpse on a shop sign, then on people walking, then on a bicycle; each object's class
-       probability in its color over the dimmed scene, per canvas cell. Kept: the state carried; reset: a fresh state
-       before each glimpse. Alternative, numerically cleaner but less lively: ADE_val_00001182 (a bedroom). -->
-  <div class="memory-demo">
-    <figure><figcaption>Glimpses</figcaption><div class="stack">
-      <img class="t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t0.png" alt="A street with a glimpse on a shop sign">
-      <img class="t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t1.png" alt="A second glimpse, on people walking">
-      <img class="t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t2.png" alt="A third glimpse, on a bicycle"></div></figure>
-    <figure><figcaption>Memory kept</figcaption><div class="stack">
-      <img class="pixels t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t0.png" alt="The sign lights up">
-      <img class="pixels t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t1.png" alt="The people light up; the sign stays">
-      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="The bicycle lights up; the sign and the people stay"></div></figure>
-    <figure class="reset"><figcaption>Memory reset</figcaption><div class="stack">
-      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="With the memory reset before each glimpse, only the bicycle remains"></div></figure>
-  </div>
-  <p class="class-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
-  <span class="fragment step-marker" data-shows="second"></span>
-  <span class="fragment step-marker" data-shows="third"></span>
-  <span class="fragment step-marker" data-shows="reset"></span>
-  <aside class="notes"><ul>
-    <li>Glimpses: a shop sign, people, a bicycle. Maps: p(class) per canvas cell.</li>
-    <li>Kept: the state carried across glimpses. Reset: a fresh state (canvas and CLS) before each glimpse.</li>
-    <li>If you reset the memory, unless you get a good look at something, the representation is bad. With the memory retained, it&rsquo;s okay: you got a good look before.</li>
-    <li>6,218 three-object sequences in ADE20K validation, glimpses left to right; after the third glimpse, mean p over the first object: 0.41 kept, 0.04 reset; over the second: 0.45, 0.04.</li>
-    <li>Keyword: trans-saccadic integration.</li>
-  </ul></aside>
-</section>
 
 <section id="extrapolation" data-status="ready">
   <h2>Extrapolation to unobserved regions</h2>
@@ -512,7 +467,7 @@
   <span class="fragment step-marker" data-shows="egc2f" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-egc2f" data-canvit-t="0"></span>
   <span class="fragment step-marker" data-shows="rfs" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-rfs" data-canvit-t="0"></span>
   <aside class="notes"><ul>
-    <li>R-IID, F-IID: pretraining.</li>
+    <li>R-IID, F-IID: pretraining. The others were never seen in pretraining.</li>
     <li>C2F: quadtree, random order within a level. F2C: C2F reversed.</li>
     <li>EG-C2F: C2F, most uncertain tile first.</li>
     <li>RFS: the full scene, repeated.</li>
@@ -724,6 +679,64 @@
 
 <section id="backup" data-status="ready">
   <p class="divider">Backup</p>
+</section>
+
+<section id="policy-agnosticism" data-status="draft">
+  <h2>Policy agnosticism</h2>
+  <!-- Viewpoints drawn by the package's pretraining sampler for four ImageNet photographs (experiments/pretraining):
+       rollout lengths from the pretraining config's process (K = 2, p_stop = 0.5), F-IID and R-IID as in pretraining.
+       Labels and colors from js/canvit/policies.js. -->
+  <div class="rollout-grid">
+    <p class="row-label" data-policy-label="random"></p>
+    <pretraining-rollout data-play src="../../data/talk/pretraining" scene="dog" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining" scene="church" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining" scene="truck" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining" scene="parachute" policy="random"></pretraining-rollout>
+    <p class="row-label fiid" data-policy-label="full_then_random"></p>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining" scene="dog" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining" scene="church" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining" scene="truck" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining" scene="parachute" policy="full_then_random"></pretraining-rollout>
+  </div>
+  <span class="fragment step-marker" data-shows="fiid"></span>
+  <aside class="notes"><ul>
+    <li>Random locations and zoom levels; scale down to 0.05 (0.25% of the area); small glimpses more likely.</li>
+    <li>Random rollout length: 4 glimpses on average.</li>
+    <li>Each scene in a batch: an R-IID and an F-IID rollout; F-IID starts with the full scene.</li>
+    <li>C2F, F2C, EG-C2F, RFS: inference only.</li>
+    <li>13.2M ImageNet-21k scenes, about 1 billion glimpses, 166 hours on a single H100.</li>
+  </ul></aside>
+</section>
+
+<section id="memory" data-status="draft">
+  <h2>A persistent, evolving understanding of the scene</h2>
+  <!-- ADE_val_00000836, a street, from a sweep of 6,218 three-object sequences in ADE20K validation
+       (experiments/memory): a glimpse on a shop sign, then on people walking, then on a bicycle; each object's class
+       probability in its color over the dimmed scene, per canvas cell. Kept: the state carried; reset: a fresh state
+       before each glimpse. Alternative, numerically cleaner but less lively: ADE_val_00001182 (a bedroom). -->
+  <div class="memory-demo">
+    <figure><figcaption>Glimpses</figcaption><div class="stack">
+      <img class="t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t0.png" alt="A street with a glimpse on a shop sign">
+      <img class="t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t1.png" alt="A second glimpse, on people walking">
+      <img class="t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t2.png" alt="A third glimpse, on a bicycle"></div></figure>
+    <figure><figcaption>Memory kept</figcaption><div class="stack">
+      <img class="pixels t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t0.png" alt="The sign lights up">
+      <img class="pixels t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t1.png" alt="The people light up; the sign stays">
+      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="The bicycle lights up; the sign and the people stay"></div></figure>
+    <figure class="reset"><figcaption>Memory reset</figcaption><div class="stack">
+      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="With the memory reset before each glimpse, only the bicycle remains"></div></figure>
+  </div>
+  <p class="class-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
+  <span class="fragment step-marker" data-shows="second"></span>
+  <span class="fragment step-marker" data-shows="third"></span>
+  <span class="fragment step-marker" data-shows="reset"></span>
+  <aside class="notes"><ul>
+    <li>Glimpses: a shop sign, people, a bicycle. Maps: p(class) per canvas cell.</li>
+    <li>Kept: the state carried across glimpses. Reset: a fresh state (canvas and CLS) before each glimpse.</li>
+    <li>If you reset the memory, unless you get a good look at something, the representation is bad. With the memory retained, it&rsquo;s okay: you got a good look before.</li>
+    <li>6,218 three-object sequences in ADE20K validation, glimpses left to right; after the third glimpse, mean p over the first object: 0.41 kept, 0.04 reset; over the second: 0.45, 0.04.</li>
+    <li>Keyword: trans-saccadic integration.</li>
+  </ul></aside>
 </section>
 
 <section id="canvas-attention" data-status="draft">

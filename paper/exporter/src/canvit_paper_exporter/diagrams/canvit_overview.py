@@ -23,7 +23,7 @@ from canvit_pytorch import CanViT, Viewpoint, sample_at_viewpoint
 from canvit_pytorch.preprocess import preprocess as make_preprocess
 from canvit_pytorch.viz.pca import fit_pca
 
-from canvit_paper_exporter.diagrams._common import DIAGRAMS_INPUTS, DIAGRAMS_OUTPUTS, BaseConfig, load_canvit
+from canvit_paper_exporter.diagrams._common import DIAGRAMS_OUTPUTS, EXAMPLE_IMAGES, BaseConfig, load_canvit
 from canvit_paper_exporter.diagrams.io import denormalized_numpy, pca_colors
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -196,7 +196,7 @@ def _save_row_images(out_dir: Path, glimpse_idx: int,
 class Config(BaseConfig):
     output: str = "canvit_overview"
     canvas_grid: int = 64
-    inputs_dir: Path = DIAGRAMS_INPUTS
+    inputs_dir: Path = EXAMPLE_IMAGES
     images: list[str] = field(default_factory=lambda: list(_DEFAULT_IMAGES))
     viewpoints: list[tuple[float, float, float]] = field(
         default_factory=lambda: list(_DEFAULT_VIEWPOINTS)

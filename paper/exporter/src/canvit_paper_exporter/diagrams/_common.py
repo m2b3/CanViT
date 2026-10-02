@@ -11,17 +11,18 @@ import torch
 from canvit_pytorch import CanViT, CanViTForPretraining
 from canvit_pytorch.hub.repos import FLAGSHIP, RELEASED_CANVAS_GRID_SIZE, RELEASED_GLIMPSE_SIZE_PX
 
-from canvit_paper_exporter.paths import REPO_ROOT
+from canvit_paper_exporter.paths import PAPER_ROOT, REPO_ROOT
 
 DIAGRAMS_DIR = REPO_ROOT / "diagrams"
 DIAGRAMS_OUTPUTS = DIAGRAMS_DIR / "outputs"
-DIAGRAMS_INPUTS = DIAGRAMS_DIR / "inputs"
+# The repository's example images, which canvit-pytorch's demos and tests also read.
+EXAMPLE_IMAGES = PAPER_ROOT.parent / "canvit-pytorch" / "test_data"
 
 
 @dataclass
 class BaseConfig:
     model: str = FLAGSHIP
-    image: Path = DIAGRAMS_INPUTS / "Cat03.jpg"
+    image: Path = EXAMPLE_IMAGES / "Cat03.jpg"
     canvas_grid: int = RELEASED_CANVAS_GRID_SIZE
     glimpse_px: int = RELEASED_GLIMPSE_SIZE_PX
     device: str = "cpu"

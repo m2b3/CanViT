@@ -24,7 +24,7 @@ from PIL import Image
 from torch import Tensor, nn
 from torch.utils.hooks import RemovableHandle
 
-from canvit_paper_exporter.diagrams._common import DIAGRAMS_INPUTS, DIAGRAMS_OUTPUTS, BaseConfig, load_canvit
+from canvit_paper_exporter.diagrams._common import DIAGRAMS_OUTPUTS, EXAMPLE_IMAGES, BaseConfig, load_canvit
 from canvit_paper_exporter.diagrams.io import denormalized_numpy, pca_colors
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -123,7 +123,7 @@ DEFAULT_SCENARIOS = (
 class Config(BaseConfig):
     output: str = "canvas_evolution"
     canvas_grid: int = 64
-    inputs_dir: Path = DIAGRAMS_INPUTS
+    inputs_dir: Path = EXAMPLE_IMAGES
     pca_anchor: bool = False
     """Color every snapshot of a glimpse in the basis of snapshot pca_anchor_idx instead of its own."""
     pca_anchor_idx: int = -1

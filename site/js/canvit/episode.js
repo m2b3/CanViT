@@ -1,9 +1,15 @@
-// <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels|correct"] [autoplay]>: a recorded rollout
-// (web bundle) played as the loop CanViT runs: the viewpoint moves on the scene, its crop becomes the glimpse,
+// <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels|correct"] [stage] [autoplay]>: a recorded
+// rollout (web bundle) played as the loop CanViT runs: the viewpoint moves on the scene, its crop becomes the glimpse,
 // the glimpse goes into CanViT, at the center, which reads its canvas and writes the glimpse into it. Under the canvas, the
-// pixel accuracy of the segmentation decoded from it. The first glimpses are slow and later ones faster; the
+// pixel accuracy of the segmentation decoded from it; beside a segmentation, its largest classes, named. The first
+// glimpses are slow and later ones faster; the
 // last state holds until Replay. Several bundles in `src` become scene tabs labeled with their titles.
+// stage introduces the loop part by part, each in its place: "scene" (the scene alone), "viewpoint" (with the first
+// glimpse's box), "glimpse" (the crop), "model" (CanViT), "canvas" (the canvas after the first glimpse), "all" (the
+// default: everything, and it plays). Before "all" it holds at the first glimpse and does not play; released to "all",
+// it plays on from that glimpse, so what the stages built stays on screen.
 
+import { ADE20K_PALETTE } from "./ade20k.js";
 import { loadBundle } from "./bundle.js";
 import { CORRECTNESS, colormapGradient, correctnessImage, layerImage, layerSpec } from "./layers.js";
 
@@ -13,6 +19,8 @@ const READOUTS = {
   labels: { label: "Segmentation", image: (bundle, t) => layerImage(bundle, t, "labels") },
   correct: { label: "Correctness", image: correctnessImage },
 };
+const STAGES = ["scene", "viewpoint", "glimpse", "model", "canvas", "all"];
+const NAMED_CLASSES = 6; // the segmentation's largest classes, named beside it
 const FIRST_STEP_MS = 1600;
 const STEP_RATIO = 0.74;
 const SHORTEST_STEP_MS = 170;
@@ -112,7 +120,16 @@ template.innerHTML = `
   .legend { display: flex; flex-direction: column; justify-content: center; gap: 8px; font-size: 13.5px;
             color: var(--canvit-muted, #475569); white-space: nowrap; }
   .legend i { display: inline-block; width: 11px; height: 11px; margin-right: 6px; border-radius: 3px; vertical-align: -1px; }
+  .classes { display: flex; flex-direction: column; justify-content: center; gap: 6px; font-size: 13px; white-space: nowrap;
+             color: var(--canvit-ink, #0f172a); }
+  .classes i { display: inline-block; width: 11px; height: 11px; margin-right: 5px; border-radius: 3px; vertical-align: -1px; }
   .error { padding: 14px; border: 1px solid #dc2626; border-radius: 10px; color: #b91c1c; font: 13px/1.5 ui-monospace, monospace; }
+  /* Staged: the parts not yet introduced keep their place, invisible. */
+  .flow > *, .bar { transition: opacity .6s ease; }
+  :host(:is([stage="scene"], [stage="viewpoint"])) :is(.crop, .glimpse, .glimpse-label),
+  :host(:is([stage="scene"], [stage="viewpoint"], [stage="glimpse"])) :is(.input, .model-cell),
+  :host(:is([stage="scene"], [stage="viewpoint"], [stage="glimpse"], [stage="model"])) :is(.write, .canvas-label, .canvas),
+  :host(:not([stage="all"])[stage]) :is(.meter, .bar) { opacity: 0; pointer-events: none; }
   /* Narrow: the same loop from top to bottom. */
   @container (max-width: 760px) {
     .flow { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 4px;
@@ -147,7 +164,7 @@ template.innerHTML = `
   <div class="cell model-cell"><div class="model"><span class="wordmark">CanViT</span><small class="step"></small></div></div>
   <div class="cell write">${arrow("write", "red")}<span class="tag">write</span>${arrow("read", "red read")}<span class="tag">read</span></div>
   <div class="label canvas-label">Canvas</div>
-  <div class="cell canvas"><div class="with-colorbar"><canvas class="canvas-view"></canvas><div class="side"><div class="colorbar" aria-hidden="true"><span class="colorbar-max"></span><div class="colorbar-bar"></div><span>0</span></div><div class="legend"></div></div></div></div>
+  <div class="cell canvas"><div class="with-colorbar"><canvas class="canvas-view"></canvas><div class="side"><div class="colorbar" aria-hidden="true"><span class="colorbar-max"></span><div class="colorbar-bar"></div><span>0</span></div><div class="legend"></div><div class="classes"></div></div></div></div>
   <div class="meter" hidden>
     <div class="meter-head"><span title="Share of annotated pixels whose class, decoded from the canvas, is right">Pixel accuracy</span><b class="meter-value"></b><span class="meter-gain" title="Change since the first glimpse"></span></div>
     <div class="meter-track"><span class="meter-base"></span><span class="meter-gained"></span><span class="meter-start"></span></div>
@@ -187,7 +204,7 @@ function sizeToDisplay(canvas) {
 }
 
 class CanvitEpisode extends HTMLElement {
-  static observedAttributes = ["src", "readout"];
+  static observedAttributes = ["src", "readout", "stage"];
 
   #bundle = null;
   #scene = null;
@@ -199,6 +216,8 @@ class CanvitEpisode extends HTMLElement {
   #frame = 0;
   #lastTime = null;
   #colors = null;
+  #namedAt = null; // the glimpse whose classes are named beside the canvas
+  #holding = false; // held at the first glimpse by a stage: the next play goes on from there
 
   constructor() {
     super();
@@ -208,7 +227,7 @@ class CanvitEpisode extends HTMLElement {
                step: $(".step"), play: $(".play"), scenes: $(".scenes"), readouts: $(".readouts"),
                meter: $(".meter"), value: $(".meter-value"), gain: $(".meter-gain"), base: $(".meter-base"),
                gained: $(".meter-gained"), start: $(".meter-start"), legend: $(".legend"),
-               colorbar: $(".colorbar"), colorbarMax: $(".colorbar-max"),
+               colorbar: $(".colorbar"), colorbarMax: $(".colorbar-max"), classes: $(".classes"),
                arrows: Object.fromEntries([...this.shadowRoot.querySelectorAll("[data-arrow]")].map((svg) =>
                  [svg.dataset.arrow, svg.querySelector(".packet")])) };
     this.$.play.addEventListener("click", () => {
@@ -229,6 +248,37 @@ class CanvitEpisode extends HTMLElement {
                              { threshold: 0.25 }).observe(this);
   }
 
+  /** Play from where it is; a slide deck calls these as its slide is shown and left. A staged episode holds. */
+  play() {
+    if (this.#staged()) return;
+    this.#pausedByUser = false;
+    this.#setPlaying(true);
+  }
+
+  pause() { this.#setPlaying(false); }
+
+  get playing() { return this.#playing; }
+
+  /** Play from the first glimpse, or on from it when a stage held it there. */
+  restart() {
+    if (this.#staged()) return;
+    if (!this.#holding) return this.#restart();
+    this.#holding = false;
+    this.#pausedByUser = false;
+    this.#setPlaying(true);
+  }
+
+  get stage() {
+    const stage = this.getAttribute("stage") ?? "all";
+    if (!STAGES.includes(stage)) throw new Error(`<canvit-episode>: unknown stage "${stage}", expected one of ${STAGES.join(", ")}`);
+    return stage;
+  }
+
+  #staged() { return this.stage !== "all"; }
+
+  /** Just before the second glimpse starts: the first one done, crop and canvas shown. */
+  #held() { return this.#schedule.durations[0] - 1; }
+
   get readout() {
     const readout = this.getAttribute("readout") ?? "canvas";
     if (!(readout in READOUTS)) throw new Error(`<canvit-episode>: unknown readout "${readout}"`);
@@ -237,7 +287,19 @@ class CanvitEpisode extends HTMLElement {
 
   attributeChangedCallback(name) {
     if (name === "src") this.#showSources();
+    else if (name === "stage") this.#showStage();
     else this.#showReadout();
+  }
+
+  #showStage() {
+    if (!this.#schedule) return;
+    if (this.#staged()) {
+      this.#setPlaying(false);
+      this.#time = this.#held();
+      this.#holding = true;
+    }
+    this.#renderPlayButton();
+    this.#draw();
   }
 
   connectedCallback() {
@@ -251,7 +313,7 @@ class CanvitEpisode extends HTMLElement {
   }
 
   #wantsAutoplay() {
-    return this.hasAttribute("autoplay") && !this.#pausedByUser && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return this.hasAttribute("autoplay") && !this.#staged() && !this.#pausedByUser && !matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
   #showSources() {
@@ -282,12 +344,14 @@ class CanvitEpisode extends HTMLElement {
       this.#bundle = bundle;
       this.#scene = scene;
       this.#schedule = schedule(bundle.glimpses.length);
+      this.#namedAt = null;
       const annotated = bundle.truth !== null && bundle.glimpses.every((g) => g.pixelAccuracy !== null);
       this.$.meter.hidden = !annotated;
       this.$.colorbarMax.textContent = `log ${bundle.manifest.readout.num_classes}`;
       this.$.colorbar.title = `Entropy of the decoded class distribution, from 0 to its maximum, log ${bundle.manifest.readout.num_classes}`;
       this.$.readouts.querySelector('[data-readout="correct"]').hidden = !annotated;
-      this.#time = this.#wantsAutoplay() ? 0 : this.#schedule.total;
+      this.#holding = this.#staged();
+      this.#time = this.#staged() ? this.#held() : this.#wantsAutoplay() ? 0 : this.#schedule.total;
       this.#renderPlayButton();
       this.#draw();
     } catch (error) {
@@ -300,6 +364,7 @@ class CanvitEpisode extends HTMLElement {
     for (const button of this.$.readouts.children) button.setAttribute("aria-pressed", String(button.dataset.readout === this.readout));
     this.$.legend.classList.toggle("off", this.readout !== "correct");
     this.$.colorbar.classList.toggle("off", this.readout !== "entropy");
+    this.$.classes.classList.toggle("off", this.readout !== "labels");
     this.#draw();
   }
 
@@ -308,6 +373,7 @@ class CanvitEpisode extends HTMLElement {
   }
 
   #restart() {
+    this.#holding = false;
     this.#time = 0;
     this.#pausedByUser = false;
     this.#draw();
@@ -359,6 +425,7 @@ class CanvitEpisode extends HTMLElement {
     this.#drawImage(this.$.glimpse, glimpseShown >= 0 ? layerImage(this.#bundle, glimpseShown, "crop") : null, true);
     this.#drawImage(this.$.canvas, canvasShown >= 0 ? READOUTS[this.readout].image(this.#bundle, canvasShown) : null, false);
     if (!this.$.meter.hidden) this.#drawMeter(canvasShown);
+    if (this.readout === "labels") this.#drawClasses(canvasShown);
     for (const [name, packet] of Object.entries(this.$.arrows)) {
       const p = name === "read" && t === 0 ? 0 : progress(u, PHASES[name]);
       packet.setAttribute("cx", String(4 + 46 * p));
@@ -375,6 +442,7 @@ class CanvitEpisode extends HTMLElement {
     const size = sizeToDisplay(canvas);
     const context = canvas.getContext("2d");
     context.drawImage(this.#scene, 0, 0, size, size);
+    if (this.stage === "scene") return;
     const boxes = this.#bundle.glimpses.map((g) => g.box);
     const from = boxes[Math.max(0, t - 1)], to = boxes[t];
     const k = t === 0 ? 1 : easeInOut(progress(u, PHASES.move));
@@ -404,6 +472,23 @@ class CanvitEpisode extends HTMLElement {
     context.imageSmoothingEnabled = smooth;
     context.imageSmoothingQuality = "high";
     context.drawImage(image, 0, 0, size, size);
+  }
+
+  /** The segmentation's NAMED_CLASSES largest classes after glimpse t, each with its color; nothing before glimpse 0. */
+  #drawClasses(t) {
+    if (t === this.#namedAt) return;
+    this.#namedAt = t;
+    if (t < 0) return this.$.classes.replaceChildren();
+    const counts = new Map();
+    for (const c of this.#bundle.glimpses[t].layers.labels.data) counts.set(c, (counts.get(c) ?? 0) + 1);
+    const names = this.#bundle.manifest.readout.class_names;
+    this.$.classes.replaceChildren(...[...counts].sort((a, b) => b[1] - a[1]).slice(0, NAMED_CLASSES).map(([c]) => {
+      const row = document.createElement("span");
+      const chip = document.createElement("i");
+      chip.style.background = `rgb(${ADE20K_PALETTE[3 * c]} ${ADE20K_PALETTE[3 * c + 1]} ${ADE20K_PALETTE[3 * c + 2]})`;
+      row.append(chip, names[c]);
+      return row;
+    }));
   }
 
   /** Pixel accuracy after glimpse t, on a fixed 0–100% bar: the part gained since the first glimpse in green. */

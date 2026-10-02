@@ -1,0 +1,123 @@
+/* The look of every talk: the project page's identity (../css/canvit.css) on 1280 × 720 slides, light. A talk's own
+   stylesheet adds what only its slides use. */
+
+@import url("node_modules/reveal.js/dist/reset.css");
+@import url("node_modules/reveal.js/dist/reveal.css");
+
+html, body { background: var(--bg); }
+.reveal {
+  --slide-pad-x: 64px;
+  font-family: var(--sans);
+  font-size: 28px;
+  line-height: 1.4;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.reveal .slides { text-align: left; }
+.reveal .slides > section, .reveal .slides > section > section {
+  box-sizing: border-box;
+  height: 100%;
+  padding: 44px var(--slide-pad-x) 48px;
+}
+.reveal ::selection { background: var(--highlight); }
+
+/* Titles state the slide's point; a title stands alone. */
+.reveal h1, .reveal h2, .reveal h3 { margin: 0; color: var(--ink); font-family: var(--sans); text-wrap: balance; }
+.reveal h1 { font-size: 64px; font-weight: 800; line-height: 1.05; letter-spacing: -.03em; }
+.reveal h2 { font-size: 44px; font-weight: 750; line-height: 1.12; letter-spacing: -.025em; margin-bottom: 26px; }
+.reveal h3 { font-size: 30px; font-weight: 700; line-height: 1.2; letter-spacing: -.015em; }
+.reveal p, .reveal li { text-wrap: pretty; }
+.reveal p { margin: 0; }
+.reveal strong, .reveal b { font-weight: 700; color: var(--ink); }
+.reveal h2 .term-glimpse, .reveal h2 .term-canvas, .reveal h2 .term-policy { font-weight: inherit; }
+/* A title with a subtitle: <hgroup><h2>…</h2><p>…</p></hgroup>. */
+.reveal hgroup { margin-bottom: 22px; }
+.reveal hgroup h2 { margin-bottom: 2px; }
+.reveal hgroup p { font-size: 28px; font-weight: 600; line-height: 1.2; color: var(--muted); }
+.reveal code { font-family: var(--mono); font-size: .86em; }
+
+/* Layout helpers. */
+.reveal .center { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.reveal .fill { height: 100%; }
+.reveal .muted { color: var(--muted); }
+.reveal .small { font-size: 20px; }
+.reveal .cols { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 36px; align-items: start; }
+/* A citation line under a figure: authors, year, venue. */
+.reveal .cite { font-size: 15px; line-height: 1.35; color: var(--muted); }
+.reveal .cite i { font-style: italic; }
+/* The highlighter of the project page, for the one phrase a slide must leave behind. */
+.reveal .hl { padding: 0 .1em; border-radius: 3px; background: linear-gradient(transparent 58%, var(--highlight) 58%); }
+
+/* A fragment that only names a build state (data-shows, deck.js), without a visible element of its own. */
+.reveal .step-marker { display: none; }
+
+/* An SVG path that draws itself when its fragment (or its own .fragment class) becomes visible. pathLength="1" on the
+   path makes the dash independent of its measured length. */
+.reveal .draw { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .9s ease; }
+.reveal .fragment.visible .draw, .reveal .draw.fragment.visible { stroke-dashoffset: 0; }
+
+/* Maps and model inputs drawn on a grid (feature maps, probability maps, glimpses) keep their cells crisp when the
+   deck scales them: hard nearest neighbor, never the browser's smoothing. Photographs stay smooth. */
+.reveal img.pixels { image-rendering: pixelated; }
+
+/* An overlay revealed across its image from left to right: as a fragment when shown, or when the slide's CSS sets
+   clip-path: inset(0) on a named state (e.g. #history.shows-map .map). */
+.reveal .wipe { clip-path: inset(0 100% 0 0); transition: clip-path 1.2s ease; }
+.reveal .wipe.fragment { opacity: 1; visibility: inherit; }
+.reveal .wipe.fragment.visible { clip-path: inset(0); }
+
+/* A ring around a region of a figure or photograph, with a short label: white line over a dark halo, legible on
+   light and dark pixels alike. An absolutely positioned SVG in the figure's pixel coordinates. */
+.reveal .marks { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+.reveal .marks .halo { fill: none; stroke: rgba(0, 0, 0, .35); stroke-width: 6; }
+.reveal .marks .ring { fill: none; stroke: #fff; stroke-width: 2.5; }
+.reveal .marks .pill { fill: rgba(15, 23, 42, .78); }
+.reveal .marks text { fill: #fff; font: 600 16px var(--sans); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal *, .reveal *::before, .reveal *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
+
+/* Code, highlighted by reveal.js's highlight plugin, in light colors that avoid the glimpse, canvas and policy hues. */
+.reveal pre { position: relative; margin: 0; padding: 18px 24px; border-radius: 14px; box-shadow: none; background: var(--soft);
+               color: var(--ink); font: 500 17px/1.55 var(--mono); }
+.reveal pre code.hljs { position: relative; display: block; padding: 0; background: none; font: inherit; white-space: pre;
+                        overflow: visible; max-height: none; }
+/* The band behind the lines a data-lines fragment marks (deck.js); 1lh is one line of the block. */
+.reveal pre::before { content: ""; position: absolute; left: 10px; right: 10px; border-radius: 6px; background: var(--highlight);
+                      top: calc(18px + (var(--line-from, 1) - 1) * 1lh); height: calc(var(--line-count, 1) * 1lh);
+                      opacity: 0; transition: top .45s ease, height .45s ease, opacity .3s ease; }
+.reveal pre.marked::before { opacity: 1; }
+.reveal .hljs-keyword, .reveal .hljs-built_in, .reveal .hljs-literal { color: #7c3aed; font-weight: 650; }
+.reveal .hljs-string { color: #15803d; }
+.reveal .hljs-number { color: #c2410c; }
+.reveal .hljs-comment { color: var(--muted); font-style: italic; }
+.reveal .hljs-title { color: var(--ink); font-weight: 700; }
+
+/* A light card holding a component, so its own surfaces line up with the slide's. */
+.reveal .card { padding: 18px 22px; border-radius: 16px; background: var(--soft); --canvit-surface: var(--soft); }
+
+/* reveal.js's own furniture, in the page's colors. */
+.reveal .progress { height: 4px; color: var(--glimpse); background: transparent; }
+.reveal .slide-number { right: 22px; bottom: 16px; padding: 0; background: none; color: var(--muted);
+                        font: 500 15px/1 var(--sans); font-variant-numeric: tabular-nums; }
+.reveal .slide-number a { color: inherit; text-decoration: none; }
+.reveal .footer { position: absolute; left: var(--slide-pad-x); bottom: 16px; z-index: 5; color: var(--muted);
+                  font: 500 15px/1 var(--sans); pointer-events: none; }
+.reveal .footer .brand { font-weight: 800; }
+
+/* The replay button (deck.js), discreet, above the slide number. */
+.reveal .replay { position: absolute; right: 16px; bottom: 44px; z-index: 11; width: 34px; height: 34px; padding: 0;
+                  border: 1.5px solid var(--rule); border-radius: 50%; background: var(--bg); color: var(--muted);
+                  font-size: 19px; line-height: 1; cursor: pointer; opacity: .55; transition: opacity .2s; }
+.reveal .replay:hover { opacity: 1; color: var(--ink); }
+.reveal .replay[hidden] { display: none; }
+
+/* How far a slide is from presentable (data-status, deck.js); hidden with ?present. */
+.reveal .status-badge { position: absolute; top: 10px; right: 12px; z-index: 20; max-width: 560px; padding: 4px 10px;
+                        border-radius: 6px; font: 600 13px/1.3 var(--sans); pointer-events: none; }
+.reveal .status-badge.draft { background: #fef3c7; color: #92400e; }
+.reveal .status-badge.aspirational { background: #ede9fe; color: #5b21b6; }
+
+/* Speaker notes never show on the slide. */
+.reveal aside.notes { display: none; }

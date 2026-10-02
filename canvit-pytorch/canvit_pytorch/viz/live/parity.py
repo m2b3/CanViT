@@ -1,10 +1,12 @@
-"""An exported live model against PyTorch: ONNX Runtime on the CPU here, and the reference the browser check reads.
+"""An export (canvit/ and probe/) against PyTorch: ONNX Runtime on the CPU here, and the reference the browser check
+reads.
 
 The reference is PyTorch (CPU, fp32) on one image: an EG-C2F episode, then glimpses at random viewpoints
 drawn as in pretraining, the canvas carried throughout. ONNX Runtime replays the same viewpoints from the
-exported initial state. Writes, under <model_dir>/parity/: report.json; scene.png, the scene exactly as
-the reference saw it before normalization; episode.json, the viewpoints; and reference/*.bin, float32
-outputs per glimpse, which <canvit-live> is compared with.
+exported initial state, each glimpse through the CanViT graph, then the probe graph on the new canvas. Writes,
+under <model_dir>/parity/: report.json (with both graphs' SHA-256); scene.png, the scene exactly as the reference saw
+it before normalization; episode.json, the viewpoints; and reference/*.bin, float32 outputs per glimpse, which
+<canvit-live> is compared with.
 """
 
 import json
@@ -25,8 +27,8 @@ from canvit_pytorch.policies.entropy import predictive_entropy
 from canvit_pytorch.policies.random import random_viewpoints
 from canvit_pytorch.preprocess import imagenet_denormalize, imagenet_normalize, preprocess
 from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
-from canvit_pytorch.viz.live.export import EG_C2F, initial_state, read_manifest
-from canvit_pytorch.viz.live.step import StepInputs, StepOutputs
+from canvit_pytorch.viz.live.export import CANVIT_DIR, EG_C2F, PROBE_DIR, initial_state, read_manifests
+from canvit_pytorch.viz.live.step import ReadoutInputs, ReadoutOutputs, StepInputs, StepOutputs
 from canvit_pytorch.viz.released_model import load_released_segmenter
 
 log = logging.getLogger(__name__)
@@ -77,6 +79,7 @@ class Parity:
     """Compare an exported live model with PyTorch on one image and write the browser check's reference."""
 
     model_dir: Path
+    """The export: its canvit/ and probe/ directories."""
     image: Path
     """A photograph, e.g. an ADE20K validation image."""
     num_random_glimpses: int = 8
@@ -84,12 +87,12 @@ class Parity:
     seed: int = 0
 
     def run(self) -> Path:
-        manifest = read_manifest(self.model_dir)
+        manifest, probe_manifest = read_manifests(self.model_dir)
         device = torch.device("cpu")
         released = load_released_segmenter(
             scene_size_px=manifest["scene_px"], canvas_grid_size=manifest["canvas_grid"], device=device,
         )
-        assert (released.model_record, released.readout_record) == (manifest["model"], manifest["readout"]), (
+        assert (released.model_record, released.readout_record) == (manifest["model"], probe_manifest["readout"]), (
             f"{self.model_dir} was exported from other checkpoints than those loaded now"
         )
         model = released.model
@@ -107,7 +110,7 @@ class Parity:
         Image.fromarray(pixels).save(out_dir / "scene.png")
 
         torch.manual_seed(self.seed)
-        num_egc2f = manifest["policy"]["num_glimpses"]
+        num_egc2f = probe_manifest["policy"]["num_glimpses"]
         policy = make_policy(
             EG_C2F, batch_size=1, device=device, num_glimpses=num_egc2f, canvas_grid_size=grid,
             canvas_logits=model.logits,
@@ -130,19 +133,24 @@ class Parity:
                     glimpse.numpy(), seconds,
                 ))
 
-        session = ort.InferenceSession(
-            str(self.model_dir / manifest["graph"]["path"]), providers=["CPUExecutionProvider"],
+        step_session = ort.InferenceSession(
+            str(self.model_dir / CANVIT_DIR / manifest["graph"]["path"]), providers=["CPUExecutionProvider"],
         )
-        canvas, recurrent_cls = initial_state(manifest, self.model_dir)
+        probe_session = ort.InferenceSession(
+            str(self.model_dir / PROBE_DIR / probe_manifest["graph"]["path"]), providers=["CPUExecutionProvider"],
+        )
+        canvas, recurrent_cls = initial_state(manifest, self.model_dir / CANVIT_DIR)
         initial = model.init_state(batch_size=1, canvas_grid_size=grid).detach()
         assert np.array_equal(canvas, initial.canvas.numpy()) and np.array_equal(recurrent_cls, initial.recurrent_cls.numpy())
         replayed: list[GlimpseOutputs] = []
         for viewpoint in viewpoints:
             inputs = (scene.numpy(), canvas, recurrent_cls, viewpoint.centers.numpy(), viewpoint.scales.numpy())
             start = time.perf_counter()
-            results = session.run(list(StepOutputs._fields), dict(zip(StepInputs._fields, inputs, strict=True)))
+            stepped = step_session.run(list(StepOutputs._fields), dict(zip(StepInputs._fields, inputs, strict=True)))
+            canvas, recurrent_cls, glimpse = (float32_array(r) for r in stepped)
+            read = probe_session.run(list(ReadoutOutputs._fields), dict(zip(ReadoutInputs._fields, (canvas,), strict=True)))
+            logits, entropy = (float32_array(r) for r in read)
             seconds = time.perf_counter() - start
-            canvas, recurrent_cls, logits, entropy, glimpse = (float32_array(r) for r in results)
             replayed.append(GlimpseOutputs(canvas, recurrent_cls, logits, entropy, glimpse, seconds))
 
         per_glimpse = [
@@ -152,8 +160,10 @@ class Parity:
             for t, (o, r) in enumerate(zip(replayed, reference, strict=True))
         ]
         report: dict[str, Any] = {
+            "graphs_sha256": {CANVIT_DIR: manifest["graph"]["sha256"], PROBE_DIR: probe_manifest["graph"]["sha256"]},
             "image": str(self.image),
-            "comparison": "onnxruntime CPU execution provider against PyTorch CPU, float32, the same viewpoints",
+            "comparison": ("onnxruntime CPU execution provider, the CanViT graph then the probe graph, against PyTorch CPU, "
+                           "float32, the same viewpoints"),
             "onnxruntime": ort.__version__,
             "torch": torch.__version__,
             "torch_threads": torch.get_num_threads(),
@@ -170,7 +180,8 @@ class Parity:
             "per_glimpse": per_glimpse,
         }
         (out_dir / "report.json").write_text(json.dumps(report, indent=1) + "\n")
-        self._write_reference(out_dir, viewpoints, reference, num_egc2f=num_egc2f)
+        self._write_reference(out_dir, viewpoints, reference, num_egc2f=num_egc2f,
+                              num_classes=probe_manifest["readout"]["num_classes"])
         log.info("Worst over glimpses: %s; warm median step: %s", report["worst"], report["warm_step_ms_median"])
 
         worst = report["worst"]
@@ -180,6 +191,7 @@ class Parity:
 
     def _write_reference(
         self, out_dir: Path, viewpoints: list[Viewpoint], reference: list[GlimpseOutputs], *, num_egc2f: int,
+        num_classes: int,
     ) -> None:
         """Logits and entropy of every glimpse; the canvas and the glimpse where they change most (the first two
         glimpses, the end of the EG-C2F episode, the last glimpse)."""
@@ -190,7 +202,7 @@ class Parity:
             for name in names:
                 getattr(outputs, name).astype("<f4").tofile(out_dir / "reference" / f"{name}_t{t:02d}.bin")
         episode = {
-            "image": str(self.image), "scene": "scene.png", "egc2f_glimpses": num_egc2f,
+            "image": str(self.image), "scene": "scene.png", "egc2f_glimpses": num_egc2f, "num_classes": num_classes,
             "viewpoints": [as_tuple(v) for v in viewpoints], "full_steps": full_steps,
             "reference": "reference/{name}_t{t:02d}.bin, little-endian float32, PyTorch CPU",
         }

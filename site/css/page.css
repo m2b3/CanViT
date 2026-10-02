@@ -1,30 +1,4 @@
-:root {
-  color-scheme: light;
-  --bg: #ffffff;
-  --ink: #0f172a;
-  --text: #334155;
-  --muted: #475569;
-  --rule: #e2e8f0;
-  --soft: #f1f5f9;
-  --underline: #94a3b8;
-  --highlight: #fde68a;
-  --glimpse: #2d6cdf;
-  --canvas: #e0483e;
-  --policy: #0d9488;
-  --mark: color-mix(in srgb, var(--policy) 45%, white);
-  /* Blue, red and teal mean glimpse, canvas and policy, and nothing else; teal marks policy phrases too. The CanViT
-     wordmark joins blue and red: Can(vas) in red, ViT in blue. Links and highlights use neutral colors. */
-  --brand: linear-gradient(90deg, var(--canvas), var(--glimpse));
-  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
-
-  --canvit-ink: var(--ink);
-  --canvit-muted: var(--muted);
-  --canvit-glimpse: var(--glimpse);
-  --canvit-canvas: var(--canvas);
-  --canvit-placeholder: var(--soft);
-  --canvit-sans: var(--sans);
-}
+/* The project page (index.html). Tokens and fonts come from canvit.css. */
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -83,6 +57,9 @@ sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); f
   width: 17px; height: 17px; background: currentColor;
   -webkit-mask: var(--icon) center / contain no-repeat; mask: var(--icon) center / contain no-repeat;
 }
+/* Icon URLs resolve against this stylesheet, so they are set here, not in the page. */
+.icon.arxiv { --icon: url("../assets/logos/arxiv.svg"); }
+.icon.github { --icon: url("../assets/logos/github.svg"); }
 
 #abstract { margin-top: clamp(48px, 7vw, 72px); }
 #abstract p { color: var(--text); font-size: 1.06rem; line-height: 1.7; }
@@ -107,8 +84,6 @@ section p:last-child { margin-bottom: 0; }
 strong, b { color: var(--ink); font-weight: 650; }
 .hl { color: var(--ink); font-weight: 750; padding: 0 .12em; border-radius: 3px;
       background: linear-gradient(transparent 58%, var(--highlight) 58%); }
-.term-glimpse { color: var(--glimpse); font-weight: 650; }
-.term-canvas { color: var(--canvas); font-weight: 650; }
 h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
 
 .lead {
@@ -126,7 +101,6 @@ h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
 .pair .value { display: flex; align-items: center; justify-content: center; min-height: 2.3em;
                font-size: clamp(1.4rem, 2.9cqi, 1.95rem); font-weight: 800; line-height: 1.15; letter-spacing: -.02em;
                text-wrap: balance; }
-.brand { background: var(--brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .cycle { color: var(--muted); }
 /* The landed text pops out, sways left and right, settles, then gets underlined. */
 .cycle.landed { align-self: center; color: var(--ink);
@@ -213,6 +187,25 @@ h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
   .dot-row, .dot-axis { grid-template-columns: minmax(0, 8em) minmax(0, 1fr) 3em; }
   .ticks span:nth-child(even) { display: none; }
 }
+
+/* <canvit-live> on a dark stage */
+.stage {
+  --stage: #0f0f15;
+  --stage-ink: #ededf3;
+  --stage-muted: #a4a4b4;
+  --stage-rule: #26262f;
+  --canvit-ink: var(--stage-ink);
+  --canvit-on-ink: var(--stage);
+  --canvit-muted: var(--stage-muted);
+  --canvit-focus: var(--glimpse);
+  --canvit-radius: 8px;
+  margin-top: 32px; padding: 16px; border: 1px solid var(--stage-rule); border-radius: 18px;
+  background: var(--stage); color: var(--stage-ink);
+  box-shadow: 0 30px 70px -40px rgb(10 10 30 / .5);
+}
+@media (min-width: 720px) { .stage { padding: 26px; } }
+.stage .hint { margin: 0 0 18px; color: var(--stage-muted); font-size: 12.5px; line-height: 1.4; }
+.stage-caption { max-width: 62rem; margin: 14px 2px 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 
 .cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin: clamp(56px, 8vw, 80px) auto 0; padding: 0 16px; }
 .button.big { padding: 16px 28px; border-radius: 14px; font-size: 1.1rem; gap: 10px; }

@@ -1,14 +1,17 @@
 """<canvit-live> in headless Chrome against the parity reference: outputs, EG-C2F's choices, pointer input, timings.
 
-Needs a page with one <canvit-live> served over HTTP together with its model directory, where `parity`
-has written the reference (<model>/parity/), and Google Chrome installed (Playwright's channel "chrome").
-The element is driven as a visitor drives it: its download button, clicks, the wheel, a drag, the keyboard.
+Needs a page with one <canvit-live> served over HTTP, the reference `parity` wrote (<export>/parity/) served over
+HTTP too, and Google Chrome installed (Playwright's channel "chrome"). The page may run a local export or the
+published ones: the reference is the same as long as the graphs are.
+The element is driven as a visitor drives it: its load button, clicks, the wheel, a drag, the keyboard; then the page
+is reloaded, and the second load must read the graphs from the browser's cache.
 """
 
 import asyncio
 import json
 import logging
 import statistics
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
@@ -29,9 +32,9 @@ in scene coordinates: pointer positions are rounded to CSS pixels, a few thousan
 
 # Replays the reference viewpoints through the element, then lets its EG-C2F choose, then times whole episodes.
 REPLAY_JS = r"""
-async ({ timedEpisodes }) => {
+async ({ timedEpisodes, referenceUrl }) => {
   const el = document.querySelector("canvit-live");
-  const base = new URL("parity/", new URL(el.getAttribute("model").replace(/\/?$/, "/"), document.baseURI));
+  const base = new URL(referenceUrl.replace(/\/?$/, "/"), document.baseURI);
   const fetchOk = async (url) => { const r = await fetch(url); if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`); return r; };
   const episode = await (await fetchOk(new URL("episode.json", base))).json();
   const reference = async (name, t) =>
@@ -46,7 +49,7 @@ async ({ timedEpisodes }) => {
     }
     return { max_abs: maxAbs, max_abs_over_max_ref: maxAbs / maxRef, rel_l2: Math.sqrt(diff2 / ref2) };
   };
-  const numClasses = (await (await fetchOk(new URL("../manifest.json", base))).json()).readout.num_classes;
+  const numClasses = episode.num_classes;
   const argmax = (logits) => {
     const n = logits.length / numClasses, labels = new Uint8Array(n), best = logits.slice(0, n);
     for (let c = 1; c < numClasses; c++) for (let i = 0; i < n; i++) if (logits[c * n + i] > best[i]) { best[i] = logits[c * n + i]; labels[i] = c; }
@@ -106,12 +109,23 @@ def inside_scene(row: float, col: float, scale: float) -> dict[str, float]:
     return {"row": min(max(row, scale - 1), 1 - scale), "col": min(max(col, scale - 1), 1 - scale), "scale": scale}
 
 
+async def load(page: Page) -> float:
+    """Press the element's load button; milliseconds until it is ready."""
+    await page.locator("canvit-live").scroll_into_view_if_needed()
+    await page.locator("canvit-live [data-load]").click()
+    started = await page.evaluate("performance.now()")
+    await page.evaluate("document.querySelector('canvit-live').ready")
+    return await page.evaluate("performance.now()") - started
+
+
 @dataclass(frozen=True)
 class CheckBrowser:
     """Check <canvit-live> in headless Chrome against the PyTorch reference written by `parity`."""
 
     page_url: str
-    """A page with one <canvit-live>, e.g. http://127.0.0.1:8020/live.html."""
+    """A page with one <canvit-live>, e.g. the project page at http://127.0.0.1:8020/."""
+    reference_url: str
+    """The parity directory of the export the page runs, e.g. http://127.0.0.1:8020/.live-model/parity/."""
     backend: Backend
     out: Path
     """Report (JSON); screenshots go next to it."""
@@ -131,72 +145,87 @@ class CheckBrowser:
         assert worst["min_argmax_agreement"] >= MIN_ARGMAX_AGREEMENT, worst
         assert report["closed_loop"]["matches"] == report["closed_loop"]["glimpses"], report["closed_loop"]
         assert all(p["ok"] for p in pointer), pointer
+        assert report["graph_requests"], "the first load requested no .onnx file: the check cannot see downloads"
+        cached = report["cached_load"]
+        assert "cached in this browser" in cached["button"] and not cached["graph_requests"], cached
         assert not report["page_errors"], report["page_errors"]
         return self.out
 
     async def _check(self) -> dict[str, Any]:
         screens = self.out.with_suffix("")
-        async with async_playwright() as playwright:
-            browser = await playwright.chromium.launch(channel="chrome", headless=self.headless, args=CHROME_ARGS[self.backend])
-            page = await browser.new_page(viewport={"width": 1280, "height": 1000}, device_scale_factor=2)
-            console: list[str] = []
-            page_errors: list[str] = []
-            page.on("console", lambda message: console.append(f"{message.type}: {message.text}"))
-            page.on("pageerror", lambda error: page_errors.append(str(error)))
-            await page.goto(self.page_url)
-            live = page.locator("canvit-live")
-            await live.scroll_into_view_if_needed()
-            await page.locator("canvit-live [data-load]").click()
-            started = await page.evaluate("performance.now()")
-            await page.evaluate("document.querySelector('canvit-live').ready")
-            load_ms = await page.evaluate("performance.now()") - started
-            backend = await page.evaluate("document.querySelector('canvit-live').backend")
-            log.info("%s ready in %.0f ms; replaying the reference", backend, load_ms)
+        # A fresh profile on disk, as a visitor's: Chrome's in-memory profiles refuse a cache entry the size of the graph.
+        with tempfile.TemporaryDirectory() as profile:
+            async with async_playwright() as playwright:
+                context = await playwright.chromium.launch_persistent_context(
+                    profile, channel="chrome", headless=self.headless, args=CHROME_ARGS[self.backend],
+                    viewport={"width": 1280, "height": 1000}, device_scale_factor=2)
+                assert context.browser is not None
+                page = await context.new_page()
+                console: list[str] = []
+                page_errors: list[str] = []
+                page.on("console", lambda message: console.append(f"{message.type}: {message.text}"))
+                page.on("pageerror", lambda error: page_errors.append(str(error)))
+                graph_requests: list[str] = []
+                page.on("request", lambda request: graph_requests.append(request.url) if ".onnx" in request.url else None)
+                await page.goto(self.page_url)
+                live = page.locator("canvit-live")
+                load_ms = await load(page)
+                backend = await page.evaluate("document.querySelector('canvit-live').backend")
+                log.info("%s ready in %.0f ms; replaying the reference", backend, load_ms)
 
-            result = await page.evaluate(REPLAY_JS, {"timedEpisodes": self.timed_episodes})
-            pointer = await self._pointer(page)
-            await page.screenshot(path=f"{screens}-pointer.png", full_page=True)
-            await page.locator("canvit-live [data-policy-run]").click()
-            await last_viewpoint(page, len(result["closed_loop"]["chosen"]))
-            await page.locator("canvit-live [data-scene-frame]").hover()
-            await page.screenshot(path=f"{screens}-egc2f.png", full_page=True)
-            resources = await page.evaluate(
-                "performance.getEntriesByType('resource').map((e) => ({name: e.name, ms: e.duration, bytes: e.decodedBodySize}))")
-            report = {
-                "page": self.page_url, "chrome": browser.version, "headless": self.headless, "backend": backend,
-                "adapter": await page.evaluate(
-                    "(async () => { const a = await navigator.gpu?.requestAdapter(); return a ? a.info.vendor + ' ' + a.info.architecture : null })()"),
-                "load_ms": load_ms,
-                "downloads": [r for r in resources if r["bytes"] > 1_000_000 and "/parity/" not in r["name"]],
-                "worst": {
-                    key: max(r[key]["rel_l2"] for r in result["replay"] if key in r)
-                    for key in ("logits", "entropy", "canvas", "glimpse")
-                } | {"max_abs_logits": max(r["logits"]["max_abs"] for r in result["replay"]),
-                     "min_argmax_agreement": min(r["argmax_agreement"] for r in result["replay"])},
-                "closed_loop": {"matches": sum(result["closed_loop"]["matches_reference"]),
-                                "glimpses": len(result["closed_loop"]["matches_reference"])},
-                # The first glimpse after loading includes one-time setup.
-                "warm_step_ms": summary([r["step_ms"] for r in result["replay"][1:]] + [r["step_ms"] for r in result["timed"]]),
-                "warm_run_ms": summary([r["run_ms"] for r in result["replay"][1:]] + [r["run_ms"] for r in result["timed"]]),
-                "first_step_ms": result["replay"][0]["step_ms"],
-                "pointer": pointer,
-                "replay": result["replay"],
-                "page_errors": page_errors,
-                "console": console,
-            }
-            await browser.close()
+                result = await page.evaluate(REPLAY_JS, {"timedEpisodes": self.timed_episodes,
+                                                         "referenceUrl": self.reference_url})
+                pointer = await self._pointer(page)
+                await live.screenshot(path=f"{screens}-pointer.png")
+                await page.locator("canvit-live [data-policy-run]").click()
+                await last_viewpoint(page, len(result["closed_loop"]["chosen"]))
+                await page.locator("canvit-live [data-scene-frame]").hover()
+                await live.screenshot(path=f"{screens}-egc2f.png")
+                resources = await page.evaluate(
+                    "performance.getEntriesByType('resource').map((e) => ({name: e.name, ms: e.duration, bytes: e.decodedBodySize}))")
+                report = {
+                    "page": self.page_url, "reference": self.reference_url, "chrome": context.browser.version, "headless": self.headless, "backend": backend,
+                    "adapter": await page.evaluate(
+                        "(async () => { const a = await navigator.gpu?.requestAdapter(); return a ? a.info.vendor + ' ' + a.info.architecture : null })()"),
+                    "load_ms": load_ms,
+                    "graph_requests": list(graph_requests),
+                    # Cross-origin files report a size only when their server sends Timing-Allow-Origin.
+                    "downloads": [r for r in resources if r["bytes"] > 1_000_000 and "/parity/" not in r["name"]],
+                    "worst": {
+                        key: max(r[key]["rel_l2"] for r in result["replay"] if key in r)
+                        for key in ("logits", "entropy", "canvas", "glimpse")
+                    } | {"max_abs_logits": max(r["logits"]["max_abs"] for r in result["replay"]),
+                         "min_argmax_agreement": min(r["argmax_agreement"] for r in result["replay"])},
+                    "closed_loop": {"matches": sum(result["closed_loop"]["matches_reference"]),
+                                    "glimpses": len(result["closed_loop"]["matches_reference"])},
+                    # The first glimpse after loading includes one-time setup.
+                    "warm_step_ms": summary([r["step_ms"] for r in result["replay"][1:]] + [r["step_ms"] for r in result["timed"]]),
+                    "warm_run_ms": summary([r["run_ms"] for r in result["replay"][1:]] + [r["run_ms"] for r in result["timed"]]),
+                    "first_step_ms": result["replay"][0]["step_ms"],
+                    "pointer": pointer,
+                    "replay": result["replay"],
+                }
+                graph_requests.clear()
+                await page.reload()
+                button = await page.locator("canvit-live [data-load]").text_content()
+                report["cached_load"] = {"button": button, "load_ms": await load(page), "graph_requests": graph_requests}
+                log.info("reloaded: %r, ready in %.0f ms", button, report["cached_load"]["load_ms"])
+                report |= {"page_errors": page_errors, "console": console}
+                await context.close()
         return report
 
     async def _pointer(self, page: Page) -> list[dict[str, Any]]:
         """Clicks at arbitrary points and scales, a drag and the keyboard; each must glimpse where aimed."""
         frame = page.locator("canvit-live [data-scene-frame]")
+        await page.locator("canvit-live [data-reset]").click()
+        # Measured after the click, which may scroll a long page, and in view: the mouse works in viewport coordinates.
+        await frame.scroll_into_view_if_needed()
         box = await frame.bounding_box()
         assert box is not None
         at = lambda x, y: (box["x"] + x * box["width"], box["y"] + y * box["height"])  # noqa: E731
         scale_now = lambda: page.evaluate(  # noqa: E731
             "Number(document.querySelector('canvit-live').shadowRoot.querySelector('.size output').textContent.split(/\\s+/)[1])")
         checks: list[dict[str, Any]] = []
-        await page.locator("canvit-live [data-reset]").click()
         count = 0
 
         async def expect(name: str, expected: dict[str, float]) -> None:

@@ -75,3 +75,12 @@ def released_ade20k_probe(model: str, *, scene_size_px: int, canvas_grid_size: i
 
 def released_dinov3_ade20k_probe(model: str, *, input_size_px: int) -> str:
     return hub_repo(dinov3_ade20k_probe_name(model, input_size_px=input_size_px, steps=RELEASED_PROBE_STEPS))
+
+
+# The canvas grid of the project page's visualizations and of the browser exports: that of the probe they read.
+VIZ_CANVAS_GRID_SIZE = 64
+
+# The flagship and its ADE20K probe as float32 ONNX graphs for the browser (canvit_pytorch.viz.live), published apart,
+# each named after the checkpoint it exports; <canvit-live> runs one glimpse through the first, then the second.
+LIVE_CANVIT = f"{FLAGSHIP}-c{VIZ_CANVAS_GRID_SIZE}-onnx-fp32"
+LIVE_PROBE = f"{released_ade20k_probe('in21k', scene_size_px=RELEASED_SCENE_SIZE_PX, canvas_grid_size=VIZ_CANVAS_GRID_SIZE)}-onnx-fp32"

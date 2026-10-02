@@ -45,7 +45,7 @@ class CanvitMap extends CanvitView {
   build(bundle) {
     const name = this.layer;
     this.spec = layerSpec(name);
-    const side = this.spec.grid ? bundle.grid : bundle.glimpsePx;
+    const side = bundle.sides[this.spec.size];
     const frame = document.createElement("div");
     frame.className = "frame";
     this.canvas = Object.assign(document.createElement("canvas"), { width: side, height: side, className: "pixels" });
@@ -53,7 +53,7 @@ class CanvitMap extends CanvitView {
     this.context = this.canvas.getContext("2d");
     this.glimpse = document.createElement("div");
     this.glimpse.className = "box glimpse";
-    this.glimpse.hidden = !this.spec.grid;
+    this.glimpse.hidden = this.spec.size !== "canvas";
     this.marker = document.createElement("div");
     this.marker.className = "pointer";
     this.tip = document.createElement("div");
@@ -61,14 +61,14 @@ class CanvitMap extends CanvitView {
     frame.append(this.canvas, this.glimpse, this.marker, this.tip);
     this.shadowRoot.replaceChildren(frame);
     this.drawn = null;
-    // The glimpse crop covers only its box of the scene.
-    this.trackPointer(frame, () => (this.spec.grid ? undefined : this.bundle.glimpses[this.t].box));
+    // Glimpse and patch layers cover only the glimpse's box of the scene.
+    this.trackPointer(frame, () => (this.spec.size === "canvas" ? undefined : this.bundle.glimpses[this.t].box));
   }
 
   render(t) {
     const { bundle, spec } = this;
     const name = this.layer;
-    const box = spec.grid ? { top: 0, left: 0, size: 1 } : bundle.glimpses[t].box;
+    const box = spec.size === "canvas" ? { top: 0, left: 0, size: 1 } : bundle.glimpses[t].box;
     const p = this.pointer;
     // Pointer position within this map, if the map shows that part of the scene.
     const local = p && {
@@ -88,7 +88,7 @@ class CanvitMap extends CanvitView {
       this.canvas.setAttribute("aria-label", `${spec.title} at glimpse ${t}`);
     }
 
-    if (spec.grid) place(this.glimpse, bundle.glimpses[t].box);
+    if (spec.size === "canvas") place(this.glimpse, bundle.glimpses[t].box);
     this.marker.hidden = !inside;
     this.tip.hidden = highlight === null;
     if (inside) {

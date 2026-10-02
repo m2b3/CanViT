@@ -73,6 +73,7 @@ A change that breaks readers gets a new identifier.
   "canvas_grid": 64,
   "glimpse_px": 128,
   "pca": {"protocol": "fixed-limits", "basis": "last-glimpse"},
+  "initial_canvas": "initial_canvas.png",
   "glimpses": [
     {"t": 0,
      "viewpoint": {"row": 0.0, "col": 0.0, "scale": 1.0},
@@ -93,7 +94,14 @@ center pixel of each canvas cell (255 where unlabeled), and each glimpse's
 with the logits upsampled bilinearly to the scene as in the paper's evaluation.
 With `--capture-writes`, each glimpse also has `write0`, `write1`, … layers:
 a PCA image of what each Canvas Attention Write added to the canvas, one basis
-per Write, as in the paper's canvas-evolution figure.
+per Write, as in the paper's canvas-evolution figure; and `write0_canvas`,
+`write1_canvas`, … layers: the canvas after that Write, in the `canvas` layer's
+basis and color limits, the last one equal to the glimpse's `canvas`; and `write0_glimpse`, `write1_glimpse`, …
+layers: the glimpse's patch tokens each Write read, one cell per patch, one PCA basis per Write.
+
+`initial_canvas` is the canvas before the first glimpse, every patch the same
+learned vector, in the `canvas` layers' basis and the color limits they share
+under `"fixed-limits"`.
 
 `pca.protocol` is `"paper"` (basis fitted on the last glimpse's canvas,
 min-max per frame, as in the paper's Figure 1) or `"fixed-limits"` (same
@@ -143,80 +151,106 @@ share of `duration_ms`) and changes the maps at the samples.
 ## Live model
 
 `<canvit-live>` runs the released CanViT-B and its ADE20K probe (64×64
-canvas) in the browser, with an ONNX graph call per glimpse. The graph is
-float32; a lossy variant (float16, quantization) is not used until `parity`
-and `check-browser` pass on it.
+canvas) in the browser: per glimpse, the CanViT graph, then the probe graph on
+the new canvas. CanViT and the probe are exported, checked and published
+apart. Both graphs are float32; a lossy variant (float16, quantization) is not
+used until `parity` and `check-browser` pass on it.
 
 ```bash
 # from canvit-pytorch/; $ADE20K_ROOT is the ADEChallengeData2016 directory
 uv run --extra live python -m canvit_pytorch.viz.live export --out-dir ../site/.live-model
 uv run --extra live python -m canvit_pytorch.viz.live parity --model-dir ../site/.live-model \
     --image $ADE20K_ROOT/images/validation/ADE_val_00001780.jpg
-# serve site/ (site/README.md), then, with Google Chrome installed:
-uv run --extra live python -m canvit_pytorch.viz.live check-browser \
-    --page-url http://127.0.0.1:8000/live.html --backend webgpu --out outputs/live/webgpu.json
+# serve site/ (site/README.md); the page's <canvit-live> with model=".live-model/canvit" probe=".live-model/probe",
+# then, with Google Chrome installed:
+uv run --extra live python -m canvit_pytorch.viz.live check-browser --page-url http://127.0.0.1:8000/ \
+    --reference-url http://127.0.0.1:8000/.live-model/parity/ --backend webgpu --out outputs/live/webgpu.json
+# stage, then with --push upload, to hub.repos.LIVE_CANVIT and LIVE_PROBE (new private repos, made public once reviewed)
+uv run --extra live python -m canvit_pytorch.viz.live publish --model-dir ../site/.live-model --out-dir staging
 ```
 
-`export` writes three files into its directory; `site/.live-model/` is
-ignored by git, and the exported graph is never committed.
+`export` writes two directories; `site/.live-model/` is ignored by git, and
+the exported graphs are never committed.
 
-- `glimpse_step.onnx`: `viz.live.step.GlimpseStep`, float32, weights embedded,
-  opset 18. Inputs `scene` [1, 3, S, S] (ImageNet-normalized), `canvas`,
-  `recurrent_cls`, `centers` [1, 2] (row, col), `scales` [1]; outputs
-  `next_canvas`, `next_recurrent_cls`, `logits` [1, C, G, G] (the probe on the
-  layer-normalized canvas), `entropy` [1, G, G] (nats) and `glimpse`
-  [1, 3, g, g], cropped from the scene inside the graph by
-  `sample_at_viewpoint`. Entropy is `predictive_entropy` with `log_softmax`
-  written as `logits - logsumexp`, and the opset is 18, because ONNX Runtime
-  Web 1.30.0's WebGPU execution provider has no LogSoftmax kernel and
-  implements GridSample for opsets 16 to 19.
-- `initial_state.bin`: little-endian float32, the parts listed in the
-  manifest in order (CanViT's `init_canvas_registers`, `init_canvas_patch`,
-  `init_recurrent_cls`). The page builds the initial canvas as
-  `CanViT.init_state` does: the registers, then the canvas patch at every cell.
-- `manifest.json`, below.
+- `canvit/`: `canvit_step.onnx` (`viz.live.step.GlimpseStep`: inputs `scene`
+  [1, 3, S, S] (ImageNet-normalized), `canvas`, `recurrent_cls`, `centers`
+  [1, 2] (row, col), `scales` [1]; outputs `next_canvas`,
+  `next_recurrent_cls` and `glimpse` [1, 3, g, g], cropped from the scene
+  inside the graph by `sample_at_viewpoint`); `initial_state.bin`,
+  little-endian float32, the parts listed in the manifest in order (CanViT's
+  `init_canvas_registers`, `init_canvas_patch`, `init_recurrent_cls`), from
+  which the page builds the initial canvas as `CanViT.init_state` does; and
+  `manifest.json`.
+- `probe/`: `probe.onnx` (`viz.live.step.ProbeReadout`: input `canvas`;
+  outputs `logits` [1, C, G, G], the probe on the layer-normalized canvas,
+  and `entropy` [1, G, G] in nats) and `manifest.json`. Only the probe's
+  weights are in its graph.
+
+Both graphs embed their weights and use opset 18, and entropy is
+`predictive_entropy` with `log_softmax` written as `logits - logsumexp`:
+ONNX Runtime Web 1.30.0's WebGPU execution provider has no LogSoftmax kernel
+and implements GridSample for opsets 16 to 19.
 
 `parity` runs PyTorch (CPU) on one image, an EG-C2F episode followed by
 glimpses at random viewpoints with the canvas carried, replays the viewpoints
-through ONNX Runtime (CPU), and fails when an output's relative L2 difference
-exceeds `parity.MAX_REL_L2` or fewer than `parity.MIN_ARGMAX_AGREEMENT` of the
-cells keep their class. It writes `parity/` into the model directory: a report,
+through ONNX Runtime (CPU), both graphs in turn, and fails when an output's
+relative L2 difference exceeds `parity.MAX_REL_L2` or fewer than
+`parity.MIN_ARGMAX_AGREEMENT` of the cells keep their class. It writes
+`parity/` beside the two directories: a report (with both graphs' SHA-256),
 the scene as the reference saw it, the viewpoints and the reference outputs.
 `check-browser` drives `<canvit-live>` in headless Chrome as a visitor would
 (download button, clicks after scrolling, a drag, the keyboard), replays the
 reference viewpoints, lets the element's EG-C2F choose and compares its
 choices with PyTorch's, and times whole EG-C2F episodes; it fails on the same
-thresholds as `parity`, on a missed EG-C2F choice or a misplaced glimpse. `--backend wasm`
-starts Chrome without a GPU process, so the page falls back to WebAssembly as
-it does for visitors without WebGPU.
+thresholds as `parity`, on a missed EG-C2F choice or a misplaced glimpse.
+`--backend wasm` starts Chrome without a GPU process, so the page falls back
+to WebAssembly as it does for visitors without WebGPU. The page it checks may
+run the local export or the published ones.
 
-### Manifest
+`publish` refuses an export without a passing parity report on these very
+graphs, or whose model or probe is no longer the Hub's current revision. It
+stages each repo with a card from its manifest and the parity report
+(`hub.cards.live_canvit_card`, `live_probe_card`). The project page and the
+talks run the published exports (`PUBLISHED_CANVIT`, `PUBLISHED_PROBE` in
+`site/js/canvit/live-model.js`).
 
-`schema`: `canvit-live-model-2ef08388-92e1-4d7d-b5ac-2922601b5aa0`, checked by
-`viz.live.export.read_manifest` and `site/js/canvit/live-model.js`. Written by
-`export`; every size, shape and name the page uses comes from it.
+### Manifests
+
+Each directory's `manifest.json` says what the page needs; `export` writes
+them, and `viz.live.export.read_manifests` and `site/js/canvit/live-model.js`
+check their schemas and that the probe reads the canvas CanViT writes.
 
 ```json
 {
-  "schema": "canvit-live-model-2ef08388-92e1-4d7d-b5ac-2922601b5aa0",
-  "graph": {"path": "glimpse_step.onnx", "bytes": "…", "sha256": "…", "opset": 18,
+  "schema": "canvit-live-canvit-0a49b16e-2f86-41ae-8b08-f83d94fb1732",
+  "graph": {"path": "canvit_step.onnx", "bytes": "…", "sha256": "…", "opset": 18,
             "inputs": {"scene": [1, 3, 512, 512], "…": "…"}, "outputs": {"next_canvas": [1, 4112, 1024], "…": "…"}},
   "initial_state": {"path": "initial_state.bin", "bytes": "…", "sha256": "…", "dtype": "float32",
                     "parts": [{"name": "init_canvas_registers", "shape": [16, 1024]}, "…"]},
   "scene_px": 512, "glimpse_px": 128, "canvas_grid": 64, "num_canvas_registers": 16,
   "normalization": {"mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]},
   "min_scale": 0.05,
-  "policy": {"name": "entropy_coarse_to_fine", "paper_name": "EG-C2F", "description": "…", "num_glimpses": 21,
-             "levels": [[[0.0, 0.0, 1.0]], [[-0.5, -0.5, 0.5], "… 4 tiles"], ["… 16 tiles"]]},
   "model": {"…": "as in the web bundle"},
-  "readout": {"…": "as in the web bundle"},
   "provenance": {"…": "as in the web bundle", "onnx": "…", "onnxscript": "…"}
 }
 ```
 
-The page checks each file's size and SHA-256 against the manifest before
+```json
+{
+  "schema": "canvit-live-probe-23117c20-1e8e-4edb-a56d-21018d157b8d",
+  "graph": {"path": "probe.onnx", "…": "…", "inputs": {"canvas": [1, 4112, 1024]}, "outputs": {"logits": [1, 150, 64, 64], "…": "…"}},
+  "canvas_grid": 64, "num_canvas_registers": 16,
+  "readout": {"…": "as in the web bundle"},
+  "policy": {"name": "entropy_coarse_to_fine", "paper_name": "EG-C2F", "description": "…", "num_glimpses": 21,
+             "levels": [[[0.0, 0.0, 1.0]], [[-0.5, -0.5, 0.5], "… 4 tiles"], ["… 16 tiles"]]},
+  "provenance": {"…": "…"}
+}
+```
+
+The page checks each file's size and SHA-256 against its manifest before
 using it. `min_scale` is pretraining's smallest viewpoint scale
 (`policies.random.MIN_SCALE`), the smallest glimpse the page offers.
 `policy.levels` are EG-C2F's quadtree tiles `(row, col, scale)` from
-`policies.EntropyGuidedC2F`; `site/js/canvit/entropy-guided-c2f.js` chooses
-among them as the Python policy does, from the graph's entropy output.
+`policies.EntropyGuidedC2F`; the policy comes with the probe because it reads
+the probe's entropy, and `site/js/canvit/entropy-guided-c2f.js` chooses among
+the tiles as the Python policy does.

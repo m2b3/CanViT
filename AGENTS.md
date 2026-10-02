@@ -161,6 +161,12 @@ spelling.
 - Put durable learning in its home: an invariant enforced in code, this
   guide, or a `TODO` beside its owner. Avoid parallel manuals and handoff
   narratives.
+- Record a rule in a guide as it was given, with no examples or extensions
+  of your own; a guide records what is true, no more specific than it has
+  to be [Yohaï, 2026-10-01: "DO NOT INCLUDE HALLUCINATED ARBITRARY EXAMPLES.
+  IF I GIVE YOU A RULE YOU TAKE THE RULE YOU DO NOT EXTRAPOLATE IN AGENTS.md.
+  AGENTS.MD IS A RECORD FOR THE FUTURE, "the truth" - IT SHOULD NOT BE ANY
+  MORE SPECIFIC THAN IT HAS TO BE."].
 - Test interfaces as a user meets them: a fresh process, the installed
   package outside this checkout, released checkpoints from the Hub.
 
@@ -195,6 +201,10 @@ spelling.
   own their facts; a card is never edited by hand on the Hub. The main pages
   (website, READMEs, pyproject) say that CanViT means Canvas Vision
   Transformer.
+- CanViT and its probes are published separately [Yohaï, 2026-10-01, on a
+  live export that fused CanViT-B and its ADE20K probe in one graph: "did
+  you fuse the entire [...] thing instead of separating the probes from the
+  canvit"].
 - Judge everything by leverage per line, tests included. A test earns its place by catching a plausible defect that
   nothing else would: a paper invariant, a numerical equivalence, a released
   checkpoint that must keep loading. Vacuous tests (restating the code) and
@@ -220,6 +230,10 @@ uv run just            # lint, typecheck, test
 - The released models' glimpse size, scene size and canvas grid are
   `hub.repos.RELEASED_*`; read them from there.
 - Never read out the raw canvas; always the layer-normalized canvas.
+- The canvas never acts: it is memory. A policy chooses viewpoints; EG-C2F chooses the tile where the segmentation
+  read out from the canvas is least certain, so the canvas guides that choice (the paper's "guide viewpoint
+  selection"). Never write that the canvas picks, chooses, looks or decides [Yohaï, 2026-10-01: "THE CANVAS NEVER
+  PICKS ANYTHING ... THE CANVAS DOES NOT ACT"].
 - `torch.compile`: call `model(x)`, never `model.forward(x)`, which bypasses
   the compiled wrapper.
 - Numbers reported anywhere (README, site, papers) come from saved evaluation

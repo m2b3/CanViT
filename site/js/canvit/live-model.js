@@ -1,9 +1,16 @@
-// CanViT-B with its ADE20K probe, one glimpse per call, in ONNX Runtime Web. The model directory is written by
-// `python -m canvit_pytorch.viz.live export` (schema below; canvit-pytorch/docs/viz.md, "Live model").
-// On WebGPU the scene, canvas and recurrent CLS token live in fixed GPU buffers: each step writes the next state
-// to output buffers, which a GPU copy moves onto the input buffers; only the maps shown are read back.
+// CanViT-B and its ADE20K probe, one glimpse per call, in ONNX Runtime Web: the CanViT graph, then the probe graph on
+// the new canvas. Both directories are written by `python -m canvit_pytorch.viz.live export`, and published apart
+// (schemas below; canvit-pytorch/docs/viz.md, "Live model"). On WebGPU the scene, canvas and recurrent CLS token live
+// in fixed GPU buffers: each step writes the next state to output buffers, which a GPU copy moves onto the input
+// buffers, and the probe reads the new canvas there; only the maps shown are read back.
 
-const SCHEMA = "canvit-live-model-2ef08388-92e1-4d7d-b5ac-2922601b5aa0";
+const CANVIT_SCHEMA = "canvit-live-canvit-0a49b16e-2f86-41ae-8b08-f83d94fb1732";
+const PROBE_SCHEMA = "canvit-live-probe-23117c20-1e8e-4edb-a56d-21018d157b8d";
+// The published exports, canvit_pytorch.hub.repos.LIVE_CANVIT and LIVE_PROBE on the Hub
+// (`python -m canvit_pytorch.viz.live publish`).
+export const PUBLISHED_CANVIT =
+  "https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02-c64-onnx-fp32/resolve/main";
+export const PUBLISHED_PROBE = "https://huggingface.co/canvit/probe-ade20k-40k-s512-c64-in21k-onnx-fp32/resolve/main";
 // The exported graph relies on this version's WebGPU kernels (docs/viz.md, "Live model"): after changing it,
 // rerun `canvit_pytorch.viz.live check-browser` on both backends.
 const ORT_VERSION = "1.30.0";
@@ -20,16 +27,39 @@ const loadOrt = (backend) =>
 
 const numel = (dims) => dims.reduce((a, b) => a * b, 1);
 
+// Verified files stay in the browser's Cache Storage under their URL and SHA-256, so a later page load reads them from
+// disk; a new export at the same URL has new hashes, misses, downloads once and replaces the old entries. Entries of
+// URLs no page loads any more stay until the browser evicts them. Manifests are fetched from the server on every load
+// and stored too: offline, the stored ones start the cached files. Without Cache Storage (an insecure origin), every
+// load downloads.
+const CACHE_NAME = "canvit-live-files";
+
+let opened = null; // the page's cache, or null without one, opened once
+
+const openCache = () => (opened ??= (async () => {
+  try {
+    if (!globalThis.caches) throw new Error("this origin has no Cache Storage");
+    return await caches.open(CACHE_NAME);
+  } catch (error) {
+    console.warn("CanViT live model: downloading on every load", error);
+    return null;
+  }
+})());
+
+function cacheKey(url, sha256) {
+  const key = new URL(url);
+  key.searchParams.set("sha256", sha256);
+  return key.href;
+}
+
 async function fetchOk(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Could not fetch ${url}: HTTP ${response.status}`);
   return response;
 }
 
-/** The bytes at url, reporting (received, total) as they arrive. */
-async function fetchBytes(url, onProgress = () => {}) {
-  const response = await fetchOk(url);
-  const total = Number(response.headers.get("content-length")) || 0;
+/** The body's bytes, reporting the count received as they arrive. */
+async function readBody(response, onProgress) {
   const reader = response.body.getReader();
   const chunks = [];
   let received = 0;
@@ -38,7 +68,7 @@ async function fetchBytes(url, onProgress = () => {}) {
     if (done) break;
     chunks.push(value);
     received += value.length;
-    onProgress(received, total);
+    onProgress(received);
   }
   const bytes = new Uint8Array(received);
   let offset = 0;
@@ -51,20 +81,99 @@ async function sha256Hex(bytes) {
   return Array.from(digest, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function verifiedBytes(base, file, onProgress) {
-  const url = new URL(file.path, base);
-  const bytes = await fetchBytes(url, onProgress);
+async function verify(url, file, bytes) {
   if (bytes.length !== file.bytes) throw new Error(`${url}: ${bytes.length} bytes, the manifest says ${file.bytes}`);
   if ((await sha256Hex(bytes)) !== file.sha256) throw new Error(`${url}: SHA-256 differs from the manifest`);
   return bytes;
 }
 
-/** The manifest of the model directory at url (relative to the page). */
-export async function loadManifest(url) {
+// Removes the entries of other versions of url before adding this one, which frees their quota first.
+async function store(cache, url, file, bytes) {
+  try {
+    for (const request of await cache.keys()) {
+      const key = new URL(request.url);
+      key.searchParams.delete("sha256");
+      if (key.href === url.href) await cache.delete(request);
+    }
+    await cache.put(cacheKey(url, file.sha256), new Response(bytes));
+  } catch (error) {
+    console.warn(`CanViT live model: could not cache ${url}; the next load downloads it again`, error);
+  }
+}
+
+/** A manifest's file, read from the cache when an earlier load stored it, else downloaded; checked against the manifest either way. */
+async function verifiedBytes(cache, { base, file }, onProgress) {
+  const url = new URL(file.path, base);
+  const cached = await cache?.match(cacheKey(url, file.sha256));
+  if (cached) {
+    try {
+      return await verify(url, file, await readBody(cached, onProgress));
+    } catch (error) {
+      console.warn(`CanViT live model: the cached ${url} is damaged; downloading it again`, error);
+      await cache.delete(cacheKey(url, file.sha256));
+    }
+  }
+  const bytes = await verify(url, file, await readBody(await fetchOk(url), onProgress));
+  if (cache) await store(cache, url, file, bytes);
+  return bytes;
+}
+
+// The server's manifest, stored for offline loads; the stored one only when the network fails, not the server.
+async function fetchManifest(cache, url) {
+  let response;
+  try {
+    response = await fetch(url, { cache: "no-cache" });
+  } catch (error) {
+    const stored = await cache?.match(url);
+    if (!stored) throw new Error(`Could not fetch ${url}: ${error.message}`);
+    console.warn(`CanViT live model: ${url} is unreachable; using the manifest stored by an earlier load`, error);
+    return stored.json();
+  }
+  if (!response.ok) throw new Error(`Could not fetch ${url}: HTTP ${response.status}`);
+  const text = await response.text();
+  try {
+    await cache?.put(url, new Response(text, { headers: { "content-type": "application/json" } }));
+  } catch (error) {
+    console.warn(`CanViT live model: could not store ${url} for offline loads`, error);
+  }
+  return JSON.parse(text);
+}
+
+async function loadManifest(cache, url, schema) {
   const base = new URL(url.endsWith("/") ? url : `${url}/`, document.baseURI);
-  const manifest = await (await fetchOk(new URL("manifest.json", base))).json();
-  if (manifest.schema !== SCHEMA) throw new Error(`${base}manifest.json: schema ${manifest.schema}, expected ${SCHEMA}`);
+  const manifest = await fetchManifest(cache, new URL("manifest.json", base));
+  if (manifest.schema !== schema) throw new Error(`${base}manifest.json: schema ${manifest.schema}, expected ${schema}`);
   return { base, manifest };
+}
+
+/** The manifests of a CanViT export and a probe export (URLs relative to the page), checked to fit together. */
+export async function loadManifests(canvitUrl, probeUrl) {
+  const cache = await openCache();
+  const [canvit, probe] = await Promise.all([loadManifest(cache, canvitUrl, CANVIT_SCHEMA), loadManifest(cache, probeUrl, PROBE_SCHEMA)]);
+  const a = canvit.manifest, b = probe.manifest;
+  if (JSON.stringify(b.graph.inputs.canvas) !== JSON.stringify(a.graph.outputs.next_canvas)
+      || b.canvas_grid !== a.canvas_grid || b.num_canvas_registers !== a.num_canvas_registers) {
+    throw new Error(`${probe.base} reads a ${b.canvas_grid}² canvas ${JSON.stringify(b.graph.inputs.canvas)}; ` +
+                    `${canvit.base} writes a ${a.canvas_grid}² one ${JSON.stringify(a.graph.outputs.next_canvas)}`);
+  }
+  return { canvit, probe };
+}
+
+// The files to fetch before the first glimpse.
+const files = ({ canvit, probe }) => ({
+  initialState: { base: canvit.base, file: canvit.manifest.initial_state },
+  canvit: { base: canvit.base, file: canvit.manifest.graph },
+  probe: { base: probe.base, file: probe.manifest.graph },
+});
+
+/** Bytes to download before the first glimpse: the files this browser has not cached. */
+export async function downloadBytes(manifests) {
+  const cache = await openCache();
+  let bytes = 0;
+  for (const { base, file } of Object.values(files(manifests))) {
+    if (!(await cache?.match(cacheKey(new URL(file.path, base), file.sha256)))) bytes += file.bytes;
+  }
+  return bytes;
 }
 
 // The registers, then the canvas patch broadcast over the grid, as CanViT.init_state builds them.
@@ -121,37 +230,47 @@ async function webgpuAvailable() {
 
 export class LiveModel {
   /**
-   * Download, verify and start the model at url: WebGPU when the browser has an adapter, WebAssembly otherwise.
-   * onProgress(stage, received, total) reports the download. `fallback` names why WebGPU was not used, if it failed.
+   * Fetch (from the browser's cache or the network), verify and start the CanViT export at canvitUrl and the probe
+   * export at probeUrl: WebGPU when the browser has an adapter, WebAssembly otherwise. onProgress(stage, received,
+   * total) reports the stages "fetch", with the bytes received of the total, then "start".
+   * `fallback` names why WebGPU was not used, if it failed.
    */
-  static async load(url, { onProgress = () => {} } = {}) {
-    const { base, manifest } = await loadManifest(url);
-    const [stateBytes, graphBytes] = await Promise.all([
-      verifiedBytes(base, manifest.initial_state),
-      verifiedBytes(base, manifest.graph, (received, total) => onProgress("download", received, total)),
-    ]);
-    const init = initialState(manifest, new Float32Array(stateBytes.buffer));
+  static async load(canvitUrl, probeUrl, { onProgress = () => {} } = {}) {
+    const manifests = await loadManifests(canvitUrl, probeUrl);
+    const cache = await openCache();
+    const parts = Object.entries(files(manifests));
+    const total = parts.reduce((sum, [, { file }]) => sum + file.bytes, 0);
+    const received = Object.fromEntries(parts.map(([name]) => [name, 0]));
+    const progress = (name) => (bytes) => {
+      received[name] = bytes;
+      onProgress("fetch", Object.values(received).reduce((a, b) => a + b, 0), total);
+    };
+    const fetched = Object.fromEntries(await Promise.all(
+      parts.map(async ([name, part]) => [name, await verifiedBytes(cache, part, progress(name))])));
+    const init = initialState(manifests.canvit.manifest, new Float32Array(fetched.initialState.buffer));
+    const graphs = { canvit: fetched.canvit, probe: fetched.probe };
     let fallback = null;
     if (await webgpuAvailable()) {
       onProgress("start", 0, 0);
       try {
-        return await LiveModel.#start("webgpu", manifest, graphBytes, init, null);
+        return await LiveModel.#start("webgpu", manifests, graphs, init, null);
       } catch (error) {
         console.error("CanViT on WebGPU failed; using WebAssembly", error);
         fallback = `WebGPU failed: ${error.message}`;
       }
     }
     onProgress("start", 0, 0);
-    return LiveModel.#start("wasm", manifest, graphBytes, init, fallback);
+    return LiveModel.#start("wasm", manifests, graphs, init, fallback);
   }
 
-  static async #start(backend, manifest, graphBytes, init, fallback) {
+  static async #start(backend, manifests, graphs, init, fallback) {
     const ort = await loadOrt(backend);
     const options = { executionProviders: [backend], graphOptimizationLevel: "all" };
     if (backend === "webgpu") options.preferredOutputLocation = "gpu-buffer";
     const started = performance.now();
-    const session = await ort.InferenceSession.create(graphBytes, options);
-    const model = new LiveModel(ort, backend, manifest, session, init, fallback);
+    const step = await ort.InferenceSession.create(graphs.canvit, options);
+    const probe = await ort.InferenceSession.create(graphs.probe, options);
+    const model = new LiveModel(ort, backend, manifests, { step, probe }, init, fallback);
     model.sessionCreateMs = performance.now() - started;
     if (backend === "webgpu") await model.#allocateGpu();
     model.reset();
@@ -160,14 +279,15 @@ export class LiveModel {
 
   #ort; #init; #gpu = null; #cpu = null; #scene = null;
 
-  constructor(ort, backend, manifest, session, init, fallback) {
+  constructor(ort, backend, manifests, sessions, init, fallback) {
     this.#ort = ort;
     this.#init = init;
     this.backend = backend;
     this.backendName = BACKENDS[backend].name;
     this.fallback = fallback;
-    this.manifest = manifest;
-    this.session = session;
+    this.manifest = manifests.canvit.manifest;
+    this.probeManifest = manifests.probe.manifest;
+    this.sessions = sessions;
   }
 
   async #allocateGpu() {
@@ -178,6 +298,7 @@ export class LiveModel {
       device,
       inputs: Object.fromEntries(Object.entries(inputs).map(([name, dims]) => [name, make(dims)])),
       outputs: Object.fromEntries(Object.entries(outputs).map(([name, dims]) => [name, make(dims)])),
+      readout: Object.fromEntries(Object.entries(this.probeManifest.graph.outputs).map(([name, dims]) => [name, make(dims)])),
       initCanvas: make(inputs.canvas),
       initCls: make(inputs.recurrent_cls),
     };
@@ -220,27 +341,28 @@ export class LiveModel {
     const centers = Float32Array.of(row, col);
     const scales = Float32Array.of(scale);
     if (this.#gpu) {
-      const { inputs, outputs, device } = this.#gpu;
+      const { inputs, outputs, readout, device } = this.#gpu;
       inputs.centers.write(centers);
       inputs.scales.write(scales);
-      const feeds = Object.fromEntries(Object.entries(inputs).map(([name, t]) => [name, t.tensor]));
-      const fetches = Object.fromEntries(Object.entries(outputs).map(([name, t]) => [name, t.tensor]));
+      const tensors = (buffers) => Object.fromEntries(Object.entries(buffers).map(([name, t]) => [name, t.tensor]));
       const started = performance.now();
-      await this.session.run(feeds, fetches);
-      const runMs = performance.now() - started;
+      await this.sessions.step.run(tensors(inputs), tensors(outputs));
       this.#copy([[outputs.next_canvas, inputs.canvas], [outputs.next_recurrent_cls, inputs.recurrent_cls]]);
-      const [logits, entropy, glimpse] = await readBack(device, [outputs.logits, outputs.entropy, outputs.glimpse]);
+      await this.sessions.probe.run({ canvas: inputs.canvas.tensor }, tensors(readout));
+      const runMs = performance.now() - started;
+      const [logits, entropy, glimpse] = await readBack(device, [readout.logits, readout.entropy, outputs.glimpse]);
       return { logits, entropy, glimpse, runMs };
     }
     const ort = this.#ort;
     const started = performance.now();
-    const out = await this.session.run({
+    const out = await this.sessions.step.run({
       scene: this.#scene, canvas: this.#cpu.canvas, recurrent_cls: this.#cpu.cls,
       centers: new ort.Tensor("float32", centers, [1, 2]), scales: new ort.Tensor("float32", scales, [1]),
     });
+    const read = await this.sessions.probe.run({ canvas: out.next_canvas });
     const runMs = performance.now() - started;
     this.#cpu = { canvas: out.next_canvas, cls: out.next_recurrent_cls };
-    return { logits: out.logits.data, entropy: out.entropy.data, glimpse: out.glimpse.data, runMs };
+    return { logits: read.logits.data, entropy: read.entropy.data, glimpse: out.glimpse.data, runMs };
   }
 
   /** The current canvas [R + G², D], for checks against PyTorch. */

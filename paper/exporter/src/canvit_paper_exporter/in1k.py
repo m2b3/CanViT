@@ -101,11 +101,11 @@ def _compute_mode(data_dir: Path) -> dict:
 
 
 def compute_frozen() -> dict:
-    return _compute_mode(paths.eval_dir("in1k_frozen"))
+    return _compute_mode(paths.eval_dir("in1k_clf_frozen"))
 
 
 def compute_finetuned() -> dict:
-    return _compute_mode(paths.eval_dir("in1k_finetuned"))
+    return _compute_mode(paths.eval_dir("in1k_clf_finetuned"))
 
 
 frozen_dataset = Dataset(name="in1k_clf_frozen", compute=compute_frozen)

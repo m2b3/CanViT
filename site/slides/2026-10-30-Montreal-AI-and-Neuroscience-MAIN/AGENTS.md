@@ -414,7 +414,7 @@ The code (`canvit-pytorch/`, by module and symbol) [read 2026-10-01]:
   `policies.quadtree.coarse_to_fine`; `viewpoint.Viewpoint(centers=[B, 2] (row, col), scales=[B])`,
   `Viewpoint.full_scene`, `viewpoint.sample_at_viewpoint`.
 - PCA as in the paper: `viz.pca` (`layernorm`, `fit_pca`, `project`, `color_limits`, `to_rgb`).
-- `python -m canvit_pytorch.viz` records bundles (`Rollout`: policy, `--capture-writes` for write residuals;
+- `uv run --no-sync --project canvit-pytorch python -m canvit_pytorch.viz` records bundles (`Rollout`: policy, `--capture-writes` for write residuals;
   `SmoothPath`).
 - URLs (paper, code, Hub, page): `canvit_pytorch.project`; `../../make_qr_codes.py` reads them.
 
@@ -456,7 +456,7 @@ as the bundles measure it]: 72.1, 69.9 and 40.7% on the street, shop and ferry o
 CanViT-B's 87.9, 77.8 and 71.4% after their 21 glimpses.
 
 Experiments behind slides: `experiments/`, a package per experiment, each step run from this directory as
-`python -m experiments.<experiment>.<step>` in the canvit-pytorch environment (`training_cost` in
+`uv run --no-sync --project ../../../canvit-pytorch python -u -m experiments.<experiment>.<step>` (`training_cost` in
 `../../../paper/exporter`'s); the sweeps write to `../../.experiments/` (ignored by git), the exports the deck loads to
 `../../data/talk/` (deployed, never committed). `experiments/build_deck_data.sh` reruns them all, or the named ones,
 with the examples the slides show.

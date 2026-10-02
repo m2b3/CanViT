@@ -55,7 +55,7 @@ node site/serve.mjs 8765                        # serve site/; open pages reload
 # http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/   (S: speaker view with notes)
 uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/ \
     --out site/.screens/main-2026 > site/.screens/shoot.log 2>&1
-python3 site/check_paper_numbers.py
+uv run --no-sync --project canvit-pytorch python site/check_paper_numbers.py
 ```
 
 [Yohaï, 2026-10-01] "in your slide-prep process, try to avoid collapsing nuance and ambiguity upfront, gather primary

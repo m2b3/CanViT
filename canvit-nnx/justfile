@@ -1,0 +1,10 @@
+default: lint typecheck test
+
+lint:
+    uv run ruff check .
+
+typecheck:
+    uv run basedpyright canvit_nnx ../canvit-core/canvit_core
+
+test:
+    uv run pytest ../tests/backends --backend nnx -m 'not network'

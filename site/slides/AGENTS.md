@@ -43,9 +43,11 @@ proposition it states or proves, what is on screen, the visual and how it builds
 sources and the status. Each entry separates what the slide must show, say or carry across (without it the story
 breaks or a claim goes unsupported) from what would be interesting or good to show; both get made, and the first
 is never cut for the second [Yohaï, 2026-10-01: "distinguishing what MUST be shown/said/carried across from what
-would be cool/interesting/worth showing, while doing both"]. The outline is reviewed (independent reviewers: fresh subagents, `codex exec` with model
-`gpt-6-astra`, asked open questions about understanding, key messages and what they would do) and revised until
-the authors are confident in it; slides are built from it, and an outline change comes before a slide change.
+would be cool/interesting/worth showing, while doing both"]. The outline is reviewed (independent reviewers: fresh
+subagents, `codex exec` with model `gpt-6-astra`, whose sandbox reaches the network only with
+`-c sandbox_workspace_write.network_access=true`, asked open questions about understanding, key messages and what they
+would do) and revised until the authors are confident in it; slides are built from it, and an outline change comes
+before a slide change.
 
 ```bash
 npm ci --prefix site/slides                     # once: reveal.js
@@ -85,8 +87,9 @@ as well if we skip through slides rapidly back and forth"].
 
 After a deploy, `check_published.py` walks the project page and a talk locally, every click and every scene of its
 episodes, and requests each file they loaded from the published site [Yohaï, 2026-10-01: "make sure that all images
-that the slides need online are accessible from the online published version"]. Do not edit `site/` while it runs:
-the dev server reloads open pages on every change.
+that the slides need online are accessible from the online published version"]. Do not edit `site/` while
+`shoot.py`, `stress.py` or `check_published.py` runs: the dev server reloads open pages on every change, which breaks
+the run.
 
 Every slide carries `data-status`: `ready`, `draft` (content in place, visuals or wording to finish) or
 `aspirational` (shows what we want; the data or code behind it does not exist yet). Drafting views show it as a

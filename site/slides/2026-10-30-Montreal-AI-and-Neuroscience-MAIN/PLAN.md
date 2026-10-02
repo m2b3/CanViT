@@ -75,11 +75,14 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
   scheme is still not great not great at all". Labels redone 2026-10-01 (no key; each passive line named at its end
   under one "Passive" heading, "linear decoding"; active models named at their points over "Active models"); awaiting
-  the authors' look. Codex (gpt-6-astra) audited the data against primary sources until the disk filled: its
-  report covers missing fields and the active entries; its sections on unverified leads and missing records are
-  empty. Its seven field fills from official code were merged into `sources/sota-history.json` on 2026-10-01 (test
-  resolutions of SimCLR, MoCo v3, EsViT and two GFNets; DPT-Hybrid 98.2M parameters; Prisadnikov's size unknown);
-  none moves a drawn line. Open: relaunch it for leads and missing records.
+  the authors' look. Codex (gpt-6-astra) audited the data against primary sources in two passes (2026-10-01; reports
+  in `throwaway/history-audit/`, merged into `sources/sota-history.json` and `.md`): fields filled from official code,
+  the leads resolved, and missing base-size records added. What moved on the charts: the ADE20K end-to-end line now
+  starts with Wider or Deeper Model A2 (43.73, 2016) and steps at APCNet (45.38, 2019); the frozen ImageNet-1k line
+  starts in 2016 below the axis and enters it in 2019, and Proteus ViT-B (84.9, 2024) raises its plateau. Open, in
+  `sota-history.md` ("Unverified leads"): DINOv3's TMLR supplement (ViT-B 85.3 and ConvNeXt-B 85.4 on ImageNet-1k,
+  ViT-B 52.7 on ADE20K, date unknown); whether the frozen line admits supervised distillation (RADIO-AMP-B, 51.2 on
+  ADE20K); SAFER-AiD, a sequential active model with no clean full-validation number.
 - [Yohaï, 2026-10-01] `#table`: "we're missing some kind of explanation of what the hell the colors correspond to...
   labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
   yet." Done 2026-10-01: DINOv3's probability of table per glimpse, with a 0-to-1 scale; `#extrapolation` uses the

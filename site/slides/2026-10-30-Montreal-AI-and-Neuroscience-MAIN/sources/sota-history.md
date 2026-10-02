@@ -1,12 +1,17 @@
 # Published accuracy over time: active and passive vision
 
 [Assembled by Claude Code on 2026-10-01 from the papers' own text; model sizes, test resolutions, pretraining data and
-the base-size series added the same afternoon; not yet reviewed by the authors.] Data for the history chart (x = year,
-y = accuracy) on ImageNet-1k top-1 and ADE20K mIoU. The data file is `sota-history.json`; its `_about` field defines
-every field and series. This note says how the points were verified, lists them with their sources, and records the
-leads that could not be confirmed and the caveats a careful audience may raise. Every number below is in the JSON;
-where the two disagree, the JSON is the reference. All tables below were generated from the JSON and the readers'
-results on 2026-10-01 (`throwaway/history-base/gen_md_tables.py` in the local checkout, not in git).
+the base-size series added the same afternoon. That evening two primary-source audits by Codex
+(`throwaway/history-audit/REPORT.md` and `REPORT2.md`, not author-validated) filled fields from official code, added
+base-size points and resolved leads; before merging the second audit, Claude Code found each added point's value
+again in the saved paper text, but did not re-check its dates or rerun its counts. Not yet reviewed by the
+authors.] Data for the history chart (x = year, y = accuracy) on ImageNet-1k top-1 and ADE20K mIoU. The data file
+is `sota-history.json`; its `_about` field defines every field and series. This note says how the points were
+verified, lists them with their sources, and records the leads that could not be confirmed and the caveats a careful
+audience may raise. The points in the tables below are those of the JSON; where the two disagree, the JSON is the
+reference. The tables were generated from the JSON and the readers' results on 2026-10-01
+(`throwaway/history-base/gen_md_tables.py` in the local checkout, not in git); the audits' fields and points were
+then added to them by hand.
 
 ## What the data supports
 
@@ -16,10 +21,11 @@ below scope that claim. The author asked that the chart compare models of the sa
 first. Base size means at most about 100M parameters (`size_class`; up to 110M is counted as base, and entries above
 100M say so).
 
-- **ImageNet-1k, base size.** The sequential active models are base size except Saccader-NASNet (124.5M) and
-  Prisadnikov et al. 2025 (count unknown). At each model's date:
+- **ImageNet-1k, base size.** The sequential active models are base size except Saccader-NASNet (124.5M) and the
+  two Prisadnikov et al. models of 2025 and 2026 (counts unknown). At each model's date:
   - Saccader-NASNet (2019-08-20, 75.03, 331 px) trails the base ImageNet-1k-only line by 9.37 points
-    (EfficientNet-B7, 84.4 in arXiv v1, 66M, 600 px).
+    (EfficientNet-B7, 84.4 in arXiv v1, 66M, 600 px) and lies 13.73 points above the base frozen line of its date
+    (BigBiGAN RevNet-50 ×4, 61.3, 256 px).
   - GFNet's figure-read 79.8 (2020-10-11, EfficientNet backbones; 37.4M if the point is the EfficientNet-B3 model with
     144 px patches, as its curve suggests) trails FixEfficientNet-B8 (85.7, 87.4M, 800 px) by 5.9 and lies 2.0
     points above the base frozen line of its date (BYOL ResNet-200, 77.8, 63M).
@@ -27,23 +33,25 @@ first. Base size means at most about 100M parameters (`size_class`; up to 110M i
     5.52 and the base frozen line (EsViT Swin-B/W=14, 81.3, 87M) by 0.52.
   - AdaGlimpse (2024-04-04, 77.54, 86.9M, 224 px) trails MOAT-2 (86.5, 73.4M, 512 px, ImageNet-1k only) by 8.96 and
     the frozen DINOv2 ViT-B/14 linear probe (84.5, 86.6M, 224 px) by 6.96.
-  - AdaptiveNN-DeiT-S (2025-09-18, 82.2, 89.4M at test, 288 px) trails MOAT-2 (86.5) by 4.3, the frozen DINOv2
-    ViT-B/14 probe (84.5) by 2.3, and the base extra-data line (ViT-B/16 distilled from ViT-22B, 88.6, 384 px) by
-    6.4. Its own Supplementary Data Tab. 2 gives the like-for-like baseline: DeiT-S scores 80.9 at 288 px and 81.6 at
-    384 px.
+  - AdaptiveNN-DeiT-S (2025-09-18, 82.2, 89.4M at test, 288 px) trails MOAT-2 (86.5) by 4.3, the base frozen line
+    (Proteus ViT-B/14, 84.9, distilled from DINOv2-L/14 on ImageNet-1k images) by 2.7, and the base extra-data line
+    (ViT-B/16 distilled from ViT-22B, 88.6, 384 px) by 6.4. Its own Supplementary Data Tab. 2 gives the like-for-like
+    baseline: DeiT-S scores 80.9 at 288 px and 81.6 at 384 px.
   - The base frozen line ends at 85.0: the CanViT paper's own linear probe of DINOv3 ViT-B/16 at 512 px (2026-03-23).
+    DINOv3's TMLR supplement may raise it (an open lead under "Unverified leads").
 - **ADE20K, base size.**
   - AdaGlimpse (2024-04-04, 25.7 with 8 glimpses; ViT-B encoder and policy 86.1M, 117.1M with its decoder; 224 px
-    scenes) trails the base fine-tuned line by 29.6 single-scale (EVA-02-B + UperNet, 55.3, 512 px) and 30.1
+    scenes) trails the base fine-tuned line by 30.0 single-scale (PlainSeg BEiT-B, 55.70, 640 px crops) and 30.1
     multi-scale (RevColV2-B + Mask2Former, 55.8), and the base frozen linear line (DINOv2 ViT-B/14, 47.3) by 21.6.
   - AME's encoder is a ViT-L (303.1M; 348.5M with its decoder), so AME is large and the base lines do not bound it.
     At its date (2023-03-11) the base fine-tuned line stood at 55.1 multi-scale (Mask2Former Swin-B) and the base
     frozen linear line at 38.3 (iBOT ViT-B/16).
   - The base frozen linear line ends at 51.8 (DINOv3 ViT-B/16 under DINOv3's protocol, 2025-08-13); the CanViT
-    paper's probe of the same model gives 47.19 under its own protocol.
+    paper's probe of the same model gives 47.19 under its own protocol. The same DINOv3 supplement lead may raise this
+    end too.
 - **Resolution still differs at base size.** The base passive records from 2019 on test at 384 to 800 px; the active
-  models at 224 to 331 px (AdaptiveNN 288). The base frozen probes test at 224 px (DINOv2) and 512 px (the CanViT
-  paper's DINOv3 probe).
+  models at 224 to 331 px (AdaptiveNN 288). The base frozen probes, where the test size is known, use 224 or 256 px
+  (BigBiGAN) up to DINOv2 and 512 px in the CanViT paper's DINOv3 probe.
 - **All sizes, for reference.** These lines are set by models of 0.5 to 7 billion parameters and the author asked not
   to draw them.
   - ImageNet-1k: Saccader (75.03) trails the extra-data frontier of its date by 11.37 points (FixRes, 86.4,
@@ -61,7 +69,8 @@ first. Base size means at most about 100M parameters (`size_class`; up to 110M i
   about it (see the caveats).
 - **Plotting.** Filter each passive series by `size_class == "base"` and draw its running maximum (ADE20K: per
   protocol). The ImageNet extra-data base line is the running maximum over the base points of `overall` and
-  `in1k_only`, as for all sizes.
+  `in1k_only`, as for all sizes. The base frozen ImageNet line starts in 2016 at 35.4 (Split-Brain AlexNet) and first
+  reaches 60 with Local Aggregation (60.2, 2019-03-29).
 
 ## How the data was assembled
 
@@ -78,8 +87,8 @@ first. Base size means at most about 100M parameters (`size_class`; up to 110M i
      EVA-02, DINOv2, DINOv3 and others) as lead lists.
 
    A leaderboard value, another paper's table or a number recalled from memory counted only as a lead. The Papers
-   with Code ADE20K list has 83 entries and lacks ONE-PEACE and ViT-P. Its ImageNet-1k list includes implausible
-   entries (below).
+   with Code ADE20K list has 83 entries and lacks ONE-PEACE and ViT-P. Its ImageNet-1k list includes claims the JSON
+   leaves out (SATA and TAPe+ML, under "Verified, but left out").
 3. **Verification.** Each value was read in the paper's text, extracted from its PDF with `pdftotext -layout`.
    The check covered the table row, its caption, and the setup text that states the data, backbone and
    protocol. Error rates were converted to accuracy (100 − error).
@@ -109,7 +118,9 @@ first. Base size means at most about 100M parameters (`size_class`; up to 110M i
    evidence is kept outside git in the local checkout:
    `throwaway/history-base/evidence/` (afternoon), `throwaway/history-base/evidence_2026-10-01_morning/` (morning)
    and `throwaway/history-base/pdf_text/` (the PDF text extractions the evidence cites); each point's `where` field
-   names the table to reopen.
+   names the table to reopen. In the evening, Codex audited the file against primary sources: official code for
+   missing fields, then the unverified leads and missing base-size records. Its reports, the papers it saved
+   (`sources/`) and its parameter-count scripts are in `throwaway/history-audit/`.
 9. **What counts as active.** A model is *active* if it chooses where to look, one glimpse after another, each
    choice depending on what it has already seen. A model counts as *select once* if a policy picks
    high-resolution patches in a single step from a low-resolution view. *Borderline* covers foveated models whose
@@ -118,7 +129,8 @@ first. Base size means at most about 100M parameters (`size_class`; up to 110M i
 ## Verified points
 
 Model sizes, test resolutions and pretraining data are in the JSON and in the section "Where each size, resolution and
-pretraining was read". The base-size points collected in the afternoon are listed in the section "Base-size series".
+pretraining was read". The base-size points collected in the afternoon and by the evening audit are listed in the
+section "Base-size series".
 
 ### ImageNet-1k top-1 (validation set, %)
 
@@ -284,7 +296,8 @@ that beat every earlier base point of the series; ADE20K: per protocol), the exi
 reference points marked "not a record". A base point of the extra-data series counts only if it beats both base
 lines (ImageNet-1k only and extra data) at its date. Params are those of the predicting network (ImageNet), the
 frozen backbone (probes) or the backbone (ADE20K); "—" means the paper does not state it (the provenance tables say
-what is known).
+what is known). Wider or Deeper Model A2's backbone, counted from the official code, is 105.07M: above 100M, base
+under the 110M bound.
 
 ### ImageNet-1k, trained end to end on ImageNet-1k only (`in1k_only`)
 
@@ -326,30 +339,41 @@ what is known).
 
 | Date | Model | Params (M) | Test px | Pretraining | Top-1 | Where | Source |
 |---|---|---|---|---|---|---|---|
-| 2020-02-13 | SimCLR ResNet-50 (2×) | 94 | — | none | 74.2 | Table 6 of arXiv v1 | [Chen et al. 2020](https://arxiv.org/abs/2002.05709) |
+| 2016-11-29 | Split-Brain Autoencoder (AlexNet, conv3 linear probe) | — | — | none | 35.4 | Table 2 of arXiv v1 (conv3 column); Section 4.1.1 | [Zhang et al. 2016](https://arxiv.org/abs/1611.09842v1) |
+| 2018-03-21 | RotNet AlexNet (conv3 linear probe) | — | — | none | 38.7 | Table 5 of arXiv v1 (conv3 column); Section 3.2 | [Gidaris et al. 2018](https://arxiv.org/abs/1803.07728v1) |
+| 2018-05-05 | Instance Discrimination ResNet-50 (linear SVM probe) | — | — | none | 54.0 | Table 2 of arXiv v1 ('Ours Resnet50', conv5 column); Section 4.2 | [Wu et al. 2018](https://arxiv.org/abs/1805.01978v1) |
+| 2019-01-25 | Rotation RevNet-50 (width factor 16, linear probe) | 85.765632 | 224 | none | 55.4 | Table 2 of arXiv v1 ('Rotation' row, 'Ours' ImageNet column); Section 4.2; Appendix B | [Kolesnikov et al. 2019](https://arxiv.org/abs/1901.09005v1) |
+| 2019-03-29 | Local Aggregation ResNet-50 (10-crop linear probe) | — | — | none | 60.2 | Table 1 of arXiv v1 (ResNet-50 rows); Section 4.2 | [Zhuang et al. 2019](https://arxiv.org/abs/1903.12355v1) |
+| 2019-07-04 | BigBiGAN RevNet-50 x4 (BN+CReLU linear probe) | — | 256 | none | 61.3 | Table 2 of arXiv v1 (official validation set); Sections 4 and 4.1; Appendix A | [Donahue & Simonyan 2019](https://arxiv.org/abs/1907.02544v1) |
+| 2019-10-21 | CMC ResNet-101 (two color-view encoders, linear probe) | 84.990912 | 224 | none | 65.0 | Table 2 of arXiv v3; official code models/resnet.py and LinearProbing.py | [Tian et al. 2019](https://arxiv.org/abs/1906.05849v3) |
+| 2019-12-04 | PIRL ResNet-50 c2x (linear probe) | 98 | — | none | 67.4 | Section 3.2 text and Figure 2 of arXiv v1; Appendix A ('Base Architecture for PIRL') | [Misra & van der Maaten 2019](https://arxiv.org/abs/1912.01991v1) |
+| 2020-02-13 | SimCLR ResNet-50 (2×) | 94 | 224 | none | 74.2 | Table 6 of arXiv v1 | [Chen et al. 2020](https://arxiv.org/abs/2002.05709) |
 | 2020-06-13 | BYOL ResNet-200 (1×) | 63 | 224 | none | 77.8 | Table 9 (Appendix C.2) of arXiv v1 | [Grill et al. 2020](https://arxiv.org/abs/2006.07733) |
-| 2021-04-05 | MoCo v3 ViT-BN-B/7 | 86 | — | none | 79.5 | Figure 8 (table under the plot) of arXiv v1 | [Chen et al. 2021](https://arxiv.org/abs/2104.02057) |
+| 2021-04-05 | MoCo v3 ViT-BN-B/7 | 86 | 224 | none | 79.5 | Figure 8 (table under the plot) of arXiv v1 | [Chen et al. 2021](https://arxiv.org/abs/2104.02057) |
 | 2021-04-29 | DINO ViT-B/8 | 85 | 224 | none | 80.1 | Table 2 | [Caron et al. 2021](https://arxiv.org/abs/2104.14294) |
-| 2021-06-17 | EsViT Swin-B/W=14 | 87 | — | none | 81.3 | Table 1 of arXiv v1 | [Li et al. 2021](https://arxiv.org/abs/2106.09785) |
+| 2021-06-17 | EsViT Swin-B/W=14 | 87 | 224 | none | 81.3 | Table 1 of arXiv v1 | [Li et al. 2021](https://arxiv.org/abs/2106.09785) |
 | 2023-04-14 | DINOv2 ViT-B/14 | 86.58 | 224 | LVD-142M (self-supervised; distilled from DINOv2 ViT-g/14) | 84.5 | Table 4 | [Oquab et al. 2023](https://arxiv.org/abs/2304.07193) |
+| 2024-07-15 | Proteus ViT-B/14 (DINOv2-L teacher, linear probe) | — | — | ImageNet-1k images + DINOv2-L/14 teacher (LVD-142M, self-supervised) | 84.9 | Table 4 of arXiv v1; Sections 3.2.1 and 3.2.2; Appendix A.1.2 | [Zhang et al. 2024](https://arxiv.org/abs/2407.10366v1) |
 | 2026-03-23 | DINOv3 ViT-B/16, probed by Berreby et al. (512 px) | 86 | 512 | distilled from DINOv3 7B: LVD-1689M + retrieval-curated web images + ImageNet-1k/21k + Mapillary (DINOv3 data, self-supervised) | 85.0 | Table 17 of arXiv v1 (Table 10 of v2), 'IN1k top-1 (ours)', printed 85.00% | [Berreby et al. 2026](https://arxiv.org/abs/2603.22570) |
 
 ### ADE20K, backbone fine-tuned with a segmentation decoder (`overall`)
 
 | Date | Model | Params (M) | Test px | Pretraining | mIoU | Protocol | Where | Source |
 |---|---|---|---|---|---|---|---|---|
-| 2016-12-04 | PSPNet ResNet-152 | — | — | ImageNet-1k | 42.62 | single-scale | Table 3 (PSPNet(152)), arXiv v1 | [Zhao et al. 2016](https://arxiv.org/abs/1612.01105) |
+| 2016-11-30 | Wider or Deeper Model A2 (2-convolution decoder) | 105.070912 | — | ImageNet-1k + Places365 | 43.73 | single-scale | Table 4 of arXiv v1 (ADE20K val, 'Model A2, 2 conv.'); Sections 5 and 6.2 | [Wu et al. 2016](https://arxiv.org/abs/1611.10080v1) |
+| 2016-12-04 | PSPNet ResNet-152 (not a record) | — | — | ImageNet-1k | 42.62 | single-scale | Table 3 (PSPNet(152)), arXiv v1 | [Zhao et al. 2016](https://arxiv.org/abs/1612.01105) |
 | 2016-12-04 | PSPNet ResNet-152 | — | — | ImageNet-1k | 43.51 | multi-scale | Table 3 (PSPNet(152)+MS), arXiv v1 | [Zhao et al. 2016](https://arxiv.org/abs/1612.01105) |
 | 2017 | SAC ResNet-101 (SAC-multiple + MS) | — | — | ImageNet-1k | 44.3 | multi-scale | Table 3 ('SAC-multiple + MS') | [Zhang et al. 2017](https://openaccess.thecvf.com/content_ICCV_2017/papers/Zhang_Scale-Adaptive_Convolutions_for_ICCV_2017_paper.pdf) |
 | 2018-03-23 | EncNet ResNet-101 | — | — | — | 44.65 | unstated | Table 4 | [Zhang et al. 2018](https://arxiv.org/abs/1803.08904) |
 | 2018-09-04 | OCNet ResNet-101 (arXiv v1) | — | — | ImageNet-1k | 45.08 | unstated | Table 9 of arXiv v1 | [Yuan & Wang 2018](https://arxiv.org/abs/1809.00916v1) |
 | 2018-11-28 | CCNet ResNet-101 (arXiv v1) | — | — | ImageNet (1k or 21k not stated) | 45.22 | unstated | Table 6 of arXiv v1 | [Huang et al. 2018](https://arxiv.org/abs/1811.11721) |
+| 2019 | APCNet ResNet-101 | — | — | ImageNet-1k | 45.38 | unstated | Table 8 (ADE20K validation, 'Ours ResNet101'); Section 4.1 | [He et al. 2019](https://openaccess.thecvf.com/content_CVPR_2019/papers/He_Adaptive_Pyramid_Context_Network_for_Semantic_Segmentation_CVPR_2019_paper.pdf) |
 | 2019-09-24 | OCR HRNetV2-W48 (arXiv v1) | — | 520 | ImageNet-1k | 45.66 | unstated | Table 9 and Section 4 text of arXiv v1 | [Yuan et al. 2019](https://arxiv.org/abs/1909.11065) |
 | 2019-11-05 | ACNet ResNet-101 | — | — | — | 45.9 | multi-scale | Table 5 | [Fu et al. 2019](https://arxiv.org/abs/1911.01664) |
 | 2020-04-03 | CPNet ResNet-101 | — | 480 | ImageNet-1k | 46.27 | multi-scale | Table 4 (CPNet101) | [Yu et al. 2020](https://arxiv.org/abs/2004.01547) |
 | 2020-04-19 | ResNeSt-101 | 48.3 | — | ImageNet-1k | 46.91 | multi-scale | Table 7 of arXiv v1 | [Zhang et al. 2020](https://arxiv.org/abs/2004.08955) |
 | 2020-12-30 | DeepLabV3 ResNeSt-200 (arXiv v2) | 70.2 | — | ImageNet-1k | 48.36 | multi-scale | Table 5 of arXiv v2 | [Zhang et al. 2020](https://arxiv.org/abs/2004.08955) |
-| 2021-03-24 | DPT-Hybrid (ViT-Hybrid: ResNet-50 stem + ViT-B) | — | 480 | ImageNet (1k or 21k not stated) | 49.02 | multi-scale | Table 4 | [Ranftl et al. 2021](https://arxiv.org/abs/2103.13413) |
+| 2021-03-24 | DPT-Hybrid (ViT-Hybrid: ResNet-50 stem + ViT-B) | 98.181952 | 480 | ImageNet (1k or 21k not stated) | 49.02 | multi-scale | Table 4 | [Ranftl et al. 2021](https://arxiv.org/abs/2103.13413) |
 | 2021-03-25 | Swin-B + UperNet (ImageNet-22k) | 88 | 640 | ImageNet-21k | 51.6 | multi-scale | Table 3 (UperNet Swin-B‡); protocol from Appendix A2.3 | [Liu et al. 2021](https://arxiv.org/abs/2103.14030) |
 | 2021-05-31 | SegFormer-B5 (MiT-B5) | 81.4 | 640 | ImageNet-1k | 51.0 | single-scale | Table 1(a), arXiv v1 | [Xie et al. 2021](https://arxiv.org/abs/2105.15203) |
 | 2021-05-31 | SegFormer-B5 (MiT-B5) | 81.4 | 640 | ImageNet-1k | 51.8 | multi-scale | Table 1(a), arXiv v1 (also Section 4.3 text) | [Xie et al. 2021](https://arxiv.org/abs/2105.15203) |
@@ -363,6 +387,7 @@ what is known).
 | 2023-03-20 | EVA-02-B + UperNet | 86 | 512 | ImageNet-21k images (MIM) + EVA-CLIP teacher (image-text) | 55.3 | single-scale | Table 15(a), arXiv v1 | [Fang et al. 2023](https://arxiv.org/abs/2303.11331) |
 | 2023-09-02 | RevColV2-B + Mask2Former (not a record) | 88 | — | ImageNet-1k (MIM) + ImageNet-21k (supervised) | 54.9 | single-scale | Table 3 ('RevColV2-B+M2F') | [Han et al. 2023](https://arxiv.org/abs/2309.01005) |
 | 2023-09-02 | RevColV2-B + Mask2Former | 88 | — | ImageNet-1k (MIM) + ImageNet-21k (supervised) | 55.8 | multi-scale | Table 3 ('RevColV2-B+M2F') | [Han et al. 2023](https://arxiv.org/abs/2309.01005) |
+| 2023-10-19 | PlainSeg BEiT-B | — | 640 | BEiT weights (data not restated in the paper) | 55.7 | single-scale | Table 3 of arXiv v1 (mIoU(SS) column); Section 4.1; Appendix Table 8 | [Hong et al. 2023](https://arxiv.org/abs/2310.12755v1) |
 
 ### ADE20K, frozen self-supervised backbone + linear head (`frozen_ssl`)
 
@@ -391,8 +416,8 @@ code or the stated architecture, as the last column says.
 | IN-1k | DRAM, reimplemented by Elsayed et al. (8 glimpses of 77 px) | 67.5 | 45.61 | glimpse network ResNet-v2-50 on channel-stacked multi-resolution crops + classification LSTM (1024 units) + location LSTM (1024 units) + FC 1024 + FC 2 (next location) = 45,610,219 in total; per-part counts not stated | 224 | 77 × 8 | 5.58 B FLOPs per image at 8 glimpses, counting multiplications only, measured by Papadopoulos et al. (TNet paper Table 1; Appendix B.3 Eq. 13) | Saccader paper (arXiv 1908.07644v3) Table Supp.1: DRAM 45,610,219; TNet paper Table 1: 45.61M; components from Saccader Appendix C, DRAM model |
 | IN-1k | Saccader (Saccader-NASNet, 331 px images) | 75.03 | 124.54 | Saccader 35,583,913 (BagNet-77-lowD representation network 20,628,393 + attention network, what/where mixing conv and Saccader cell 14,955,520 by difference) + NASNet classifier 88,953,851 (by difference) = 124,537,764 | 331 | 113 × 6 | — | Saccader paper (arXiv 1908.07644v3) Table Supp.1: Saccader-NASNet 124,537,764, Saccader 35,583,913, BagNet-77-LowD 20,628,393; NASNet part and attention part computed by difference |
 | IN-1k | GFNet (ResNet-50, 96 px patches, T=5) | 75.93 | 103.63 | global (glance) encoder ResNet-50 without fc 23.51M + local (focus) encoder ResNet-50 without fc 23.51M + classifier GRU(2048->1024) + FC 1000 10.47M + patch-proposal network 46.15M (FC 18432->2048 37.75M, FC 2048->1024 2.10M, GRU 1024 6.30M, FC 2) = 103.63M; critic FC (1,025 parameters) training only | 224 | 96 × 5 | — | counted with uv-run torch by instantiating the official classes (github.com/blackfeather-wang/GFNet-Pytorch @ 8a6775c: models/resnet.py resnet50, network.py ActorCritic and Full_layer with configs.py resnet50: policy_hidden_dim 1024, fc_hidden_dim 1024, state_dim 2048*ceil(96/32)^2); not stated in the paper, whose Appendix A.1 describes the GRUs (1024 units, conv layer removed in pi for ResNets) |
-| IN-1k | GFNet (EfficientNet backbones, T=4), read from figure | 79.8 | 37.41 | global (glance) encoder EfficientNet-B3 with its classifier 12.23M (its classifier gives the glance prediction) + local (focus) encoder EfficientNet-B3 without classifier 10.70M + cascaded linear classifiers fc_2..fc_4 13.83M + patch-proposal network 0.65M (1x1 conv 1536->32, FC 800->256, GRU 256, FC 2) = 37.41M for 144 px patches (37.33M for 128 px patches) | — | 144 × — | about 0.75 G multiply-adds per image on average (x-position of the point in Figure 4(c), read from the PDF vector data) | counted with uv-run torch by instantiating the official classes (GFNet-Pytorch @ 8a6775c: models/gen_efficientnet efficientnet_b3, network.py with configs.py efficientnet_b3); not stated in the paper. That the top point belongs to the EfficientNet-B3 GFNet with 144 px patches is inferred: it lies on the highest-budget of the three GFNet curves of Figure 4(c), and appendix Table 2 lists B2-128, B3-128, B3-144 |
-| IN-1k | GF-EfficientNet-B2 (TPAMI version, 128 px patches, T=4) | 77.93 | 30.06 | global (glance) encoder EfficientNet-B2 with its classifier 9.11M + local (focus) encoder EfficientNet-B2 without classifier 7.70M + cascaded linear classifiers fc_2..fc_4 12.68M + patch-proposal network 0.57M (1x1 conv 1408->32, FC 512->256, GRU 256, FC 2) = 30.06M | — | 128 × 4 | — | counted with uv-run torch by instantiating the official classes (GFNet-Pytorch @ 8a6775c: efficientnet_b2, network.py, configs.py efficientnet_b2); not stated in the paper |
+| IN-1k | GFNet (EfficientNet backbones, T=4), read from figure | 79.8 | 37.41 | global (glance) encoder EfficientNet-B3 with its classifier 12.23M (its classifier gives the glance prediction) + local (focus) encoder EfficientNet-B3 without classifier 10.70M + cascaded linear classifiers fc_2..fc_4 13.83M + patch-proposal network 0.65M (1x1 conv 1536->32, FC 800->256, GRU 256, FC 2) = 37.41M for 144 px patches (37.33M for 128 px patches) | 300 | 144 × — | about 0.75 G multiply-adds per image on average (x-position of the point in Figure 4(c), read from the PDF vector data) | counted with uv-run torch by instantiating the official classes (GFNet-Pytorch @ 8a6775c: models/gen_efficientnet efficientnet_b3, network.py with configs.py efficientnet_b3); not stated in the paper. That the top point belongs to the EfficientNet-B3 GFNet with 144 px patches is inferred: it lies on the highest-budget of the three GFNet curves of Figure 4(c), and appendix Table 2 lists B2-128, B3-128, B3-144 |
+| IN-1k | GF-EfficientNet-B2 (TPAMI version, 128 px patches, T=4) | 77.93 | 30.06 | global (glance) encoder EfficientNet-B2 with its classifier 9.11M + local (focus) encoder EfficientNet-B2 without classifier 7.70M + cascaded linear classifiers fc_2..fc_4 12.68M + patch-proposal network 0.57M (1x1 conv 1408->32, FC 512->256, GRU 256, FC 2) = 30.06M | 260 | 128 × 4 | — | counted with uv-run torch by instantiating the official classes (GFNet-Pytorch @ 8a6775c: efficientnet_b2, network.py, configs.py efficientnet_b2); not stated in the paper |
 | IN-1k | MS-GFNet (EfficientNet-B3, T=4), read from figure | 80.0 | — | two EfficientNet-B3 encoders + cascaded linear classifiers + patch-proposal network adapted to several patch sizes; MS-GFNet code is not released; the paper says its parameter count is approximately identical to GFNet's (Sec. 5.2.5); the GFNet EfficientNet-B3 count is 37.3-37.4M | — | — × — | about 0.75 G multiply-adds per image on average (x-position of the top point in Figure 10(b) of v2 / Figure 8(b) of v1, read from the PDF vector data) | not stated as a number; TPAMI Sec. 5.2.5 ("the number of parameters is approximately identical", said of the ResNet-50 MS-GFNet); approximation from the official GFNet EfficientNet-B3 count |
 | IN-1k | STAM (DeiT-B-distilled, 27 glimpses of 32 px) | 80.78 | 100.5 | core DeiT-B distilled with classifiers G and D (class and distillation heads) 87.34M + actor MLP 13.13M (3 x {FC-BN-ReLU}, 2304->2048->2048->2048, then FC->1) + glimpse-location embeddings 0.04M (49 x 768) = 100.50M; critic MLP 1.32M and teacher DeiT-B distilled 87.34M used only in training | 224 | 32 × 27 | — | computed: core counted with uv-run timm 1.0.30 deit_base_distilled_patch16_224 (DeiT paper Table 5: 87M); actor and critic from the released STAM code (STAMVisionTransformer.set_mode, run_imagenet.sh: mlp_layers 4, mlp_hidden_dim 2048, actor input 3 x embed_dim) with embed_dim 768; the release only registers the DeiT-Small agent, the paper gives the MLP form (Sec. 5) and the Base core (A.3); no count is stated in the paper |
 | IN-1k | Liu et al. (learned saccades, 4x4 fovea action space) | 73.7 | 55.75 | reconstruction model 0.02M (3 ConvLSTM layers 3->8->16->3 and a 3x3 conv) + actor ResNet18 with 16 outputs 11.18M + evaluator ResNet-101 44.55M = 55.75M; critic ResNet18 11.18M training only. With the released code's 4x4 actor (BasicBlock [3,4,6,3], ResNet-34 layout, 21.29M) the sum is 65.86M | 224 | 56 × 5 | — | computed: paper names ResNet18 actor/critic (Sec. 3.4) and ResNet101 evaluator (Sec. 4.1); counted with uv-run torchvision (16-way head for the 4x4 action space); ConvLSTM 3x3 kernels from the released code (github.com/jliu206/Foveal_Saccadic_Vision_System @ 90a5f9f), the paper gives only the channel widths (A.1) |
@@ -480,13 +505,22 @@ code or the stated architecture, as the last column says.
 | BASIC-L image encoder (CoAtNet-7) trained with Lion, fine-tuned | 91.1 | 2400 | not stated in the Lion paper; BASIC (arXiv 2111.10050 v3) Table 5: BASIC-L image model CoAtNet-7, 2.4B | — | not stated in the Lion paper | JFT-5B + 6.6B image-text pairs (Section 4.2 text) | large |
 | OmniVec (fine-tuned) | 92.4 | — | not stated anywhere in the paper (Table 14 only says the ViT baselines were enlarged to match OmniVec-4's parameter count) | — | not stated | multimodal: AudioSet, Something-Something v2, Wikipedia, SUN RGB-D, ModelNet40 (Section 4 'Masked pretraining') | — |
 | OmniVec2 (fine-tuned) | 93.6 | — | not stated in the CVPR paper, its supplement or the arXiv copy (2507.13364v1) | — | not stated | multimodal: AudioSet, Something-Something v2, Wikipedia, SUN RGB-D, ModelNet40 and more (CVPR Section 4 'Masked pretraining') | — |
-| SimCLR ResNet-50 (2×) | 74.2 | 94 | Table 6 of arXiv v1 (Param. 94 for ResNet-50 (2x)) | — | not stated: the ImageNet linear-evaluation crop size is not given in v1; Appendix B.6 states 224x224 center crops only for the transfer and semi-supervised protocols | none (Table 6 caption and Section 2.3: representations learned on ImageNet without labels) | base |
+| Split-Brain Autoencoder (AlexNet, conv3 linear probe) | 35.4 | — | not stated in the paper; the probed features come from the convolutional layers of a split AlexNet (a full AlexNet is 60M), so base size | — | not stated: Section 4.1.1 gives frozen weights and spatially resized feature maps, not the image size | none (Section 4: 'We pre-train on the 1.3M ImageNet dataset [31] (without the use of labels)') | base |
+| RotNet AlexNet (conv3 linear probe) | 38.7 | — | not stated in the paper; the probed features come from AlexNet convolutional layers (a full AlexNet is 60M), so base size | — | not stated in arXiv v1 | none (Table 5 caption: the models 'were pre-trained on ImageNet without labels', except the supervised and random rows) | base |
+| Instance Discrimination ResNet-50 (linear SVM probe) | 54.0 | — | not stated in the paper; a ResNet-50 is 25.6M with its classifier by torchvision's definition | — | not stated | none (unsupervised; Section 4.2 learns the features on ImageNet) | base |
+| Rotation RevNet-50 (width factor 16, linear probe) | 55.4 | 85.765632 | counted from the official code (google/revisiting-self-supervised, models/resnet.py revnet50, filters_factor=16, no classifier): 85,765,632 (throwaway/history-audit/count_revnet2.py, count_revnet2.json); not stated in the paper | 224 | not stated in the paper; the official config/evaluation/rotation_or_exemplar.sh sets --crop_size 224,224 | none (self-supervised on ImageNet; Table 2's 'Ours' column is the official validation set) | base |
+| Local Aggregation ResNet-50 (10-crop linear probe) | 60.2 | — | not stated in the paper; a ResNet-50 is 25.6M with its classifier by torchvision's definition | — | not stated: Section 4.2 reports 10-crop validation accuracy without the crop size | none (self-supervised on ImageNet, Section 4) | base |
+| BigBiGAN RevNet-50 x4 (BN+CReLU linear probe) | 61.3 | — | not stated in BigBiGAN; the paper ties its RevNet-50 ×4 to Kolesnikov et al.'s width factor 16, which is 85,765,632 in that study's official code (throwaway/history-audit/count_revnet2.json), so base size; the BigBiGAN encoder itself was not counted | 256 | Appendix A: encoder input 256 x 256, center crop | none ('We train a BigBiGAN on unlabeled ImageNet, freeze its learned representation') | base |
+| CMC ResNet-101 (two color-view encoders, linear probe) | 65.0 | 84.990912 | counted from the official code (HobbitLong/CMC @ 7b227be, models/resnet.py, resnet101v2: the encoders of both views, unused contrastive fc heads excluded): 84,990,912 (throwaway/history-audit/count_cmc2.py, count_cmc2.log); not stated in the paper | 224 | not stated in the paper; the official LinearProbing.py validates with Resize(256), CenterCrop(224) | none (self-supervised on ImageNet; Table 2 caption: an encoder for each of the two views) | base |
+| PIRL ResNet-50 c2x (linear probe) | 67.4 | 98 | Appendix A of arXiv v1: PIRL-c2x has 'a total of 98 million parameters'; the same paragraph gives 25.6 million for the standard ResNet-50, a count that includes its 1000-way fc layer, so the 98M may include a classifier too | — | not stated: Figure 2 reports single-crop top-1 without the crop size | none (Appendix A: 'the ImageNet training set (1.28 million images)'; self-supervised) | base |
+| SimCLR ResNet-50 (2×) | 74.2 | 94 | Table 6 of arXiv v1 (Param. 94 for ResNet-50 (2x)) | 224 | not stated in v1 (Appendix B.6 states 224x224 center crops only for the transfer and semi-supervised protocols); the official google-research/simclr README's ImageNet linear-evaluation command uses --image_size=224 | none (Table 6 caption and Section 2.3: representations learned on ImageNet without labels) | base |
 | BYOL ResNet-200 (1×) | 77.8 | 63 | Table 9 of arXiv v1 ('Weights' 63M for ResNet-200 1x) | 224 | Appendix C.1 of arXiv v1: test images resized to 256 px on the shorter side, then a 224x224 center crop | none (Section 4 / Appendix C.1: trained on the ImageNet ILSVRC-2012 training set without labels) | base |
-| MoCo v3 ViT-BN-B/7 | 79.5 | 86 | Table 2 of arXiv v1 (ViT-Base 86 M); Section 6.3 text: the 7x7 patch 'keeps the model size unchanged' | — | not stated: linear probing reports 'single-crop top-1' without the crop size; Figure 8 caption says pretraining used two 224x224 crops | none (Section 6 (Experimental Results): pre-trained in the ImageNet-1k training set; Figure 8 caption) | base |
+| MoCo v3 ViT-BN-B/7 | 79.5 | 86 | Table 2 of arXiv v1 (ViT-Base 86 M); Section 6.3 text: the 7x7 patch 'keeps the model size unchanged' | 224 | not stated in the paper: linear probing reports 'single-crop top-1' without the crop size; Figure 8 caption says pretraining used two 224x224 crops. The official facebookresearch/moco-v3 main_lincls.py validates with Resize(256), CenterCrop(224) (the released protocol; the BN-B/7 checkpoint itself was not matched) | none (Section 6 (Experimental Results): pre-trained in the ImageNet-1k training set; Figure 8 caption) | base |
 | DINO ViT-B/8 | 80.1 | 85 | Table 2 'Param.' column (85, in millions); frozen backbone, the linear head (768x1000 plus bias, about 0.77M) is not counted | 224 | paper: 'report accuracy on a central crop' (size not stated); official eval_linear.py (facebookresearch/dino @ 7c446df): Resize(256) + CenterCrop(224) | none (Section 4: pretrained on the ImageNet dataset without labels) | base |
-| EsViT Swin-B/W=14 | 81.3 | 87 | Table 1 of arXiv v1 (#Parameters 87) | — | not stated: the linear-probe crop size is not given (Section 3 mentions 224x224 only as a typical input when discussing sequence length) | none (Section 4: unsupervised pre-training on ImageNet-1K without labels) | base |
+| EsViT Swin-B/W=14 | 81.3 | 87 | Table 1 of arXiv v1 (#Parameters 87) | 224 | not stated in the paper (Section 3 mentions 224x224 only as a typical input when discussing sequence length); the official microsoft/esvit eval_linear.py validates with Resize(256), CenterCrop(224) | none (Section 4: unsupervised pre-training on ImageNet-1K without labels) | base |
 | DINOv2 ViT-g/14 | 86.5 | 1100 | Section 4 text: 'our ViT-g backbone counts 1.1B parameters'; frozen backbone, linear head not counted | 224 | Table 4 caption: 'at resolution 224 x 224 unless stated otherwise' | LVD-142M (self-supervised) (Table 4 'Data' column) | large |
 | DINOv2 ViT-B/14 | 84.5 | 86.58 | counted from the official code (github.com/facebookresearch/dinov2 @ 7764ea0f, dinov2.hub.backbones._make_dinov2_model('vit_base'), 12 blocks): 86,580,480; not stated in the paper, whose Table 17 lists 18 blocks for ViT-B/14 (contradicted by the paper's own layer list {3, 6, 9, 12} for ViT-S/B and by the code) | 224 | Table 4 caption: 'at resolution 224 x 224 unless stated otherwise' | LVD-142M (self-supervised; distilled from DINOv2 ViT-g/14) (Table 4 (Data: LVD-142M); Section 5 (distillation from ViT-g); Table 15 (LVD-142M composition)) | base |
+| Proteus ViT-B/14 (DINOv2-L teacher, linear probe) | 84.9 | — | not stated in the paper; a ViT-B/14 (DINOv2's ViT-B/14 is 86.58M by its official code) | — | not stated: Appendix A.1.2 follows DINOv2's linear-probing protocol without the test size | ImageNet-1k images + DINOv2-L/14 teacher (LVD-142M, self-supervised) (Section 3.1: pre-training on the ImageNet-1K training set; Table 4 caption: Proteus-B is distilled from DINOv2-L) | base |
 | DINOv3 ViT-7B/16 | 88.4 | 6716 | v1 Figure 16(a) table: ViT-7B 6716M (Table 2: 6.7B); frozen backbone, linear head not counted | 512 | v1 Table 7 caption: resolution adapted to 1024 patch tokens, 512x512 for patch size 16 | LVD-1689M + retrieval-curated web images + ImageNet-1k/21k + Mapillary (DINOv3 data, self-supervised) (v1 Section 3.1) | large |
 | DINOv3 ViT-B/16, probed by Berreby et al. (512 px) | 85.0 | 86 | DINOv3 paper, Figure 16(a) (ViT-B 86M); the CanViT paper does not restate it | 512 | Table 17 caption (v1) / Table 10 caption (v2): 512x512 input resolution | distilled from DINOv3 7B: LVD-1689M + retrieval-curated web images + ImageNet-1k/21k + Mapillary (DINOv3 data, self-supervised) (DINOv3 arXiv v1 Section 3.1 (data) and Section 5.2 / 7 (distillation from ViT-7B)) | base |
 
@@ -495,6 +529,7 @@ code or the stated architecture, as the last column says.
 | Model | Value | Params (M) | Where params | Test px | Where test px | Pretraining (where) | Size |
 |---|---|---|---|---|---|---|---|
 | Cascade-DilatedNet (VGG) | 34.9 | — | Not stated in arXiv v1 or the CVPR 2017 version. DilatedNet is described as a dilated fully convolutional VGG-16; its count depends on how the converted fc6/fc7 layers are kept, which the paper does not say. | 512 | Section 4 footnote 2: benchmark images larger than this are rescaled to a shorter side of 512; smaller images keep their size. The network's test input size is not stated separately. | not stated (Not stated: neither version names pretraining data (searched both texts for ImageNet, pre-train, initialization).) | — |
+| Wider or Deeper Model A2 (2-convolution decoder) | 43.73 | 105.070912 | counted from the official code (itijyou/ademxapp @ 0901990, util/symbol/resnet_v2.py rna_feat_a1, convolutions and batch-norm affine parameters; classifier and running statistics excluded): 105,070,912 (throwaway/history-audit/count_wider2.py, count_wider2.json); the official misc/places_model_a2.pdf graph has the same feature topology; not stated in the paper; above 100M, base under the 110M bound | — | not stated: the 500 px crop is a training setting; Section 5: no multi-scale testing 'except for the test set of ADE20K' | ImageNet-1k + Places365 (Section 6.2: Model A2 is initialised from Model A and tuned 'with the Places 365 data'; Model A is trained on ILSVRC 2012) | base |
 | PSPNet ResNet-269 | 43.81 | — | Not stated: Table 3 lists pre-trained ResNet depths 50/101/152/269 without parameter counts; ResNet-269 is not one of He et al.'s configurations. | — | Not stated: Section 5.1 says only that 'an appropriately large cropsize' helps; no crop or test size is given. | not stated (Not stated: Section 3.3 says 'we use a pretrained ResNet [13]' without naming the dataset.) | — |
 | PSPNet ResNet-269 | 44.94 | — | Not stated (as for the single-scale entry). | — | Not stated; multi-scale testing ('MS', Table 3/4) without listed scales or base size. | not stated (Not stated: 'pretrained ResNet' without naming the dataset.) | — |
 | PSPNet ResNet-152 | 42.62 | — | not stated in the paper; ResNet sizes counted with torchvision 0.29 definitions (no weights), evidence/base-ade/resnet_param_counts.txt: ResNet-101 42.50M and ResNet-152 58.14M without the fc layer; PSPNet's own ResNet variant is not described, so no exact count | — | not stated (the paper only says an 'appropriately large cropsize') | ImageNet-1k (Section 3 text: 'we use a pretrained ResNet model [13]' ([13] = He et al. ImageNet ResNet)) | base |
@@ -503,6 +538,7 @@ code or the stated architecture, as the last column says.
 | EncNet ResNet-101 | 44.65 | — | not stated in the paper; a ResNet-101 is 42.5M without its classifier by torchvision's definition, and OCR v1 states about 42.7M for its dilated ResNet-101 | — | Not stated: Section 3.1 says images are cropped to a fixed size with zero padding, without the size. | not stated (Not stated: 'EncNet augments a pre-trained Deep Residual Network (ResNet) [17]' (Introduction) without naming the dataset.) | base |
 | OCNet ResNet-101 (arXiv v1) | 45.08 | — | not stated in OCNet v1; the same authors' OCR paper (v1, Section 4) states 'the backbone ResNet-101 is about 42.7M' | — | not stated (training resizes images to a random length in {300, 375, 450, 525, 600}) | ImageNet-1k (Section 4.2: 'We choose the ImageNet pretrained ResNet-101') | base |
 | CCNet ResNet-101 (arXiv v1) | 45.22 | — | not stated in the paper; a ResNet-101 is 42.5M without its classifier by torchvision's definition, and OCR v1 states about 42.7M for its dilated ResNet-101 | — | Not stated: Section 4.2 gives training augmentation only (short side random in {300, 375, 450, 525, 600}); no test size. | ImageNet (1k or 21k not stated) (Section 4.2 'Network Structure': 'we choose the ImageNet pre-trained ResNet-101 [16] as our backbone' (arXiv v1).) | base |
+| APCNet ResNet-101 | 45.38 | — | not stated in the paper; a ResNet-101 is 42.5M without its classifier by torchvision's definition | — | not stated: Section 4.1 sets the ADE20K training crop to 576; no test size | ImageNet-1k (Section 4.1: ResNet 'pre-trained on ImageNet [29]', where [29] is the ILSVRC paper of Russakovsky et al.) | base |
 | OCR HRNetV2-W48 (arXiv v1) | 45.66 | — | HRNetV2-W48 count not stated in OCR v1 (it states about 42.7M for its ResNet-101 backbone). Swin v1 Table 3 lists 'OCRNet HRNet-w48' at 71M for the whole system (an mmsegmentation reproduction), so the backbone is under 71M | 520 | Section 4: 'ADE20K: ... crop size as 520 x 520' | ImageNet-1k (Section 3.2: 'ResNet-50/ResNet-101 pretrained over the ImageNet dataset'; HRNetV2-W48 pretraining not restated) | base |
 | ACNet ResNet-101 | 45.9 | — | not stated in the paper; a ResNet-101 is 42.5M without its classifier by torchvision's definition, and OCR v1 states about 42.7M for its dilated ResNet-101 | — | Not stated for ADE20K: Section 4.4 says multi-scale input and multi-scale testing; the scale list in Section 4.3 is for Cityscapes and no base size is given. | not stated (Not stated: Section 4.2 'We employ a dilated pretrained ResNet architecture' without naming the dataset.) | base |
 | CPNet ResNet-101 | 46.27 | — | not stated; ResNet sizes counted with torchvision 0.29 definitions (no weights), evidence/base-ade/resnet_param_counts.txt: ResNet-101 42.50M and ResNet-152 58.14M without the fc layer (the paper's 'off-the-shelf' ResNet-101 variant is not specified) | 480 | Section 4.1: random crops of 480 x 480 for ADE20K training; test-time base size not stated | ImageNet-1k (Section 4.1: 'We adopt the ResNet [13] as our pre-trained model') | base |
@@ -510,7 +546,7 @@ code or the stated architecture, as the last column says.
 | DeepLabV3 ResNeSt-200 (arXiv v2) | 48.36 | 70.2 | ResNeSt v1 Figure 1 inset table: ResNeSt-200 70.2M (the ImageNet classification model, including its classifier; v2's table rounds to 70M) | — | not stated for ADE20K (GluonCV DeepLabV3 implementation) | ImageNet-1k (Section 6.3: transfer learning from the ImageNet-trained ResNeSt) | base |
 | SETR-MLA (ViT-L) | 48.64 | 307 / 310.57 system | Backbone: SETR Table 1 'T-Large' is 24 layers, hidden 1024, 16 heads, which is ViT-Large, 307M in the ViT paper's Table 1 (arXiv 2010.11929v2); SETR does not state the backbone count. Whole model: SETR Table 4, SETR-MLA #Params 310.57M. | 512 | Section 4.1 'Implementation details': random 512 crops for ADE20K in training; test uses a sliding window ('e.g., 480 x 480 for Pascal Context', whose training crop is 480) after scaling to a uniform size that is not given. | ImageNet-21k (Table 4 'Pre' column 21K; transformer initialised from ViT weights pretrained on ImageNet-21K (Section 4.1 'Pre-training').) | large |
 | SETR-MLA (ViT-L) | 50.28 | 307 / 310.57 system | As for the single-scale entry (ViT Table 1; SETR Table 4). | 512 | Multi-scale test with factors 0.5-1.75 (Section 4.1, mmsegmentation default) around the 512 crop setting. | ImageNet-21k (Table 4 'Pre' 21K.) | large |
-| DPT-Hybrid (ViT-Hybrid: ResNet-50 stem + ViT-B) | 49.02 | — | backbone count not stated. Table 9 gives 123M for the whole DPT-Hybrid monocular-depth model (DPT-Base 112M); the segmentation model has a different head. The ViT-Hybrid backbone is a ResNet-50 embedding followed by 12 ViT-B layers; without the exact ResNet stage layout an exact count is not possible | 480 | Section 4.2: 'We train on square random crops of size 480' | ImageNet (1k or 21k not stated) (Section 4.2: 'The encoder is again initialized from ImageNet-pretrained weights') | base |
+| DPT-Hybrid (ViT-Hybrid: ResNet-50 stem + ViT-B) | 49.02 | 98.181952 | backbone count not stated in the paper (Table 9 gives 123M for the whole DPT-Hybrid monocular-depth model, DPT-Base 112M; the segmentation model has a different head). Counted from the official code: dpt/vit.py _make_pretrained_vitb_rn50_384 builds timm 0.4.5 vit_base_resnet50_384, 98,950,952 minus its unused 769,000-parameter ImageNet head = 98,181,952 (throwaway/history-audit/count_dpt.py, count_dpt.log) | 480 | Section 4.2: 'We train on square random crops of size 480' | ImageNet (1k or 21k not stated) (Section 4.2: 'The encoder is again initialized from ImageNet-pretrained weights') | base |
 | Swin-L + UperNet | 53.5 | 197 / 234 system | Backbone: Table 1(b), Swin-L 197M. System: Table 3, UperNet Swin-L 234M. | 640 | Appendix A2.3 (ADE20K): Swin-B/L trained with 640x640 input; multi-scale test at [0.5, 0.75, 1.0, 1.25, 1.5, 1.75]x the training resolution. | ImageNet-21k (Table 3 '‡ indicates that the model is pre-trained on ImageNet-22K'.) | large |
 | Swin-B + UperNet (ImageNet-22k) | 51.6 | 88 / 121 system | Swin-B 88M: Table 1 (ImageNet classification); system 121M: Table 3 | 640 | Appendix A2.3: 'Swin-B and Swin-L with ‡ ... trained with the input of 640x640' | ImageNet-21k (Table 3 caption: '‡ indicates that the model is pre-trained on ImageNet-22K') | base |
 | SegFormer-B5 (MiT-B5) | 51.0 | 81.4 / 84.7 system | Table 1(a): encoder 81.4M, decoder 3.3M (sum 84.7M); Table 4 states 84.7M for SegFormer-B5 | 640 | Section 4.1: 'we set crop size to 640 x 640 on ADE20K for our largest model B5'; evaluation rescales the short side to the crop size | ImageNet-1k (Section 4.1: 'We pre-train the encoder on the Imagenet-1K dataset') | base |
@@ -534,6 +570,7 @@ code or the stated architecture, as the last column says.
 | ONE-PEACE + ViT-Adapter + Mask2Former | 63.0 | 1520 | As above. | 896 | As above, multi-scale column. | LAION-2B image-text pairs + COCO-Stuff (As above.) | large |
 | RevColV2-B + Mask2Former | 54.9 | 88 / 325 system | Table 2: RevColV2-B 88M (classification model). Table 1 lists 101M for the base model with its top-down columns, which the segmentation model also uses ('both bottom-up and top-down columns', Section 3.1.3). Table 3 states 325M for the Mask2Former system | — | not stated for the Mask2Former runs (the UperNet ImageNet-22k runs use 640 x 640, Section 3.1.3) | ImageNet-1k (MIM) + ImageNet-21k (supervised) (Section 3.1.1 and Table 2 (ImageNet-1K pre-train + 22K intermediate fine-tune)) | base |
 | RevColV2-B + Mask2Former | 55.8 | 88 / 325 system | as above | — | not stated | ImageNet-1k (MIM) + ImageNet-21k (supervised) (as above) | base |
+| PlainSeg BEiT-B | 55.7 | — / 105 system | Backbone alone not stated. Whole model: Table 3, 105M (22% randomly initialised), which bounds the backbone below 110M | 640 | Appendix Table 8: ADE20K crop 640; Section 4.1: sliding-window inference, single-scale results only | BEiT weights (data not restated in the paper) (Section 4.1 names BEiT among the pre-trained plain ViTs; the BEiT-B checkpoint is not identified) | base |
 | ViT-CoMer-L + Mask2Former (BEiTv2 init) | 62.1 | — / 604 system | Backbone alone not stated: the paper gives system counts only (Table 7: Mask2Former + ViT-CoMer-L 604M; Table 5: UperNet + ViT-CoMer-L 383.4M). Its ViT branch is a ViT-L (307M in the ViT paper's Table 1). | — | Not stated: implementation details for Table 7 are deferred to a supplementary that arXiv v1-v3 do not contain. | BEiT v2 weights (data not restated in the paper) (Section 4.2 and Table 7 'Pre-train' column: BEiTv2 [31]. COCO-Stuff intermediate training is not mentioned.) | large |
 | ViT-P on InternImage-H + Mask2Former | 63.1 | — / 1610 system | Two backbones, no separate count in the paper: Mask2Former† InternImage-H mask generator (InternImage-H is 1.08B in the InternImage paper's Table 1) and a DINOv2-L point classifier (Section 4.2; 304.4M counted with timm 1.0.30 vit_large_patch14_dinov2). System: Table 1, 1.61B. | 896 | Table 1: mask-generator crop 896x896; Section 4.2: ViT-P crop 518x518 on ADE20K. | InternImage-H and DINOv2-L weights + COCO (Table 1 caption: '† Models pre-trained on COCO' (both the Mask2Former and ViT-P marked †).) | large |
 | ViT-P on InternImage-H + Mask2Former | 63.6 | — / 1610 system | As above. | 896 | As above, m.s. column. | InternImage-H and DINOv2-L weights + COCO (As above.) | large |
@@ -562,8 +599,17 @@ code or the stated architecture, as the last column says.
   appendix gives DRAM 66.6 and Saccader 70.1 on a 3,906-image validation subset.
 - Frozen weakly-supervised backbones, linear probe (DINOv3 Table 9): PE-core G/14 89.3 and SigLIP 2 g/16 89.1.
   Both are above DINOv3 7B's 88.4. They are not self-supervised, so they are not in the `frozen_ssl` series.
+- SpatialBoost (arXiv 2603.22057, 2026): 90.2 in Table 5's linear ImageNet column for DINOv3 + SpatialBoost, whose
+  backbone is DINOv3 ViT-7B/16 (Section 4.1), so it is large.
 - CF-ViT (AAAI 2023, 2022-03-08): 84.1. It tokenizes the whole image coarsely, then re-splits patches chosen by
   attention, once. It is not active.
+- S3TA (Towards Robust Image Classification Using Sequential Attention Models, CVPR 2020, arXiv 1912.02184): S3TA-16
+  72.54 nominal accuracy (Table 1). Its recurrent attention queries a feature map that a modified ResNet-152 computes
+  on the full image (Section 3), so it is not glimpse-limited sensing; no single system count is stated.
+- SparseFormer-B (SparseFormer: Sparse Visual Recognition via Limited Latent Tokens, ICLR 2024, arXiv 2304.03768):
+  82.6, 81M (v1 Table 2). It samples image features over several steps, but its first layers (a 7×7 convolution and
+  max pooling) see the full-resolution image: borderline under the series definitions, not added. Its bootstrapped
+  successor (arXiv 2312.01987) keeps the feature-space sampling.
 - Jérémie et al. (arXiv 2402.15480): 74.3 with a single central log-polar fixation on a retrained ResNet-101;
   77.4 when the fixation sits at the ground-truth box centre. Not active.
 - Vuyyuru, Reddy et al. 2020 (arXiv 2006.16427): 62.90 with fixed "retinal fixations" on central 320 px crops.
@@ -577,9 +623,13 @@ code or the stated architecture, as the last column says.
     2015-02-11); Inception-v3 single model, 144 crops, 81.23 (2015-12-02); Inception-v4 single 82.3 and
     Inception-ResNet-v2 single 82.2 (2016-02-23; no count stated); NASNet-A (N=7) 82.3 (84.9M, arXiv v1 of
     2017-07-21; NASNet-A (6 @ 4032) 82.7 with 88.9M in v4).
-  - AutoAugment AmoebaNet-B (6,190) 82.75 (arXiv v1, 2018-05-24; 82.8 in v3); FixRes PNASNet-5 at 480 px 83.7
-    (2019-06-14); AdvProp EfficientNet-B7 85.2 (66M); CaiT-S36↑384Υ 85.4 (68M) and CaiT-S48↑384 85.1 (89M); HaloNet
-    H7 84.9 (67M); CoAtNet-2 at 512 px 85.9 (75M, 2021-06-09, ties Refined-ViT-L↑448 of 2021-06-07); XCiT-M24/8Υ↑384
+  - AmoebaNet-A (6, 190), 86.7M: 82.7 in arXiv v1 (2018-02-05) and 82.8 in v2 (2018-02-06) of Regularized Evolution
+    for Image Classifier Architecture Search (AAAI 2019, arXiv 1802.01548), ImageNet results table; v1's 82.8 row is
+    AmoebaNet-A (6, 204), 99.6M. AutoAugment AmoebaNet-B (6,190) 82.75 (arXiv v1, 2018-05-24; 82.8 in v3); FixRes
+    PNASNet-5 at 480 px 83.7 (2019-06-14); AdvProp EfficientNet-B7 85.2 (66M); CaiT-S36↑384Υ 85.4 (68M) and
+    CaiT-S48↑384 85.1 (89M); HaloNet H7 84.9 (67M); EfficientNetV2-M 85.1 (55M; arXiv 2104.00298 v1); LV-ViT-M↑384
+    85.4 (56M; the 89.5 in its row is ImageNet-ReaL; arXiv 2104.10858 v1 Table 4); CoAtNet-2 at 512 px 85.9 (75M,
+    2021-06-09, ties Refined-ViT-L↑448 of 2021-06-07); XCiT-M24/8Υ↑384
     85.8 (84M); MaxViT-S at 512 px 86.19 (69M); CAFormer-B36↑384 86.4 (99M); TransNeXt-Base at 384 px 86.2 (89.7M);
     H-ViT3-B 85.5 (94M, 2025-12-01).
   - Excluded as above 100M: ZFNet v3's wider single model (62.5, 107.6M computed); Howard 2013's "Double FC" net
@@ -587,7 +637,9 @@ code or the stated architecture, as the last column says.
     model C (330.6M computed); Deep Image (75.12, 212.7M); MaxViT-B (120M).
 - Base size, extra data, read but not records: Yalniz et al. ResNeXt-101 32x4d 83.4 (43M) and ResNet-50 81.2; Noisy
   Student B7 with a B7 teacher 85.9; Meta Pseudo Labels EfficientNet-B7 86.87 (Table 11 of arXiv v3); HaloNet H4 at
-  512 px 85.8 (85M, ImageNet-21k); FocalNet-B 86.5, DaViT-Base 86.9 and FT-CLIP ViT-B 86.6 (384 px); ConvNeXt V2-B
+  512 px 85.8 (85M, ImageNet-21k); EfficientNetV2-M (21k) 86.1 (55M); SwinV2-B 87.1 (88M, ImageNet-22K, 384 px; arXiv
+  2111.09883 v1 Table 2); DeiT III ViT-B↑384 86.7 (ImageNet-21k; the 86.9 in its row is the parameter count; arXiv
+  2204.07118 v1 Table 8); FocalNet-B 86.5, DaViT-Base 86.9 and FT-CLIP ViT-B 86.6 (384 px); ConvNeXt V2-B
   87.7 (ImageNet-22K, 384 px, 2023-01-02); EVA-02-B 88.6 at 448 px (2023-03-20; 88.57 in its Table 18, a tie with
   the ViT-22B-distilled ViT-B); UniRepLKNet-B 87.4 (98M); MobileNetV4 Hybrid-L 87.0 (35.9M, JFT data and an
   EfficientNet-L2 teacher); ScaleKD ViT-B/14 86.43; Sun et al. 2017 ResNet-101 from JFT-300M 79.2.
@@ -595,7 +647,26 @@ code or the stated architecture, as the last column says.
   MoCo v3 ViT-B/16 76.7; iBOT ViT-B/16 79.5 (ImageNet-1k pretraining) and 79.0 (ImageNet-22K); MAE ViT-B 68.0; RELICv2
   ResNet200 (1x) 79.8 (63M); Mugs ViT-B/16 80.6; I-JEPA ViT-B/16 72.9; SimCLRv2 ResNet-152 (1x+SK) 77.2 (89M); SwAV
   ResNet-50 75.3; Franca ViT-B/14 82.0 (ImageNet-21K). MSN reports no full-label ViT-B linear result, data2vec no
-  linear probe, and DINOv2 with registers only ViT-L.
+  linear probe, and DINOv2 with registers only ViT-L. Also:
+  - CMC ResNet-50 64.1 (two encoders, 47.0M counted from the official code), in the same table as the CMC point.
+  - CPC v2 ResNet-50 63.8 (24M stated; Data-Efficient Image Recognition with Contrastive Predictive Coding, ICML
+    2020, arXiv 1905.09272, Table 1 of v3): below the base frozen line from CMC's 65.0 (2019-10-21) on; its first
+    public date is an open lead.
+  - SwAV ResNet-50 (w2) 77.3 (94M, 400 epochs): a row of the official facebookresearch/swav README's "Larger
+    architectures", absent from arXiv 2006.09882 v1. SwAV's v1 already follows BYOL's 77.8 (2020-06-13).
+  - XCiT-M24/8 trained with DINO, 84M: 80.3 at 224 px and 80.9 at 384 px (XCiT, NeurIPS 2021, arXiv 2106.09681 v1
+    Table 3, 2021-06-17), below EsViT's 81.3 of the same day.
+- Frozen self-supervised, large: CMC ResNet-50 x2 68.4 (arXiv 1906.05849 v3, Table 2): two width-2 encoders,
+  187.7M counted from the official code. v5's 70.6 uses other color views and RandAugment with the same encoders.
+- Leaderboard claims kept out, though both papers do report them:
+  - SATA (arXiv 2409.19850): SATA-B∗ 94.9 at 224 px in Table 1 (SATA-B, built on DeiT-B, 93.9). The starred ViT
+    checkpoint's pretraining data is not identified, so no series can be assigned; Equation 7's outlier set, read
+    literally with alpha = 1 (Section 5.6), is empty; the official code (github.com/nick-nikzad/SATA) could not be
+    read.
+  - TAPe+ML (arXiv 2609.20869): 88.1 on ImageNet-1k (Table 5, p. 23), trained from scratch on the standard split,
+    with fewer than 100,000 parameters claimed in the abstract. Its limitations section (p. 36) says the full
+    representation algorithm is proprietary and undisclosed, so the inference system can be neither specified nor
+    counted. Accepted, it would top the base ImageNet-1k-only line (86.5).
 
 **ADE20K**
 - Further passive results below the year's best:
@@ -627,71 +698,91 @@ code or the stated architecture, as the last column says.
   ConvNeXt V2-B 52.1; SegViT BEiTv2-Base 54.0 / 54.9; DaViT-B with Florence-2 pretraining 54.9 / 55.5; UniRepLKNet-B
   53.5 / 53.9; TransNeXt-Base + Mask2Former 54.7 (ImageNet-1k only); ViT-CoMer-B 48.8 / 49.4; ViT-5-Base 49.1;
   SeMask-B FPN 49.35 / 50.98; iBOT ViT-B/16 + UperNet 50.0 (iBOT Table 6). Segmenter's comparison table uses ViT-L;
-  EoMT's ADE20K semantic rows are ViT-L only; Kerssies et al. give figure values only (highest label 54.7).
-- Base size, frozen linear, read but not records: Franca ViT-B/14 39.1 under its own protocol (DINOv2-B scores 42.6
-  under it).
+  EoMT's ADE20K semantic rows are ViT-L only; Kerssies et al. give figure values only (highest label 54.7). Also:
+  - ANL ResNet-101 45.24 (Asymmetric Non-local Neural Networks for Semantic Segmentation, ICCV 2019, arXiv
+    1908.07678, Table 4; multi-scale with flip; 63.17M for the whole model, Table 2; 2019-08-21), below APCNet's
+    earlier 45.38.
+  - DNL ResNet-101 45.97, not 46.0 (Disentangled Non-Local Neural Networks, ECCV 2020, arXiv 2006.06668, Table 4;
+    multi-scale; 2020-06-11), below CPNet's 46.27 and ResNeSt-101's 46.91 of April 2020.
+  - MVP ViT-B/16 + UperNet 52.4 (MVP: Multimodality-guided Visual Pre-training, arXiv 2203.05175, Table 2;
+    fine-tuned), below Mask2Former Swin-B's 53.9 / 55.1.
+  - Proteus ViT-B/14 + UperNet 54.4 (arXiv 2407.10366 v1, Table 5; single-scale at 518 px), below PlainSeg's 55.70.
+- Base size, frozen linear, read but not records, all below DINOv2 ViT-B/14's 47.3 (or iBOT ViT-B/16's 38.3 before
+  2023-04-14); the protocols differ from paper to paper:
+  - Franca ViT-B/14 39.1 under its own protocol (DINOv2-B scores 42.6 under it; arXiv 2507.14137 v1 Table 2a).
+  - VICRegL ConvNeXt-B 35.3 (85M; arXiv 2210.01571 v1 Table 2); its 43.2 belongs to ConvNeXt-XL (350M).
+  - NeCo ViT-B/14 44.9 (arXiv 2408.11054 v1 Table 2).
+  - FiT3D 45.93 (DINOv2 features after 3D-aware fine-tuning; arXiv 2407.20229 Table 3; its 58.71 is mAcc).
+  - MoSiC ViT-B/14 43.6 and DINOv2R-B + MoSiC 44.4 (arXiv 2506.08694 v1 Tables 4 and 5).
+  - DIP ViT-B/14 39.5 (arXiv 2506.18463 v1 Appendix Table 8; the 86.7 in its row is COCO).
+- Frozen, distilled from a mix of self-supervised, supervised and language-supervised teachers: RADIO-AMP-B, 98M
+  (RADIO Amplified: Improved Baselines for Agglomerative Vision Foundation Models, arXiv 2412.07679 v1 of
+  2024-12-10; CVPR 2025 as RADIOv2.5), linear ADE20K 48.94 / 50.48 / 51.16 at 512 / 768 / 1024 px (Appendix Table
+  A5). Its teachers are CLIP, DINOv2 and SAM-H (Section 2.1), so it is not self-supervised and stays out of
+  `frozen_ssl`.
 
 ## Unverified leads
 
 **ImageNet-1k**
-- AmoebaNet-A 83.9 (Real et al. 2018): not pinned to the arXiv version that first carries it. GPipe's later
-  versions cite it as the previous best. AmoebaNet-A (N=6, F=190), 86.7M, 82.8 was seen only in PNASNet v3's Table 5;
-  it would tie the Inception-v3 ensemble at base size.
+- AmoebaNet-A 83.9 (Real et al. 2018), a larger model than the base-size AmoebaNet-A (6, 190): not pinned to the
+  arXiv version that first carries it. GPipe's later versions cite it as the previous best.
 - Not read in their own papers:
   - InternImage-H 89.6.
   - Florence 90.05.
   - NEPA-L 85.3 (a 2026 lead).
-  - At base size: SwinV2-B 87.1 (ImageNet-22K, 384 px), EfficientNetV2-M 85.1 (ImageNet-1k) and 86.1 (21k), DeiT III
-    ViT-B 86.7 (21k, 384 px), LV-ViT-M↑384 85.4. None would be a record at its date under any reading.
-  - Mahajan et al. 2018 ResNeXt-101 32x8d (IG): 82.2 per FixRes's Table 2, 82.7 per Yalniz et al.'s Table 6; Mahajan
-    et al. show it only in figures. Below PNASNet-5 either way.
-  - XCiT-M24/8 trained with DINO (84M), linear probe 80.3 and 80.9 at 384 px (XCiT paper, arXiv 2106.09681): a lead
-    for the base frozen series, below EsViT's 81.3 of the same day.
-  - Base-size frozen self-supervised results before 2020 (CPC v2 ResNet-50 63.8, BigBiGAN RevNet-50 (4x) 61.3, CMC
-    ResNet-50 (2x)) and SwAV ResNet-50 (w2) 77.3 were seen only in other papers' tables (SimCLR, SwAV, BYOL, RELICv2).
-    SwAV's own v1 has no w2 row.
+  - Mahajan et al. 2018 ResNeXt-101 32x8d (IG), 88M by its own Section 2.3: 82.2 per FixRes's Table 2, 82.7 per
+    Yalniz et al.'s Table 6; Mahajan et al. show the accuracy only in figures. Below PNASNet-5 either way.
 - MaskDistill 88.3 and ConvNeXt V2-H 88.9 were seen but not read. They use a CLIP teacher and ImageNet-22K
   labels, so they would belong to the extra-data series, below the frontier of their year.
-- SpatialBoost 90.2 (2026) is a linear probe on DINOv3, not a fine-tuned result. Its protocol was not checked.
 - 2024–2026, overall: no fine-tuned ImageNet-1k result above Lion/BASIC-L's 91.1 was found, other than OmniVec2
   (flagged in the JSON). At base size, no result above MOAT-2's 86.5 (ImageNet-1k only), the ViT-22B-distilled
-  ViT-B's 88.6 (extra data) or the CanViT paper's 85.0 (frozen) was found. The searches were not exhaustive: the
-  comparison tables of TransNeXt, UniRepLKNet, ViT³, ScaleKD, MobileNetV4 and EVA-02, the paperswithcode.co mirror
-  (132 ImageNet entries) and a few web searches.
-- DINOv3's TMLR version points to appendix Tables 36 and 37 for more results on its distilled models. The Zotero copy
-  has no appendix, and OpenReview refused the downloads, so whether DINOv3's authors published an ImageNet-1k
-  validation number for ViT-B/16 is open; arXiv v1 and the TMLR main text give only ImageNet-ReaL (89.3).
-- Excluded as implausible, though they appear on the Papers with Code leaderboard:
-  - SATA (arXiv 2409.19850): 94.9% from a ViT-B/16 "with no additional training or fine-tuning".
-  - TAPe+ML (arXiv 2609.20869): 88.1% with under 100k parameters.
-  - "Toward Errorless Training ImageNet-1k" reports training-set accuracy.
+  ViT-B's 88.6 (extra data) or the CanViT paper's 85.0 (frozen) was found, other than the DINOv3 supplement below.
+  The searches were not exhaustive: the comparison tables of TransNeXt, UniRepLKNet, ViT³, ScaleKD, MobileNetV4 and
+  EVA-02, the paperswithcode.co mirror (132 ImageNet entries) and a few web searches.
+- DINOv3's TMLR supplementary material (openreview.net/attachment?id=2NlGyqNjns&name=supplementary_material) holds
+  Tables 36 and 37 on its distilled models. The PDF itself could not be opened (HTTP 403); the audit read its text as
+  indexed by a web search (`throwaway/history-audit/dinov3_indexed_evidence2.md`). Table 36, linear classification,
+  IN-1k val at 512 px: ViT-B 85.3, ConvNeXt-B 85.4. Table 37, linear segmentation, ADE20K at 1024 px: ViT-B 52.7 (51.8
+  at 512 px, as in the JSON). Both models are base size (ViT-B 86M, ConvNeXt-Base 89M, arXiv v1 Figure 16(a)). The
+  supplement's first public date is unknown and arXiv v1 (2025-08-13) lacks these tables, so they are not points;
+  verified and dated, they would raise the base frozen ends to 85.4 and 52.7.
+- First public dates still open: SwAV ResNet-50 (w2)'s 77.3 (a model-zoo row); CPC v2 ResNet-50's 63.8 (absent from
+  arXiv v1 and v2, present in v3 of 2020-07-01, already tabulated by SimCLR's v1 of 2020-02-13), a base frozen record
+  only if public between BigBiGAN (2019-07-04) and CMC (2019-10-21); RotNet's 38.7 in its ICLR 2018 OpenReview
+  submission (OpenReview refused the request).
+- SATA's implementation and checkpoint, and TAPe+ML's full inference system, are unresolved (both under "Verified,
+  but left out").
+- SAFER-AiD (SAFER-AiD: Saccade-Assisted Foveal-peripheral vision Enhanced Reconstruction for Adversarial Defense,
+  WACV 2026, arXiv 2510.08761), a sequential active model: the accumulated reconstruction chooses each next saccade
+  (Section 3.3); three glimpses with 56×56 foveae, 6% peripheral sampling and 224 px images (Section 4). Its tables
+  give accuracy on attacked inputs, for two correctly classified images per class (Section 4.2); clean accuracy
+  appears only in Figure 4, with no printed number or full-validation scope; the count of its inference networks
+  (reconstruction network, actor, downstream classifier) is not stated. No point until a clean full-validation
+  number and a count exist.
+- APEX (Active Perception with EXploratory Sampling), in the Syracuse University dissertation Bio-Inspired Visual
+  Intelligence: Improving Efficiency and Robustness through Foveal-Peripheral Sampling and Learned Saccades (2026,
+  surface.syr.edu/etd/2372): the abstract names frozen CLIP features and adversarial and incremental evaluation but no
+  ImageNet score or parameter count; the PDF download was refused (HTTP 403).
 - Report top-5 only: GoogLeNet (2014) and the multi-model results of PReLU-net and ResNet.
-- Luo et al. 2015 (foveation against adversarial examples) and Recasens et al. 2018 (saliency-based sampling)
-  were not checked for ImageNet-1k numbers.
-- Dallain et al. 2026 (saccade-inspired classification with ViT attention maps) shows its numbers in plots only,
-  and its fixations come from a DINO attention pass over the full image.
 - FoveaTer's venue: the v3 PDF header says ICLR 2023, but this was not confirmed.
-- Howard 2013's Table 2 (37.1% error with 90 predictions) does not say which network it uses; Table 3 calls 37.0%
-  "One Base Net", matching the larger "Double FC" network.
+- Howard 2013's Table 2 (37.1% error with 90 predictions) does not say which network it uses; Table 1 separates the
+  "Double FC" network from the smaller one, and Table 3 calls 37.0% "One Base Net", matching the larger "Double FC"
+  network. The JSON keeps the smaller network's 62.5.
 
 **ADE20K**
-- SAC (ICCV 2017, 44.30) and UperNet (ECCV 2018, 42.66) were seen only in later papers' tables in the morning; SAC
-  was read in its own paper in the afternoon and is now a base-size point dated by its conference year.
+- UperNet ResNet-101 42.66 (Unified Perceptual Parsing for Scene Understanding, ECCV 2018, arXiv 1807.10221) appears in
+  later papers' tables, APCNet's Table 8 among them; the row was not located in UperNet's own text. It is below the
+  2016–2017 base records either way.
 - FD-SwinV2-G 61.4, Mask DINO 60.8 and M3I (InternImage-H, 62.9) were seen only in other papers' tables. None was
   a year's best.
-- No 2024–2026 result above ViT-P's 63.6 multi-scale was found; the search was limited. At base size, no result above
-  EVA-02-B's 55.3 single-scale or RevColV2-B's 55.8 multi-scale was found (web searches and the Papers with Code
-  mirror only).
-- Base size, not read in their own papers: APCNet ResNet-101 45.38 (CVPR 2019; would sit between CCNet and OCR), ANL
-  ResNet-101 45.24 (ICCV 2019), DNL ResNet-101 46.0, MVP ViT-B 52.4. Wider or Deeper Model A2 (2016-11-30) reads
-  43.73 in its own Table 4, but no parameter count is stated; if it is base size it is the 2016 base record and
-  PSPNet ResNet-152's 42.62 is not.
-- Base-size frozen linear results between iBOT (2021-11) and DINOv2 (2023-04), or between DINOv2 and DINOv3
-  (2025-08), were not searched; protocols in that literature differ.
-- No other active (sequential) model reports standard ADE20K mIoU:
-  - GAE (Glimpse-Attend-and-Explore) reports pixel accuracy only.
-  - SimGlim reports reconstruction only.
-  - Digital Foveation uses a 98-class ADE20K subset.
+- No 2024–2026 result above ViT-P's 63.6 multi-scale was found; the search was limited. At base size, no 2024–2026
+  result above PlainSeg's 55.70 single-scale or RevColV2-B's 55.8 multi-scale was found (web searches and the Papers
+  with Code mirror only).
+- Scope of the frozen line: `frozen_ssl` admits self-supervised backbones only. RADIO-AMP-B (under "Verified, but left
+  out"), distilled from CLIP, DINOv2 and SAM-H, would be a base frozen ADE20K record between DINOv2 (2023-04) and
+  DINOv3 (2025-08) if the line admitted all frozen pretrained features. Whether to widen it is the authors' decision.
+- The audit's search for base frozen linear ADE20K results between iBOT (2021-11) and DINOv3 (2025-08) found none
+  above the line (candidates under "Verified, but left out" and "Checked"); it does not establish that none exist.
 
 ## Checked: no ImageNet-1k top-1 or ADE20K mIoU
 
@@ -700,6 +791,9 @@ code or the stated architecture, as the last column says.
   - Pourrahimi & Bashivan 2025 (bioRxiv): visual search on COCO-Search18. Its CNN is pretrained on
     retina-transformed ImageNet, with no accuracy reported.
   - AME: SUN360 classification only.
+  - Luo et al. 2015 (Foveation-based Mechanisms Alleviate Adversarial Examples, arXiv 1511.06292): top-5 accuracy
+    only, with foveations placed from ground-truth object boxes (Section 2).
+  - "Toward Errorless Training ImageNet-1k" (on the Papers with Code leaderboard): training-set accuracy.
 - **Small datasets only:**
   - Rangrej & Clark (BMVC 2021): up to TinyImageNet.
   - Gaussian RAM: cluttered MNIST and CIFAR.
@@ -715,6 +809,8 @@ code or the stated architecture, as the last column says.
   - EVA (2603.27340).
   - Two-stream foveation (TCDS 2024): CUB and ImageNet birds.
   - FocL: a 2,000-image validation subset with oracle or SAM crops.
+  - FAVE (arXiv 2609.04392): General-2K (65.60 top-1) and object-size cohorts, on crops selected externally or from
+    ground truth.
 - **Other tasks:**
   - FALcon's own paper reports localization only.
   - AttSeg: Cityscapes, CamVid, KITTI.
@@ -722,6 +818,22 @@ code or the stated architecture, as the last column says.
   - Video models: AdaFocus, Uni-AdaFocus, policy-based foveated imaging.
   - Coarse-to-Fine GAP: instance detection.
   - Beyond Grids: plots only.
+  - Dallain et al. 2026 (A Saccade-inspired Approach to Image Classification using Vision Transformer Attention Maps,
+    arXiv 2603.09613): classification shown in figures only; its fixations come from a single-pass static saliency
+    map of a ViT over the full image.
+  - Recasens et al. 2018 (Learning to Zoom, ECCV 2018, arXiv 1809.03355): iNaturalist and other non-ImageNet tasks;
+    its saliency sampler runs in a single pass.
+- **No standard ADE20K mIoU (active models):**
+  - GAE (Glimpse-Attend-and-Explore) reports pixel accuracy only.
+  - SimGlim reports reconstruction only.
+  - Digital Foveation uses a 98-class ADE20K subset.
+- **No frozen linear ADE20K mIoU (their ADE20K results fine-tune the backbone):**
+  - LOCA (Location-Aware Self-Supervised Transformers, arXiv 2212.02400 v1; WACV 2024): Table 2 is end-to-end
+    fine-tuning with a linear decoder.
+  - SelfPatch (CVPR 2022, arXiv 2206.07990): Semantic FPN fine-tuning (Section 4).
+  - Mugs (arXiv 2203.14415): Appendix B.3 fine-tunes the backbone.
+  - Context Autoencoder (arXiv 2202.03026): UperNet fine-tuning (Section 4.4); its linear and attentive probes are on
+    ImageNet.
 
 ## Caveats a careful audience may raise
 
@@ -762,7 +874,7 @@ code or the stated architecture, as the last column says.
 4. **Sensing budgets differ.** Active models report accuracy at a fraction of the pixels. Examples: AdaGlimpse
    uses 28.6% of the pixels, STAM about 55%, Saccader 29.5% of the 331 px image. Passive models see every pixel.
 5. **Evaluation protocols changed over time.**
-   - Passive results up to 2016 are ensembles with 10–144 crops; from 2017 they are mostly single-crop.
+   - End-to-end results up to 2016 average ensembles or 10–144 crops; from 2017 they are mostly single-crop.
    - Test resolution grew from 224 px to 800 px.
    - Inception-v3 was scored on 48,238 non-blacklisted validation images (the paper says the full set is about
      0.2 points worse).
@@ -776,6 +888,7 @@ code or the stated architecture, as the last column says.
    - Noisy Student: 87.4, then 88.4; its B7 student 86.8, then 86.9.
    - BiT: 87.76, then 87.54 in the final version.
    - CCNet: 45.22, then 45.76.
+   - CMC: ResNet-101 60.1 in v1 (2019-06-13) and v2, 65.0 from v3 (2019-10-21).
    - FoveaTer: ImageNet-100 in v1, 78.31 in v2, 76.69 in v3.
    - EfficientNet-B7: 84.4 in v1 to v3, 84.3 from v4 (2020-09-04).
    - FixRes: v1 (2019-06-14) has no ResNeXt-101 32x48d result; 86.4 first appears in v2 (2019-07-19).
@@ -796,7 +909,9 @@ code or the stated architecture, as the last column says.
    - The active models are evaluated on much smaller scenes: AME on 256×128 px images, AdaGlimpse on 224×224.
    - AME's SETR initialisation was already trained on ADE20K segmentation.
    - Several papers do not state single- or multi-scale (protocol "unstated"). EncNet's Section 3.1 says evaluation
-     averages predictions over multiple scales, but its Table 4 does not mark the protocol.
+     averages predictions over multiple scales, but its Table 4 does not mark the protocol. APCNet's Section 4.1
+     describes multi-scale and flip evaluation, but neither its Table 8 nor its ADE20K section says whether the
+     ADE20K result uses it.
    - Swin's "62.8" is a test-set score, not validation mIoU. Swin's own paper prints 51.6 for Swin-B + UperNet with
      multi-scale testing and no single-scale value; later papers (CSWin, ConvNeXt from Swin's GitHub, UniRepLKNet)
      cite 50.0 / 51.7.
@@ -805,6 +920,10 @@ code or the stated architecture, as the last column says.
      47.3 in its own paper, 48.4 under DINOv3's and 42.6 under Franca's.
    - DINO ViT-B: 31.8 (ViT-B/8, DINOv2's protocol) and 34.5 (ViT-B/16, iBOT's protocol). Both are dated by DINO's
      release; the base frozen ADE20K line mixes these protocols.
+   - The base frozen ImageNet line mixes probes too: linear classifiers on intermediate AlexNet layers, best layer
+     reported (Split-Brain, RotNet), a linear SVM on conv5 features (Instance Discrimination), 10-crop evaluation
+     (Local Aggregation), a fixed BN+CReLU transform before the linear layer (BigBiGAN), and features of several
+     layers concatenated (EsViT, DINOv2, Proteus).
    - DINOv3's paper gives its distilled ViT-B/16 51.8, while the CanViT paper's own probe of that model at 512 px
      gives 47.19, the protocol it also uses to probe CanViT-B. The CanViT paper resizes images and masks to 512×512
      for scoring, without keeping the aspect ratio.
@@ -832,7 +951,7 @@ code or the stated architecture, as the last column says.
     (Introduction) and cites neither. A question about LookWhere is likely from an informed audience; whether
     the talk should address it is the authors' decision.
 11. **"Year" can mean different things.** A point's year is that of its first public appearance (usually arXiv),
-    not of the venue. The 2012 AlexNet, 2017 SAC and 2024 OmniVec2 points carry the year only.
+    not of the venue. The 2012 AlexNet, 2017 SAC, 2019 APCNet and 2024 OmniVec2 points carry the year only.
 12. **Who states the parameter counts.** No active paper in the file states its full system's count except Saccader,
     DRAM (in Saccader's table) and TNet. The other active counts come from the official code or the stated
     architecture:
@@ -852,19 +971,25 @@ code or the stated architecture, as the last column says.
 13. **Passive counts not stated in their papers.** ResNet-152 (60.19M, torchvision), SENet-154 (115.09M, timm's port
     of the official release; NASNet, PNASNet, Mahajan et al. and GPipe list 145.8M to 146M), PReLU-net model C
     (330.6M, computed), ZFNet and SPP-net (computed), DINOv2 ViT-B/14 and ViT-L/14 (counted from code; DINOv2's
-    Table 17 lists 18 blocks for ViT-B/14, contradicted by its own layer list and by the code's 12). The ResNet-101
-    backbones of EncNet, CCNet, ACNet, OCNet, SAC and CPNet and the ResNet-152 of PSPNet have no stated count and are
-    left null (base size under any variant). PSPNet's ResNet-269, Cascade-DilatedNet and DPT-Hybrid's backbone are
-    unpinned: if ResNet-269 is base size, PSPNet ResNet-269 becomes the 2016 base ADE20K record and PSPNet ResNet-152
-    and SAC are not records. RevColV2-B is 88M in its classification table but 101M with the columns its
-    segmentation model uses, and its Mask2Former system is listed at 325M, against 107M for Mask2Former Swin-B.
+    Table 17 lists 18 blocks for ViT-B/14, contradicted by its own layer list and by the code's 12). The audits
+    counted Wider or Deeper Model A2's backbone (105.07M), DPT-Hybrid's (98.18M), Rotation RevNet-50 (85.77M) and
+    CMC's two ResNet-101 encoders (84.99M) from official code. The ResNet-101 backbones of EncNet, CCNet, ACNet, OCNet,
+    SAC, APCNet and CPNet, the ResNet-152 of PSPNet, the AlexNet and ResNet-50 features of the early frozen probes,
+    BigBiGAN's RevNet-50 ×4 and Proteus's ViT-B/14 have no stated count and are left null (base size under any
+    variant). PSPNet's ResNet-269 and Cascade-DilatedNet are unpinned: if ResNet-269 is base size, PSPNet ResNet-269
+    (43.81 single-scale, 44.94 multi-scale) becomes the 2016 base ADE20K record, above Wider or Deeper Model A2's
+    43.73, and PSPNet ResNet-152 and SAC are not records. RevColV2-B is 88M in its classification table but 101M with
+    the columns its segmentation model uses, and its Mask2Former system is listed at 325M, against 107M for Mask2Former
+    Swin-B.
 14. **Test-resolution conventions.** MultiGrain's 500 px is the longer image side; FOVI's 256 px is the maximum side;
     AME's 128 px is the shorter side of 256×128 scenes; EfficientNet-B7's 600 px and AdvProp B8's 672 px come from
-    the official code, not the papers; DINO's 224 px linear-probe crop comes from its official evaluation code.
-15. **The all-size frozen ImageNet line is incomplete.** The base frozen series starts with convnets in
-    2020 (SimCLR ResNet-50 (2×), BYOL ResNet-200). The larger models of the same papers are not in the JSON: SimCLR
-    ResNet-50 (4×), 375M, 76.5 (Table 6 of arXiv v1) and BYOL ResNet-50 (4×), 375M, 78.6 and ResNet-200 (2×), 250M,
-    79.6 (Table 1 of arXiv v1). The larger MoCo v3 and EsViT models were not read. The running maximum of all
+    the official code, not the papers; so do DINO's, SimCLR's, MoCo v3's, EsViT's, Rotation RevNet-50's and CMC's
+    224 px linear-probe crops and the two GFNets' 300 and 260 px. PlainSeg's 640 px is its sliding-window crop.
+15. **The all-size frozen ImageNet line is incomplete.** The base frozen series is convnets until 2020, from the
+    Split-Brain AlexNet (2016) to BYOL ResNet-200. The larger models of the same papers are not in the JSON: SimCLR
+    ResNet-50 (4×), 375M, 76.5 (Table 6 of arXiv v1), BYOL ResNet-50 (4×), 375M, 78.6 and ResNet-200 (2×), 250M,
+    79.6 (Table 1 of arXiv v1), and CMC's ResNet-50 x2 (under "Verified, but left out"). The larger MoCo v3 and
+    EsViT models were not read. The running maximum of all
     `frozen_ssl` points is therefore not an all-size frontier, at least before DINOv2 (2023-04-14); the all-size
     frozen series was not searched for completeness.
 16. **Pretraining data that touches the benchmark.** DINOv2's LVD-142M includes 1M images retrieved with ADE20K

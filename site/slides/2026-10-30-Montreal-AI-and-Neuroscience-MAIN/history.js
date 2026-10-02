@@ -16,6 +16,7 @@ const SVG = "http://www.w3.org/2000/svg";
 const WIDTH = 1120, HEIGHT = 540, M = { left: 56, right: 250, top: 40, bottom: 40 };
 const END = 2026.6;
 const CANVIT_YEAR = 2026.2;
+let charts = 0; // numbers each chart's clip path, so ids stay unique on a page with several charts
 
 const BENCHMARKS = {
   imagenet: { key: "imagenet_top1", unit: "ImageNet-1k top-1 accuracy (%)", years: [2012, END], range: [60, 95], step: 10,
@@ -71,6 +72,10 @@ function draw(container, data, macros) {
   const step = (records) => records.map((p, i) => (i ? `H${x(yearOf(p))}V${y(p.value)}` : `M${x(yearOf(p))},${y(p.value)}`)).join("") + `H${x(END)}`;
   const svg = el("svg", { viewBox: `0 0 ${WIDTH} ${HEIGHT}`, role: "img", "aria-label": spec.unit });
   const labelX = x(END) + 18;
+  // The lines are clipped to the plot: a line starting below the axis's range enters from below.
+  const clipId = `history-plot-${charts++}`;
+  el("rect", { x: M.left, y: y(spec.range[1]), width: x(END) - M.left, height: y(spec.range[0]) - y(spec.range[1]) },
+     el("clipPath", { id: clipId }, el("defs", {}, svg)));
 
   const axes = el("g", { class: "axes" }, svg);
   for (let v = spec.range[0]; v <= spec.range[1]; v += spec.step) {
@@ -90,13 +95,13 @@ function draw(container, data, macros) {
   // probed by the paper) stays visible across them.
   const canvitPoints = el("g", { class: "canvit" }, svg);
   const passiveGroup = el("g", { class: "passive" }, svg);
-  el("path", { d: step(passive), class: "line" }, passiveGroup);
+  el("path", { d: step(passive), class: "line", "clip-path": `url(#${clipId})` }, passiveGroup);
   // Each line named at its end; "Passive" heads the two, above the upper one.
   const passiveY = y(passiveTop) + 7;
   text("Passive", { x: labelX, y: passiveY - 30, class: "label head" }, passiveGroup);
   text("trained end to end", { x: labelX, y: passiveY, class: "label" }, passiveGroup);
   const frozenGroup = el("g", { class: "frozen" }, svg);
-  el("path", { d: step(frozen), class: "line" }, frozenGroup);
+  el("path", { d: step(frozen), class: "line", "clip-path": `url(#${clipId})` }, frozenGroup);
   const frozenY = Math.max(y(frozenTop) + 7, passiveY + 28);
   text("frozen self-supervised", { x: labelX, y: frozenY, class: "label" }, frozenGroup);
 

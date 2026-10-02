@@ -11,7 +11,7 @@
 - Generated files are never edited by hand: `exports/`, `latex/data.tex`, `latex/data_macros.json` and the
   `*_rows.tex` files. Change the exporter or `latex/generate_data.py` and regenerate.
 - The project page and the talks read `latex/data_macros.json` and `exports/*.json` through links in
-  `site/assets/paper/`. After changing what `generate_data.py` writes, run `python3 site/check_paper_numbers.py`
+  `site/assets/paper/`. After changing what `generate_data.py` writes, run `uv run --no-sync --project canvit-pytorch python site/check_paper_numbers.py`
   from the repository root; before dropping a macro, also search the branches that edit `site/`
   (`git grep -w <macro> <branch>`).
 - Read generated row files with `\inputrows`, which avoids the trailing `\par` of `\input` that breaks

@@ -52,7 +52,7 @@ def _add_baseline_deltas(variants: dict[str, dict]) -> None:
 
 
 def compute() -> dict:
-    recon_dir = paths.eval_dir("ablation_recon")
+    recon_dir = paths.eval_dir("recon")
     assert recon_dir.is_dir(), f"Missing {recon_dir}"
     grouped = _group(recon_dir)
     assert set(grouped) == set(BY_SLUG), f"Variants without runs: {sorted(set(BY_SLUG) - set(grouped))}"

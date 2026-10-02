@@ -12,20 +12,17 @@ check-data:
     cd {{justfile_directory()}} && uv run --no-project python latex/generate_data.py --check
 
 # Run the exporter (the paper's datasets and figures) into exports/, then regenerate the data.
-exports: && data
+exports:
     cd {{justfile_directory()}}/exporter && uv run python -m canvit_paper_exporter.run
 
+    cd {{justfile_directory()}} && uv run --no-project python latex/generate_data.py
+
 # Build modes, set through the NeurIPS .sty's package options:
-#   build               no option: double-blind, checklist on, acks hidden
 #   build-preprint      [preprint]: authors and acks shown, checklist omitted
 #   build-camera-ready  [final,main]: authors, acks and checklist shown
 # Each regenerates the data first, so no PDF renders stale rows, and then checks
 # for Type 3 fonts. --reruns 3: minitoc/parttoc need three passes, and tectonic's
 # rerun detection misses .ptc1 changes.
-
-# Anonymous submission PDF: latex/CanViT_Toward_AVFMs.pdf
-build: data && (check-fonts "CanViT_Toward_AVFMs.pdf")
-    cd {{justfile_directory()}}/latex && tectonic --reruns 3 CanViT_Toward_AVFMs.tex
 
 # arXiv PDF: latex/preprint_wrapper.pdf
 build-preprint: data && (check-fonts "preprint_wrapper.pdf")
@@ -40,7 +37,7 @@ build-camera-ready: data && (check-fonts "camera_ready_wrapper.pdf")
 # uplt.rc["pdf.fonttype"] = 42 in exporter/src/canvit_paper_exporter/style.py. Needs
 # pdffonts (poppler); warns and skips without it.
 # Fail if latex/FILE contains a Type 3 font.
-check-fonts FILE="CanViT_Toward_AVFMs.pdf":
+check-fonts FILE="camera_ready_wrapper.pdf":
     #!/usr/bin/env bash
     set -euo pipefail
     if ! command -v pdffonts >/dev/null; then
@@ -105,5 +102,5 @@ build-arxiv: build-preprint
 
 # Remove build outputs (exports/ is never cleaned here).
 clean:
-    cd {{justfile_directory()}}/latex && rm -f CanViT_Toward_AVFMs.{pdf,aux,bbl,blg,log,out} preprint_wrapper.pdf camera_ready_wrapper.pdf arxiv_bundle.tar.gz
+    cd {{justfile_directory()}}/latex && rm -f preprint_wrapper.{pdf,aux,bbl,blg,log,out} camera_ready_wrapper.{pdf,aux,bbl,blg,log,out} arxiv_bundle.tar.gz
     rm -rf {{justfile_directory()}}/latex/arxiv_bundle

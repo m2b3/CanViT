@@ -38,9 +38,6 @@
 \definecolor{lststring}{RGB}{163,21,21} %
 \definecolor{lstbuiltin}{RGB}{43,145,175} %
 
-\newif\ifanonymous \anonymoustrue
-\newcommand{\anon}[2]{\ifanonymous#1\else#2\fi}
-
 \renewcommand{\thefootnote}{$\dagger$}
 
 \definecolor{archCanvas}{HTML}{e05050}     %
@@ -1556,12 +1553,11 @@ To visualize grids of high-dimensional glimpse or canvas patch tokens as RGB ima
 
 \subsection{Availability of code and data}
 \label{supp:declarations:code-and-data}
-Our primary code repository is \url{https://github.com/m2b3/CanViT-PyTorch}.
-We release all of our code under the MIT license under the \texttt{m2b3} GitHub organization,
-including model definition and core utilities (\texttt{CanViT-PyTorch}), pretraining code (\texttt{CanViT-pretrain}),
-DINOv3/CanViT IN1k and ADE20K probe fitting (\texttt{dinov3-in1k-probes} and
-\texttt{CanViT-specialize}), evaluation code (\texttt{CanViT-eval}), and figure/data export code
-(\texttt{CanViT-paper-exporter}).
+Our primary code repository is \url{https://github.com/m2b3/CanViT}.
+We release the code in this repository under the MIT license, including the shared definitions
+and checkpoint contracts (\texttt{canvit-core/}), the PyTorch model, training and evaluation code
+(\texttt{canvit-pytorch/}), the native backend packages (\texttt{canvit-mlx/} and \texttt{canvit-nnx/}),
+and the figure and data exporter (\texttt{paper/exporter/}).
 We also release all the checkpoints used in our evaluations, under the MIT
 license as well, alongside all data necessary to regenerate figures and tables,
 at \url{https://figshare.com/s/3f05748d12b01bdad5b3} and \url{https://huggingface.co/canvit}.

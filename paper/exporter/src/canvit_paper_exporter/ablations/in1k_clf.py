@@ -17,7 +17,7 @@ def _top1_curve(result: dict) -> list[float]:
 
 def compute() -> dict:
     return downstream.compute(
-        paths.eval_dir("ablation_in1k_clf"),
+        paths.eval_dir("in1k_clf_ablations"),
         curve_of=_top1_curve,
         recorded_repos=lambda r: (
             r["metadata"]["config"]["classifier"]["pretrained_repo"], r["metadata"]["config"]["classifier"]["probe_repo"],

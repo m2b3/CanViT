@@ -17,7 +17,7 @@ def _expected_repos(slug: str, scene: int, grid: int) -> tuple[str, str]:
 
 def compute() -> dict:
     return downstream.compute(
-        paths.eval_dir("ablation_seg"),
+        paths.eval_dir("ade20k_seg_ablations"),
         curve_of=lambda r: [r["mious"][f"t{t}"] for t in range(len(r["mious"]))],
         recorded_repos=lambda r: (r["metadata"]["config"]["pretrained_repo"], r["metadata"]["config"]["probe_repo"]),
         expected_repos=_expected_repos,

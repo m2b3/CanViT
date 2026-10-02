@@ -15,24 +15,20 @@ Year is the first public release (arXiv), the convention of `sota-history.json`.
 |---|---|---|---|
 | 2014 | RAM | Reinforcement learning picks each glimpse | Mnih and colleagues turned recognition into a sequence of glimpses chosen by a recurrent network trained with reinforcement learning, so computation no longer grows with image size, and it beat a convolutional network of similar size on cluttered digits. |
 | 2014 | DRAM | Glimpses read multi-digit house numbers | Ba and colleagues took the recipe from toy digits to photographs, matching the best convolutional network on multi-digit house numbers with fewer parameters and less computation, and gave the model a coarse look at the whole image to aim its first glimpse. |
-| 2019 | Saccader | Pretrained policy reaches 75% on ImageNet | Elsayed and colleagues brought hard attention to ImageNet: a pretraining step gave the reinforcement-learned policy good starting locations, and the model reached 75% top-1 while its classifier saw under a third of each image. |
+| 2019 | Saccader | Pretraining brings hard attention to ImageNet | Elsayed and colleagues brought hard attention to ImageNet: a pretraining step gave the reinforcement-learned policy good starting locations. The Saccader-NASNet variant reached 75% top-1 with a separate NASNet classifier reading its glimpses. |
 | 2020 | GFNet | Glance, then focus, stop when sure | Wang and colleagues made active vision a speed-up for standard networks on ImageNet: a low-resolution glance, then high-resolution patches only when needed, stopping once confident, for 2 to 3 times fewer operations with ResNets at equal accuracy. |
-| 2022 | STAM | Transformer that never sees whole image | Rangrej, Srinidhi and Clark (McGill and Toronto) dropped the look at the whole image that earlier ImageNet models relied on: a transformer picks each glimpse from past glimpses alone, learns from a teacher that sees the full image, and reaches 80.8% on ImageNet. |
 | 2023 | AME | Looks where its attention is uncertain | Pardyl and colleagues chose glimpses without reinforcement learning, where a masked-autoencoder transformer's attention is most uncertain, and used the same model to predict the whole scene densely, including ADE20K segmentation. |
 | 2024 | AdaGlimpse | Chooses where to look and zoom | Pardyl and colleagues let the policy choose both position and zoom from a continuous range, so the model can take in the whole scene coarsely before zooming in on detail, as a camera with optical zoom can. |
 | 2025 | AdaptiveNN | Coarse-to-fine fixations across many tasks | Wang and colleagues made the case at scale: coarse-to-fine fixations trained end to end, tested on 17 benchmarks across 9 tasks with up to 28 times lower inference cost at equal accuracy, and compared with human fixations. |
 
 Notes on the selection:
 
-- **Seven of the eight are the CanViT paper's own related-work narrative** (Related work, "Deep active vision" and
-  "Dense prediction in active vision" paragraphs): RAM, DRAM, Saccader, GFNet, AdaptiveNN, AME, AdaGlimpse.
-- **STAM is the one the CanViT paper does not cite** (`references.bib` has no Rangrej entry). It earns its place on
-  three counts, each verified below: the highest ImageNet-1k accuracy of a sequential glimpse model in
-  `sota-history.json` before AdaptiveNN (80.78%), no view of the whole image at any resolution, and a full-image
-  teacher distilled into a glimpse-based student, an idea related to CanViT's passive-to-active distillation (STAM
-  matches class distributions, CanViT dense features; AdaGlimpse uses a full-image teacher "as in STAM"). Two of its
-  three authors are at McGill. Dropping STAM leaves seven entries that stay inside the paper's bibliography.
-- **If two more must go**, DRAM and AME are the least needed for the CanViT story: DRAM's coarse context glance
+- **The seven entries follow the CanViT paper's own related-work narrative** (Related work, "Deep active vision" and
+  "Dense prediction in active vision" paragraphs): RAM, DRAM, Saccader, GFNet, AdaptiveNN, AME and AdaGlimpse.
+- **STAM was considered and left off the slide.** The CanViT paper does not cite it (`references.bib` has no Rangrej
+  entry), and the authors decided that never seeing the whole image does not set it apart from the other early glimpse
+  models. Its checked evidence remains below for questions and future revisions.
+- **If another entry must go**, DRAM and AME are the least needed for the CanViT story: DRAM's coarse context glance
   reappears in GFNet and AdaptiveNN, and AdaGlimpse also does dense prediction.
 - **Precursors to mention in passing** (details below): Larochelle & Hinton 2010 (foveal glimpses combined by a
   Boltzmann machine; RAM takes the word "glimpse" from it), Ranzato 2014 (where to look, learned from a low-resolution
@@ -60,7 +56,7 @@ Notes on the selection:
    Crossref, as each entry says. Semantic Scholar rate-limited most queries and DBLP refused automated ones this
    session.
 
-## The eight entries
+## Slide entries and considered models
 
 ### 2014: Recurrent Attention Model (RAM)
 
@@ -78,7 +74,7 @@ Notes on the selection:
 - **Headline.** 60×60 Cluttered Translated MNIST: 5.23% error with 8 glimpses against 7.83% for a convolutional
   network with about the same number of parameters; 100×100: 10.83% against 16.51% (Table 2, p. 7).
 - **Figure.** Figure 1 (A–C), p. 3: glimpse sensor, glimpse network, unrolled model. Already extracted as
-  `assets/figures/mnih-2014-ram.png`. Alternative: Figure 3, p. 7, glimpse paths on cluttered digits.
+  `../assets/figures/mnih-2014-ram.png`. Alternative: Figure 3, p. 7, glimpse paths on cluttered digits.
 - **Note.** The paper also trains RAM to play a 24×24-pixel game of "Catch" from the reward alone (Section 4.2).
 
 ### 2014: Deep Recurrent Attention Model (DRAM)
@@ -115,7 +111,8 @@ Notes on the selection:
   requires only class labels and provides initial attention locations for policy gradient optimization" (Abstract,
   p. 1). The CanViT paper: active vision "remained largely confined to simple tasks such as digit recognition until
   2019, when Saccader achieved 75% ImageNet-1k top-1 accuracy by introducing an intermediate pretraining step to
-  stabilize learning" (Related work).
+  stabilize learning" (Related work). That 75% point is the Saccader-NASNet variant with a separate NASNet classifier;
+  the paper's Section 4.3 and Figure 6 describe that classifier explicitly.
 - **Headline.** ImageNet-1k top-1 75.03 ± 0.08% and top-5 91.19%, with 6 glimpses, "processing only 29.47 ± 0.26% of
   the image" with a separate NASNet classifier on 331 px images (Section 4.3 text, p. 9; Figure 6, p. 8). Reused
   from `sota-history.md`, re-read here. The base model at 224 px scores 70.31% (`sota-history.md`).
@@ -147,7 +144,7 @@ Notes on the selection:
   two focus steps, with the fraction of computation used. Alternative: Figure 7, p. 8, patch sequences on test
   images.
 
-### 2022: Sequential Transformers Attention Model (STAM)
+### 2022: Sequential Transformers Attention Model (STAM, considered but not on the slide)
 
 - **Paper.** Rangrej S.B., Srinidhi C.L., Clark J.J. "Consistency driven Sequential Transformers Attention Model for
   Partially Observable Scenes." CVPR 2022, pp. 2508–2517 (Crossref, doi:10.1109/CVPR52688.2022.00255).

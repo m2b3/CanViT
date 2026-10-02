@@ -1,4 +1,4 @@
-[Written by a Claude Code subagent on 2026-10-01 from the seven papers' PDFs and the precursors named in active-vision-timeline.md; the speaker notes it checks are those of #timeline before that day's corrections. Not reviewed by the authors.]
+[Written by a Claude Code subagent on 2026-10-01 from the seven papers' PDFs and the precursors named in `active-vision-timeline.md`; the speaker notes it checks are those of #timeline before that day's corrections. Not reviewed by the authors.]
 
 # Timeline slide: what each model introduced, and a check of the speaker notes
 

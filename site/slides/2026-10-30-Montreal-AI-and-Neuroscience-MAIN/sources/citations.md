@@ -13,7 +13,7 @@ along the way are listed at the end for the camera-ready.
 - Larochelle H., Hinton G.E. 2010. Learning to combine foveal glimpses with a third-order Boltzmann machine. *NIPS 23*.
 - Mnih V., Heess N., Graves A., Kavukcuoglu K. 2014. Recurrent Models of Visual Attention. *NIPS 27*. arXiv:1406.6247. Reinforcement learning chooses where to look; compute independent of image size.
 - Ba J., Mnih V., Kavukcuoglu K. 2015. Multiple Object Recognition with Visual Attention. *ICLR 2015*. arXiv:1412.7755.
-- Elsayed G.F., Kornblith S., Le Q.V. 2019. Saccader. *NeurIPS 32*. arXiv:1908.07644. 75% top-1 on ImageNet.
+- Elsayed G.F., Kornblith S., Le Q.V. 2019. Saccader. *NeurIPS 32*. arXiv:1908.07644. 75% top-1 with the separate NASNet classifier.
 - Wang Y., Lv K., Huang R., Song S., Yang L., Huang G. 2020. Glance and Focus (GFNet). *NeurIPS 33*. arXiv:2010.05300.
 - Pardyl A., Rypeść G., Kurzejamski G., Zieliński B., Trzciński T. 2023. Active Visual Exploration Based on Attention-Map Entropy (AME). *IJCAI 2023*. arXiv:2303.06457.
 - Pardyl A. et al. 2024. AdaGlimpse. *ECCV 2024*. arXiv:2404.03482. Soft Actor-Critic chooses glimpses of any position and scale.

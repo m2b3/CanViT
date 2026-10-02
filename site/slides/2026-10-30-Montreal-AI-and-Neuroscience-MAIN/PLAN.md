@@ -118,7 +118,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   from the feature map to probability maps using our ade20k segmentation heads to show it is EASY to decode what's
   where from those features"; and "beware of OVERLAYS - they can confuse ... exploring both side by side / one after
   the other, and overlays". In progress: 1024 px input, PCs 2–4 clipped 2–98%, nearest neighbor
-  (`throwaway/foundation`); the released DINOv3 ViT-B ADE20K probe decodes television, fireplace, armchair.
+  (`experiments/foundation`); the released DINOv3 ViT-B ADE20K probe decodes television, fireplace, armchair.
 - [Yohaï, 2026-10-01] "when you show examples of canvit, contrast with simply having dinov3 128px full scene": beside
   CanViT's maps, DINOv3 ViT-B on the whole scene at 128 px (the same input budget as a glimpse; its released 128 px
   ADE20K probe, `hub.repos.released_dinov3_ade20k_probe("dv3b", input_size_px=128)`), on the rollout, extrapolation
@@ -159,8 +159,10 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   refactoring, that affects the core package so we will see. also, beware of polluting the core-package API with
   adhoc [stuff] - if something is justified and would genuinely make the package better, we can do it, but
   otherwise..."; on the name `record_talk.sh`: "why [...] is this called 'record' anyway" (the scripts run
-  experiments; bundles are recordings). In progress: the experiments committed in this talk's `experiments/`, one
-  module per experiment, writing `../../data/talk/`; the core package untouched.
+  experiments; bundles are recordings). The easy version is done (2026-10-01): every experiment behind the deck is
+  committed in this talk's `experiments/` and reproduces the deployed data exactly; `experiments/build_deck_data.sh`
+  rebuilds `../../data/talk/`; the core package is untouched. Open: whether any of it moves into the core package
+  (the authors' call).
 
 ## Next
 
@@ -217,9 +219,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 | Item | Slides | Diff. | Also | Status |
 |---|---|---|---|---|
-| Table corners: two glimpses at an object's ends, CanViT against DINOv3 per glimpse, over ADE20K validation (`throwaway/table_corners`); to graduate into `canvit_pytorch.viz` | `#table`, `#extrapolation` | S | page | done |
-| Distillation: DINOv3's features of a scene and CanViT's prediction after each glimpse (`throwaway/distillation`) | `#distillation` | S | page, paper | done |
-| Looking closer: small objects missed by a full-scene glimpse and found by a zoomed one (`throwaway/looking_closer`); to graduate into `canvit_pytorch.viz` | `#detail` | S | page | done |
+| Table corners: two glimpses at an object's ends, CanViT against DINOv3 per glimpse, over ADE20K validation (`experiments/table_corners`); to graduate into `canvit_pytorch.viz` | `#table`, `#extrapolation` | S | page | done |
+| Distillation: DINOv3's features of a scene and CanViT's prediction after each glimpse (`experiments/distillation`) | `#distillation` | S | page, paper | done |
+| Looking closer: small objects missed by a full-scene glimpse and found by a zoomed one (`experiments/looking_closer`); to graduate into `canvit_pytorch.viz` | `#detail` | S | page | done |
 | Teacher features of the conference room for the browser (similarity to a hovered patch, PCA, probe segmentation) | `#foundation` | M | page | todo |
 
 ## Components and deck primitives

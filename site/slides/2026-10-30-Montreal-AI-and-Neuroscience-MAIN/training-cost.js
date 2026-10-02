@@ -1,5 +1,5 @@
 // The training-cost slide: each active model's best accuracy against its own training compute, one chart per
-// benchmark, from throwaway/training_cost/export.py's JSON (the rebuttal's FLOP accounting: teachers and pretrained
+// benchmark, from experiments/training_cost/export.py's JSON (the rebuttal's FLOP accounting: teachers and pretrained
 // weights counted on no side). A model is a point at its compute, or a bar across a range of counts when its code and
 // paper differ. CanViT-B is in canvas red, filled when fine-tuned and hollow when frozen with a linear probe, as on the
 // history charts.

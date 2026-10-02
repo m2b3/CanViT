@@ -17,7 +17,9 @@ FULLY UNDERSTAND. READ AND UNDERSTAND FIRST."
 - `YYYY-MM-DD-Event/`: one directory per talk: `AGENTS.md` (the talk's audience, framings, scoped claims and
   decisions), `OUTLINE.md` (the talk, slide by slide, designed before the slides), `index.html` (every slide, with
   speaker notes), `talk.css` (rules scoped by slide id), `PLAN.md` (the talk's open work, ranked), `sources/` (the
-  material it draws on) and any talk-only modules or assets.
+  material it draws on), `experiments/` (the experiments that compute the talk's data under `../data/talk/`,
+  rebuilt by its `build_deck_data.sh`; `deploy.sh` ships the data files the deck names, never the experiments) and any
+  talk-only modules or assets.
 
 Computing, exporting and plotting are separate steps [Yohaï, 2026-10-01]: an experiment writes its results as
 uncolored data (labels, probabilities, scalar maps, metrics, viewpoints) to files; figures and slides read those files

@@ -1,4 +1,4 @@
-// The uncertainty slide's data, drawn from the export of throwaway/metacognition/export.py (a directory holding
+// The uncertainty slide's data, drawn from the export of experiments/metacognition/export.py (a directory holding
 // cells.json and tiles.json): rings on the scene at the most and least certain canvas cells, the class probabilities
 // at each as bars, and the four quadrants with the one EG-C2F visits next.
 

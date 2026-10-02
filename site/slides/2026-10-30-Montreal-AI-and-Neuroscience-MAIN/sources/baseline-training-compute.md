@@ -1,4 +1,4 @@
-[Counted by a Claude Code subagent on 2026-10-01 from AdaptiveNN's and AdaGlimpse's code, papers and released checkpoints, under the rebuttal's conventions (training_flops.py); the script is throwaway/training_cost/baselines.py. Not reviewed by the authors.]
+[Counted by a Claude Code subagent on 2026-10-01 from AdaptiveNN's and AdaGlimpse's code, papers and released checkpoints, under the rebuttal's conventions (training_flops.py); the script is experiments/training_cost/baselines.py in the talk. Not reviewed by the authors.]
 
 # Training compute of two prior active-vision models (2026-10-01)
 
@@ -7,7 +7,7 @@ Scope: own training compute behind AdaptiveNN-DeiT-S at 82.2% ImageNet-1k top-1,
 - AdaptiveNN: "Emulating Human-like Adaptive Vision for Efficient and Flexible Machine Visual Perception" (Wang, Yue, Yue et al., Nature Machine Intelligence 2025, arXiv:2509.15333). It trains a glance network plus a fixation ("focus") network with a PPO-trained fixation policy.
 - AdaGlimpse: "AdaGlimpse: Active Visual Exploration with Arbitrary Glimpse Position and Scale" (Pardyl, Wronka, Wołczyk, Adamczewski, Trzciński, Zieliński, ECCV 2024, arXiv:2404.03482). It is a ViT-B encoder over accumulated glimpse patches, with an MAE-style decoder and a Soft Actor-Critic (SAC) agent that picks glimpse position and scale.
 
-Reproduce: `uv run --no-sync --project ~/code/CanViT-paper-exporter python -u /Users/yberreby/.claude/jobs/2e07edf0/tmp/baseline_training_flops.py` (output saved in `/Users/yberreby/.claude/jobs/2e07edf0/tmp/baseline_training_flops.log`). Teacher measurement: `deeplab_teacher_flops.py` in the same directory.
+Reproduce, from the talk's directory: `uv run --no-sync --project ~/code/CanViT-paper-exporter python -u -m experiments.training_cost.baselines`. Teacher measurement: `experiments/training_cost/deeplab_teacher_flops.py`.
 
 ## Results
 

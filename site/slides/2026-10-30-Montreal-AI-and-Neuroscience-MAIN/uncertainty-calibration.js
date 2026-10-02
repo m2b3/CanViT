@@ -1,5 +1,5 @@
 // Whether the uncertainty read out from the canvas tracks the segmentation's errors: accuracy of the decoded class in
-// each tenth of canvas cells ranked by entropy, over ADE20K validation, from throwaway/metacognition/calibration.py's
+// each tenth of canvas cells ranked by entropy, over ADE20K validation, from experiments/metacognition/calibration.py's
 // JSON, after the full-scene glimpse (1) and after C2F's first five glimpses (5).
 
 const NS = "http://www.w3.org/2000/svg";

@@ -11,7 +11,7 @@ path = "license_build.py"
 [tool.hatch.build.targets.sdist]
 exclude = ["*.pt", "*.pt.bak", "*.pth", "test_data/", "slurm/", "tpu/", "license_build.py"]
 
-# The license text is the repository's LICENSE; the sdist carries a copy, from which the wheel takes it.
+# The hook supplies the repository's LICENSE to both archives.
 [tool.hatch.build.targets.sdist.force-include]
 "../tools/license_build.py" = "license_build.py"
 
@@ -44,7 +44,7 @@ dependencies = [
     "torch>=2.14.0; sys_platform == 'darwin'",
     "torchvision>=0.22.0",
     "safetensors>=0.7.0",
-    "canvit-core>=0.2.0",
+    "canvit-core>=0.2.1,<0.3.0",
 ]
 
 [project.urls]

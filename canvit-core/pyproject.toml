@@ -1,6 +1,6 @@
 [project]
 name = "canvit-core"
-version = "0.2.0"
+version = "0.2.1"
 description = "Shared architecture definitions for CanViT (Canvas Vision Transformer)"
 readme = "README.md"
 license = "MIT"
@@ -9,11 +9,18 @@ authors = [
     { name = "Yohaï-Eliel Berreby", email = "me@yberreby.com" }
 ]
 requires-python = ">=3.12"
+
 dependencies = [
     "huggingface-hub>=1.3.2",
     "numpy>=2.2",
     "pillow>=12.3.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/m2b3/CanViT"
+Homepage = "https://m2b3.github.io/CanViT/"
+Paper = "https://arxiv.org/abs/2603.22570"
+Checkpoints = "https://huggingface.co/canvit"
 
 [build-system]
 requires = ["hatchling"]

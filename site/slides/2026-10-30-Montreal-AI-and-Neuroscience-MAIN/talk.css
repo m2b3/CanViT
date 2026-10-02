@@ -3,7 +3,6 @@
 
 .reveal figure { margin: 0; }
 .reveal figure img { display: block; }
-.reveal .big { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 /* A slide's closing statement: centered, bold, one line where it can. */
 .reveal .claim { margin-top: 26px; font-size: 32px; font-weight: 750; letter-spacing: -.015em; text-align: center; }
 /* Token grids (32 × 32 PCA images) stay square blocks when scaled. */

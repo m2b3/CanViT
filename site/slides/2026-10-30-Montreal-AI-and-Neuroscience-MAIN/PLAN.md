@@ -101,7 +101,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   these is now said where it first occurs: ImageNet, passive vision (`#tradition`); glimpse, DINOv3 announced
   (`#table`); ADE20K (`#foundation`); Vision Transformer, the canvas as one vector per region, its 32 × 32 and
   64 × 64 grids (`#architecture`); distillation, dense, latent (`#distillation`); R-IID and F-IID by name, later
-  policies not named early (`#policy-agnosticism`); fine-tuning, the same linear readout (`#results`); FLOPs
+  policies not named early (`#distillation`'s notes, `#policies`); fine-tuning, the same linear readout (`#results`); FLOPs
   (`#frontier`). On screen, still open: `#architecture` shows the paper's figure with CLS, VPE and register tokens the
   talk never names (a two-stream drawing, under "Decisions for the authors").
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:

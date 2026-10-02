@@ -446,6 +446,16 @@ the current object scores 0.048 lower with the canvas kept than alone (unexplain
 ADE_val_00000836 (shop sign 0.91 / 0.90 / 0.04, person 0.76 / 0.68 / 0.06 after its glimpse / kept / reset), is below
 the strict bar for person; ADE_val_00001182 (a bedroom) meets it.
 
+DINOv3 [read 2026-10-01 in arXiv:2508.10104v1]: LVD-1689M, 1,689 million images curated from about 17 billion web
+images (§3.1); the ViT-7B teacher, 6,716M parameters (Fig. 16a), trained for 1M iterations at 4,096 images per batch,
+61,440 H100-hours for its pretraining (Table 20); about 9 million GPU-hours for the whole project (its carbon
+footprint section); the smaller ViTs, ViT-B included, distilled from the 7B (§5.2); ADE20K with a linear layer: ViT-B
+51.8 mIoU (Table 14), ViT-7B 55.9 (the text of its dense evaluation).
+
+DINOv3 ViT-B on the whole scene at 128 px [measured 2026-10-01, `experiments/whole_scene_baseline`, pixel accuracy
+as the bundles measure it]: 72.1, 69.9 and 40.7% on the street, shop and ferry of the recorded R-IID bundles, against
+CanViT-B's 87.9, 77.8 and 71.4% after their 21 glimpses.
+
 Experiments behind slides: `experiments/`, a package per experiment, each step run from this directory as
 `python -m experiments.<experiment>.<step>` in the canvit-pytorch environment (`training_cost` in
 `../../../paper/exporter`'s); the sweeps write to `../../.experiments/` (ignored by git), the exports the deck loads to

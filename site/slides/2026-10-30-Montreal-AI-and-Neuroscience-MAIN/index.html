@@ -177,7 +177,7 @@
     <li>Saccader, Elsayed et al. 2019: 75% on ImageNet-1k with a separate NASNet classifier reading its glimpses (70% alone); a pretraining step to stabilize learning.</li>
     <li>GFNet, Wang et al. 2020: glance, then focus; efficiency; classification only, fixed zoom.</li>
     <li>AME, Pardyl et al. 2023: segmentation; next glimpse from the entropy of its decoder's attention maps.</li>
-    <li>AdaGlimpse, Pardyl et al. 2025: chooses position and zoom.</li>
+    <li>AdaGlimpse, Pardyl et al. 2024: chooses position and zoom.</li>
     <li>AdaptiveNN, Wang et al. 2025: classification, fixed zoom.</li>
     <li>All except AME learn where to look with RL.</li>
     <li>CanViT, NeurIPS 2026: no learned policy.</li>
@@ -596,7 +596,7 @@
   <!-- Each question beside the demonstration in this talk that shows it can be asked of CanViT, in the colors of the
        three parts of an active-vision model (#active-vision-model): instantaneous vision, memory, action selection.
        Top-down feedback: C2F against F2C on ADE20K, the same viewpoints in another order (#policy-accuracy). Memory:
-       the street of #memory after its third glimpse, kept and reset. Scanpaths: Yarbus's record over a face beside
+       the street of #memory (in Backup) after its third glimpse, kept and reset. Scanpaths: Yarbus's record over a face beside
        EG-C2F's first glimpses on the street of #policies. -->
   <div class="asks">
     <article class="ask fragment" style="--accent: var(--glimpse)">

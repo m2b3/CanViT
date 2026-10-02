@@ -368,7 +368,7 @@ yet reviewed by the authors.
   shows CanViT can be asked it, one card per click, in the colors of the three parts of an active-vision model
   (`#active-vision-model`): top-down feedback (instantaneous vision, blue): how what was seen changes how the next
   view is processed, over C2F against F2C on ADE20K (`<canvit-policy-curves policies>`); trans-saccadic memory
-  (memory, red): what is kept from one view to the next, over the street of `#memory` kept and reset; scanpaths
+  (memory, red): what is kept from one view to the next, over the street of `#memory` (in Backup) kept and reset; scanpaths
   (action selection, teal): how human scanpaths compare with policies on the same observer, over Yarbus's record
   beside EG-C2F's first glimpses. The questions are CC's synthesis from the paper and the UNIQUE application [CC,
   2026-10-01; for the authors to confirm]. Alternative not drawn: a bookend of `#human-vision`, each property of human

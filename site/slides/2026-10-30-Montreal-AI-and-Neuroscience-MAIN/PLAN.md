@@ -214,6 +214,20 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   (`assets/figures/`: Intraub & Richardson, Biederman et al., Torralba et al., Oliva & Torralba), and citations on
   `#table` (its `XXX`). S.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
+- From an open review by Codex (gpt-6-astra, 2026-10-02; its report, `throwaway/talk-review-codex/REPORT.md`, is
+  untracked; its precision fixes to the notes are applied), for the authors:
+  - Story order: a short `#memory` in the main talk after `#detail`, so "trans-saccadic memory" on `#neuro-ai` has a
+    demonstrated referent; `#quickstart` before `#neuro-ai`, so the talk ends on the scientific questions, then
+    `#links`.
+  - Give one closing question an experimental shape: hold the current glimpse fixed, vary what was seen before, compare
+    what is decoded. Human scanpaths need a stated mapping from fixations to crop position and scale.
+  - `#extrapolation` without the photograph: the audience must recall the table from `#table`; bring back the scene
+    with its two boxes.
+  - `#quickstart`: walk through less of the imports and checkpoint names; keep the two glimpse calls and their outputs.
+  - If metacognition is a central claim, show that the uncertainty is useful (EG-C2F's early lead over C2F on
+    `#policy-accuracy`, or a short `#calibration`).
+  - "No policy can make up for a poor observer" heard as a general law: at a fixed budget a policy can matter (the notes
+    of `#active-vision-model` give the one-glimpse numbers).
 - Open from the second cold read (2026-10-01, a fresh subagent; its fixed defects are in git history), for the
   authors:
   - `#distillation`: the "Target" row does not say it is DINOv3 seeing the whole scene (the row labels are Yohaï's);

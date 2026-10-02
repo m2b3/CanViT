@@ -355,8 +355,9 @@ yet reviewed by the authors.
   TPU chip-hours); the model running on a laptop or in a browser.
 - **Says:** first why cost matters to this audience [Yohaï, 2026-10-01: "properly make the case of why anyone would
   [care] about efficiency (it's about money, making experiments cheap, etc)"]: compute is money and time; a
-  model twenty times cheaper to run makes every experiment twenty times cheaper (more scenes, glimpses and policies,
-  policies learned by trial and error) and runs on a laptop. Then: "Even our worst policy, a policy worse than random
+  model cheaper to run makes the experiments that run it cheaper (more scenes, glimpses and policies, policies learned
+  by trial and error) and runs on a laptop; the twentyfold is inference FLOPs on segmentation, never a multiplier on an
+  experiment's cost. Then: "Even our worst policy, a policy worse than random
   ... got better performance at lower cost."
 - **Status:** draft: the case for cost is not on the slide yet (`PLAN.md`).
 

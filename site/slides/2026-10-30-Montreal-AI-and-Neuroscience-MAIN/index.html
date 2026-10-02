@@ -537,9 +537,11 @@
   <span class="fragment step-marker" data-shows="canvit-imagenet"></span>
   <span class="fragment step-marker" data-shows="ade20k"></span>
   <span class="fragment step-marker" data-shows="canvit-ade20k"></span>
+  <span class="fragment step-marker" data-shows="gain-ade20k"></span>
   <aside class="notes"><ul>
-    <li>ImageNet-1k: <span data-macro="inkFrozenBest">81.1</span> frozen, <span data-macro="inkFinetunedBest">84.5</span> fine-tuned; AdaptiveNN 82.2.</li>
-    <li>ADE20K: <span data-macro="adeBestMiou">45.9</span> frozen; AME <span data-macro="ameSetrMiou">27.6</span>.</li>
+    <li>ImageNet-1k: <span data-macro="inkFrozenBest">81.1</span> frozen, <span data-macro="inkFinetunedBest">84.5</span> fine-tuned; AdaptiveNN 82.2, trained end to end (+2.3).</li>
+    <li>ADE20K: <span data-macro="adeBestMiou">45.9</span> frozen (C2F, 64 &times; 64 canvas); AME <span data-macro="ameSetrMiou">27.6</span>.</li>
+    <li>Paper: CanViT-B outperforms prior active vision models on both by a wide margin.</li>
     <li>DINOv3 ViT-B with our linear probe: 47.2. Dashed line: 51.8, DINOv3's own protocol; what explains the gap was not measured.</li>
   </ul></aside>
 </section>

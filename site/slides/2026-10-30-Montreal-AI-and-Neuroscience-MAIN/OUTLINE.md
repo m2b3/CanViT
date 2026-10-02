@@ -321,6 +321,9 @@ yet reviewed by the authors.
 - **Title:** the paper's Fig. 3 caption.
 - **Shows:** the history chart of `#history`, now with CanViT-B: 45.9% ADE20K mIoU (frozen, linear probe, C2F, 64²
   canvas) and 84.5% ImageNet-1k top-1 (fine-tuned), named in the chart's margin.
+- **Builds:** ImageNet-1k with CanViT-B's two results; then ADE20K with its result; then a dotted line at AME's level
+  and an arrow up to CanViT-B's 45.9, "+18.3" (the paper: "up from 27.6%"). ImageNet-1k gets no arrow: 2.3 points
+  over AdaptiveNN is about 30 px and crowds AdaptiveNN's point; it is in the notes.
 - **Status:** draft (the breakdown of results is still to settle, `PLAN.md`).
 
 ### Accuracy by viewing policy

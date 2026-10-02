@@ -95,6 +95,12 @@
 .reveal .history-chart .canvit .filled { fill: var(--canvas); }
 .reveal .history-chart .canvit .hollow { fill: var(--bg); }
 .reveal .history-chart .canvit .leader { fill: none; stroke: var(--canvas); stroke-width: 1.5; }
+.reveal .history-chart .gain .level { fill: none; stroke: var(--canvas); stroke-width: 2; stroke-dasharray: 2 6;
+  stroke-linecap: round; }
+.reveal .history-chart .gain .arrow { fill: none; stroke: var(--canvas); stroke-width: 4; stroke-linecap: round;
+  stroke-linejoin: round; }
+.reveal .history-chart .gain .gain-label { font-size: 28px; font-weight: 800; fill: var(--canvas); paint-order: stroke;
+  stroke: var(--bg); stroke-width: 6px; }
 .reveal .history-chart .canvit .label { fill: var(--canvas); font-weight: 800; font-size: 21px;
                                          paint-order: stroke; stroke: var(--bg); stroke-width: 6px; }
 .reveal .history-chart g { transition: opacity .5s ease; }
@@ -136,7 +142,8 @@
 #results .history-chart .gap { opacity: 0; }
 #results:not(.shows-ade20k) .history-chart.imagenet, #results.shows-ade20k .history-chart.ade20k { opacity: 1; }
 #results:not(.shows-canvit-imagenet) .history-chart.imagenet .canvit,
-#results:not(.shows-canvit-ade20k) .history-chart.ade20k .canvit { opacity: 0; }
+#results:not(.shows-canvit-ade20k) .history-chart.ade20k .canvit,
+#results:not(.shows-gain-ade20k) .history-chart.ade20k .gain { opacity: 0; }
 
 /* The project page's "What's in an active-vision model?", at slide size. */
 #active-vision-model .axes { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 10px; }

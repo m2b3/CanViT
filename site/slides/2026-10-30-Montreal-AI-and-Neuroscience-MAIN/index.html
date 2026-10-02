@@ -166,7 +166,10 @@
   <!-- Drawn by timeline.js from sources/active-vision-timeline.json; each model a fragment, then how each chose where
        to look. Evidence for every entry: sources/active-vision-timeline.md. -->
   <div class="timeline"></div>
-  <p class="legend fragment" data-shows="rl"><span class="dot"></span>where to look, learned by reinforcement learning</p>
+  <div class="legend fragment" data-shows="rl">
+    <p><span class="dot"></span>where to look, learned by reinforcement learning</p>
+    <p class="by-rule"><span class="dot"></span>by the entropy of its decoder's attention</p>
+  </div>
   <span class="fragment step-marker" data-shows="canvit"></span>
   <aside class="notes"><ul>
     <li>RAM, Mnih et al. 2014 (Mnih: deep Q-learning): where to look learned by RL.</li>

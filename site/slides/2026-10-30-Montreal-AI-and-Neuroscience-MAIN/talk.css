@@ -515,9 +515,13 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #timeline .year { font: 600 18px var(--sans); fill: var(--muted); paint-order: stroke; stroke: var(--bg); stroke-width: 8px; }
 #timeline .marker { fill: #d97706; stroke: var(--bg); stroke-width: 2.5; transition: fill .5s ease, r .5s ease; }
 #timeline.shows-rl .marker.rl { fill: var(--policy); r: 13; }
-#timeline .legend { position: absolute; right: var(--slide-pad-x); top: 120px; display: flex; align-items: center; gap: 10px;
+#timeline .legend { position: absolute; right: var(--slide-pad-x); top: 112px; display: grid; gap: 6px;
                     font-size: 20px; font-weight: 650; color: var(--policy); }
+#timeline .legend p { display: flex; align-items: center; gap: 10px; }
 #timeline .legend .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--policy); }
+/* AME: chosen by a rule, its marker kept in the active models' amber. */
+#timeline .legend .by-rule { color: #b45309; }
+#timeline .legend .by-rule .dot { width: 16px; height: 16px; margin: 0 3px; background: #d97706; }
 #timeline .leader { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 5; }
 #timeline .name { font: 800 24px var(--sans); fill: var(--ink); }
 #timeline .cite { font: italic 400 15px var(--sans); fill: var(--muted); }

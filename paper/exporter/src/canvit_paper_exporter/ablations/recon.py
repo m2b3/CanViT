@@ -3,11 +3,10 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
-import torch
 
 from canvit_paper_exporter import paths
 from canvit_paper_exporter.ablations.registry import BASELINE, BY_SLUG
-from canvit_paper_exporter.core import Dataset
+from canvit_paper_exporter.core import Dataset, load_result
 from canvit_paper_exporter.stats import bootstrap_mean_ci
 
 # recon_{slug}_{YYYYMMDDTHHMMSSZ}_r{run}.pt (canvit_pytorch.evaluate batch group "recon")
@@ -28,7 +27,7 @@ def _group(recon_dir: Path) -> dict[str, list[Path]]:
 
 def _summarise(slug: str, files: list[Path]) -> tuple[dict, str]:
     """Bootstrap the per-timestep metrics across runs for one variant; also the policy the runs recorded."""
-    runs = [torch.load(f, map_location="cpu", weights_only=False) for f in files]
+    runs = [load_result(f) for f in files]
     (policy,) = {run["metadata"]["config"]["episode"]["policy"] for run in runs}
     per_run = [run["per_timestep"] for run in runs]
     T = len(per_run[0])

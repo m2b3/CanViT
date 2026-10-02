@@ -3,13 +3,10 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
-      - "canvit-core-v*"
-      - "canvit-mlx-v*"
-      - "canvit-nnx-v*"
+      - "canvit-v*"
+      - "canvit-*-v*"
 
-# v* tags release canvit-pytorch. Package-qualified tags release the independent
-# packages. Register this workflow as a trusted publisher for each PyPI project.
+# Register this workflow as a trusted publisher for each PyPI project.
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -29,31 +26,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          case "$RELEASE_TAG" in
-            v*)
-              package_dir=canvit-pytorch
-              expected_version="${RELEASE_TAG#v}"
-              ;;
-            canvit-core-v*)
-              package_dir=canvit-core
-              expected_version="${RELEASE_TAG#canvit-core-v}"
-              ;;
-            canvit-mlx-v*)
-              package_dir=canvit-mlx
-              expected_version="${RELEASE_TAG#canvit-mlx-v}"
-              ;;
-            canvit-nnx-v*)
-              package_dir=canvit-nnx
-              expected_version="${RELEASE_TAG#canvit-nnx-v}"
-              ;;
-            *)
-              printf 'unsupported release tag: %s\n' "$RELEASE_TAG" >&2
-              exit 1
-              ;;
-          esac
+          package_dir="${RELEASE_TAG%-v*}"
+          expected_version="${RELEASE_TAG##*-v}"
 
           package_version="$(uv run --no-project python -c \
-            'import pathlib, sys, tomllib; print(tomllib.loads(pathlib.Path(sys.argv[1], "pyproject.toml").read_text())["project"]["version"])' \
+            'import pathlib, sys, tomllib; path = pathlib.Path(sys.argv[1]); project = tomllib.loads((path / "pyproject.toml").read_text())["project"]; assert project["name"] == path.name; print(project["version"])' \
             "$package_dir")"
           if [[ "$package_version" != "$expected_version" ]]; then
             printf 'tag %s names version %s, but %s declares %s\n' \

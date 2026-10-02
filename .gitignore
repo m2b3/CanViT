@@ -58,3 +58,25 @@ site/.screens/
 
 # Exported live models (python -m canvit_pytorch.viz.live export): hundreds of MB, never committed
 site/.live-model
+
+# The paper: evaluation results the exporter reads (not distributed), its diagram intermediates, exports the
+# manuscript does not read (SVG and PNG renderings, datasets run by name), and LaTeX build outputs.
+paper/exporter/data/
+paper/exporter/diagrams/outputs/
+paper/exporter/diagrams/*.pdf
+paper/exporter/diagrams/*.svg
+paper/exporter/diagrams/*.png
+paper/exports/*.svg
+paper/exports/*.png
+paper/exports/ablation_seg.json
+paper/exports/ablation_in1k_clf.json
+paper/latex/*.pdf
+paper/latex/*.aux
+paper/latex/*.bbl
+paper/latex/*.blg
+paper/latex/*.out
+paper/latex/*.maf
+paper/latex/*.mtc*
+paper/latex/*.ptc*
+paper/latex/arxiv_bundle/
+paper/latex/arxiv_bundle.tar.gz

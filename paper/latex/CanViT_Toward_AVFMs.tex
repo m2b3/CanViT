@@ -1,0 +1,1610 @@
+\documentclass{article}
+
+\PassOptionsToPackage{numbers, super, compress}{natbib}
+
+\usepackage{neurips_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{makecell}      %
+\setcellgapes{3pt}
+\makegapedcells
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{nicefrac}
+
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{proposition}[lemma]{Proposition}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{xspace}
+\usepackage{wrapfig}
+\usepackage{listings}
+
+\usepackage{minitoc}
+\renewcommand{\partname}{}
+\renewcommand{\thepart}{}
+\noptcrule
+
+\definecolor{lstkw}{RGB}{0,0,153}       %
+\definecolor{lstcomment}{RGB}{106,153,85} %
+\definecolor{lststring}{RGB}{163,21,21} %
+\definecolor{lstbuiltin}{RGB}{43,145,175} %
+
+\newif\ifanonymous \anonymoustrue
+\newcommand{\anon}[2]{\ifanonymous#1\else#2\fi}
+
+\renewcommand{\thefootnote}{$\dagger$}
+
+\definecolor{archCanvas}{HTML}{e05050}     %
+\definecolor{archGlimpse}{HTML}{4080d0}    %
+\definecolor{archCls}{HTML}{50b050}        %
+\definecolor{archReg}{HTML}{b0b0b0}        %
+\definecolor{archVpe}{HTML}{f0a030}        %
+\definecolor{archBackbone}{HTML}{d0a8e0}   %
+\lstdefinestyle{canvitpython}{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{lstkw}\bfseries,
+  commentstyle=\color{lstcomment}\itshape,
+  stringstyle=\color{lststring},
+  emphstyle=\color{lstbuiltin}\bfseries,
+  emph={LayerNorm,Linear,Identity,nn,Module,arange,stack,meshgrid,reshape,
+        to_multihead,from_multihead,sdpa,apply_2d_rope,compute_2d_rope},
+  showstringspaces=false,
+  breaklines=false,
+  columns=fullflexible,
+  keepspaces=true,
+  upquote=true,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{lightgray},
+  xleftmargin=0pt,
+  xrightmargin=0pt,
+}
+
+\input{data}
+
+\makeatletter
+\newcommand{\inputrows}[1]{\@@input #1 }
+\makeatother
+
+\newcommand{\abldelta}[2]{\csname abl#1#2\endcsname}
+
+\usepackage{acro}
+\DeclareAcronym{ACV}{short=ACV, long=Active Computer Vision}
+\DeclareAcronym{AVFM}{short=AVFM, long=Active-Vision Foundation Model, long-plural-form=Active-Vision Foundation Models}
+\DeclareAcronym{ViT}{short=ViT, long=Vision Transformer}
+\DeclareAcronym{ANN}{short=ANN, long=Artificial Neural Network}
+\DeclareAcronym{MAE}{short=MAE, long=Masked Autoencoder}
+\DeclareAcronym{MLP}{short=MLP, long=Multi-Layer Perceptron, long-plural-form=Multi-Layer Perceptrons}
+\DeclareAcronym{CNN}{short=CNN, long=Convolutional Neural Network}
+\DeclareAcronym{RoPE}{short=RoPE, long=Rotary Position Embeddings}
+\DeclareAcronym{BPTT}{short=BPTT, long=Backpropagation Through Time}
+\DeclareAcronym{SDPA}{short=SDPA, long=Scaled Dot Product Attention}
+\DeclareAcronym{RL}{short=RL, long=Reinforcement Learning}
+\DeclareAcronym{ROI}{short=ROI, long=region of interest, long-plural-form=regions of interest}
+\DeclareAcronym{LLM}{short=LLM, long=Large Language Model}
+\DeclareAcronym{FLOP}{short=FLOP, long=floating point operation}
+\DeclareAcronym{RFF}{short=RFF, long=Random Fourier Features}
+\DeclareAcronym{PCA}{short=PCA, long=Principal Component Analysis}
+
+\newcommand{\Dcan}{D_{\text{can}}}
+\newcommand{\Dbb}{D_{\text{bb}}}
+\newcommand{\Ncan}{N_{\text{can}}}
+\newcommand{\Nbb}{N_{\text{bb}}}
+
+\newcommand{\Ztgt}{\mathbf{Z}^*}
+\newcommand{\ztgt}{\mathbf{z}^*}
+\newcommand{\Ztrecon}{\hat{\mathbf{Z}}_t}
+\newcommand{\ztrecon}{\hat{\mathbf{z}}_t}
+
+
+\title{CanViT: Toward Active-Vision Foundation Models}
+
+\author{%
+  Yoha\"i-Eliel Berreby$^{1,2}$\quad
+  Sabrina Du$^{1,2}$\quad
+  Audrey Durand$^{2,3}$\quad
+  B.~Suresh Krishna$^{1}$ \\[3pt]
+  {\normalfont $^{1}$McGill University\quad $^{2}$Mila - Quebec AI Institute\quad $^{3}$Universit\'e Laval} \\[3pt]
+  {\normalfont \texttt{me@yberreby.com}\quad \texttt{sabrina.du@mail.mcgill.ca}} \\
+  {\normalfont \texttt{audrey.durand@ift.ulaval.ca}\quad \texttt{suresh.krishna@mcgill.ca}}%
+}
+
+\begin{document}
+
+\doparttoc
+\faketableofcontents
+
+\maketitle
+
+% ===========================================================================
+% ABSTRACT
+% ===========================================================================
+\begin{abstract}
+Active computer vision promises efficient, biologically plausible perception through sequential, localized glimpses,
+but lacks scalable general-purpose architectures and pretraining pipelines,
+leaving Active-Vision Foundation Models (AVFMs) underexplored.
+We introduce \textbf{CanViT}, the first task- and policy-agnostic AVFM.
+CanViT uses scene-relative RoPE to bind
+a retinotopic Vision Transformer backbone
+and a spatiotopic scene-wide latent workspace, the \emph{canvas}.
+Efficient interaction with this high-capacity working memory
+is supported by Canvas Attention,
+a novel asymmetric cross-attention mechanism.
+We decouple \emph{thinking} (backbone-level) and \emph{memory} (canvas-level),
+eliminating canvas-side self-attention and fully-connected layers
+to achieve fast sequential inference and scalability to high output resolutions.
+We propose a label-free active vision pretraining scheme,
+\textbf{policy-agnostic passive-to-active dense latent distillation}:
+reconstructing scene-wide DINOv3 embeddings
+from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths.
+We pretrain CanViT-B from a random initialization
+on 13.2 million ImageNet-21k scenes---an order of magnitude more than previous active models---and 1 billion random glimpses,
+in 166 hours on a single H100.
+On ADE20K segmentation,
+a frozen CanViT-B achieves \adeSingleGlimpseMiou\% mIoU
+in a single low-resolution glimpse,
+outperforming the best active model's \adeBestPriorMiou\%
+with \adeCheapestBeatFlopRatio{}x fewer inference FLOPs
+as well as its FLOP- or input-matched DINOv3 teacher.
+Given additional glimpses, CanViT-B reaches \adeBestMiou\% ADE20K mIoU.
+On ImageNet-1k classification,
+CanViT-B also sets a new active-vision state of the art,
+with \inkFinetunedBest\% top-1 accuracy after fine-tuning.
+CanViT generalizes to longer rollouts, larger scenes, and new policies.
+Our work narrows the wide gap between passive and active computer vision,
+demonstrating the potential of task- and policy-agnostic AVFM pretraining.
+\end{abstract}
+
+
+% ===========================================================================
+% 1. INTRODUCTION
+% ===========================================================================
+\section{Introduction}
+\label{sec:introduction}
+
+Deep \acp{ANN} have achieved outstanding performance in a variety of computer vision tasks,
+and proven valuable to life sciences research
+as computational models of biological visual processing
+\cite{yaminsPerformanceoptimizedHierarchicalModels2014,
+yaminsUsingGoaldrivenDeep2016,
+schrimpfBrainScoreWhichArtificial2018,
+zhuangUnsupervisedNeuralNetwork2021,
+bakhtiariFunctionalSpecializationVisual2021,
+mehrerEcologicallyMotivatedImage2021,
+raugelDisentanglingFactorsConvergence2025}.
+This practical and scientific success has largely hinged on
+vision encoders which process individual frames independently and passively,
+without the ability to reuse previous computation to guide further processing in a recurrent, active, human-like manner.
+
+Unlike most \acp{ANN},
+humans sample their visual environment
+by actively and frequently orienting their sensory apparatus towards \acp{ROI},
+through gaze shifts.
+This process is inherently sequential,
+and involves strategic planning \cite{yarbusEyeMovementsVision1967,hoppeMultistepPlanningEye2019},
+integration of evidence across time in visual working memory \cite{BADDELEY197447,melcherPersistenceVisualMemory2001},
+and top-down recurrent feedback---rich conditioning of early visual pathways by signals from higher brain areas, allowing each fixation's visual information to be processed in a contextually informed manner, based on what was seen earlier
+\cite{raoPredictiveCodingVisual1999,
+gilbertTopdownInfluencesVisual2013,
+karEvidenceThatRecurrent2019}, rather than \emph{tabula rasa}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/exported/canvit_overview.pdf}
+  \caption{\textbf{A CanViT rollout.}
+    We consider a high-resolution scene (\textbf{A}).
+    At each timestep $t$,
+    CanViT ingests a $128^2\,\text{px}$ \emph{glimpse} (\textbf{B}, 1st row),
+    a crop extracted at a \emph{viewpoint} with center $(x_t, y_t) \in [-1,+1]^2$ and scale (zoom level) $s_t \in (0,1]$.
+    This updates a scene-wide latent representation, the \emph{canvas},
+    with which CanViT integrates broad context and fine detail from variable-scale glimpses,
+    extrapolates to unobserved regions,
+    and conditions visual processing on a working understanding of the scene.
+    We visualize the canvas via Principal Component Analysis across tokens (\textbf{B}, 2nd row),
+    and canvas updates $(\Delta)$ as cosine dissimilarity heatmaps across consecutive timesteps (\textbf{B}, 3rd row).
+  }
+  \label{fig:example-canvit-rollout}
+  \vspace{-1em}%
+\end{figure}
+
+Drawing inspiration from human vision,
+various \ac{ACV} models, which process visual scenes through sequential, localized glimpses, have been proposed
+\cite{mnihRecurrentModelsVisual2014,
+DRAMBaMK14,
+matheReinforcementLearningVisual2016,
+ablavatski2017enriched,
+elsayedSaccaderImprovingAccuracy2019,
+wangGlanceFocusDynamic2020,
+papadopoulosHardAttentionScalableImage2021,
+seifiGlimpseAttendandExploreSelfAttentionActive2021,
+liuImprovedEfficiencyBased2023,
+AMEPardylRK0T23,
+pardylAdaGlimpseActiveVisual2025,
+wangEmulatingHumanlikeAdaptive2025,
+pourrahimiNeuralSignaturesAssociational2025,
+renEndToEndInstanceSegmentation2017,
+liModelingHumanEye2023,
+olszewskiTORETokenRecycling2025}.
+These models often seek biological relevance and computational efficiency.
+Yet, despite their theoretical advantages, they have struggled to match the accuracy, efficiency, flexibility and representational richness of their passive counterparts.
+This disconnect is particularly striking on dense prediction,
+which is unsupported by most existing active vision models;
+the few exceptions lag dramatically behind passive models
+on standard benchmarks like ADE20K segmentation~\cite{zhouSceneParsingADE20K2017} when evaluated on it~\cite{AMEPardylRK0T23,pardylAdaGlimpseActiveVisual2025}.
+
+An active vision model can be considered along three axes:
+making sense of what it sees at a given moment (instantaneous vision);
+updating a persistent, evolving understanding of the scene,
+which may in turn inform further processing (memory);
+and deciding where and at what zoom level to look next (action selection).
+The first two axes define an observer's ability to understand, persist, and recall visual inputs,
+while the last defines its input-selection strategy, or sensory policy.
+They do not play comparable roles:
+given perfect instantaneous vision and memory,
+naive and strategic policies should reach the same accuracy after enough glimpses of a static scene,
+but no policy can make up for a poor observer.
+Yet, prior \ac{ACV} work has often focused on action selection
+\cite{mnihRecurrentModelsVisual2014,
+DRAMBaMK14,
+matheReinforcementLearningVisual2016,
+ablavatski2017enriched,
+elsayedSaccaderImprovingAccuracy2019,
+wangGlanceFocusDynamic2020,
+papadopoulosHardAttentionScalableImage2021,
+seifiGlimpseAttendandExploreSelfAttentionActive2021,
+liuImprovedEfficiencyBased2023,
+AMEPardylRK0T23,
+pardylAdaGlimpseActiveVisual2025,
+wangEmulatingHumanlikeAdaptive2025,
+pourrahimiNeuralSignaturesAssociational2025}.
+Concurrently, passive-vision foundation models like DINOv3 \cite{simeoniDINOv32026}
+excel at general-purpose instantaneous vision
+but lack essential active-vision components,
+as they have no concept of localized glimpses or memory.
+
+Focusing on the intersection of instantaneous vision and memory,
+we sought to build a task- and policy-agnostic \ac{AVFM}:
+a vision model capable of understanding the spatial and semantic structure of scenes
+across arbitrary sequences of glimpses,
+with rich representations that transfer across tasks and viewing policies.
+This policy-agnostic approach disentangles ``how to see in an active-vision setting'' from ``where to look,''
+thus freeing active-vision pretraining from the complexity of \ac{RL}.
+Policy agnosticism may also be desirable for real-world deployment,
+where physical limitations (e.g., a motorized camera's range of motion and optical zoom levels) may preclude the use of a general-purpose policy.
+
+\textbf{Contributions.}
+We introduce the Canvas Vision Transformer (CanViT, Figure~\ref{fig:example-canvit-rollout}),
+a recurrent architecture
+built around a latent scene-wide representation called the \emph{canvas} (\S\ref{sec:arch})
+and pretrained with a novel passive-to-active distillation scheme (\S\ref{sec:pretraining}).
+We evaluate CanViT-B
+on ADE20K semantic segmentation
+and ImageNet-1k~\cite{russakovskyImageNetLargeScale2015} classification (\S\ref{sec:experiments}).
+CanViT-B sets a new state of the art among active vision models on both ADE20K and ImageNet-1k
+while transferring across policies, temporal horizons, and canvas resolutions without retraining.
+
+
+% ===========================================================================
+% 2. RELATED WORK
+% ===========================================================================
+\section{Related work}
+\label{sec:related-work}
+
+\textbf{Deep active vision} models typically process sequences of \emph{glimpses}---fixed- or variable-scale crops extracted from a larger image or video.
+This line of research traces back to the Recurrent Attention Model~\cite{mnihRecurrentModelsVisual2014},
+and remained largely confined to simple tasks such as digit recognition~\cite{DRAMBaMK14,ablavatski2017enriched}
+until 2019, when Saccader~\cite{elsayedSaccaderImprovingAccuracy2019}
+achieved 75\% ImageNet-1k~\cite{russakovskyImageNetLargeScale2015} top-1 accuracy by
+introducing an intermediate pretraining step to stabilize learning.
+GFNet~\cite{wangGlanceFocusDynamic2020} and AdaptiveNN~\cite{wangEmulatingHumanlikeAdaptive2025}
+later showed that active vision could deliver computational efficiency gains on real-world tasks,
+although both remained structurally limited to classification tasks and fixed zoom levels.
+
+\textbf{Dense prediction in active vision} has remained underexplored, as most \ac{ACV} architectures cannot produce the scene-wide, spatially dense outputs required in tasks like semantic segmentation or depth estimation.
+Among the few exceptions, AME~\cite{AMEPardylRK0T23} and AdaGlimpse~\cite{pardylAdaGlimpseActiveVisual2025}
+achieve dense prediction through post-hoc expansion of encoder outputs:
+at each timestep, a MAE-style~\cite{heMaskedAutoencodersAre2022} Transformer decoder receives all encoded glimpse tokens
+with a full grid of learnable mask tokens and performs self-attention over the entire grid to produce scene-wide predictions.
+This becomes intractable at high scene resolutions, where active vision is most appealing.
+Despite being the state of the art on active ADE20K segmentation,
+these models respectively achieve only \ameSetrMiou\% and \adaglimpseEightMiou\% mIoU.
+
+\textbf{Dense latent distillation from self-supervised \acsp{ViT}} allows the visuospatial intelligence acquired through extensive pretraining to be quickly transferred into randomly-initialized models.
+The largest DINOv2~\cite{oquab2024dinov}/v3~\cite{simeoniDINOv32026}
+models were distilled into smaller \acp{ViT}
+using the same dataset and objective as during pretraining.
+Proteus~\cite{zhang2025accessing}
+distilled DINOv2-\{g,L\}/14~\cite{oquab2024dinov}
+into a smaller model using 100$\times$ less data than during pretraining
+and a simple loss combining CLS token matching with dense feature matching.
+Our distillation scheme follows a similar philosophy to Proteus,
+but transfers across problem settings rather than across model sizes:
+we use a passive teacher's visual world knowledge to teach an active student
+how to see from arbitrary glimpse sequences.
+
+\textbf{Cross-attention for dimensionality/computation decoupling}
+was pioneered by the Set Transformer~\cite{leeSetTransformerFramework2019},
+popularized by Perceiver models~\cite{jaeglePerceiverGeneralPerception2021,jaeglePerceiverIOGeneral2021},
+then generalized to iterative bidirectional routing by Recurrent Interface Networks (RINs)~\cite{jabriScalableAdaptiveComputation2023}.
+Like RINs, CanViT alternates read and write cross-attention across depth and time.
+Unlike Perceiver and RINs, CanViT ingests external input on its few-token side (glimpse), with latents on the many-token side (canvas).
+Moreover, CanViT's many-token side forgoes not only self-attention, but also all fully-connected layers:
+canvas tokens never go through \acp{MLP},
+QKVO projections in cross-attention,
+or GRU~\cite{chungEmpiricalEvaluationGated2014}/LSTM~\cite{hochreiterLongShortTermMemory1997} recurrent gates.
+Instead, canvas tokens evolve solely via our Canvas Attention mechanism.
+
+
+\textbf{Latent-space recurrent reasoning} iterates over a fixed external input in a weight-tied fashion,
+decoupling representational capacity from computational depth
+to enable improved algorithmic reasoning~\cite{dehghaniUniversalTransformers2018,yangLoopedTransformersAre2023,saunshiReasoningLatentThoughts2024,wangHierarchicalReasoningModel2025,jolicoeur-martineauLessMoreRecursive2025}
+and flexible test-time compute allocation~\cite{gravesAdaptiveComputationTime2017,baninoPonderNetLearningPonder2021}.
+This paradigm has recently seen renewed interest,
+both in the \ac{LLM} space~\cite{haoTrainingLargeLanguage2025,geipingScalingTestTimeCompute2025}
+and for its ability to produce small yet highly capable models~\cite{wangHierarchicalReasoningModel2025,jolicoeur-martineauLessMoreRecursive2025}.
+Leveraging top-down recurrent feedback allows previous computation to be reused,
+without losing most of it to ephemeral step-wise outputs.
+Active vision offers an opportunity to generalize this framework
+by allowing each processing step to benefit from a new perspective on the scene
+instead of operating on a constant input.
+CanViT achieves latent-space recurrent reasoning
+with a semantically rich (rather than pixel-like) workspace, the \emph{canvas},
+which provides top-down recurrent feedback for early layers to build upon.
+
+
+
+% ===========================================================================
+% 3. PRELIMINARIES
+% ===========================================================================
+\section{Preliminaries}
+\label{sec:preliminaries}
+
+\textbf{Definitions: Scenes, Glimpses, Viewpoints.}
+For a timestep $t \in \mathbb{N}$,
+we consider a bounded 2D \emph{scene},
+which can be formally represented as
+a function $\psi_t : [-1, +1]^2 \to \mathbb{R}^3$
+mapping continuous-valued $(x,y)$ coordinates to RGB values.
+In our experiments, we consider static scenes,
+with $\psi_t = \psi_0$ for all timesteps.
+We define a \emph{glimpse}
+as a fixed-resolution crop,
+extracted at a \emph{viewpoint} $\mathbf{v}_t = (x_t, y_t, s_t)$,
+where $(x_t, y_t) \in [-1,+1]^2$ is the crop center in scene coordinates
+and $s_t \in (0, 1]$ is the crop's \emph{scale}, or half-side-length.
+That is, the crop spans the scene coordinates
+$[x_t - s_t, x_t + s_t] \times [y_t - s_t, y_t + s_t]$,
+covering a fraction $s_t^2$ of the scene's surface area.
+Regardless of its scale $s_t$,
+the crop is resized to a fixed resolution of $H_g \times W_g$ pixels,
+which determines its information capacity;
+under that constraint, $s_t$ smoothly controls the tradeoff between spatial coverage and perception of detail.
+
+
+\textbf{General-Purpose, Spatially-Grounded Active Vision.}
+We wish for our model to build up a general-purpose understanding of the \emph{scene}
+through a sequence of \emph{glimpses} that it perceives,
+allowing each additional processing step
+to build upon and refine this understanding.
+This evolving latent representation should be readily decodable into predictions at every timestep,
+whether for non-spatial, global prediction tasks like object classification
+or spatially-grounded, dense tasks like semantic segmentation or depth estimation.
+Dense predictions require explicit architectural handling,
+as the active vision setting breaks the direct,
+connectivity-based mapping between input and output feature maps
+that passive \acp{CNN} and \acp{ViT} commonly exploit:
+glimpses need not align with the scene from which they are extracted.
+
+To address this problem, we introduce the \textbf{Canvas Vision Transformer}, or \textbf{CanViT} (\S\ref{sec:arch}),
+a recurrent vision architecture built around a scene-wide latent representation called the \textbf{canvas}.
+
+
+% ===========================================================================
+% 4. ARCHITECTURE
+% ===========================================================================
+\section{The Canvas Vision Transformer (CanViT)}
+\label{sec:arch}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.85\linewidth]{figures/exported/arch_overview.pdf}
+  \caption{\textbf{CanViT architecture diagram.}
+    We adopt a dual-stream structure, equipping a \textbf{ViT backbone} (\textcolor{archBackbone}{\textbf{purple}}, left-hand columns), which processes localized \textbf{glimpses} (\textcolor{archGlimpse}{\textbf{blue}}), with a \textbf{canvas} (\textcolor{archCanvas}{\textbf{red}}, right-hand columns), a fine-grained scene-wide spatio-semantic memory.
+    At each timestep $t$, a glimpse is extracted from a viewpoint $\mathbf{v}_t = (x_t, y_t, s_t)$, patchified, and processed through the backbone, alongside a recurrent CLS token (\textcolor{archCls}{\textbf{green}}) and a Viewpoint Encoding (VPE) token (\textcolor{archVpe}{\textbf{orange}}).
+    The canvas regularly interacts with the glimpse stream via \textbf{Canvas Attention} (Figure~\ref{fig:canvas-attention}), alternating between read (R) and write (W) operations
+    to, respectively, condition the backbone's processing on the canvas and populate the canvas.
+    Both streams are equipped with register tokens (\textcolor{archReg}{\textbf{gray}})~\cite{darcetVisionTransformersNeed2023}.
+  }
+  \label{fig:canvit-high-level-arch}
+\end{figure}
+
+
+The CanViT architecture (Figure~\ref{fig:canvit-high-level-arch})
+formulates active-vision processing
+as the interaction between a high-capacity memory stream (the \emph{canvas})
+and a \ac{ViT}~\cite{dosovitskiyImageWorth16x162020} backbone's compact glimpse processing stream.
+These streams interact bidirectionally through
+Canvas Attention (Figure~\ref{fig:canvas-attention}),
+a mechanism that allows the backbone to efficiently pull information from the canvas and send updates to it.
+
+The \textbf{glimpse stream}, made up of $\Dbb$-dimensional glimpse tokens, is largely ephemeral.
+Each glimpse is extracted from the scene at a given viewpoint,
+split into $16^2\,\text{px}$ patches,
+and fed to the backbone alongside
+ephemeral register tokens~\cite{darcetVisionTransformersNeed2023},
+a recurrent CLS token,
+and a viewpoint encoding (VPE) token derived from the glimpse's position and zoom level.
+Since spatial alignment between consecutive patch grids cannot be assumed,
+as a glimpse may be taken from any position and at any zoom level,
+patch tokens cannot be directly forwarded across time without destroying their grid structure.
+Instead, CanViT persists relevant information from glimpses via the canvas stream.
+
+The \textbf{canvas stream}, made up of $\Dcan$-dimensional canvas tokens, is fully persistent.
+The canvas acts as a scene-wide spatio-semantic memory,
+which can function as a cognitive map~\cite{tolmanCognitiveMapsRats1948} of the scene.
+It comprises a few \emph{canvas registers}, which act as a non-spatial memory,
+and a large $H \times W$ spatial grid of \emph{canvas patches}
+tiling the $[-1, +1]^2$ scene coordinate space.
+At the start of each rollout, this grid is broadcasted to the desired size
+from a single learnable initial patch,
+enabling the canvas resolution to be set at inference time.
+Each canvas patch maps onto a fixed scene region, regardless of the current viewpoint,
+thus allowing direct token-wise decoding into dense predictions
+and unbroken gradient flow across time.
+After initialization,
+the canvas is read from and written to by consecutive Canvas Attention layers,
+whose outputs are residuals injected into each stream.
+No \acp{MLP} or self-attention layers are applied to canvas tokens,
+which evolve solely by interacting with the backbone's glimpse tokens via Canvas Attention Write operations.
+This restriction is key to CanViT's efficiency, as the canvas stream is designed to accommodate a much larger number of tokens than the glimpse stream.
+
+
+\textbf{Scene-Relative Rotary Position Embeddings (SR-RoPE).}
+We compute 2D \acs{RoPE}~\cite{suRoFormerEnhancedTransformer2024,heoRotaryPositionEmbedding2025}
+from the centers of glimpse patches and canvas patches
+in the scene's $[-1,+1]^2$ coordinate system,
+both in the ViT backbone's self-attention and in Canvas Attention layers.
+The positions of glimpse patch centers depend on the current viewpoint $(x_t, y_t, s_t)$,
+with their relative distances implicitly communicating the viewing scale $s_t$ (zoom):
+a zoomed-in glimpse's patches are tightly clustered in a small scene region,
+while a zoomed-out glimpse's tokens span a wider region (Figure~\ref{fig:example-canvit-rollout}).
+The positions of canvas patches are constant for any given canvas grid size,
+since they uniformly tile the scene.
+Consistent use of scene-relative coordinates
+binds the retinotopic glimpse stream and the spatiotopic canvas stream
+with a shared reference frame,
+while \ac{RoPE} enables generalization across patch grid sizes.
+
+
+\textbf{Canvas Attention} (Figure~\ref{fig:canvas-attention}\textbf{A}; pseudocode in Appendix~\ref{supp:canvas-attention-pseudocode}),
+a mechanism based on cross-attention,
+enables efficient interaction between CanViT's relatively small set of glimpse tokens
+and its much larger set of canvas tokens,
+allowing CanViT to support fine-grained scene/canvas grids without incurring the quadratic cost of self-attention (Figure~\ref{fig:canvas-attention}\textbf{B}).
+We alternate between \emph{Read} and \emph{Write} operations
+along depth (and, implicitly, time)
+using a \emph{stride} of 2 ViT blocks in CanViT-B.
+In a \emph{Read}, glimpse tokens query the canvas;
+in a \emph{Write}, canvas tokens query the glimpse.
+In both cases, the cross-attention output is added back to the querying stream via residual addition.
+SR-RoPE makes this process spatially aware,
+allowing Canvas Attention to bind the two streams.
+Unlike standard cross-attention implementations
+(e.g.~MultiHeadAttention in PyTorch~\cite{anselPyTorch2Faster2024} or Flax NNX~\cite{jax2018github,flax2020github}),
+Canvas Attention is \emph{asymmetric}: it restricts Query, Key, Value and Output (QKVO) projections
+to one token set (glimpse-side tokens),
+applying only LayerNorm, RoPE (for Queries/Keys) and element-wise residual addition
+to the other one (canvas-side tokens).
+
+\textbf{Asymmetric projections.}
+The glimpse token count $N_g$ must be kept low due to
+the quadratic cost of the ViT backbone's self-attention,
+and it is desirable for the canvas to have high information capacity
+both \emph{spatially}, by tiling the scene in a fine-grained manner with a large number $H \times W$ of canvas patch tokens (making up the bulk of the $\Ncan$ canvas tokens),
+and \emph{semantically} at any given position within the scene,
+with a large canvas embedding dimension $\Dcan$.
+This makes the asymmetric design of Canvas Attention highly advantageous,
+as the FLOP footprint of a single canvas-side projection relative to the \ac{SDPA} call that it accompanies would be:
+\begin{equation}
+  \frac{\text{projection FLOPs}}{\text{SDPA FLOPs}}
+  = \frac{2 \Ncan \Dcan^2}{4 N_g \Ncan \Dcan}
+  = \frac{\Dcan}{2 N_g}\,,
+\end{equation}
+which is a $\projSdpaRatio{}\times$ ratio with $\Dcan = \flopsCvCanvasDim{}$ and $N_g = \flopsCvNLocal{}$ (\flopsCvNPatches{} glimpse patches, \flopsCvBackboneRegs{} registers, and CLS + VPE tokens).
+The FLOP savings from asymmetric cross-attention projections
+are magnified when using fewer glimpse patches and more canvas patches (Figure~\ref{fig:canvas-attention}\textbf{C}).
+In CanViT-B,
+with a $\cSixFourCanvasGrid{} \times \cSixFourCanvasGrid{}$ canvas patch grid, adding canvas-side QKVO projections would increase the cost of each Canvas Attention Read/Write pair
+from \cSixFourAsymRwPairGf{} to \cSixFourFullRwPairGf{} GFLOPs.
+
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/exported/canvas_attention_combined.pdf}
+  \caption{\textbf{A.}~A Canvas Attention Read-Write pair.
+  \textbf{B.}~Total inference FLOPs vs output patch grid.
+  \textbf{C.}~Relative cost of canvas-side QKVO projections, per Canvas Attention Read/Write pair.}
+  \label{fig:canvas-attention}
+\end{figure}
+
+
+
+\textbf{Viewpoint Encoding (VPE) Token.}
+We supplement SR-RoPE,
+which distributes the encoding of viewpoint position and scale over glimpse patches,
+with a dedicated viewpoint encoding (VPE) token
+that concentrates the viewpoint triplet $(x_t, y_t, s_t)$
+into a single glimpse-side token.
+The VPE token is a non-essential architectural affordance,
+meant to facilitate future end-to-end policy learning
+by allowing the next viewpoint to be decoded from a rich transformation of the current viewpoint.
+We provide additional details on VPE in Appendix~\ref{supp:vpe}
+and ablate it in Table~\ref{tab:ablations}\,\textbf{k}.
+
+
+% ===========================================================================
+% 5. PRETRAINING
+% ===========================================================================
+\section{Policy-agnostic passive-to-active dense latent distillation}
+\label{sec:pretraining}
+
+An active vision model should (1) make sense of what it sees,
+(2) integrate observations into a persistent scene representation,
+and (3) decide where to look next.
+Here, we ask: how can we teach CanViT (1) and (2)
+in a task-agnostic, spatially aware, label-free manner,
+while remaining robust to the choice of policy (3)?
+We achieve this via
+\emph{policy-agnostic passive-to-active dense latent distillation},
+which combines highly informative reconstruction targets with rollout randomization.
+
+\subsection{Passive-to-active dense distillation}
+\label{subsec:distillation}
+
+A natural pretext task for active-vision pretraining is \emph{scene reconstruction}:
+training the model to produce a best-guess approximation of the overall scene from a sequence of glimpses.
+This incentivizes understanding of the spatial and semantic structure of scenes,
+in order to faithfully extrapolate to unseen regions and details.
+Since we wish for CanViT to iteratively build a semantically rich ``mental image,''
+we formulate this reconstruction objective in DINOv3 \cite{simeoniDINOv32026} latent space,
+rather than in pixel space like passive \acp{MAE} \cite{heMaskedAutoencodersAre2022}
+and some active vision models \cite{pardylAdaGlimpseActiveVisual2025}.
+
+\textbf{Teacher.}
+We build upon DINOv3 \cite{simeoniDINOv32026},
+a self-supervised vision model family
+whose dense representations deliver outstanding frozen-feature transfer
+to classification, segmentation, depth estimation, and other downstream tasks.
+We use DINOv3 ViT-B as a \emph{high-resolution scene-wide spatio-semantic teacher},
+which produces patch tokens (dense features) and a global CLS token.
+These highly informative reference embeddings represent an idealized scene understanding
+for CanViT to match using sequences of cheap, partial glimpses.
+High-resolution teacher inference is much more computationally intensive than a single CanViT forward pass;
+however, since the teacher is frozen,
+we precompute reference features once,
+storing them for subsequent use across epochs and hyperparameter sweeps.
+We apply per-position z-score standardization to reconstruction targets.
+
+\textbf{Decoding.} At each timestep $t$,
+CanViT produces updated canvas tokens,
+including canvas patches $\mathbf{C}_t \in \mathbb{R}^{H \times W \times \Dcan}$ and canvas registers,
+and an updated CLS token $\mathbf{h}_t \in \mathbb{R}^{\Dbb}$.
+We apply layer normalization \cite{baLayerNormalization2016},
+then decode into DINOv3-space reconstructions via token-wise linear projections:
+\begin{equation}
+  \Ztrecon = W_C \cdot \text{LayerNorm}(\mathbf{C}_t), \quad
+  \ztrecon = W_h \cdot \text{LayerNorm}(\mathbf{h}_t)
+\end{equation}
+
+\textbf{Loss.} Our loss combines patch-level and CLS-level reconstruction, averaged across space and time:
+\begin{equation}
+  \mathcal{L} = \frac{1}{T} \sum_{t=0}^{T-1}
+  \left[
+    \frac{1}{HW} \|\Ztrecon - \Ztgt\|_F^2 + \|\ztrecon - \ztgt\|^2
+  \right]
+\end{equation}
+
+
+\subsection{Policy agnosticism}
+\label{subsec:policy-agnosticism}
+
+\textbf{Dual rollouts.}
+For each scene, we run two independent rollouts from a freshly-initialized canvas, averaging their losses.
+These rollouts and their viewpoint sampling policies are referred to as R-IID and F-IID,
+which only differ by their behavior at $t=0$.
+R-IID (Random-then-IID) rollouts sample random viewpoints at all timesteps, including $t=0$,
+ensuring robustness to arbitrary rollout starts.
+F-IID (Full-then-IID) rollouts always start with the full-scene zoomed-out viewpoint $(x_0,y_0,s_0) = (0,0,1)$,
+providing a low-resolution but high-spatial-coverage view of each scene at least once over the course of pretraining.
+Training with 1 F-IID + 1 R-IID rather than 2 R-IID rollouts accelerates convergence,
+even when evaluating on held-out data with a R-IID policy (Table~\ref{tab:ablations}\,\textbf{h}).
+
+\textbf{Sampling of viewpoint center and scale.}
+For all non-initial timesteps, as well as the $t = 0$ timestep of R-IID rollouts,
+we sample $A \sim \mathcal{U}([0, A_{\max}])$ and set $s = 1 - \sqrt{A}$.
+For a glimpse of scale $s$,
+valid centers form a box of half-side-length $\sqrt{A}$,
+within which we draw $(x, y)$ uniformly.
+The resulting marginal scale density is $p(s) \propto (1 - s)$,
+favoring small, localized glimpses.
+We set $A_{\max} = (1 - s_{\min})^2$ with a minimum glimpse scale of $s_{\min} = 0.05$, or $0.25\%$ of the scene's area.
+
+\textbf{Rollout length randomization.}
+Our loss provides \emph{temporally} dense supervision, with per-timestep credit assignment.
+This allows us to train CanViT with truncated \ac{BPTT} over chunks of only $K = 2$ glimpses.
+At each chunk boundary, we stop the rollout with probability $p_{\text{stop}} = 0.5$,
+resulting in a geometric distribution of chunk counts
+with an \emph{average} sequence length of $T = K / p_{\text{stop}} = 4$ glimpses
+while occasionally exposing the model to longer sequences.
+This scheme ensures sequence length robustness on a constant train-time VRAM footprint,
+with a modest train-time compute overhead due to the low average sequence length.
+
+
+% ===========================================================================
+% 6. EXPERIMENTS
+% ===========================================================================
+\section{Experiments}
+\label{sec:experiments}
+
+To assess generalization across tasks, policies, temporal horizons, and canvas resolutions,
+we pretrain a general-purpose CanViT-B checkpoint and evaluate it with linear decoding
+on ADE20K~\cite{zhouSceneParsingADE20K2017} semantic segmentation
+and ImageNet-1k (IN1k) classification~\cite{russakovskyImageNetLargeScale2015}.
+We use frozen weights to assess feature decodability on ADE20K and IN1k,
+and full fine-tuning to measure peak IN1k performance;
+we do not fine-tune on ADE20K due to its low scene count.
+We use $128^2\,\text{px}$ glimpses consistently.
+We provide additional details on pretraining (Appendix~\ref{supp:pretraining-details}) and evaluation (Appendix~\ref{supp:evaluation-details}), as well as a detailed ablation study (Appendix~\ref{supp:ablation-study}) and inference latency measurements (Appendix~\ref{supp:latency-experiments}).
+
+\textbf{Task-agnostic pretraining.}
+Following the protocol described in \S\ref{sec:pretraining},
+we pretrain CanViT-B from a random initialization
+in just 166 hours on a single H100,
+sampling approximately 1 billion glimpses
+from 13.2 million $512^2\,\text{px}$ ImageNet-21k~\cite{russakovskyImageNetLargeScale2015,ridnikImageNet21KPretrainingMasses2021} scenes.
+We use an average sequence length of $T = 4$ (via $p_{\mathrm{stop}} = 0.5$ and $K = 2$) and a canvas resolution of $32^2 = 1024$ patches during pretraining.
+
+\textbf{Task-specific probing.}
+For ADE20K, we train linear probes to predict segmentation masks from canvas patches.
+We train a separate probe for each considered canvas resolution.
+For ImageNet-1k, we use a linear probe to predict logits from CanViT's recurrent CLS token.
+When fine-tuning, we start from our frozen-weights probes and unfreeze CanViT's own weights (i.e.\ LP-FT~\cite{kumarFineTuningCanDistort2022}).
+
+
+\textbf{Baselines.}
+We consider leading active vision models with published results on ADE20K segmentation and/or ImageNet-1k classification:
+Saccader~\cite{elsayedSaccaderImprovingAccuracy2019},
+AME~\cite{AMEPardylRK0T23},
+AdaGlimpse~\cite{pardylAdaGlimpseActiveVisual2025},
+and AdaptiveNN~\cite{wangEmulatingHumanlikeAdaptive2025}.
+We report each model's best published results;
+for AME, we include both its SETR~\cite{zhengRethinkingSemanticSegmentation2021} and MAE~\cite{heMaskedAutoencodersAre2022}-initialized variants for completeness.
+When assessing the effects of canvas resolution and ground-truth mask area, we also compare against the DINOv3 ViT-B passive teacher.
+
+\textbf{Policies.}
+To assess CanViT's ability to generalize across policies,
+we supplement the R-IID and F-IID train-time policies described in \S\ref{subsec:policy-agnosticism}
+with additional inference-time-only policies.
+We introduce a \textbf{Coarse-to-Fine (C2F)} policy,
+which traverses a quadtree over the scene,
+deterministically decreasing the viewpoint scale as the rollout progresses
+while randomizing the visitation order at each scale.
+To isolate the effect of processing order,
+we pair C2F with the \textbf{Fine-to-Coarse (F2C)} policy,
+which reverses C2F viewpoint sequences.
+For ADE20K, we also introduce an \textbf{Entropy-Guided C2F (EG-C2F)} variant,
+which greedily selects the highest-uncertainty tile among those that have not yet been visited at a given scale,
+using the segmentation probe's per-position class entropy.
+This image-dependent dynamic policy showcases the ability of the canvas to guide viewpoint selection, even without \ac{RL}.
+Lastly, to disentangle the impact of additional recurrent processing from that of ingesting different inputs,
+we consider a \textbf{Repeated Full-Scene (RFS)} policy,
+which simply iterates over the $(x,y,s)=(0,0,1)$ zoomed-out viewpoint.
+We use up to $T = 21$ glimpses.
+
+\subsection{Results}
+\label{subsec:results}
+
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/exported/main_results.pdf}
+  \caption{\textbf{Benchmark results on ADE20K and ImageNet-1k}.
+    \textbf{A.}~Accuracy--efficiency frontier on ADE20K segmentation.
+    \textbf{B.}~ADE20K segmentation mIoU by viewing policy, at $32^2$ or $64^2$ canvas resolution.
+    \textbf{C.}~ImageNet-1k classification accuracy by viewing policy, with or without fine-tuning.}
+  \label{fig:main-ade20k-in1k-results}
+\end{figure}
+
+
+\begin{wraptable}{r}{0.48\linewidth}
+  \vspace{-1.2em}
+  \makeatletter
+  \setlength{\abovecaptionskip}{\@neuripsbelowcaptionskip}%
+  \setlength{\belowcaptionskip}{\@neuripsabovecaptionskip}%
+  \makeatother
+  \caption{\textbf{Comparison with prior work.} \\ $\dagger$: Frozen weights with linear probing.}
+  \label{tab:active-vision-comparison}
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}%
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Model} & \textbf{ADE20K mIoU} & \textbf{IN1k top-1} \\
+    \midrule
+    Saccader \cite{elsayedSaccaderImprovingAccuracy2019} & --- & 75.0 \\
+    AME \cite{AMEPardylRK0T23} (MAE) & 24.4 & --- \\
+    AME \cite{AMEPardylRK0T23} (SETR) & 27.6 & --- \\
+    AdaGlimpse \cite{pardylAdaGlimpseActiveVisual2025} & 25.7 & 77.5 \\
+    AdaptiveNN \cite{wangEmulatingHumanlikeAdaptive2025} & --- & 82.2 \\
+    \midrule
+    \textbf{CanViT-B} & \textbf{\adeBestMiou}$^{\dagger}$ & \inkFrozenBest$^{\dagger}$ / \textbf{\inkFinetunedBest} \\
+    \bottomrule
+  \end{tabular}
+  \vspace{-0.5em}
+\end{wraptable}
+
+CanViT-B outperforms prior active vision models
+on both ADE20K segmentation and ImageNet-1k classification by a wide margin (Table~\ref{tab:active-vision-comparison}),
+achieving up to \adeBestMiou\% ADE20K mIoU (up from 27.6\%)
+and \inkFinetunedBest\% IN1k top-1 accuracy (up from 82.2\%).
+On ADE20K, state-of-the-art accuracy is paired with striking efficiency:
+in a single glimpse, CanViT-B reaches \adeCheapestBeatMiou\% mIoU
+using \adeCheapestBeatFlopRatio{}x fewer FLOPs than AME does at \adeBestPriorMiou\% mIoU
+(Figure~\ref{fig:main-ade20k-in1k-results}\textbf{A}).
+CanViT's advantage holds even with the F2C policy's worse-than-random viewing order,
+showing that perception, not viewpoint selection, was the bottleneck in this task.
+
+On both tasks, CanViT-B generalizes across policies, temporal horizons, and canvas resolutions, even with frozen weights (Figure~\ref{fig:main-ade20k-in1k-results}\textbf{B,C}).
+The inference-time-only C2F policy
+dramatically outperforms the R-IID and F-IID policies on ADE20K
+in both peak accuracy and efficiency,
+and provides a modest efficiency boost early into IN1k rollouts.
+EG-C2F's uncertainty-based viewpoint selection
+enables further efficiency gains on ADE20K.
+We observe consistent ADE20K mIoU gains through $T = \adeMaxT$ glimpses,
+well beyond the average of $T \approx 4$ used during pretraining,
+while IN1k accuracy quickly plateaus.
+On both tasks, CanViT reaches higher peak accuracies with C2F than F2C
+despite both policies yielding the same set of viewpoints by $t = \adeLastT$,
+highlighting the importance of contextually informed processing.
+Given a constant input (RFS),
+accuracy initially improves purely from recurrent processing,
+then subsequently declines in the absence of diverse viewpoints.
+Despite training exclusively with a $32^2$ canvas,
+evaluating CanViT-B with an inference-time $64^2$ canvas
+consistently provides an accuracy boost on ADE20K,
+an effect that we probe further in Figure~\ref{fig:resolution-and-mask-size-analysis}.
+
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/exported/resolution_and_mask_size.pdf}
+  \caption{\textbf{Effects of canvas resolution and ground-truth mask area.}
+    We evaluate on ADE20K segmentation with canvas resolution in $\{8^2, 16^2, 32^2, 64^2\}$,
+    using the EG-C2F policy, frozen weights, and per-resolution linear probes.
+    \textbf{A.}~Per-mask IoU given a single full-scene $128^2$\,px input ($8^2$ input patch grid).
+    \textbf{B.}~Per-mask IoU gain given additional glimpses.
+    \textbf{C.}~Accuracy--efficiency Pareto frontier, varying FLOPs via timestep count for CanViT and via input resolution (px) for DINOv3.
+  }
+  \label{fig:resolution-and-mask-size-analysis}
+\end{figure}
+
+CanViT's dual-stream design decouples glimpse (instantaneous vision) resolution from canvas (memory/output) resolution.
+This input-output dissociation can be advantageous even in single-timestep (passive vision) contexts:
+given a low-resolution full-scene glimpse, a frozen CanViT-B with a finer canvas outperforms its coarser-canvas counterpart on ADE20K segmentation,
+and even its input-matched DINOv3-ViT-B teacher (Figure~\ref{fig:resolution-and-mask-size-analysis}\textbf{A}).
+Finer canvases are most beneficial when dealing with small ground-truth segmentation masks (e.g., for small, distant or occluded objects) (Figure~\ref{fig:resolution-and-mask-size-analysis}\textbf{A})
+or using multiple timesteps (Figure~\ref{fig:resolution-and-mask-size-analysis}\textbf{B}).
+Together,
+the accuracy gains provided by finer canvases
+and the low computational overhead of Canvas Attention
+allow CanViT-B to offer an attractive accuracy-efficiency frontier on ADE20K segmentation at low FLOP budgets (Figure~\ref{fig:resolution-and-mask-size-analysis}\textbf{C}).
+
+
+% ===========================================================================
+% 7. CONCLUSION
+% ===========================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+CanViT applies the foundation model playbook to active vision,
+with a general-purpose active-vision model
+that can be used as-is across tasks and viewing policies
+while delivering outstanding performance.
+Our results show that pairing a carefully designed active-vision architecture
+with a highly informative learning signal
+is sufficient to dramatically advance the state of the art in active computer vision,
+without relying on complex \ac{RL} pipelines.
+Together, CanViT's strong inference-time generalization, high computational efficiency
+and state-of-the-art performance on active-vision benchmarks
+highlight the potential of our approach
+and of task- and policy-agnostic \ac{AVFM} pretraining.
+
+\textbf{Limitations and future work.}
+Like most active-vision models, CanViT was trained and evaluated on static scenes.
+However, its constant-memory recurrent design and high computational efficiency
+make it an ideal candidate for future adaptation to real-time video processing and embodied active perception.
+In those contexts, the addition of a lightweight gating mechanism may be desirable in order to facilitate forgetting.
+Similarly, \ac{RL}-based policy learning would be a natural extension,
+particularly in goal-directed settings such as visual search;
+we leave this to future work.
+We expect CanViT-B to be directly applicable to monocular depth estimation without retraining,
+similarly to its DINOv3 teacher and passive models distilled from DINOv2/v3 features~\cite{zhang2025accessing}.
+Our passive-to-active distillation scheme accelerates active-vision pretraining
+by allowing it to remain focused on active-vision-specific considerations
+such as partial observability and information integration across glimpses,
+but requires a pretrained passive teacher.
+This may prove limiting at very high scene resolutions
+due to the quadratic cost of teacher self-attention
+and the large storage footprint of precomputed features,
+especially when working with video, which would involve distinct per-timestep targets.
+We thus see active-to-active self-distillation as a promising avenue for future research.
+Finally, our results use a single model size
+pretrained using a modest compute budget
+and a dataset over 100$\times$ smaller than DINOv3's LVD-1689M;
+we expect further gains from more extensive pretraining and larger models,
+though the latter may be undesirable for edge deployment.
+
+
+
+% ===========================================================================
+% ACKNOWLEDGMENTS
+% ===========================================================================
+\begin{ack}
+Funded by a Vision Sciences Research Network (VSRN) PhD Recruitment Scholarship, a Unifying Neuroscience and Artificial Intelligence - Québec (UNIQUE) MSc Excellence Fellowship, a Centre for Applied Mathematics in Bioscience and Medicine (CAMBAM) Fellowship, a McGill Department of Physiology Max and Jane Childress Entrance Fellowship, and a McGill Faculty of Medicine and Health Sciences Internal Studentship to Yohaï-Eliel Berreby; a Natural Sciences and Engineering Research Council of Canada (NSERC) Undergraduate Student Research Award administered by the McGill Faculty of Medicine and Health Sciences to Sabrina Du; a Canada CIFAR AI Chair to Audrey Durand; and an NSERC Discovery Research program grant (RGPIN-2022-05399) and Supplement (DGECR-2022-00321) together with a computing resources grant from Calcul Québec and the Digital Research Alliance of Canada to B. Suresh Krishna. This project received compute support from Lamarck Labs. The funders of this research played no role in any aspect of the research, decision to publish, or manuscript preparation.
+
+\end{ack}
+
+
+% ===========================================================================
+% REFERENCES
+% ===========================================================================
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+
+% ===========================================================================
+% APPENDIX
+% ===========================================================================
+\appendix
+
+\clearpage
+\part{}
+\section*{\centering \LARGE Appendix}
+\mtcsettitle{parttoc}{Contents}
+\parttoc
+\clearpage
+
+\section{Canvas Attention pseudocode}
+\label{supp:canvas-attention-pseudocode}
+
+\begin{lstlisting}[style=canvitpython]
+class CanvasAttention(nn.Module):
+    def __init__(self, D_q, D_kv):
+        self.ln_q  = LayerNorm(D_q)
+        self.ln_kv = LayerNorm(D_kv)
+
+    # Common template for Reads and Writes
+    def forward(self, x_q, x_kv, rope_q, rope_kv):
+        q  = to_multihead(self.q_map(self.ln_q(x_q)))
+        kv = self.ln_kv(x_kv)
+        k  = to_multihead(self.k_map(kv))
+        v  = to_multihead(self.v_map(kv))
+        q  = apply_2d_rope(q, rope_q)
+        k  = apply_2d_rope(k, rope_kv)
+        return self.o_map(from_multihead(sdpa(q, k, v)))
+
+
+class CanvasAttentionRead(CanvasAttention):  # backbone queries canvas
+    def __init__(self, D_bb, D_can):
+        super().__init__(D_q=D_bb, D_kv=D_can)
+        # backbone-side: fully-connected Query and Output projections
+        self.q_map = Linear(D_bb, D_can)
+        self.o_map = Linear(D_can, D_bb)
+        # canvas-side: no-op for Key and Value
+        self.k_map = Identity()
+        self.v_map = Identity()
+
+
+class CanvasAttentionWrite(CanvasAttention):  # canvas queries backbone
+    def __init__(self, D_bb, D_can):
+        super().__init__(D_q=D_can, D_kv=D_bb)
+        # backbone-side: fully-connected Key and Value projections
+        self.k_map = Linear(D_bb, D_can)
+        self.v_map = Linear(D_bb, D_can)
+        # canvas-side: no-op for Query and Output
+        self.q_map = Identity()
+        self.o_map = Identity()
+
+
+# cell centers of uniform R x C grid
+# in [-1,+1]^2, shape [R*C, 2]
+def grid(R, C):
+    ys = (arange(R) + 0.5) / R * 2 - 1
+    xs = (arange(C) + 0.5) / C * 2 - 1
+    return stack(meshgrid(ys, xs), -1).reshape(R * C, 2)
+
+
+# Scene-Relative 2D Rotary Position Embeddings
+# center=(y,x) in [-1,+1]^2, scale in (0,1]: where/how zoomed-out the viewpoint is
+rope_bb  = compute_2d_rope(center + scale * grid(H_g, W_g))  # dynamic
+rope_can = compute_2d_rope(grid(H_c, W_c))                   # fixed
+
+# CanViT alternates reads and writes across depth:
+x_bb  = blk1(blk0(x_bb))
+x_bb  = x_bb  + read(x_bb, x_can, rope_bb, rope_can)
+x_bb  = blk3(blk2(x_bb))
+x_can = x_can + write(x_can, x_bb, rope_can, rope_bb)
+x_bb  = blk5(blk4(x_bb))
+x_bb  = x_bb  + read(x_bb, x_can, rope_bb, rope_can)
+# ...
+\end{lstlisting}
+\clearpage
+
+\section{Viewpoint Encoding (VPE)}
+\label{supp:vpe}
+
+The VPE token is instantiated by first encoding the current viewpoint $(x, y, s)$ as the triplet $(x/s, y/s, \log s)$, a parameterization with scale invariance, same-scale translation invariance, and planar isotropy properties (proven below). We then lift this triplet into $\mathbb{R}^{D_{\mathrm{bb}}}$ via \ac{RFF}~\cite{tancikFourierFeaturesLet2020}, and apply layer normalization~\cite{baLayerNormalization2016} before letting the backbone process it alongside the other glimpse tokens (patches, registers, and recurrent CLS token).
+
+\subsection{Definitions: scene, viewpoint, crop}
+
+We consider a finite 2D scene whose $(x,y)$ coordinates span $[-1,+1]^2$.
+
+We call a \emph{viewpoint} a triplet $(x,y,s) \in \mathcal{V}_{\mathrm{raw}}$ such that the corresponding square crop,
+\[
+[x-s, x+s] \times [y-s, y+s],
+\]
+lies inside $[-1,+1]^2$. Equivalently,
+\[
+\mathcal{V}_{\mathrm{raw}} = \{\, (x,y,s) \in \mathbb{R}^2 \times (0,1] : |x| \le 1 - s,\ |y| \le 1 - s \,\}.
+\]
+For instance, the viewpoint $(0,0,1)$ spans the entire scene; the viewpoint $(0.5,0.5,0.5)$ spans the quadrant $[0,1]^2$; the viewpoint $(2, 2, 0.5)$ is invalid, as its center lies outside of the scene; the viewpoint $(0.5, 0.5, 1)$ is \emph{also} invalid, even though its center lies within the scene, because its borders extend beyond the scene boundaries.
+
+\subsection{Finding a scale-invariant representation}
+
+While the above representation of a viewpoint as a triplet $(x,y,s) \in \mathcal{V}_{\mathrm{raw}}$ is simple to understand and uniquely defines crops within the scene, it fails to represent an important property: \textbf{scale invariance}.
+
+When considering viewpoints as vectors, we would like distances between viewpoints to be \textbf{invariant to global rescaling}. In other words, the distance between two side-by-side square crops should be identical regardless of zoom level; equivalently, a 10\% zoom of the scene should leave any pairwise viewpoint distance unchanged. This is not the case in a straightforward $(x,y,s)$ encoding, which becomes artificially insensitive to shifts in position and scale for small crops (i.e.\ when $s \ll 1$), thus being forced to under-represent fine detail at small scales, leading to loss of information, or over-represent it at large scales, leading to ill-conditioned representations with excessive sensitivity to small perturbations at large scales (when $s \approx 1$).
+
+Beyond scale invariance, two further properties are natural: \textbf{same-scale translation invariance}, so that at a fixed zoom the encoding distance depends only on the relative offset between viewpoints, and \textbf{planar isotropy}, so that the encoding does not privilege a particular axis orientation. Because the scene is bounded, these properties are stated for transformations whose resulting viewpoints remain valid crops. We thus seek a smooth, injective $u : \mathcal{V}_{\mathrm{raw}} \to \mathcal{V}$ that, equipping $\mathcal{V}$ with the Euclidean distance $d$ inherited from $\mathbb{R}^3$, satisfies all three.
+
+We propose the embedding $u : \mathcal{V}_{\mathrm{raw}} \to \mathcal{V} = u(\mathcal{V}_{\mathrm{raw}}) \subset \mathbb{R}^3$ defined by
+\begin{align*}
+u &: \mathcal{V}_{\mathrm{raw}} \to \mathcal{V} \\
+& (x,y,s) \mapsto ( x/s, y/s, \log s ) = (u_1, u_2, u_3) \\
+u^{-1} &: \mathcal{V} \to \mathcal{V}_{\mathrm{raw}} \\
+& (u_1, u_2, u_3) \mapsto (\exp(u_3) u_1, \exp(u_3) u_2, \exp(u_3)) = (x,y,s).
+\end{align*}
+The component functions are smooth for $s > 0$, and the displayed inverse shows that $u$ is injective.
+
+\subsection{Properties of $u$}\label{sec:vpe-properties}
+
+Throughout, $q_i = (x_i, y_i, s_i) \in \mathcal{V}_{\mathrm{raw}}$ and $d$ is the Euclidean distance on $\mathcal{V} \subset \mathbb{R}^3$.
+
+\begin{lemma}[Pairwise distance identity]\label{lem:pairwise}
+For $q_i = (x_i, y_i, s_i) \in \mathcal{V}_{\mathrm{raw}}$,
+\begin{align*}
+d(u(q_1), u(q_2))^2 &= \| u(q_1) - u(q_2) \|_2^2 \\
+&= \| ( x_1/s_1 - x_2/s_2,\ y_1/s_1 - y_2/s_2,\ \log s_1 - \log s_2 ) \|_2^2 \\
+&= ( x_1/s_1 - x_2/s_2 )^2 + ( y_1/s_1 - y_2/s_2 )^2 + ( \log s_1 - \log s_2 )^2.
+\end{align*}
+\end{lemma}
+\begin{proof}
+Direct computation from the definition of $u$ and the Euclidean norm on $\mathcal{V} \subset \mathbb{R}^3$.
+\end{proof}
+
+\begin{proposition}[Scale invariance]\label{prop:scale-invariance}
+For all $c > 0$ such that $c q_i = (c x_i, c y_i, c s_i) \in \mathcal{V}_{\mathrm{raw}}$ for $i=1,2$,
+\[
+d(u(c q_1), u(c q_2)) = d(u(q_1), u(q_2)).
+\]
+\end{proposition}
+\begin{proof}
+Let $c > 0$ and $q_i = (x_i,y_i,s_i)$. By the definition of $u$,
+\[
+u(c q_i) = ( x_i/s_i,\ y_i/s_i,\ \log s_i + \log c ),
+\]
+so the additive $\log c$ cancels in the difference:
+\[
+u(c q_1) - u(c q_2) = \left( \frac{x_1}{s_1} - \frac{x_2}{s_2},\ \frac{y_1}{s_1} - \frac{y_2}{s_2},\ \log s_1 - \log s_2 \right).
+\]
+Setting $c = 1$ in this identity yields $u(q_1) - u(q_2)$ component-wise; the two difference vectors are therefore equal, hence so are their norms.
+\end{proof}
+
+\begin{proposition}[Same-scale translation invariance]\label{prop:translation-invariance}
+With $(x_1, y_1, s), (x_2, y_2, s) \in \mathcal{V}_{\mathrm{raw}}$, for any planar offset $(\Delta_x,\Delta_y) \in \mathbb{R}^2$ such that $(x_1+\Delta_x,y_1+\Delta_y,s)$ and $(x_2+\Delta_x,y_2+\Delta_y,s)$ lie in $\mathcal{V}_{\mathrm{raw}}$,
+\[
+d(u(x_1+\Delta_x, y_1+\Delta_y, s), u(x_2+\Delta_x, y_2+\Delta_y, s)) = d(u(x_1, y_1, s), u(x_2, y_2, s)).
+\]
+\end{proposition}
+\begin{proof}
+By Lemma~\ref{lem:pairwise},
+\[
+d(u(x_1, y_1, s), u(x_2, y_2, s))^2 = \left( \frac{x_1 - x_2}{s} \right)^2 + \left( \frac{y_1 - y_2}{s} \right)^2,
+\]
+and
+\begin{align*}
+d(u(x_1+\Delta_x, y_1+\Delta_y, s), u(x_2+\Delta_x, y_2+\Delta_y, s))^2
+&= \left( \frac{(x_1+\Delta_x) - (x_2+\Delta_x)}{s} \right)^2 \\
+&\quad + \left( \frac{(y_1+\Delta_y) - (y_2+\Delta_y)}{s} \right)^2 \\
+&= \left( \frac{x_1 - x_2}{s} \right)^2 + \left( \frac{y_1 - y_2}{s} \right)^2.
+\end{align*}
+The two right-hand sides agree.
+\end{proof}
+
+\begin{proposition}[Planar isotropy]\label{prop:isotropy}
+For any $Q \in \mathrm{O}(2)$, with $(x_{i,Q}, y_{i,Q}, s_i) \in \mathcal{V}_{\mathrm{raw}}$ for $i=1,2$ denoting the transformed coordinates $(x_{i,Q}, y_{i,Q}) = Q(x_i, y_i)$,
+\[
+d(u(x_{1,Q}, y_{1,Q}, s_1), u(x_{2,Q}, y_{2,Q}, s_2)) = d(u(x_1, y_1, s_1), u(x_2, y_2, s_2)).
+\]
+\end{proposition}
+\begin{proof}
+By Lemma~\ref{lem:pairwise},
+\[
+d(u(x_1,y_1,s_1), u(x_2,y_2,s_2))^2 = \| (x_1/s_1, y_1/s_1) - (x_2/s_2, y_2/s_2) \|_2^2 + (\log s_1 - \log s_2)^2.
+\]
+For any $Q \in \mathrm{O}(2)$,
+\begin{align*}
+d(u(x_{1,Q}, y_{1,Q}, s_1), u(x_{2,Q}, y_{2,Q}, s_2))^2
+&= \| Q(x_1,y_1)/s_1 - Q(x_2,y_2)/s_2 \|_2^2 \\
+&\quad + (\log s_1 - \log s_2)^2 \\
+&= \| Q((x_1/s_1, y_1/s_1) - (x_2/s_2, y_2/s_2)) \|_2^2 \\
+&\quad + (\log s_1 - \log s_2)^2 \\
+&= \| (x_1/s_1, y_1/s_1) - (x_2/s_2, y_2/s_2) \|_2^2 \\
+&\quad + (\log s_1 - \log s_2)^2,
+\end{align*}
+where the second equality uses linearity of $Q$, and the third uses orthogonality $\|Qv\|_2 = \|v\|_2$ for all $v \in \mathbb{R}^2$. The result follows.
+\end{proof}
+
+\section{CanViT-B pretraining details}
+\label{supp:pretraining-details}
+
+\textbf{Hyperparameters.}
+We list architectural hyperparameters in Table~\ref{tab:pretrain-arch-hparams},
+and ImageNet-21k pretraining hyperparameters in Table~\ref{tab:pretrain-hparams}.
+Similarly to DINOv3 ViTs, we use LayerScale~\cite{touvronGoingDeeperImage2021} in the ViT backbone.
+
+\textbf{Precomputation of teacher features.}
+To eliminate the repeated cost of the teacher's forward pass during training, we precompute DINOv3 ViT-B features for all 13.2 million ImageNet-21k images at $512^2$\,px input resolution, which corresponds to a $32 \times 32$ patch grid.
+Images are processed without augmentation (resize shortest side to 512\,px, center crop).
+We performed this one-time export in parallel over many MIG 1g.10gb H100 instances, with a small total footprint of approximately 8 H100-equivalent hours for our entire training set.
+We store features in float16, totaling approximately 19~TiB, and organize them into shards of 4096 images each.
+Each shard contains whole-scene dense patch features and CLS tokens, both obtained after DINOv3's final LayerNorm.
+Per-position z-score standardization statistics (mean and variance for each spatial position and embedding dimension) are precomputed from a representative sample of 4096 images.
+We pre-shuffle shards during dataset export, enabling us to process the shards themselves sequentially during pretraining.
+This strategy enables high-bandwidth streaming from networked storage, without incurring the high cost of a random data access pattern.
+
+\textbf{Numerical precision considerations.}
+The use of mixed-precision training is critical for efficiency, but comes with numerical correctness considerations, particularly in long-horizon scenarios.
+Over the course of this project, we encountered several subtle correctness issues, which only led to meaningful regressions after several hundred thousand steps of pretraining.
+For safe CanViT pretraining with minimal performance impact, we keep the canvas in float32 as it accumulates updates across time and depth, and keep all coordinate-related components in float32: grid coordinates, \ac{RoPE} computations, VPE token projection matrix and creation.
+Other operations, including \ac{SDPA} operations and learned projection layers, can be safely performed in bfloat16, following standard autocast operator rules.
+We perform the backward pass outside of the AMP region, setting \texttt{backward\_pass\_autocast="off"} accordingly when using \texttt{torch.compile}.
+
+\begin{table}[h]
+  \caption{\textbf{CanViT-B architecture.}}
+  \label{tab:pretrain-arch-hparams}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Value} \\
+    \midrule
+    Backbone & ViT-B/16 \\
+    Backbone embedding dim & 768 \\
+    Backbone registers (ephemeral) & 5 \\
+    Glimpse patch size & $16^2$\,px \\
+    Canvas embedding dim & 1024 \\
+    Canvas registers (persistent) & 16 \\
+    Canvas Attention heads & 8 \\
+    Canvas Attention head dim. & 128 \\
+    Canvas Attention R/W stride & 2 \\
+    RoPE base period & 100 \\
+    RoPE precision & float32 \\
+    VPE token & Enabled \\
+    VPE \ac{RFF}~\cite{tancikFourierFeaturesLet2020} std.\ deviation $\sigma$ & 1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \caption{\textbf{CanViT-B pretraining hyperparameters.}}
+  \label{tab:pretrain-hparams}
+  \centering
+  \begin{minipage}[t]{0.49\linewidth}
+    \centering
+    \setlength{\tabcolsep}{3.4pt}%
+    \begin{tabular}{ll}
+      \toprule
+      \textbf{Hyperparameter} & \textbf{Value} \\
+      \midrule
+      Optimizer & AdamW \\
+      Initial learning rate & $1.00 \times 10^{-7}$ \\
+      Peak learning rate & $4.00 \times 10^{-4}$ \\
+      LR schedule & Warmup $\to$ Const. \\
+      LR warmup steps & 100{,}000 \\
+      Weight decay & $1 \times 10^{-4}$ \\
+      Gradient clipping & 1.0 max norm \\
+      AdamW $\beta_1$, $\beta_2$ & 0.9, 0.999 \\
+      TBPTT chunk size & $K = 2$ glimpses \\
+      Stop prob. & $p_{\mathrm{stop}} = 0.5$ \\
+      Rollouts per step & 1 F-IID + 1 R-IID \\
+      \bottomrule
+    \end{tabular}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.49\linewidth}
+    \centering
+    \setlength{\tabcolsep}{3.4pt}%
+    \begin{tabular}{ll}
+      \toprule
+      \textbf{Hyperparameter} & \textbf{Value} \\
+      \midrule
+      Dataset & ImageNet-21k \\
+      IN21k version & winter21\_whole \\
+      Preprocessing & Resize(512), CenterCrop \\
+      Data augmentation & None \\
+      Scene resolution & $512^2$\,px (1024 patches) \\
+      Glimpse resolution & $128^2$\,px (64 patches) \\
+      Batch size & 64 scenes \\
+      Total training steps & $2.00 \times 10^6$ \\
+      Min scale & 0.05 (0.25\% of area) \\
+      Forward precision & AMP bfloat16 \\
+      ViT LayerScale init. & $1 \times 10^{-5}$ \\
+      \bottomrule
+    \end{tabular}
+  \end{minipage}
+\end{table}
+
+\section{Evaluation details}
+\label{supp:evaluation-details}
+
+\subsection{Viewing policies}
+\label{supp:policy-definitions}
+
+\textbf{Full-i.i.d.\ (F-IID)} and \textbf{Random-i.i.d.\ (R-IID)} are described as part of our pretraining scheme (Section~\ref{sec:pretraining}).
+F-IID begins with a full-scene viewpoint ($s = 1$) then samples i.i.d.\ random crops, whereas R-IID samples i.i.d.\ random crops at all timesteps, including $t = 0$.
+
+\textbf{Coarse-to-Fine (C2F)} traverses a quadtree over the scene from coarse to fine. At level $\ell \ge 0$, the viewpoint scale is $s_\ell = 2^{-\ell}$, tiling the scene into a $2^\ell \times 2^\ell$ grid of non-overlapping crops. Let $V_\ell$ denote the ordered set of viewpoints at level $\ell$; within each level, we visit tiles in a random order $\sigma_\ell(V_\ell)$ (where $\sigma_\ell$ is an independent random permutation). The full sequence is the concatenation $V_0, \sigma_1(V_1), \sigma_2(V_2), \ldots$, truncated to the glimpse budget $T$.
+
+\textbf{Fine-to-Coarse (F2C)} reverses C2F viewpoint sequences. For any given glimpse budget, F2C starts from the finest level and progresses toward coarser views. After identical image coverage, the C2F vs.\ F2C comparison isolates the effect of processing order.
+
+\textbf{Entropy-Guided C2F (EG-C2F)} is a variant of C2F that prioritizes informative regions at each scale level. Rather than visiting tiles in random order, EG-C2F ranks them by the Shannon entropy of the per-position class distribution predicted by the segmentation probe, visiting high-entropy (uncertain) tiles first.
+
+\textbf{Repeated Full-Scene (RFS)} repeats the viewpoint $(x, y, s) = (0, 0, 1)$ at every timestep. It serves as a recurrence-only control: any improvement over $t = 0$ must come from iterative canvas refinement with a fixed glimpse input.
+
+\subsection{FLOP counting}
+\label{supp:flop-counting}
+
+We count each multiply-add (MAC) operation as two floating-point operations (FLOPs). We sourced architecture parameters for DINOv3~\cite{simeoniDINOv32026}, AME~\cite{AMEPardylRK0T23} and AdaGlimpse~\cite{pardylAdaGlimpseActiveVisual2025} from the corresponding papers and code releases.\footnote{\url{https://github.com/facebookresearch/dinov3}, \url{https://github.com/apardyl/AME},\\ \url{https://github.com/apardyl/AdaGlimpse}}
+To obtain fine-grained FLOP curves, we computed FLOP counts analytically, following the same standard formulas as PyTorch's \texttt{flop\_counter} module.
+We validated our total counts end-to-end against traced FLOP counts as well as previously-reported FLOP counts, which were published for DINOv3 but not for AdaGlimpse or AME.
+
+\subsection{Task: ADE20K segmentation}
+\label{supp:task-ade20k}
+
+\textbf{Probe training.} Each probe consists of dropout~\cite{srivastavaDropoutSimpleWay2014} ($p = 0.1$), batch normalization~\cite{ioffeBatchNormalizationAccelerating2015}, and a linear classifier in the form of a $1 \times 1$ convolution.
+For CanViT, this head is preceded by a layer normalization~\cite{baLayerNormalization2016} and applied to canvas patches.
+For the DINOv3 baselines, the head is applied directly to the feature map, as the DINOv3 features that we consider are already layer-normalized.
+We train for 40{,}000 steps with AdamW with peak learning rate $3 \times 10^{-4}$ and weight decay $10^{-3}$,
+under a 1{,}500-step linear warmup followed by cosine decay,
+at batch size 16.
+Training-time augmentations are random scale-jittered $512^2$ crops (scale factor in $[0.5, 2.0]$) and horizontal flips.
+During CanViT probe training, glimpse viewpoints are drawn i.i.d.\ under the R-IID policy across $T = 10$ timesteps.
+
+\textbf{Evaluation.} Similarly to our active-vision ADE20K baselines~\cite{AMEPardylRK0T23,pardylAdaGlimpseActiveVisual2025}, we resize all images and masks to a fixed size (here, $512 \times 512$). We apply this preprocessing consistently when evaluating CanViT-B and DINOv3 ViT-B, ensuring a fair comparison between the models. Across up to $T = \adeMaxT$ timesteps, we report ADE20K mIoU by policy and timestep at canvas grids $32 \times 32$ and $64 \times 64$ on Figure~\ref{fig:main-ade20k-in1k-results}\textbf{B} and Table~\ref{supp:tab-policy-eval}. Table~\ref{supp:tab-ade20k-canvas-sweep} reports best-$t$ mIoU at canvas grids $c \times c$ for $c \in \{8, 16, 32, 64\}$.
+
+\begin{table}[h]
+  \caption{\textbf{ADE20K mIoU (\%) by policy and timestep ($T = 21$), frozen CanViT-B.}
+  Cells: $\pm$ \bootstrapCiPct\% bootstrap CI half-width ($n = \adePolicyEvalStochN$ runs) for stochastic policies.
+  $^\dagger$: deterministic policy.
+  \textbf{Bold} = best across all policies at that timestep.}
+  \label{supp:tab-policy-eval}
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}%
+  \begin{tabular}{lccccccccc}
+    \toprule
+    \textbf{Policy} & \textbf{Canvas} & \textbf{$t{=}0$} & \textbf{$t{=}1$} & \textbf{$t{=}2$} & \textbf{$t{=}3$} & \textbf{$t{=}4$} & \textbf{$t{=}9$} & \textbf{$t{=}16$} & \textbf{$t{=}20$} \\
+    \midrule
+    \inputrows{ade20k_seg_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \caption{\textbf{ADE20K mIoU (\%) across canvas grid sizes, frozen CanViT-B.}
+  One independently-trained linear probe per canvas grid $c$.
+  Cells: best-$t$ mIoU mean, with $\pm$ \bootstrapCiPct\% bootstrap CI half-width ($n = \adeSweepN$ runs) for stochastic policies.
+  $^\dagger$: deterministic policy.}
+  \label{supp:tab-ade20k-canvas-sweep}
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \adeSweepHeader \\
+    \midrule
+    \inputrows{ade20k_canvas_sweep_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Task: ImageNet-1k classification}
+\label{supp:task-in1k}
+
+\textbf{Probe training.} As the DINOv3 authors did not release ImageNet-1k classification heads for models other than their 7B-parameter flagship, we trained and released our own linear probes for all five smaller ViT variants (\S\ref{supp:in1k-dinov3-probe-training}). Since CanViT-B was pretrained to predict DINOv3 representations, it is possible to use a DINOv3-fitted probe with it. We initialize the linear classification head applied to CanViT-B's recurrent CLS token by algebraically fusing three consecutive affine transforms (CanViT's pretrained CLS projection, CLS destandardization, and our DINOv3 ViT-B IN1k linear probe) into a single LayerNorm $\to$ Linear layer.
+
+\textbf{Fine-tuning.} For ImageNet-1k full fine-tuning, we start from an already-fit frozen classification head then unfreeze CanViT and fine-tune all model and head parameters end-to-end, a two-stage approach known as LP-FT (linear probing then fine-tuning)~\cite{kumarFineTuningCanDistort2022}. We train for \inkFtEpochs{} epochs with \inkFtOptimizer{} (peak learning rate $\inkFtLr$, weight decay $\inkFtWeightDecay$, gradient clipping at \inkFtGradClip{} max norm), batch size \inkFtBatchSize{}, and label smoothing \inkFtLabelSmoothing{}. The learning rate follows a linear warmup over \inkFtWarmupSteps{} steps then cosine decay to zero (\inkFtTotalSteps{} total steps). Training images are augmented with RandomResizedCrop($512^2$\,px, scale $\in [0.2, 1.0]$) and horizontal flips. Each step processes $T = \inkFtNGlimpses$ F-IID glimpses with \inkFtBpttMode{} backpropagation through time. We performed this fine-tuning step on TPU v6e-4 hardware using \texttt{torch\_xla} and SPMD for multi-chip parallelism.
+
+\textbf{Evaluation.} When evaluating on the ImageNet-1k~\cite{russakovskyImageNetLargeScale2015} validation set, we preprocess images by resizing the shortest side to 512 pixels followed by a center crop. Across up to $T = \inkMaxT$ timesteps, we report frozen CanViT-B IN1k top-1 accuracy by policy and timestep at canvas grid $32 \times 32$ on Figure~\ref{fig:main-ade20k-in1k-results}\textbf{C} (frozen curves) and Table~\ref{supp:tab-in1k-frozen-eval}. Table~\ref{supp:tab-in1k-canvas-sweep} reports best-$t$ top-1 at canvas grids $c \times c$ for $c \in \{8, 16, 32, 64\}$.
+We report fine-tuned CanViT-B IN1k top-1 accuracy by policy and timestep on Figure~\ref{fig:main-ade20k-in1k-results}\textbf{C} (fine-tuned curves) and Table~\ref{supp:tab-in1k-finetuned-eval}.
+Canvas resolution has only a marginal effect on best-$t$ top-1 on IN1k (Table~\ref{supp:tab-in1k-canvas-sweep}), unlike on ADE20K (Table~\ref{supp:tab-ade20k-canvas-sweep}).
+
+\begin{table}[h]
+  \caption{\textbf{ImageNet-1k top-1 accuracy (\%) across timesteps, frozen CanViT-B ($32 \times 32$ canvas).}
+  Cells: $\pm$ \bootstrapCiPct\% bootstrap CI half-width ($n = \inkFrozenStochN$ runs) for stochastic policies.
+  $^\dagger$: deterministic policy.
+  \textbf{Bold} = best policy at each timestep.}
+  \label{supp:tab-in1k-frozen-eval}
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}%
+  \begin{tabular}{lccccccccc}
+    \toprule
+    \textbf{Policy} & \textbf{$t{=}0$} & \textbf{$t{=}1$} & \textbf{$t{=}2$} & \textbf{$t{=}3$} & \textbf{$t{=}4$} & \textbf{$t{=}5$} & \textbf{$t{=}9$} & \textbf{$t{=}15$} & \textbf{$t{=}20$} \\
+    \midrule
+    \inputrows{in1k_clf_frozen_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\ifnum\inkSweepHasData=1
+\begin{table}[h]
+  \caption{\textbf{ImageNet-1k top-1 accuracy (\%) across canvas grid sizes, frozen CanViT-B.}
+  Same IN1k probe across columns, evaluated at canvas grid $c \times c$.
+  Cells: best-$t$ top-1 mean, with $\pm$ \bootstrapCiPct\% bootstrap CI half-width ($n = \inkSweepN$ runs) for stochastic policies.
+  $^\dagger$: deterministic policy.}
+  \label{supp:tab-in1k-canvas-sweep}
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \inkSweepHeader \\
+    \midrule
+    \inputrows{in1k_canvas_sweep_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+\fi
+
+\begin{table}[h]
+  \caption{\textbf{ImageNet-1k top-1 accuracy (\%) across timesteps, fine-tuned CanViT-B ($32 \times 32$ canvas).}
+  Cells: $\pm$ \bootstrapCiPct\% bootstrap CI half-width ($n = \inkFinetunedStochN$ runs) for stochastic policies.
+  $^\dagger$: deterministic policy.
+  \textbf{Bold} = best policy at each timestep.}
+  \label{supp:tab-in1k-finetuned-eval}
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}%
+  \begin{tabular}{lccccccccc}
+    \toprule
+    \textbf{Policy} & \textbf{$t{=}0$} & \textbf{$t{=}1$} & \textbf{$t{=}2$} & \textbf{$t{=}3$} & \textbf{$t{=}4$} & \textbf{$t{=}5$} & \textbf{$t{=}9$} & \textbf{$t{=}15$} & \textbf{$t{=}20$} \\
+    \midrule
+    \inputrows{in1k_clf_finetuned_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Methodology for Figure~\ref{fig:resolution-and-mask-size-analysis} analyses}
+\label{supp:iou-obj}
+
+\textbf{Panels A and B.} We evaluate the impact of canvas resolution on ADE20K segmentation performance, notably examining how IoU varies as a function of ground truth mask size.
+To do so, we collect all (scene, class) pairs from the validation set (i.e., where the ground-truth mask is non-empty).
+For the mask corresponding to each such pair, we measure its area as the ratio between mask and scene pixels and compute per-mask IoU with the predictions from frozen DINOv3 and frozen CanViT-B models.
+Unlike the class-level mIoU reported elsewhere, per-mask IoU is computed for each non-zero mask instance rather than by summing pixels across the full validation set, and consequently does not consider false positive predictions from scenes where the class is absent.
+
+We use $128^2$\,px input images for DINOv3 and CanViT-B models in Figure~\ref{fig:resolution-and-mask-size-analysis}\,A--B.
+To obtain a desired output resolution, we fix CanViT-B's canvas resolution to $8^2$, $16^2$, $32^2$, or $64^2$ at inference.
+DINOv3's output resolution is determined by its input resolution; with its $16^2$\,px patch size, it produces an $8^2$ feature map.
+Each model-resolution pair under consideration is evaluated with its own independently trained linear probe, yielding four CanViT-B probes (one per canvas resolution) and one DINOv3 probe.
+This pipeline produces one (scene, class, mask area, timestep, IoU) datapoint per ground-truth mask per model.
+For CanViT, timesteps range from $t = \lowessTDeltaEarly$ to $t = \lowessTDeltaLate$ under an EG-C2F policy.
+At $t = 0$, Table~\ref{supp:tab-passive-comparison} reports the corresponding passive comparison against DINOv3 ViT-B/16 (our passive teacher) and DINOv3 ViT-S/16.
+
+To compute the trends shown in Figure~\ref{fig:resolution-and-mask-size-analysis}\,A--B, we select the first timestep (\textbf{A}) or a difference of timesteps (\textbf{B}) and apply locally-weighted scatter-plot smoothing to the scatter of (mask area, IoU) datapoints, using the Python package statsmodels~\cite{seabold2010} with a smoothing fraction of \lowessFrac{}. We disable iterative-based reweightings (i.e.\ we set $\mathrm{it} = \lowessIt$) to prevent outliers from being artificially downweighted. The \lowessCiPct\% confidence intervals were computed with \lowessNBoot{} bootstrap resamples.
+
+\textbf{Panel C.} For CanViT-B, we sweep the EG-C2F glimpse budget from $t = 0$ to $t = 20$ at four canvas resolutions ($8^2$, $16^2$, $32^2$, $64^2$), producing one curve per grid.
+For DINOv3 ViT-B/16, we sweep input resolution over $128$, $144$, $160$, $192$, $256$, $384$, and $512$\,px, with one independently trained linear probe per resolution.
+Figure~\ref{supp:fig-canvas-grid-impact} visualizes CanViT-B mIoU at canvas grids $c \times c$ ($c \in \{8, 16, 32, 64\}$) under the C2F policy across all $T = \adeMaxT$ timesteps.
+
+\begin{table}[h]
+  \caption{\textbf{Passive-vision comparison: ADE20K mIoU at $t = 0$ (single full-scene glimpse).} CanViT-B vs.\ DINOv3 ViT-B/16 and ViT-S/16 at various input and output resolutions. All models use frozen features with a linear segmentation probe.}
+  \label{supp:tab-passive-comparison}
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}%
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Model} & \textbf{Input} & \textbf{Scene grid} & \textbf{GFLOPs} & \textbf{mIoU (\%)} \\
+    \midrule
+    \inputrows{passive_comparison_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics{figures/exported/canvas_grid_impact_coarse_to_fine.pdf}
+  \caption{\textbf{Impact of canvas grid size on CanViT-B ADE20K mIoU (C2F policy, $T = \adeMaxT$).}
+  Mean mIoU across $n = \canvasGridImpactN$ evaluation runs, at each timestep, at canvas grids $c \times c$ ($c \in \{\canvasGridImpactGrids\}$).}
+  \label{supp:fig-canvas-grid-impact}
+\end{figure}
+
+\clearpage
+\subsection{DINOv3 ImageNet-1k linear classification probes}
+\label{supp:in1k-dinov3-probe-training}
+
+DINOv3~\cite{simeoniDINOv32026} was released with a pretrained ImageNet-1k linear classification head only for the 7B-parameter flagship model, not for the smaller ViT checkpoints (ViT-S/16, ViT-S+/16, ViT-B/16, ViT-L/16, ViT-H+/16). Additionally, only ImageNet-ReAL top-1 accuracy, rather than standard ImageNet-1k top-1 validation accuracy, was reported for those non-flagship checkpoints.
+We trained linear probes for all five smaller DINOv3 ViT models, which all match or exceed the best IN1k-ReAL top-1 validation accuracy reported by the DINOv3 authors (Table~\ref{tab:dinov3-probes}).
+
+\textbf{Feature extraction.} We extract CLS tokens from the last transformer layer of each DINOv3 ViT model at $512 \times 512$ input resolution (1024 patch tokens with $16 \times 16$\,px patches), using bfloat16 automatic mixed precision for the forward pass. CLS tokens are stored in float32. Data loading uses Inception-crop augmentation for the training split. Features are pre-computed and cached to disk before any probe training begins. This decouples the expensive backbone forward pass from the probe optimization, which iterates over cached feature vectors rather than running the backbone or loading images. This makes extensive hyperparameter search over the full training set practical. Since augmentation is applied at extraction time and baked into the cached features, each extraction run through the training split (with different random shuffling and augmentation) produces a separate file. To train with $N$ augmentation epochs, $N$ extraction passes must be run and stored. During probe training, each file is treated as an independent epoch.
+
+\textbf{Hyperparameter (HP) search.} For each backbone, we sweep the following HPs with Optuna~\cite{akibaOptunaNextgenerationHyperparameter2019} to maximize ImageNet-ReAL top-1 validation accuracy~\cite{beyerAreWeDone2020}: loss (softmax or sigmoid cross-entropy); optimizer (AdamW or SGD); reference learning rate ($10^{-7}$ to $10^{-2}$, log-uniform); batch size (one of the top three powers of 2 fitting in GPU memory for that backbone); AdamW weight decay ($0$ to $0.1$, uniform), $\beta_1$ ($0.1$ to $0.99$, log-uniform), and $\beta_2 = \beta_1 + g (1 - \beta_1)$ with $g \in [0.01, 1.0]$ log-uniform (ensuring $\beta_2 > \beta_1$); SGD momentum ($0$ to $0.99$, uniform); and weight initialization (Gaussian $\mathcal{N}(0, 0.01)$ with zero bias, or PyTorch default). The peak learning rate is the reference learning rate times the batch size (linear scaling rule), with linear warmup over the first 10\% of steps followed by cosine annealing to zero. We report selected HPs in Table~\ref{tab:dinov3-probe-hparams}.
+
+\begin{table}[h]
+  \caption{\textbf{DINOv3 IN1k linear probe accuracy at $512 \times 512$ input resolution.}}
+  \label{tab:dinov3-probes}
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Model} & \textbf{IN-ReAL top-1 (official / ours)} & \textbf{IN1k top-1 (ours)} \\
+    \midrule
+    \inputrows{dinov3_probe_accuracy.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \caption{\textbf{Selected hyperparameters for each DINOv3 IN1k linear probe.}}
+  \label{tab:dinov3-probe-hparams}
+  \centering
+  \small
+  \setlength{\tabcolsep}{2pt}%
+  \begin{tabular}{@{}lccccccc@{}}%
+    \toprule
+    \textbf{Model} & \textbf{Loss} & \textbf{Batch size} & \textbf{Peak LR} & \textbf{Weight decay} & \textbf{$(\beta_1, \beta_2)$} & \textbf{DINOv3 init} & \textbf{Epochs (aug., total)} \\
+    \midrule
+    \inputrows{dinov3_probe_hparams.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\clearpage
+\section{Pretraining ablations}
+\label{supp:ablation-study}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/exported/ablation_loss.pdf}
+  \caption{\textbf{Ablation study: loss curves during ImageNet-21k pretraining.}
+  Faint lines: logged per-batch losses. Bold lines: exponential moving average of logged losses.}
+  \label{fig:ablation-loss-curves}
+\end{figure}
+
+\begin{table}[h]
+  \caption{\textbf{Ablation study: reconstruction quality on ADE20K validation set.}
+  We compare CanViT's predicted DINOv3-ViT-B features against reference teacher features after \ablT{} \ablPolicyName{} glimpses.
+  GFLOPs: per-timestep forward pass cost.
+  $\Delta$: \% change in cosine similarity relative to baseline (mean over $n = \ablNRuns$ evaluation runs per variant).
+  Sp.\ = spatial (dense, patch-level); CLS = CLS-token.}
+  \label{tab:ablations}
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Variant} & \textbf{Params} & \textbf{GFLOPs} & \textbf{$\Delta$ Sp.\ Cos} & \textbf{$\Delta$ CLS Cos} \\
+    \midrule
+    \inputrows{ablation_overview_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+To assess the influence of our design choices at the level of architecture and pretraining, we conducted an ablation study using short pretraining runs.
+For our ablation baseline and each ablated variant, we allocated approximately \ablStepsK{} optimizer steps (slightly over 10\% of our flagship checkpoint's pretraining compute), with a learning rate warmup of 20k steps.
+
+We report training loss curves on Figure~\ref{fig:ablation-loss-curves}, disaggregated by reconstruction target (patch/CLS) and by policy (R-IID/F-IID).
+As our chosen step count results in slightly more than 1 epoch on the 13.2 million ImageNet-21k images in our pretraining dataset, these training curves are representative of the model's generalization capabilities.
+
+To further quantify generalization, we evaluated each ablation variant on the ADE20K validation set by measuring cosine similarity between the canvas reconstruction and DINOv3 ViT-B teacher features under the R-IID policy.
+We report the relative change compared to baseline on Table~\ref{tab:ablations}, alongside computational footprint and parameter count, with \bootstrapCiPct\% CIs and $t = 0$ results in Table~\ref{tab:ablation-eval-supp}.
+
+\begin{table}[t]
+  \caption{\textbf{Ablation study: reconstruction quality on ADE20K validation set (supplementary).}
+  Cosine similarity (\%) with DINOv3-B teacher features; cells are \bootstrapCiPct\% bootstrap CIs across $n = \ablNRuns$ independent \ablPolicyName{} runs per variant.
+  Sp.\ = spatial (patch-level), CLS = CLS-token.}
+  \label{tab:ablation-eval-supp}
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \multirow{2}{*}{\textbf{Variant}}
+      & \multicolumn{2}{c}{\textbf{$t = 0$}}
+      & \multicolumn{2}{c}{\textbf{$t = \ablTLast$}} \\
+    \cmidrule(l){2-3} \cmidrule(l){4-5}
+    & Sp.\ & CLS & Sp.\ & CLS \\
+    \midrule
+    \inputrows{ablation_detail_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Capacity--expressiveness trade-offs.}
+The removal of canvas-side QKVO projections is key to the low overhead of Canvas Attention.
+On any given training or inference budget, this allows for more frequent canvas--backbone interactions, a larger canvas embedding dimension (semantic resolution), and the use of more canvas patches (spatial resolution).
+However, at fixed canvas dimensionality, the ablation of these projections reduces the expressiveness of each individual cross-attention operation.
+To assess the well-foundedness of this trade-off, we reduced canvas dimensionality from $D_{\mathrm{can}} = 1024$ to $D_{\mathrm{can}} = 256$, leading to a dramatic drop in patch reconstruction quality (\abldelta{DcanTwoFiveSix}{SceneNorm}, Table~\ref{tab:ablations}\,\textbf{a}).
+Re-introducing canvas-side QKVO projections in a FLOP-matched manner forces the use of a small canvas, resulting in a loss of per-position information capacity and a failure to rescue reconstruction quality via increased expressiveness (\abldelta{QkvoDcanTwoFiveSix}{SceneNorm} and \abldelta{QkvoDcanThreeEightFour}{SceneNorm} respectively, Table~\ref{tab:ablations}\,\textbf{b,c}).
+
+\textbf{Frequency and directionality of canvas--backbone interaction.}
+CanViT interleaves Canvas Attention Read/Write operations along depth.
+In CanViT-B, this corresponds to 3 reads and 3 writes per glimpse (R/W stride of 2), evenly spread across its ViT-B backbone's 12 Transformer blocks.
+Write operations are required in order to update the canvas and produce dense outputs.
+In contrast, Read operations can be readily ablated; doing so results in a large drop in both patch-level (\abldelta{NoReads}{SceneNorm}) and CLS-level (\abldelta{NoReads}{ClsNorm}) reconstruction quality (Table~\ref{tab:ablations}\,\textbf{d}).
+This highlights the benefit of canvas-to-backbone communication, which underpins top-down recurrent feedback across timesteps, indirect canvas-to-canvas interaction via the backbone, and generally allows backbone-side computation to benefit from the high-capacity workspace constituted by the canvas.
+When increasing the R/W stride from 2 to 6 Transformer blocks, which results in just 1 read and 1 write per glimpse, we observe a similar yet slightly less pronounced effect (\abldelta{RwStrideSix}{SceneNorm}, Table~\ref{tab:ablations}\,\textbf{e}).
+Together, these results show the benefits of frequent, bidirectional Canvas Attention operations, and point at the importance of within-glimpse canvas refinement and contextually-aware backbone computation.
+
+\textbf{Dense latent supervision.}
+Omitting dense supervision is contrary to the goal of using a frozen CanViT's canvas features for dense tasks.
+However, this objective-level intervention has no effect on the model's architecture or raw expressiveness, and could theoretically enhance CLS reconstruction by allowing the model's representations to be specialized for this purpose, rather than requiring them to support both CLS-level and patch-level reconstruction.
+In our ablation study, the reverse was true (\abldelta{NoDense}{ClsNorm}, Table~\ref{tab:ablations}\,\textbf{f}): removing patch-level supervision \emph{degrades} CLS reconstruction, indicating that the patch-level objective also benefits CLS-level learning rather than competing with it for capacity.
+
+\textbf{F-IID rollouts.}
+During pretraining, we average losses and gradients across two rollouts that start from a random (R-IID) or full-scene zoomed-out (F-IID) viewpoint for each scene.
+The inclusion of a F-IID rollout ensures that at least one glimpse has full spatial coverage and that the full-scene viewpoint, $(x = 0, y = 0, s = 1)$, can be seen during training.
+Simply removing the F-IID rollout (\abldelta{NoFiidOneRiid}{SceneNorm} spatial, Table~\ref{tab:ablations}\,\textbf{g}) dramatically slows down the decrease \emph{of the R-IID loss}; however, this also halves the total number of glimpses per optimizer step.
+To control for this, we trained a second variant that replaces the F-IID rollout with a second R-IID rollout, preserving the total number of glimpses per step (Table~\ref{tab:ablations}\,\textbf{h}).
+The controlled variant still incurs a substantial degradation (\abldelta{NoFiidTwoRiid}{SceneNorm} spatial, \abldelta{NoFiidTwoRiid}{ClsNorm} CLS), confirming that the full-scene viewpoint itself is beneficial, beyond its contribution as an additional rollout.
+
+\textbf{Temporal credit assignment.}
+CanViT uses the smallest possible truncated \ac{BPTT} chunk size, $K = 2$, in order for gradient updates to take into account a glimpse and its successor.
+Setting $K = 1$ roughly halves the backward-pass memory footprint, but eliminates gradient flow across time altogether.
+Given temporally-dense supervision and highly-informative canvas tokens, it may still be possible to obtain meaningful results with $K=1$, as the model learns to greedily produce a best-guess reconstruction at each timestep, which incidentally produces an informative canvas for the next timestep to reuse.
+In this ablation, we also decrease the stop probability from 0.5 to 0.25 to keep the expected number of glimpses per optimizer step comparable.
+We find that removing BPTT (Table~\ref{tab:ablations}\,\textbf{i}) degrades both spatial (\abldelta{NoBptt}{SceneNorm}) and CLS (\abldelta{NoBptt}{ClsNorm}) reconstruction, indicating that even minimal temporal gradient flow ($K = 2$) contributes meaningfully to learning.
+
+\textbf{Backbone embedding dimension.}
+Reducing the backbone embedding dimension from $D_{\mathrm{bb}} = 768$ to $D_{\mathrm{bb}} = 384$ is exactly equivalent to using a ViT-S backbone, rather than ViT-B.
+This results in the largest drop in parameter count, per-glimpse computational footprint, and CLS reconstruction quality (\abldelta{VitS}{ClsNorm}) across all ablations.
+However, the impact of a narrower backbone on patch (spatial) reconstruction (\abldelta{VitS}{SceneNorm}), while significant, remains lower than that of several other ablations.
+
+\textbf{VPE token.}
+Among all considered ablations, the removal of the VPE token had the lowest impact across both policies and both loss types (\abldelta{NoVpe}{SceneNorm} spatial, \abldelta{NoVpe}{ClsNorm} CLS; Figure~\ref{fig:ablation-loss-curves}, Table~\ref{tab:ablations}\,\textbf{k}), consistent with its role as an architectural affordance for future extensions of CanViT to end-to-end policy learning rather than as a key component of the proposed architecture.
+
+\clearpage
+\section{Inference latency}
+\label{supp:latency-experiments}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/exported/hw_latency.pdf}
+  \caption{\textbf{Latency scaling with output resolution.} Faint scatter: individual iterations.}
+  \label{fig:inference-efficiency}
+\end{figure}
+
+\begin{table}[h]
+  \caption{\textbf{Latency and peak memory by hardware, precision, and output resolution.}}
+  \label{tab:hw-bench}
+  \centering
+  \footnotesize%
+  \setlength{\tabcolsep}{4pt}%
+  \setlength{\aboverulesep}{1pt}\setlength{\belowrulesep}{1pt}%
+  \begin{tabular}{llcccccc}
+    \toprule
+    \multirow{2}{*}{\textbf{Device}} & \multirow{2}{*}{\textbf{Scene grid}}
+      & \multicolumn{2}{c}{\textbf{CanViT-B}}
+      & \multicolumn{2}{c}{\textbf{DINOv3 ViT-B/16}}
+      & \multicolumn{2}{c}{\textbf{DINOv3 ViT-S/16}} \\
+    \cmidrule(l){3-4} \cmidrule(l){5-6} \cmidrule(l){7-8}
+    & & ms & MB & ms & MB & ms & MB \\
+    \midrule
+    \inputrows{hw_bench_rows.tex}
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+We report minimum latency and peak memory scaling in Figure~\ref{fig:inference-efficiency} and Table~\ref{tab:hw-bench}.
+Benchmarks run on an NVIDIA GeForce RTX 4090 and on an AMD Ryzen 9 7950X 16-Core Processor.
+CUDA benchmarks use both float32 and AMP bfloat16, and \texttt{torch.compile}.
+CPU benchmarks use float32 in eager mode, with 1 thread or 16 threads (the physical-core count).
+
+Each timed iteration processes a single input (batch size $B = 1$) with explicit device synchronization both before and after.
+After \benchWarmupItersPhrase{}, measurement runs at least \benchMinItersPhrase{} and continues until either a \benchTimeBudgetS{}-second budget or a \benchMaxIters{}-iteration limit is reached, whichever comes first.
+\ifnum\benchNPasses>1\relax We repeat each configuration \benchNPassesPhrase{} and pool the per-iteration latencies. \fi
+Within the measurement window, we record peak GPU memory and minimum forward-pass latency.
+To vary the scene grid size during benchmarking, we adjust the canvas resolution for CanViT and the input (and thus, output) resolution for DINOv3, as in Figure~\ref{fig:resolution-and-mask-size-analysis} and Appendix~\ref{supp:iou-obj}.
+
+\clearpage
+\section{Interpretability}
+\label{supp:interpretability}
+
+\textbf{PCA Visualizations.}
+To visualize grids of high-dimensional glimpse or canvas patch tokens as RGB images (Figure~\ref{fig:example-canvit-rollout}, Figure~\ref{fig:canvit-high-level-arch}, Figure~\ref{fig:canvas-attention}, Figure~\ref{fig:canvas-evolution}), we adopt a similar approach to that of DINOv3~\cite{simeoniDINOv32026}, by performing \ac{PCA} across tokens then mapping groups of three consecutive PCs to RGB. In order to prevent global variance from washing out local detail when visualizing a subset of the canvas, we apply min-max scaling to the resulting RGB channels across the visible region. We apply this protocol to layer-normalized~\cite{baLayerNormalization2016} tokens, such that each individual token has unit variance and zero mean across its dimensions.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/exported/canvas_evolution.pdf}
+  \caption{\textbf{Canvas updates within and across glimpses.} CanViT performs multiple Canvas Attention Write operations per glimpse, each producing a residual that is summed with the canvas (Figure~\ref{fig:canvit-high-level-arch}). To isolate the contribution of individual Write operations, we capture intermediate residuals and canvases after each Write operation within a $128^2$\,px glimpse, and visualize these snapshots with \acf{PCA} across tokens. We compute PCA bases independently for all snapshots rather than using a shared basis, in order to visualize the spatial structure of each individual snapshot. We observe an emergent progression in the spatial structure of residuals as within-glimpse processing unfolds from Write~0 to Write~2, from localized and feature-level content to scene-wide and semantically grounded content. Write-0 residuals reflect the structure of the glimpse's $8 \times 8$ patch grid. Write-1 residuals begin to reflect the structure of the objects within the glimpse. Write-2 residuals extrapolate beyond the confines of the glimpse, and delineate sharper object boundaries.}
+  \label{fig:canvas-evolution}
+\end{figure}
+
+% ===========================================================================
+% H. DECLARATIONS
+% ===========================================================================
+\clearpage
+\section{Declarations}
+\label{supp:declarations}
+
+\subsection{Availability of code and data}
+\label{supp:declarations:code-and-data}
+Our primary code repository is \url{https://github.com/m2b3/CanViT-PyTorch}.
+We release all of our code under the MIT license under the \texttt{m2b3} GitHub organization,
+including model definition and core utilities (\texttt{CanViT-PyTorch}), pretraining code (\texttt{CanViT-pretrain}),
+DINOv3/CanViT IN1k and ADE20K probe fitting (\texttt{dinov3-in1k-probes} and
+\texttt{CanViT-specialize}), evaluation code (\texttt{CanViT-eval}), and figure/data export code
+(\texttt{CanViT-paper-exporter}).
+We also release all the checkpoints used in our evaluations, under the MIT
+license as well, alongside all data necessary to regenerate figures and tables,
+at \url{https://figshare.com/s/3f05748d12b01bdad5b3} and \url{https://huggingface.co/canvit}.
+
+\subsection{Broader impact}
+\label{supp:declarations:broader-impact}
+CanViT's constant-memory recurrent architecture, fast sequential inference and scalability to large scenes make it an attractive candidate for future extension to real-time, high-FPS video processing, embodied active perception, and high-resolution static image processing. In turn, such extensions may support applications in a variety of domains, including edge/physical AI, medical imaging, and camera- or satellite-based environmental monitoring.
+
+As with nearly all general-purpose computer vision models, derivatives of this work might be incorporated into surveillance and security technology. As such, we invite researchers building upon active-vision foundation models to engage with the societal implications of any specific application.
+
+\subsection{Compute reporting}
+\label{supp:declarations:compute-reporting}
+Over the course of this project, we used approximately 2500 H100-equivalent hours on our SLURM-based compute platform. Our pretraining runs required under 24 GB of GPU memory (18.2 GB for the 2M-step CanViT-B pretraining run described in Appendix~\ref{supp:pretraining-details}). For interactive development, probe training, and downstream evaluations, we additionally used a single NVIDIA RTX 4090 workstation; we did not have fine-grained usage tracking in place there, but estimate a total of around 2000 RTX 4090 GPU-hours.
+
+ImageNet-1k fine-tuning experiments were run on Google Cloud TPU v6e-4 spot instances using \texttt{torch\_xla}. The total cost of these experiments was under 800 USD. The total runtime of our reported IN1k fine-tuning run was under 15 wall-clock hours on TPUv6e-4 using SPMD data parallelism. We did not perform extensive optimization of our \texttt{torch\_xla} code.
+
+The numbers above include all failed runs, preliminary experiments, and hyperparameter sweeps.
+
+\subsection{Statistical analysis}
+\label{supp:declarations:statistical-analysis}
+
+All confidence intervals reported in this paper are \bootstrapCiPct\% bootstrap CIs.
+For the four stochastic viewing policies (F-IID, R-IID, C2F, F2C), each \emph{evaluation run} is one full pass over the evaluation set under a fresh policy seed. We bootstrap the mean across runs (percentile method, 10{,}000 resamples; \texttt{scipy.stats.bootstrap}). We plot these CIs as shaded bands (often too tight to be visible) in Figure~\ref{fig:main-ade20k-in1k-results} and Figure~\ref{supp:fig-canvas-grid-impact}. The other two policies (EG-C2F, RFS) are deterministic and yield single-run point estimates.
+For Figure~\ref{fig:resolution-and-mask-size-analysis}\textbf{A,B}, we bootstrap a LOWESS regression across ground-truth masks (1{,}000 resamples; full methodology in Appendix~\ref{supp:iou-obj}).
+
+\subsection{Licenses and attribution}
+\label{supp:declarations:licenses-and-attribution}
+
+\textbf{Pretraining and evaluation.}
+CanViT-B was pretrained on ImageNet-21k's \texttt{winter21\_whole} split~\cite{ridnikImageNet21KPretrainingMasses2021}, and evaluated on the ImageNet-1k~\cite{russakovskyImageNetLargeScale2015} and ADE20K~\cite{zhouSceneParsingADE20K2017} datasets.
+
+\textbf{Example images.}
+The cat image (Cat03.jpg) used as an example in figures throughout the paper is sourced from Wikimedia Commons and is attributed to Fir0002/Flagstaffotos under the CC BY-NC 3.0 license. Other example images were sourced from the Places365 dataset~\cite{zhouPlaces10Million2017} and used solely for illustration purposes.
+
+
+% ===========================================================================
+% NEURIPS CHECKLIST
+% ===========================================================================
+\makeatletter
+\if@preprint\else
+  \input{checklist}
+\fi
+\makeatother
+
+
+\end{document}

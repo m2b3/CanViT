@@ -1,0 +1,18 @@
+{
+  "canvit": {
+    "canvas_dim": 1024,
+    "n_local": 71,
+    "n_patches": 64,
+    "backbone_regs": 5,
+    "canvas_grid": 32,
+    "asym_rw_pair_gf": 1.052,
+    "full_rw_pair_gf": 9.776,
+    "qkvo_rw_pair_ratio": 9.3,
+    "c64": {
+      "canvas_grid": 64,
+      "asym_rw_pair_gf": 2.838,
+      "full_rw_pair_gf": 37.332,
+      "qkvo_rw_pair_ratio": 13.2
+    }
+  }
+}

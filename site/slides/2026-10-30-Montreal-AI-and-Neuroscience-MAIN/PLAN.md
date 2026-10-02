@@ -205,10 +205,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 ## Known issues
 
-- The disk is nearly full (about 250 MB free on the evening of 2026-10-01, shrinking from processes outside this
-  work); the live model's export and the codex audit wait for about 1 GB. Two caches
-  are the user's to clear or keep: `~/.cache/uv` (18 GB; `uv cache prune` drops unreferenced entries) and
-  `~/.cache/huggingface/hub` (8.1 GB, including twelve ablation checkpoints the talk does not use).
 - `#live` (Backup): shrunk with `zoom: .8`.
 
 ## Experiments and exports
@@ -236,7 +232,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 | Item | Diff. | Status |
 |---|---|---|
-| Offline on the day: ONNX Runtime Web loads from jsDelivr (`js/canvit/live-model.js`); install it locally as reveal.js is | S–M | todo |
+| Offline on the day: the model's files and manifests come from the browser's cache after one load on the presenting machine (started with the Hub unreachable on 2026-10-01); ONNX Runtime Web loads from jsDelivr (`js/canvit/live-model.js`), offline only from the HTTP cache; install it locally as reveal.js is | S–M | todo |
 
 ## For the camera-ready (not the talk)
 

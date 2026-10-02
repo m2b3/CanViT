@@ -65,6 +65,8 @@ the correctness argument as possible; review is the last line of defense.
 Write for capable engineers: simplicity means fewer concepts and fewer ways to
 get something wrong, not avoiding powerful language features.
 
+- Keep computation in small, typed, pure functions where possible; isolate
+  side effects at explicit boundaries.
 - Seek the abstraction that makes a whole class of code unnecessary. Judge it
   by the code it eliminates and the future changes it makes straightforward.
   Avoid both repetitive plumbing and speculative generality.
@@ -115,6 +117,8 @@ rather than teaching readers to remember the exception.
 - The import graph is part of the architecture. The core model depends on no
   subsystem; move a misplaced responsibility rather than reaching into another
   package's internals.
+- Keep public APIs consistent: names, argument conventions, return shapes and
+  error behavior should carry the same concepts across backends.
 - Define record vocabularies precisely (checkpoint configs, Hub model cards,
   web bundle manifests): what each field means, who writes it, and under what
   conditions.
@@ -160,7 +164,10 @@ spelling.
   defaults come from the definitions that drive execution. Results go to
   files or stdout; diagnostics go to logging.
 - Errors name the operation, the affected identity (path, checkpoint, step)
-  and the observed evidence.
+  and the observed evidence. Preserve the original cause and make uncertainty
+  and recovery options explicit. Catch exceptions to add context, clean up,
+  retry a transient failure or handle a system boundary; never hide a failure
+  behind a plausible default.
 - Put durable learning in its home: an invariant enforced in code, this
   guide, or a `TODO` beside its owner. Avoid parallel manuals and handoff
   narratives.
@@ -199,6 +206,8 @@ spelling.
   Checkpoints are republished on the Hub as needed; each republished
   checkpoint is verified by
   loading it and comparing outputs with the old code.
+- Republish NNX and MLX checkpoints as needed; avoid unnecessary backward
+  compatibility code in the libraries, especially their main code paths.
 - Hub model cards and everything else published are deduplicated and
   consistent. They are generated from the modules that
   own their facts; a card is never edited by hand on the Hub. The main pages
@@ -212,6 +221,10 @@ spelling.
   nothing else would: a paper invariant, a numerical equivalence, a released
   checkpoint that must keep loading. Vacuous tests (restating the code) and
   brittle ones (pinning internals) go.
+- Review beyond the initial checklist: read the complete changed path for
+  contradictions, missing prerequisites and assumptions.
+- Fix the in-scope instances of a reported defect and the design that produces
+  them.
 - Record enduring rules here at the level they apply; keep specific
   constraints beside the code they constrain.
 

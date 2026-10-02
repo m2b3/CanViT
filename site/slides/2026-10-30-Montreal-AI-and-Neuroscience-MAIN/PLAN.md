@@ -154,8 +154,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] Reuse the well-received primitives of the September deck, ported (never imported): see
   "Components and deck primitives".
 - [Yohaï, 2026-10-01] Keep every TODO, known issue and request in this file.
-- [Yohaï, 2026-10-01] "the speaker notes you wrote are [...] so please nuke them and replace with bullet points at
-  most without hallucinating logical links, and only if genuinely helpful." In progress.
 - [Yohaï, 2026-10-01] On the deck's data coming from gitignored `throwaway/` scripts: "time for you to read all the
   throwaway scripts etc and begin with the easy version of having scripts committed alongside the website. for
   refactoring, that affects the core package so we will see. also, beware of polluting the core-package API with
@@ -167,9 +165,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 ## Next
 
 - An independent cold read of the deck (2026-10-01, `sources/talk-review.md`), its precision fixes applied. Open:
-  - The neuroscience case closes only in the notes ("networks that got good at vision turned out to be good models of
-    the visual cortex; active models were never good enough to enter that comparison"); `#neuro-ai` could call back
-    the Brain-Score figure of `#tradition` on screen.
+  - The neuroscience case is not closed on screen: `#neuro-ai` could call back the Brain-Score figure of
+    `#tradition`.
   - "Metacognition" on `#uncertainty` was asserted; now measured (AUROC 0.84, 99% to 37% accuracy from the surest
     tenth of cells to the least sure), said on `#uncertainty` and drawn in Backup (`#calibration`). Whether the number
     belongs on `#uncertainty`'s screen is the authors' call.

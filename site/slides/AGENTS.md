@@ -202,7 +202,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   notes.
 - Speaker notes (`<aside class="notes">`) are bullet points at most, without invented logical links, and only where
   they help [Yohaï, 2026-10-01: "the speaker notes you wrote are [...] so please nuke them and replace with bullet
-  points at most without hallucinating logical links, and only if genuinely helpful"].
+  points at most without hallucinating logical links, and only if genuinely helpful"; then: "if you aren't sure about
+  something shut up instead of trying to come up with fancy sentences that are AI bullshit . and respect my voice"].
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../css/canvit.css`).
 - A figure from another paper is cited on the slide (`.cite`: authors, year, venue).
 - Animations play while their slide is shown and pause when it is left (`data-play`); a slide that builds

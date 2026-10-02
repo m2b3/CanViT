@@ -59,7 +59,7 @@
     <li>Felleman &amp; Van Essen 1991: the hierarchy of visual areas.</li>
     <li>Yamins et al. 2014: better at recognizing objects, better at predicting IT.</li>
     <li>Brain-Score: Schrimpf et al. 2018.</li>
-    <li>All passive: the whole image, all at once.</li>
+    <li>The networks see the whole image, all at once.</li>
   </ul></aside>
 </section>
 
@@ -72,8 +72,8 @@
   <p class="cite">Yarbus 1967, <i>Eye Movements and Vision</i></p>
   <aside class="notes"><ul>
     <li>Sharp central vision, blurry peripheral vision; we move our eyes.</li>
-    <li>Yarbus 1967: the face; the same painting, different questions, different scanpaths.</li>
-    <li>Paper: sequential; strategic planning; working memory across fixations; top-down feedback.</li>
+    <li>Yarbus 1967: the face; the same painting, different instructions, different scanpaths.</li>
+    <li>Paper: sequential; strategic planning; integration across time in visual working memory; top-down recurrent feedback.</li>
   </ul></aside>
 </section>
 
@@ -132,7 +132,7 @@
   <aside class="notes"><ul>
     <li>DINOv3 ViT-B/16 (Meta, 2025): self-supervised, no labels.</li>
     <li>Colors: PCA of the patch features (components 2 to 4).</li>
-    <li>A linear probe on the frozen features (ADE20K): p(television), p(fireplace), p(armchair).</li>
+    <li>A linear probe on the frozen features, trained with ADE20K labels: p(television), p(fireplace), p(armchair).</li>
   </ul></aside>
 </section>
 
@@ -148,9 +148,9 @@
   <aside class="notes"><ul>
     <li>RAM, Mnih et al. 2014 (Mnih: deep Q-learning): where to look learned by RL.</li>
     <li>DRAM, Ba et al. 2015: house numbers (SVHN).</li>
-    <li>Saccader, Elsayed et al. 2019: 75% on ImageNet-1k; a pretraining step to stabilize learning.</li>
+    <li>Saccader, Elsayed et al. 2019: 75% on ImageNet-1k with a separate NASNet classifier reading its glimpses (70% alone); a pretraining step to stabilize learning.</li>
     <li>GFNet, Wang et al. 2020: glance, then focus; efficiency; classification only, fixed zoom.</li>
-    <li>AME, Pardyl et al. 2023: segmentation; next glimpse from its decoder's attention.</li>
+    <li>AME, Pardyl et al. 2023: segmentation; next glimpse from the entropy of its decoder's attention maps.</li>
     <li>AdaGlimpse, Pardyl et al. 2025: chooses position and zoom.</li>
     <li>AdaptiveNN, Wang et al. 2025: classification, fixed zoom.</li>
     <li>All except AME learn where to look with RL.</li>
@@ -251,7 +251,7 @@
   <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-episode" data-canvit-stage="all"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="all" data-canvit-readout="labels"></span>
   <aside class="notes"><ul>
-    <li>Viewpoint: center (x, y) and scale.</li>
+    <li>Viewpoint: center and scale (the crop's half side).</li>
     <li>Glimpse: 128 &times; 128 px at any scale; nothing outside it.</li>
     <li>A world of difference between seeing something blurry and seeing nothing at all.</li>
     <li>Canvas colors: PCA, as for DINOv3.</li>
@@ -276,9 +276,9 @@
     <li>ViT-B backbone, randomly initialized, processes each glimpse.</li>
     <li>Canvas: 32 &times; 32 in pretraining, 64 &times; 64 here, set at inference.</li>
     <li>Read: the glimpse queries the canvas. Write: the canvas queries the glimpse.</li>
-    <li>Canvas after each write (paper, canvas evolution figure): the glimpse's patch grid; objects in the glimpse; beyond the glimpse.</li>
-    <li>Intelligence on the ViT side; the memory dumb, but not too dumb.</li>
-    <li>Next glimpse: the glimpse stream starts over; the canvas carries over.</li>
+    <li>Shown: the canvas after each write. Paper, canvas evolution figure: the write residuals go from the glimpse's patch grid, to the objects in it, to beyond the glimpse.</li>
+    <li>I put the intelligence on the Vision Transformer side, and made the memory dumb, but not too dumb.</li>
+    <li>Next glimpse: new glimpse patches; the canvas and the CLS token carry over.</li>
   </ul></aside>
 </section>
 
@@ -344,9 +344,9 @@
   <aside class="notes"><ul>
     <li>Separating the architecture problem from the problem of learning good representations.</li>
     <li>Teacher: DINOv3 ViT-B, frozen, the whole scene at 512 px. Student: CanViT, from glimpses.</li>
-    <li>Predicts every patch's DINOv3 feature from the canvas: dense, latent. MSE. No labels.</li>
-    <li>Pretraining rollouts: 4 glimpses on average. This one: 21.</li>
-    <li>This example: patch loss 0.87 after the first glimpse, 0.31 after the last (steps.json).</li>
+    <li>Targets: DINOv3's patch features, predicted from the canvas, and its CLS token. Squared error. No labels.</li>
+    <li>Pretraining: ImageNet-21k, 4 glimpses on average. This example: the released model on an ADE20K bedroom, 21 random glimpses.</li>
+    <li>Patch loss 0.87 after the first glimpse, 0.31 after the last; 1.05 for predicting the average target.</li>
   </ul></aside>
 </section>
 
@@ -371,7 +371,7 @@
   <aside class="notes"><ul>
     <li>Random locations and zoom levels; scale down to 0.05 (0.25% of the area); small glimpses more likely.</li>
     <li>Random rollout length: 4 glimpses on average.</li>
-    <li>Each scene: R-IID and F-IID.</li>
+    <li>Each scene in a batch: an R-IID and an F-IID rollout; F-IID starts with the full scene.</li>
     <li>C2F, F2C, EG-C2F, RFS: inference only.</li>
     <li>13.2M ImageNet-21k scenes, about 1 billion glimpses, 166 hours on a single H100.</li>
   </ul></aside>
@@ -403,9 +403,9 @@
   <span class="fragment step-marker" data-shows="reset"></span>
   <aside class="notes"><ul>
     <li>Glimpses: a shop sign, people, a bicycle. Maps: p(class) per canvas cell.</li>
-    <li>Kept: the canvas carried across glimpses. Reset: before each glimpse.</li>
-    <li>Unless you get a good look at something, the representation is bad.</li>
-      <li>Keyword: trans-saccadic integration.</li>
+    <li>Kept: the state carried across glimpses. Reset: a fresh state (canvas and CLS) before each glimpse.</li>
+    <li>If you reset the memory, unless you get a good look at something, the representation is bad. With the memory retained, it&rsquo;s okay: you got a good look before.</li>
+    <li>Keyword: trans-saccadic integration.</li>
   </ul></aside>
 </section>
 
@@ -426,7 +426,8 @@
   </div>
   <aside class="notes"><ul>
     <li>DINOv3 per glimpse; CanViT after the far end, the near end, both.</li>
-    <li>1,436 large ADE20K objects, glimpses at both ends: the unseen middle labeled as the object 53% after one end, 65% after both; 46% of the other pixels in between too.</li>
+    <li>1,436 large ADE20K objects, a glimpse at each end. Mean share of the unseen middle labeled as the object: 52 to 53% after one end, 65% after both. Mean share of the other labeled pixels between the glimpses labeled as the object too: 46%.</li>
+    <li>This table: chosen for few false positives (8%).</li>
   </ul></aside>
 </section>
 
@@ -458,8 +459,8 @@
   <span class="fragment step-marker" data-shows="passive"></span>
   <aside class="notes"><ul>
     <li>128 &times; 128 px at any zoom: spatial coverage vs perception of detail.</li>
-    <li>Television: p 0.03 after the full scene, 0.77 after the zoom; DINOv3 on the whole scene at 128 px: 0.004.</li>
-    <li>4,151 small ADE20K objects: 18% of the object right after the full scene, 32% after a zoom, 19% after a second full-scene glimpse.</li>
+    <li>Mean p(television) over the TV: 0.03 after the full scene, 0.77 after the zoom, 0.03 after the full scene again; DINOv3 on the whole scene at 128 px: 0.004.</li>
+    <li>4,151 small ADE20K objects (0.05 to 2% of the scene). Mean share of the object's pixels labeled as its class: 18% after the full scene, 32% after a zoom on it, 19% after the full scene twice.</li>
   </ul></aside>
 </section>
 
@@ -519,8 +520,8 @@
   <aside class="notes"><ul>
     <li>A distribution over 150 classes per canvas cell.</li>
     <li>Building cell: building 0.997. Car cell: car 0.27, building 0.27, road 0.12; 3.2 bits (max 7.2).</li>
-    <li>EG-C2F: mean entropy per quadrant, highest first. No RL.</li>
-    <li>Keyword: Renninger et al. 2007.</li>
+    <li>EG-C2F: within each quadtree level, the unvisited tile with the highest mean entropy. No RL.</li>
+    <li>Keyword: Renninger, Verghese &amp; Coughlan 2007, &ldquo;Where to look next? Eye movements reduce local uncertainty&rdquo; (Journal of Vision).</li>
   </ul></aside>
 </section>
 
@@ -538,7 +539,7 @@
   <aside class="notes"><ul>
     <li>ImageNet-1k: <span data-macro="inkFrozenBest">81.1</span> frozen, <span data-macro="inkFinetunedBest">84.5</span> fine-tuned; AdaptiveNN 82.2.</li>
     <li>ADE20K: <span data-macro="adeBestMiou">45.9</span> frozen; AME <span data-macro="ameSetrMiou">27.6</span>.</li>
-    <li>DINOv3 ViT-B with our linear probe: 47.2. Dashed line: 51.8, DINOv3's own protocol.</li>
+    <li>DINOv3 ViT-B with our linear probe: 47.2. Dashed line: 51.8, DINOv3's own protocol; what explains the gap was not measured.</li>
   </ul></aside>
 </section>
 
@@ -580,9 +581,9 @@
   <aside class="notes"><ul>
     <li>Own training only; teachers and inherited weights not counted.</li>
     <li>CanViT-B: pretraining 52.5 EFLOPs + teacher features 2.8; ImageNet-1k fine-tuning 4.8; ADE20K probe 0.16.</li>
-    <li>AdaGlimpse: 63 to 145 (ImageNet-1k), 84 to 167 (ADE20K); its code vs its paper.</li>
+    <li>AdaGlimpse: 63 to 145 (ImageNet-1k), 84 to 167 (ADE20K): glimpses per image in its code vs in its paper.</li>
     <li>AdaptiveNN: 22.6, counted from its code.</li>
-    <li>AME: 1.4 to 1.8, starting from SETR's ViT-L.</li>
+    <li>AME: 1.4 to 1.8, starting from SETR weights already trained on ADE20K.</li>
   </ul></aside>
 </section>
 
@@ -598,7 +599,7 @@
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
   <aside class="notes"><ul>
     <li>ADE20K mIoU vs inference FLOPs, glimpse by glimpse.</li>
-    <li>Even our worst policy, F2C, worse than random: better performance at lower cost than AME.</li>
+    <li>Even F2C, a worse-than-random viewing order (paper): better performance at lower cost than AME.</li>
     <li>EG-C2F, one glimpse: <span data-macro="adeSingleGlimpseMiou">38.5</span>, <span data-macro="adeCheapestBeatFlopRatio">20</span>&times; fewer FLOPs than AME at <span data-macro="adeBestPriorMiou">27.6</span>.</li>
     <li>Paper: perception, not viewpoint selection, was the bottleneck.</li>
     <li>No efficiency claim on ImageNet-1k.</li>
@@ -638,9 +639,9 @@
     </article>
   </div>
   <aside class="notes"><ul>
-    <li>Top-down feedback: C2F vs F2C.</li>
+    <li>Top-down feedback: C2F vs F2C, the same viewpoints in another order.</li>
     <li>Trans-saccadic memory: kept vs reset.</li>
-    <li>Scanpaths: a human scanpath is a policy on the same observer.</li>
+    <li>Scanpaths: human fixations, given a scale, become viewpoints: a policy on the same observer.</li>
     <li>Limits (paper): static scenes; needs a passive teacher.</li>
     <li>Thorat et al. 2025, &ldquo;Predicting upcoming visual features during eye movements yields scene representations aligned with human visual cortex&rdquo; (arXiv:2511.12715).</li>
   </ul></aside>
@@ -711,9 +712,9 @@
     <rect class="fragment canvas-side" x="158" y="60" width="58" height="102" rx="6"/>
   </svg>
   <aside class="notes"><ul>
-    <li>Asymmetric: QKVO projections on the glimpse side only; canvas side: LayerNorm and RoPE.</li>
+    <li>Asymmetric: QKVO projections on the glimpse side only; canvas side: LayerNorm, RoPE and residual addition.</li>
     <li>Read/write pair, 64 &times; 64 canvas: <span data-macro="cSixFourAsymRwPairGf">2.8</span> GFLOPs; with canvas-side projections <span data-macro="cSixFourFullRwPairGf">37.3</span>.</li>
-    <li>Previous dense models: cheap encoder, massive decoder.</li>
+    <li>Previous dense models (AME, AdaGlimpse): a cheap encoder and a massive decoder.</li>
   </ul></aside>
 </section>
 
@@ -723,7 +724,7 @@
        encoding (VPE) token and the registers, over three glimpses. -->
   <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
   <aside class="notes"><ul>
-    <li>Green: recurrent CLS token. Orange: viewpoint encoding (VPE) token. Gray: registers.</li>
+    <li>Green: recurrent CLS token. Orange: viewpoint encoding (VPE) token. Gray: registers; the glimpse's are dropped after each glimpse, the canvas's persist.</li>
   </ul></aside>
 </section>
 
@@ -736,7 +737,7 @@
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="dinov3 egc2f-32 egc2f-64"></span>
   <aside class="notes"><ul>
     <li>DINOv3 ViT-B on the whole scene, 128 to 512 px.</li>
-    <li>CanViT-B, one 128 px glimpse: <span data-macro="adeSingleGlimpseMiou">38.5</span>; DINOv3 at matched FLOPs: <span data-macro="teacherFlopMatchedMiou">33.2</span>.</li>
+    <li>CanViT-B, one 128 px full-scene glimpse, 32 &times; 32 canvas, 15.8 GFLOPs: <span data-macro="adeSingleGlimpseMiou">38.5</span>. DINOv3 at 160 px, 18.4 GFLOPs: <span data-macro="teacherFlopMatchedMiou">33.2</span>.</li>
     <li>DINOv3 at 512 px ends higher.</li>
   </ul></aside>
 </section>
@@ -748,9 +749,9 @@
        center; uncertainty-calibration.js draws ../../data/talk/metacognition/calibration.json. -->
   <div class="calibration"></div>
   <aside class="notes"><ul>
-    <li>Canvas cells of ADE20K validation, ranked by entropy, in tenths.</li>
-    <li>Surest tenth: 99% right. Least sure: 37% (full-scene glimpse).</li>
-    <li>AUROC 0.84.</li>
+    <li>Labeled cells of the 64 &times; 64 canvas over ADE20K validation, after the full-scene glimpse, ranked by entropy, in tenths.</li>
+    <li>Surest tenth: 99% right. Least sure: 37%.</li>
+    <li>Entropy separates wrong cells from right ones: AUROC 0.836.</li>
   </ul></aside>
 </section>
 

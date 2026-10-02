@@ -342,7 +342,7 @@ def live_canvit_card(*, repo: str, probe_repo: str, manifest: dict[str, Any], pa
         base_model=manifest["model"]["repo"],
     )
     summary = (f"The released CanViT-B as an ONNX graph of one glimpse on a {grid} × {grid} canvas, for "
-               f"`<canvit-live>`: the [live demo]({project.PAGE_URL}live.html) of the project page, which runs it in the "
+               f"`<canvit-live>`: the [live demo]({project.PAGE_URL}#live) of the project page, which runs it in the "
                f"browser with ONNX Runtime Web (WebGPU, else WebAssembly) and reads the canvas with "
                f"[an ADE20K probe](https://huggingface.co/{probe_repo}), exported apart.")
     return _card(data=data, title="CanViT-B, one glimpse, for the browser", summary=summary, usage=usage,
@@ -366,7 +366,7 @@ def live_probe_card(*, repo: str, canvit_repo: str, manifest: dict[str, Any], pa
         tags=TAGS + ["ade20k", "linear-probe", "onnx"], datasets=[ADE20K_HUB_ID], base_model=manifest["readout"]["repo"],
     )
     summary = (f"The released ADE20K probe on CanViT-B's {grid} × {grid} canvas as an ONNX graph (canvas in, class "
-               f"logits and their entropy out), for `<canvit-live>`: the [live demo]({project.PAGE_URL}live.html) "
+               f"logits and their entropy out), for `<canvit-live>`: the [live demo]({project.PAGE_URL}#live) "
                f"of the project page, which runs it after [CanViT-B's glimpse graph](https://huggingface.co/{canvit_repo}).")
     return _card(data=data, title="ADE20K probe on CanViT's canvas, for the browser", summary=summary, usage=usage,
                  details=details, install=install, install_language="html", usage_language="html")

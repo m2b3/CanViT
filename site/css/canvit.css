@@ -1,4 +1,4 @@
-/* CanViT's look, shared by the project page, the live page and the slides: fonts, colors and what each color means.
+/* CanViT's look, shared by the project page and the slides: fonts, colors and what each color means.
    The <canvit-*> components read the --canvit-* properties. Pages link this file before their own stylesheet. */
 
 /* Self-hosted (assets/fonts, SIL Open Font License), so pages and talks render the same offline. */

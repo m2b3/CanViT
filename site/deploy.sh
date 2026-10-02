@@ -15,8 +15,8 @@ python3 site/check_paper_numbers.py
 [ -z "$(git status --porcelain -- site)" ] || { echo "site/ has uncommitted changes: commit them first" >&2; exit 1; }
 # The bundles the pages and talks load, as they name them; other recorded bundles stay local. data/talk is the talks'
 # own data, not a bundle.
-bundles=$(grep -ho 'data/[a-z0-9-]*' site/index.html site/live.html site/slides/*/index.html | grep -v '^data/talk$' | sort -u)
-[ -n "$bundles" ] || { echo "site/index.html and site/live.html name no bundle under data/" >&2; exit 1; }
+bundles=$(grep -ho 'data/[a-z0-9-]*' site/index.html site/slides/*/index.html | grep -v '^data/talk$' | sort -u)
+[ -n "$bundles" ] || { echo "site/index.html names no bundle under data/" >&2; exit 1; }
 talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$')
 if grep -q 'data/talk' site/slides/*/index.html; then
   [ -d site/data/talk ] || { echo "site/data/talk is missing: the talks' throwaway exports write it" >&2; exit 1; }

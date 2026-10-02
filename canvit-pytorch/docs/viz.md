@@ -161,9 +161,9 @@ used until `parity` and `check-browser` pass on it.
 uv run --extra live python -m canvit_pytorch.viz.live export --out-dir ../site/.live-model
 uv run --extra live python -m canvit_pytorch.viz.live parity --model-dir ../site/.live-model \
     --image $ADE20K_ROOT/images/validation/ADE_val_00001780.jpg
-# serve site/ (site/README.md); live.html with model=".live-model/canvit" probe=".live-model/probe", then,
-# with Google Chrome installed:
-uv run --extra live python -m canvit_pytorch.viz.live check-browser --page-url http://127.0.0.1:8000/live.html \
+# serve site/ (site/README.md); the page's <canvit-live> with model=".live-model/canvit" probe=".live-model/probe",
+# then, with Google Chrome installed:
+uv run --extra live python -m canvit_pytorch.viz.live check-browser --page-url http://127.0.0.1:8000/ \
     --reference-url http://127.0.0.1:8000/.live-model/parity/ --backend webgpu --out outputs/live/webgpu.json
 # stage, then with --push upload, to hub.repos.LIVE_CANVIT and LIVE_PROBE (new private repos, made public once reviewed)
 uv run --extra live python -m canvit_pytorch.viz.live publish --model-dir ../site/.live-model --out-dir staging

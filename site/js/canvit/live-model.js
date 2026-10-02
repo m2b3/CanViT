@@ -27,16 +27,39 @@ const loadOrt = (backend) =>
 
 const numel = (dims) => dims.reduce((a, b) => a * b, 1);
 
+// Verified files stay in the browser's Cache Storage under their URL and SHA-256, so a later page load reads them from
+// disk; a new export at the same URL has new hashes, misses, downloads once and replaces the old entries. Entries of
+// URLs no page loads any more stay until the browser evicts them. Manifests are fetched from the server on every load
+// and stored too: offline, the stored ones start the cached files. Without Cache Storage (an insecure origin), every
+// load downloads.
+const CACHE_NAME = "canvit-live-files";
+
+let opened = null; // the page's cache, or null without one, opened once
+
+const openCache = () => (opened ??= (async () => {
+  try {
+    if (!globalThis.caches) throw new Error("this origin has no Cache Storage");
+    return await caches.open(CACHE_NAME);
+  } catch (error) {
+    console.warn("CanViT live model: downloading on every load", error);
+    return null;
+  }
+})());
+
+function cacheKey(url, sha256) {
+  const key = new URL(url);
+  key.searchParams.set("sha256", sha256);
+  return key.href;
+}
+
 async function fetchOk(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Could not fetch ${url}: HTTP ${response.status}`);
   return response;
 }
 
-/** The bytes at url, reporting (received, total) as they arrive. */
-async function fetchBytes(url, onProgress = () => {}) {
-  const response = await fetchOk(url);
-  const total = Number(response.headers.get("content-length")) || 0;
+/** The body's bytes, reporting the count received as they arrive. */
+async function readBody(response, onProgress) {
   const reader = response.body.getReader();
   const chunks = [];
   let received = 0;
@@ -45,7 +68,7 @@ async function fetchBytes(url, onProgress = () => {}) {
     if (done) break;
     chunks.push(value);
     received += value.length;
-    onProgress(received, total);
+    onProgress(received);
   }
   const bytes = new Uint8Array(received);
   let offset = 0;
@@ -58,24 +81,75 @@ async function sha256Hex(bytes) {
   return Array.from(digest, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function verifiedBytes(base, file, onProgress) {
-  const url = new URL(file.path, base);
-  const bytes = await fetchBytes(url, onProgress);
+async function verify(url, file, bytes) {
   if (bytes.length !== file.bytes) throw new Error(`${url}: ${bytes.length} bytes, the manifest says ${file.bytes}`);
   if ((await sha256Hex(bytes)) !== file.sha256) throw new Error(`${url}: SHA-256 differs from the manifest`);
   return bytes;
 }
 
-async function loadManifest(url, schema) {
+// Removes the entries of other versions of url before adding this one, which frees their quota first.
+async function store(cache, url, file, bytes) {
+  try {
+    for (const request of await cache.keys()) {
+      const key = new URL(request.url);
+      key.searchParams.delete("sha256");
+      if (key.href === url.href) await cache.delete(request);
+    }
+    await cache.put(cacheKey(url, file.sha256), new Response(bytes));
+  } catch (error) {
+    console.warn(`CanViT live model: could not cache ${url}; the next load downloads it again`, error);
+  }
+}
+
+/** A manifest's file, read from the cache when an earlier load stored it, else downloaded; checked against the manifest either way. */
+async function verifiedBytes(cache, { base, file }, onProgress) {
+  const url = new URL(file.path, base);
+  const cached = await cache?.match(cacheKey(url, file.sha256));
+  if (cached) {
+    try {
+      return await verify(url, file, await readBody(cached, onProgress));
+    } catch (error) {
+      console.warn(`CanViT live model: the cached ${url} is damaged; downloading it again`, error);
+      await cache.delete(cacheKey(url, file.sha256));
+    }
+  }
+  const bytes = await verify(url, file, await readBody(await fetchOk(url), onProgress));
+  if (cache) await store(cache, url, file, bytes);
+  return bytes;
+}
+
+// The server's manifest, stored for offline loads; the stored one only when the network fails, not the server.
+async function fetchManifest(cache, url) {
+  let response;
+  try {
+    response = await fetch(url, { cache: "no-cache" });
+  } catch (error) {
+    const stored = await cache?.match(url);
+    if (!stored) throw new Error(`Could not fetch ${url}: ${error.message}`);
+    console.warn(`CanViT live model: ${url} is unreachable; using the manifest stored by an earlier load`, error);
+    return stored.json();
+  }
+  if (!response.ok) throw new Error(`Could not fetch ${url}: HTTP ${response.status}`);
+  const text = await response.text();
+  try {
+    await cache?.put(url, new Response(text, { headers: { "content-type": "application/json" } }));
+  } catch (error) {
+    console.warn(`CanViT live model: could not store ${url} for offline loads`, error);
+  }
+  return JSON.parse(text);
+}
+
+async function loadManifest(cache, url, schema) {
   const base = new URL(url.endsWith("/") ? url : `${url}/`, document.baseURI);
-  const manifest = await (await fetchOk(new URL("manifest.json", base))).json();
+  const manifest = await fetchManifest(cache, new URL("manifest.json", base));
   if (manifest.schema !== schema) throw new Error(`${base}manifest.json: schema ${manifest.schema}, expected ${schema}`);
   return { base, manifest };
 }
 
 /** The manifests of a CanViT export and a probe export (URLs relative to the page), checked to fit together. */
 export async function loadManifests(canvitUrl, probeUrl) {
-  const [canvit, probe] = await Promise.all([loadManifest(canvitUrl, CANVIT_SCHEMA), loadManifest(probeUrl, PROBE_SCHEMA)]);
+  const cache = await openCache();
+  const [canvit, probe] = await Promise.all([loadManifest(cache, canvitUrl, CANVIT_SCHEMA), loadManifest(cache, probeUrl, PROBE_SCHEMA)]);
   const a = canvit.manifest, b = probe.manifest;
   if (JSON.stringify(b.graph.inputs.canvas) !== JSON.stringify(a.graph.outputs.next_canvas)
       || b.canvas_grid !== a.canvas_grid || b.num_canvas_registers !== a.num_canvas_registers) {
@@ -85,9 +159,22 @@ export async function loadManifests(canvitUrl, probeUrl) {
   return { canvit, probe };
 }
 
-/** Bytes to download before the first glimpse. */
-export const downloadBytes = ({ canvit, probe }) =>
-  canvit.manifest.graph.bytes + canvit.manifest.initial_state.bytes + probe.manifest.graph.bytes;
+// The files to fetch before the first glimpse.
+const files = ({ canvit, probe }) => ({
+  initialState: { base: canvit.base, file: canvit.manifest.initial_state },
+  canvit: { base: canvit.base, file: canvit.manifest.graph },
+  probe: { base: probe.base, file: probe.manifest.graph },
+});
+
+/** Bytes to download before the first glimpse: the files this browser has not cached. */
+export async function downloadBytes(manifests) {
+  const cache = await openCache();
+  let bytes = 0;
+  for (const { base, file } of Object.values(files(manifests))) {
+    if (!(await cache?.match(cacheKey(new URL(file.path, base), file.sha256)))) bytes += file.bytes;
+  }
+  return bytes;
+}
 
 // The registers, then the canvas patch broadcast over the grid, as CanViT.init_state builds them.
 function initialState(manifest, flat) {
@@ -143,23 +230,25 @@ async function webgpuAvailable() {
 
 export class LiveModel {
   /**
-   * Download, verify and start the CanViT export at canvitUrl and the probe export at probeUrl: WebGPU when the
-   * browser has an adapter, WebAssembly otherwise. onProgress(stage, received, total) reports the download.
+   * Fetch (from the browser's cache or the network), verify and start the CanViT export at canvitUrl and the probe
+   * export at probeUrl: WebGPU when the browser has an adapter, WebAssembly otherwise. onProgress(stage, received,
+   * total) reports the stages "fetch", with the bytes received of the total, then "start".
    * `fallback` names why WebGPU was not used, if it failed.
    */
   static async load(canvitUrl, probeUrl, { onProgress = () => {} } = {}) {
     const manifests = await loadManifests(canvitUrl, probeUrl);
-    const { canvit, probe } = manifests;
-    const total = downloadBytes(manifests);
-    const received = { canvit: 0, probe: 0 };
-    const progress = (part) => (bytes) => { received[part] = bytes; onProgress("download", received.canvit + received.probe, total); };
-    const [stateBytes, canvitBytes, probeBytes] = await Promise.all([
-      verifiedBytes(canvit.base, canvit.manifest.initial_state),
-      verifiedBytes(canvit.base, canvit.manifest.graph, progress("canvit")),
-      verifiedBytes(probe.base, probe.manifest.graph, progress("probe")),
-    ]);
-    const init = initialState(canvit.manifest, new Float32Array(stateBytes.buffer));
-    const graphs = { canvit: canvitBytes, probe: probeBytes };
+    const cache = await openCache();
+    const parts = Object.entries(files(manifests));
+    const total = parts.reduce((sum, [, { file }]) => sum + file.bytes, 0);
+    const received = Object.fromEntries(parts.map(([name]) => [name, 0]));
+    const progress = (name) => (bytes) => {
+      received[name] = bytes;
+      onProgress("fetch", Object.values(received).reduce((a, b) => a + b, 0), total);
+    };
+    const fetched = Object.fromEntries(await Promise.all(
+      parts.map(async ([name, part]) => [name, await verifiedBytes(cache, part, progress(name))])));
+    const init = initialState(manifests.canvit.manifest, new Float32Array(fetched.initialState.buffer));
+    const graphs = { canvit: fetched.canvit, probe: fetched.probe };
     let fallback = null;
     if (await webgpuAvailable()) {
       onProgress("start", 0, 0);

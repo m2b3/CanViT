@@ -188,7 +188,24 @@ h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
   .ticks span:nth-child(even) { display: none; }
 }
 
-.live-link { margin: 18px 0 0; text-align: center; font: 16px/1.5 var(--sans); color: var(--muted); }
+/* <canvit-live> on a dark stage */
+.stage {
+  --stage: #0f0f15;
+  --stage-ink: #ededf3;
+  --stage-muted: #a4a4b4;
+  --stage-rule: #26262f;
+  --canvit-ink: var(--stage-ink);
+  --canvit-on-ink: var(--stage);
+  --canvit-muted: var(--stage-muted);
+  --canvit-focus: var(--glimpse);
+  --canvit-radius: 8px;
+  margin-top: 32px; padding: 16px; border: 1px solid var(--stage-rule); border-radius: 18px;
+  background: var(--stage); color: var(--stage-ink);
+  box-shadow: 0 30px 70px -40px rgb(10 10 30 / .5);
+}
+@media (min-width: 720px) { .stage { padding: 26px; } }
+.stage .hint { margin: 0 0 18px; color: var(--stage-muted); font-size: 12.5px; line-height: 1.4; }
+.stage-caption { max-width: 62rem; margin: 14px 2px 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 
 .cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin: clamp(56px, 8vw, 80px) auto 0; padding: 0 16px; }
 .button.big { padding: 16px 28px; border-radius: 14px; font-size: 1.1rem; gap: 10px; }

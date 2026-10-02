@@ -4,8 +4,9 @@
 // the ADE20K classes decoded from the canvas, and their entropy on a fixed scale from 0 to log(num_classes).
 // `model` and `probe` are the canvit/ and probe/ directories `python -m canvit_pytorch.viz.live export` writes,
 // relative to the page; without them, the exports published on the Hub (PUBLISHED_CANVIT, PUBLISHED_PROBE). `scene`
-// is an image URL, relative to the page. The download starts from a button that states its size, or as soon as
-// `autoload` is present (also when it is added later, as a deck does when the slide comes near).
+// is an image URL, relative to the page; a button replaces it with a photo from the visitor's device. Loading starts from a button that states the download size (nothing once
+// this browser has cached the files, live-model.js), or as soon as `autoload` is present (also when it is added
+// later, as a deck does when the slide comes near).
 // Events: canvit-load {manifest, probeManifest, backend}, canvit-glimpse {t, viewpoint, chosenBy, stepMs, runMs},
 // canvit-error.
 
@@ -61,6 +62,7 @@ const styles = sheet(`
             color: var(--canvit-muted, color-mix(in srgb, currentColor 60%, transparent)); font-variant-numeric: tabular-nums; }
   .status b { color: var(--canvit-ink, currentColor); font-weight: 600; }
   .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 16px; }
+  [data-photo] { margin-left: auto; }
   button { font: inherit; font-size: 13px; color: inherit; cursor: pointer; padding: 6px 13px; border-radius: 8px; border: 0;
            background: color-mix(in srgb, currentColor 10%, transparent); }
   button.primary { background: var(--canvit-glimpse, #4080d0); color: #fff; }
@@ -100,6 +102,7 @@ function argmaxLabels(logits, numClasses) {
   return labels;
 }
 
+const megabytes = (bytes) => (bytes / 1e6).toFixed(0);
 const paletteRgb = (c) => [ADE20K_PALETTE[3 * c], ADE20K_PALETTE[3 * c + 1], ADE20K_PALETTE[3 * c + 2]];
 
 class CanvitLive extends HTMLElement {
@@ -107,7 +110,7 @@ class CanvitLive extends HTMLElement {
 
   #manifest = null; // CanViT's export
   #probe = null; // the probe's export
-  #downloadBytes = 0;
+  #downloadBytes = 0; // the files this browser has not cached
   #model = null;
   #scene = null; // {picture, tensor}
   #history = []; // viewpoints since the last reset
@@ -123,6 +126,7 @@ class CanvitLive extends HTMLElement {
   #episode = 0; // increments to stop a running EG-C2F episode
   #generation = 0; // increments when `model` changes
   #sceneRequests = 0; // increments when `scene` changes; only the latest request is shown
+  #photoUrl = null; // the object URL of the visitor's photo, while it is the scene
   #ready = Promise.withResolvers();
   #loading = false;
   #downloading = false;
@@ -169,10 +173,11 @@ class CanvitLive extends HTMLElement {
     this.#ready.promise.catch(() => {});
     try {
       const manifests = await loadManifests(this.#modelUrl, this.#probeUrl);
+      const bytes = await downloadBytes(manifests);
       if (generation !== this.#generation) return;
       this.#manifest = manifests.canvit.manifest;
       this.#probe = manifests.probe.manifest;
-      this.#downloadBytes = downloadBytes(manifests);
+      this.#downloadBytes = bytes;
       this.#build();
       await this.#loadScene();
       if (this.hasAttribute("autoload")) await this.load();
@@ -183,7 +188,7 @@ class CanvitLive extends HTMLElement {
     }
   }
 
-  /** Download and start the model (the download button calls this). */
+  /** Fetch and start the model (the load button calls this). */
   async load() {
     if (this.#model || this.#downloading) return;
     this.#downloading = true;
@@ -196,13 +201,14 @@ class CanvitLive extends HTMLElement {
     try {
       const model = await LiveModel.load(this.#modelUrl, this.#probeUrl, {
         onProgress: (stage, received, total) => {
-          if (stage === "download") {
-            progress.max = total || bytes;
+          if (stage === "fetch") {
+            progress.max = total;
             progress.value = received;
-            this.#setStatus(`Downloading CanViT-B and its probe: <b>${(received / 1e6).toFixed(0)}</b> / ${(bytes / 1e6).toFixed(0)} MB`);
+            const source = bytes ? "Downloading CanViT-B and its probe" : "Reading CanViT-B and its probe from this browser's cache";
+            this.#setStatus(`${source}: <b>${megabytes(received)}</b> / ${megabytes(total)} MB`);
           } else {
             progress.removeAttribute("value");
-            this.#setStatus("Checked the download; starting ONNX Runtime Web…");
+            this.#setStatus("Checked the files; starting ONNX Runtime Web…");
           }
         },
       });
@@ -234,6 +240,7 @@ class CanvitLive extends HTMLElement {
     try {
       await image.decode();
     } catch {
+      if (request !== this.#sceneRequests) return; // superseded, and maybe revoked: a photo replaced by another
       throw new Error(`Could not load the scene image ${image.src}`);
     }
     const { scene_px: size, normalization: { mean, std } } = this.#manifest;
@@ -350,17 +357,29 @@ class CanvitLive extends HTMLElement {
         <div class="readouts"><div class="legend"></div><div class="status" aria-live="polite"></div></div>
       </div>
       <div class="controls">
-        <button type="button" class="primary" data-load>Run CanViT-B here (${(this.#downloadBytes / 1e6).toFixed(0)} MB download)</button>
+        <button type="button" class="primary" data-load>Run CanViT-B here (${this.#downloadBytes ? `${megabytes(this.#downloadBytes)} MB download` : "cached in this browser"})</button>
         <progress hidden></progress>
         <button type="button" data-reset data-needs-model hidden>Reset canvas</button>
         <button type="button" data-policy-step data-needs-model hidden title="${policy.description}">${policy.paper_name}: next glimpse</button>
         <button type="button" data-policy-run data-needs-model hidden title="${policy.description}">${policy.paper_name}: ${policy.num_glimpses} glimpses from a fresh canvas</button>
+        <button type="button" data-photo>Use your own photo</button>
+        <input type="file" accept="image/*" hidden>
       </div>`;
     const root = this.shadowRoot;
     root.querySelector("[data-load]").addEventListener("click", () => this.load());
     root.querySelector("[data-reset]").addEventListener("click", () => this.reset());
     root.querySelector("[data-policy-step]").addEventListener("click", () => { this.#episode++; this.policyStep().catch((e) => this.#fail(e)); });
     root.querySelector("[data-policy-run]").addEventListener("click", () => this.runPolicy().catch((e) => this.#fail(e)));
+    const photo = root.querySelector("input[type=file]");
+    root.querySelector("[data-photo]").addEventListener("click", () => photo.click());
+    photo.addEventListener("change", () => {
+      const [file] = photo.files;
+      if (!file) return;
+      const previous = this.#photoUrl;
+      this.#photoUrl = URL.createObjectURL(file);
+      this.setAttribute("scene", this.#photoUrl);
+      if (previous) URL.revokeObjectURL(previous);
+    });
     const slider = root.querySelector("#scale");
     slider.addEventListener("input", () => this.#setScale(this.#sliderScale(Number(slider.value))));
     this.#bindScene(root.querySelector("[data-scene-frame]"));
@@ -376,7 +395,8 @@ class CanvitLive extends HTMLElement {
     };
     this.#setScale(this.#scale);
     this.#legend();
-    this.#setStatus(`CanViT-B and its ADE20K probe, fp32: ${(this.#downloadBytes / 1e6).toFixed(0)} MB to download. Runs on WebGPU where the browser has it, on WebAssembly (slower) otherwise.`);
+    const cost = this.#downloadBytes ? `${megabytes(this.#downloadBytes)} MB to download` : "cached in this browser";
+    this.#setStatus(`CanViT-B and its ADE20K probe, fp32: ${cost}. Runs on WebGPU where the browser has it, on WebAssembly (slower) otherwise.`);
   }
 
   // ---- pointer, wheel and keyboard on the scene ----

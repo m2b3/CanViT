@@ -55,7 +55,7 @@
   </div>
   <aside class="notes"><ul>
     <li>Yamins et al. 2014: categorization performance (x) against IT explained variance (y), thousands of models.</li>
-    <li>Brain-Score: Schrimpf et al. 2018. ImageNet: photos labeled with 1,000 object classes.</li>
+    <li>Brain-Score: Schrimpf et al. 2018. ImageNet: photos labeled with 1,000 object classes. Up to a point: above 70% top-1, the inset is flat (n.s.).</li>
     <li>The networks see the whole image, all at once: passive vision.</li>
   </ul></aside>
 </section>
@@ -110,7 +110,7 @@
   <span class="fragment step-marker" data-shows="gap"></span>
   <aside class="notes"><ul>
     <li>Glimpse: a crop of the scene, all the model sees at a time.</li>
-    <li>DINOv3 (next slide) on each glimpse alone, pasted back where the glimpse was taken: p(table).</li>
+    <li>DINOv3 (next slide) on each glimpse alone, read by a classifier trained on ADE20K, pasted back where the glimpse was taken. Brightness: its probability of table.</li>
     <li>The space in between: no clue.</li>
     <li>A smart observer should infer that the table extends between them.</li>
   </ul></aside>
@@ -141,7 +141,7 @@
          the ViT-B shown here is distilled from it (§5.2). -->
     <dl class="scale-facts">
       <div><dt>1.7 billion</dt><dd>training images, no labels</dd></div>
-      <div><dt>6.7 billion</dt><dd>parameters in the 7B model this ViT-B is distilled from</dd></div>
+      <div><dt>6.7 billion</dt><dd>parameters in the 7B model it was distilled from</dd></div>
       <div><dt>61,440</dt><dd>H100-hours to train the 7B model</dd></div>
     </dl>
   </div>
@@ -321,7 +321,8 @@
     <li>Backbone retinotopic, canvas spatiotopic; scene-relative RoPE binds them.</li>
     <li>Shown: the canvas after each write. Paper, canvas evolution figure: the write residuals go from the glimpse's patch grid, to the objects in it, to beyond the glimpse.</li>
     <li>I put the intelligence on the Vision Transformer side, and made the memory dumb, but not too dumb.</li>
-    <li>Next glimpse: new glimpse patches; the canvas and the CLS token carry over.</li>
+    <li>Left to right: depth, within one glimpse. Then the next glimpse: new glimpse patches; the canvas and the CLS token carry over.</li>
+    <li>Each glimpse comes with its position and scale; CanViT does not estimate them.</li>
   </ul></aside>
 </section>
 
@@ -389,9 +390,9 @@
     <li>Teacher: DINOv3 ViT-B, frozen, the whole scene at 512 px. Student: CanViT, from glimpses.</li>
     <li>Targets: DINOv3's patch features (predicted from the canvas) and its CLS token (from CanViT's recurrent CLS token). Squared error. No labels.</li>
     <li>Pixels would be the identity teacher: the same recipe with the target = the scene itself.</li>
-    <li>Pretraining: every viewpoint random (anywhere, zoom down to 0.25% of the scene, small glimpses more likely); random rollout length, 4 glimpses on average; each scene in a batch gets an R-IID and an F-IID rollout (F-IID starts with the full scene).</li>
+    <li>Pretraining viewpoints: random (anywhere, zoom down to 0.25% of the scene, small glimpses more likely), except the first of an F-IID rollout, the full scene; random rollout length, 4 glimpses on average; each scene in a batch gets an R-IID and an F-IID rollout.</li>
     <li>13.2M ImageNet-21k scenes, about 1 billion glimpses, 166 hours on a single H100.</li>
-    <li>This example: the released model on an ADE20K bedroom, 21 random glimpses.</li>
+    <li>This example: the released, trained model on an ADE20K bedroom, 21 random glimpses; its weights do not change across the columns. MSE: mean squared error.</li>
     <li>Patch loss 0.87 after the first glimpse, 0.31 after the last; 1.05 for predicting the average target.</li>
   </ul></aside>
 </section>
@@ -552,6 +553,7 @@
   </div>
   <span class="fragment step-marker" data-shows="ade20k"></span>
   <aside class="notes"><ul>
+    <li>Both charts: CanViT-B frozen, a linear probe (#results' 84.5 is fine-tuned). Curves that start lower enter from below the axis.</li>
     <li>ADE20K, 21 glimpses, 64 &times; 64 canvas: C2F <span data-macro="adeCTFCSixFourTTwenty">45.9</span>, F-IID <span data-macro="adeFIIDCSixFourTTwenty">44.9</span>, R-IID <span data-macro="adeRIIDCSixFourTTwenty">43.1</span>, F2C <span data-macro="adeFTCCSixFourTTwenty">42.9</span>.</li>
     <li>C2F and F2C: same viewpoints by the end, different order.</li>
     <li>Keyword: coarse-to-fine: people categorize coarse-to-fine sequences of the same scene faster than fine-to-coarse ones (Kauffmann et al. 2015; filtered images, not viewpoints).</li>
@@ -636,7 +638,7 @@
     </article>
   </div>
   <aside class="notes"><ul>
-    <li>Top-down feedback: C2F vs F2C, the same viewpoints in another order.</li>
+    <li>Top-down feedback: C2F vs F2C, the same viewpoints in another order. Order matters; which mechanism makes it matter is the open question (the pathway: reads, #architecture).</li>
     <li>Trans-saccadic memory: three glimpses, on a sign, people, a bicycle; p(class) after the third with the memory carried (kept) or wiped before each glimpse (reset). Backup: #memory.</li>
     <li>Scanpaths: human fixations, given a scale, become viewpoints: a policy on the same observer.</li>
     <li>Limits (paper): static scenes; needs a passive teacher.</li>

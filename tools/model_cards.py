@@ -84,9 +84,7 @@ def _package_name(backend: Backend) -> str:
 
 
 def _install(backend: Backend) -> str:
-    return f"""git clone {project.CODE_URL}.git
-cd CanViT
-uv sync --project {_package_name(backend)}"""
+    return f"uv add {_package_name(backend)}"
 
 
 def _backend_fragments(backend: Backend) -> tuple[str, str, str, str]:
@@ -129,24 +127,22 @@ glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_p
 
 def _probe_usage(entry: ProbeEntry, *, num_classes: int) -> str:
     imports, preprocess_import, array_constructor, module_name = _backend_fragments(entry.backend)
-    cast = "jnp.float32" if entry.backend == "nnx" else "mx.float32"
     evaluation = "\nmx.eval(logits)" if entry.backend == "mlx" else ""
     return f'''{imports}
 from PIL import Image
-from {module_name} import CanViTForPretraining, SegmentationProbe
+from {module_name} import CanViTForSemanticSegmentation
 {preprocess_import}
 
 scene = {array_constructor}(preprocess({entry.scene_size_px})(Image.open("scene.jpg").convert("RGB")))[None]
-backbone = CanViTForPretraining.from_pretrained("{entry.pretrained_native_repo}")
-backbone.eval()
-probe = SegmentationProbe.from_pretrained("{entry.target_repo}")
-probe.eval()
-state = backbone.init_state(batch_size=1, canvas_grid_size={entry.canvas_grid_size})
+model = CanViTForSemanticSegmentation.from_pretrained_with_probe(
+    pretrained_repo="{entry.pretrained_native_repo}",
+    probe_repo="{entry.target_repo}",
+)
+model.eval()
+state = model.init_state(batch_size=1, canvas_grid_size={entry.canvas_grid_size})
 viewpoint = Viewpoint.full_scene(batch_size=1)
 glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px={entry.glimpse_size_px})
-output = backbone(glimpse=glimpse, state=state, viewpoint=viewpoint)
-features = backbone.canvit.canvas_patch_grid(output.state.canvas).astype({cast})
-logits = probe(features)  # [1, {entry.canvas_grid_size}, {entry.canvas_grid_size}, {num_classes}]{evaluation}'''
+logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)  # [1, {entry.canvas_grid_size}, {entry.canvas_grid_size}, {num_classes}]{evaluation}'''
 
 
 def _details(rows: list[tuple[str, str]]) -> str:
@@ -158,9 +154,7 @@ def _model_card(entry: ModelEntry) -> tuple[str, dict[str, Any]]:
     conversion = _read_json(entry.artifact / "conversion.json")
     if record.get("format") != FORMAT:
         raise ValueError(f"{entry.artifact}: unexpected format {record.get('format')!r}")
-    native_config = record["config"]
     assert record["backend"] == entry.backend, (record["backend"], entry.backend)
-    canvit_config = native_config["canvit_config"]
     model_name = record["model"]
     assert model_name in {"CanViTForPretraining", "CanViTForImageClassification"}, model_name
     label = _backend_label(entry.backend)
@@ -169,7 +163,7 @@ def _model_card(entry: ModelEntry) -> tuple[str, dict[str, Any]]:
     glimpse_size_px = int(conversion["glimpse_size_px"])
     canvas_grid_size = int(conversion["canvas_grid_size"])
     title = f"CanViT {'pretraining checkpoint' if is_pretraining else 'classifier'} ({label})"
-    summary = f"A {label} checkpoint of CanViT, written in the strict native checkpoint format."
+    summary = f"A {label} CanViT {'pretraining' if is_pretraining else 'image-classification'} checkpoint."
     usage = _model_usage(
         backend=entry.backend,
         repo=entry.target_repo,
@@ -182,11 +176,11 @@ def _model_card(entry: ModelEntry) -> tuple[str, dict[str, Any]]:
         ("Backend", label),
         ("Model class", f"`{model_name}`"),
         ("Source checkpoint", _hub_link(entry.source_repo, entry.source_revision)),
-        ("CanViT config", f"`{json.dumps(canvit_config, sort_keys=True)}`"),
-        ("Task config", f"`{json.dumps({k: v for k, v in native_config.items() if k != 'canvit_config'}, sort_keys=True)}`"),
         ("Validation geometry", f"{scene_size_px} px scenes, {glimpse_size_px} px glimpses, {canvas_grid_size} × {canvas_grid_size} canvas"),
-        ("Checkpoint format", FORMAT),
     ]
+    task_config = record["config"]
+    if "n_classes" in task_config:
+        rows.append(("Classes", str(task_config["n_classes"])))
     frontmatter: dict[str, str | list[str]] = {
         "library_name": _package_name(entry.backend),
         "pipeline_tag": "image-feature-extraction" if is_pretraining else "image-classification",
@@ -199,7 +193,7 @@ def _model_card(entry: ModelEntry) -> tuple[str, dict[str, Any]]:
         summary,
         project.DESCRIPTION,
         f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
-        "## Install from the source repository\n\n```bash\n" + _install(entry.backend) + "\n```",
+        "## Install\n\n```bash\n" + _install(entry.backend) + "\n```",
         "## Usage\n\n```python\n" + usage + "\n```",
         "## Details\n\n" + _details(rows),
         "## Citation\n\n```bibtex\n" + project.BIBTEX + "\n```",
@@ -225,17 +219,16 @@ def _probe_card(entry: ProbeEntry) -> tuple[str, dict[str, Any]]:
         ("Model class", "`SegmentationProbe`"),
         ("Source probe", _hub_link(entry.source_repo, entry.source_revision)),
         ("CanViT checkpoint", _hub_link(entry.pretrained_native_repo)),
-        ("Probe config", f"`{json.dumps(record['config'], sort_keys=True)}`"),
+        ("Classes", str(record["config"]["num_classes"])),
         ("Example geometry", f"{entry.scene_size_px} px scenes, {entry.glimpse_size_px} px glimpses, {entry.canvas_grid_size} × {entry.canvas_grid_size} canvas"),
-        ("Checkpoint format", FORMAT),
     ]
     body = "\n\n".join((
         _frontmatter(frontmatter),
         f"# ADE20K probe on CanViT's canvas ({label})",
-        f"A {label} `SegmentationProbe` checkpoint. The CanViT model and probe remain separate checkpoints.",
+        f"A {label} ADE20K segmentation probe for CanViT canvas features. Load it alongside the separately published CanViT checkpoint.",
         project.DESCRIPTION,
         f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
-        "## Install from the source repository\n\n```bash\n" + _install(entry.backend) + "\n```",
+        "## Install\n\n```bash\n" + _install(entry.backend) + "\n```",
         "## Usage\n\n```python\n" + _probe_usage(entry, num_classes=record["config"]["num_classes"]) + "\n```",
         "## Details\n\n" + _details(rows),
         "## Citation\n\n```bibtex\n" + project.BIBTEX + "\n```",

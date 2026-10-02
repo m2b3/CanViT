@@ -32,7 +32,8 @@
   <img src="site/assets/canvas_attention_across_scales.png" alt="Canvas attention across scales — two example trajectories showing glimpses, canvas crops, and full canvas PCA/change maps over multiple timesteps." width="100%">
 </p>
 
-This repository holds the reference PyTorch implementation of CanViT, with pretraining, task specialization and
+This repository holds the reference PyTorch implementation of CanViT, the
+Canvas Vision Transformer, with pretraining, task specialization and
 evaluation; the package is [`canvit-pytorch`](https://pypi.org/project/canvit-pytorch/) on PyPI.
 The native MLX and JAX/Flax NNX packages live under [`canvit-mlx/`](canvit-mlx/) and [`canvit-nnx/`](canvit-nnx/) and
 share [`canvit-core/`](canvit-core/).
@@ -55,8 +56,8 @@ share [`canvit-core/`](canvit-core/).
 
 ## Checkpoints
 
-The checkpoints are on Hugging Face under [`canvit`](https://huggingface.co/canvit); `from_pretrained` loads the
-PyTorch ones.
+The table lists PyTorch checkpoints on Hugging Face. Native MLX and JAX/Flax
+NNX checkpoints are linked in [Backend packages](#backend-packages).
 
 | Checkpoint | Description |
 |------------|-------------|
@@ -78,8 +79,11 @@ Collections:
 We recommend [`uv`](https://docs.astral.sh/uv/) for dependency management.
 
 ```bash
-uv add canvit-pytorch   # or: pip install canvit-pytorch
+uv add canvit-pytorch
 ```
+
+The snippets use `path/to/image.jpg`; replace it with the path to an RGB
+image.
 
 ```python
 from canvit_pytorch import CanViTForPretraining, Viewpoint, sample_at_viewpoint
@@ -92,42 +96,32 @@ model = CanViTForPretraining.from_pretrained(
     "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02"
 ).eval()
 
-# Replace with the image of your choice
-image = Image.open("canvit-pytorch/test_data/Cat03.jpg").convert("RGB")
+image = Image.open("path/to/image.jpg").convert("RGB")
 image = preprocess(512)(image)
 image = image.unsqueeze(0)  # [1, 3, 512, 512]
 
 # CanViT is a recurrent model.
 state = model.init_state(batch_size=1, canvas_grid_size=32)
 
-# Let's process a first glimpse: centered, zoomed-out.
-# You can use any viewpoint you like, as long as it is within bounds.
-# CanViT was trained on viewpoints covering 0.25% to 100%
-# of a scene's surface area.
 with torch.inference_mode():
     vp = Viewpoint.full_scene(batch_size=1, device=image.device)
     glimpse = sample_at_viewpoint(spatial=image, viewpoint=vp, glimpse_size_px=128)
     out = model(glimpse=glimpse, state=state, viewpoint=vp)
 
-# Let's inspect the structure of what we get back.
-# The canvas contains the model's working understanding of
-# the scene at any given time, and is linearly decodable 
-# into dense predictions upon token-wise LayerNorm.
-# See `demos/basic.py` for how to visualize the canvas.
-canvas_spatial = model.canvit.canvas_patch_grid(out.state.canvas)  # [1, 32, 32, 1024] — spatial feature map
+# The output carries the updated recurrent state and the glimpse features.
 out.state.recurrent_cls  # [1, 1, 768] — global CLS token
 out.glimpse_patches      # [1, 64, 768] — glimpse patch features
 
 # Now let's do a second glimpse: zoom into the top-left quadrant
 # You can do this repeatedly: CanViT is recurrent with a large but constant-size canvas.
 with torch.inference_mode():
-    vp2 = Viewpoint(centers=torch.tensor([[-.5, -.5]]), scales=torch.tensor([.5]))
+    vp2 = Viewpoint(
+        centers=torch.tensor([[-.5, -.5]], device=image.device),
+        scales=torch.tensor([.5], device=image.device),
+    )
     glimpse2 = sample_at_viewpoint(spatial=image, viewpoint=vp2, glimpse_size_px=128)
     out2 = model(glimpse=glimpse2, state=out.state, viewpoint=vp2)
     
-# You can use CanViT with frozen weights, fine-tune it, learn a policy on top...
-# Or pretrain your own; it's fast.
-# Start building!
 ```
 
 ### ImageNet-1k Classification
@@ -159,7 +153,7 @@ clf = CanViTForImageClassification.from_pretrained_with_probe(
 **Both have the same forward pass:**
 
 ```python
-image = preprocess(512)(Image.open("canvit-pytorch/test_data/Cat03.jpg").convert("RGB")).unsqueeze(0)
+image = preprocess(512)(Image.open("path/to/image.jpg").convert("RGB")).unsqueeze(0)
 state = clf.init_state(batch_size=1, canvas_grid_size=32)
 
 with torch.inference_mode():
@@ -175,19 +169,28 @@ print(logits.argmax(dim=-1))  # ImageNet-1k class index
 `CanViTForSemanticSegmentation` bundles a CanViT and a `SegmentationProbe` head into one model. `forward` returns per-pixel logits at canvas-grid resolution; `predict` adds bilinear upsampling.
 
 ```python
-from canvit_pytorch import CanViTForSemanticSegmentation
+import torch
+from PIL import Image
 
-# Frozen CanViT + the flagship ADE20K probe (45.9% mIoU, 512px / 64x64 canvas):
+from canvit_pytorch import CanViTForSemanticSegmentation, Viewpoint, sample_at_viewpoint
+from canvit_pytorch.preprocess import preprocess
+
 seg = CanViTForSemanticSegmentation.from_pretrained_with_probe(
     pretrained_repo="canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02",
     probe_repo="canvit/probe-ade20k-40k-s512-c64-in21k",
 ).eval()
 
+image = preprocess(512)(Image.open("path/to/image.jpg").convert("RGB")).unsqueeze(0)
 state = seg.init_state(batch_size=1, canvas_grid_size=64)
 with torch.inference_mode():
-    logits, state = seg(glimpse=glimpse, state=state, viewpoint=vp)               # [B, n_cls, 64, 64]
-    upsampled, state = seg.predict(glimpse=glimpse, state=state, viewpoint=vp,
-                                   target_size=(1024, 1024))                       # [B, n_cls, 1024, 1024]
+    viewpoint = Viewpoint.full_scene(batch_size=1, device=image.device)
+    glimpse = sample_at_viewpoint(spatial=image, viewpoint=viewpoint, glimpse_size_px=128)
+    upsampled, state = seg.predict(
+        glimpse=glimpse,
+        state=state,
+        viewpoint=viewpoint,
+        target_size=(1024, 1024),
+    )  # [B, n_cls, 1024, 1024]
 ```
 
 The standalone `SegmentationProbe` head is also exported from `canvit_pytorch` for use on any spatial feature map. The published probes are listed under [Checkpoints](#checkpoints).
@@ -198,47 +201,29 @@ CanViT's PyTorch, MLX and JAX/Flax NNX implementations share model names and
 architecture definitions in [`canvit-core/`](canvit-core/). Constructing an
 NNX model from scratch also takes `rngs=nnx.Rngs(0)`.
 
+```bash
+uv add canvit-mlx  # MLX on Apple Silicon
+uv add canvit-nnx  # JAX / Flax NNX
+```
+
 Native arrays use NHWC: a model glimpse has shape `[B, H, W, 3]`, and
 `sample_at_viewpoint` accepts `[B, H, W, C]`. PyTorch tensors use NCHW: images
 and feature maps are `[B, C, H, W]`, while model glimpses are `[B, 3, h, w]`.
 Viewpoint centers are `(row, col)` scene coordinates in `[-1, 1]`, and scales
 are crop half-sides across all backends.
 
-For example, an MLX rollout from the released ImageNet-21k checkpoint is:
-
-```python
-import mlx.core as mx
-from PIL import Image
-
-from canvit_mlx import CanViTForPretraining, Viewpoint, sample_at_viewpoint
-from canvit_mlx.preprocess import preprocess
-
-image = preprocess(512)(Image.open("image.jpg").convert("RGB"))
-image = mx.array(image)[None]  # [B, H, W, 3]
-model = CanViTForPretraining.from_pretrained(
-    "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02-mlx"
-)
-viewpoint = Viewpoint.full_scene(batch_size=1)
-state = model.init_state(batch_size=1, canvas_grid_size=32)
-glimpse = sample_at_viewpoint(spatial=image, viewpoint=viewpoint, glimpse_size_px=128)
-output = model(glimpse=glimpse, state=state, viewpoint=viewpoint)
-mx.eval(output)
-```
-
-Native loaders read `config.json` and `model.safetensors` with strict backend
-and tensor validation. See the backend-specific converter options from the
-repository root:
-
-```bash
-uv run --project canvit-mlx python -m tools.convert_checkpoints --help
-uv run --project canvit-nnx python -m tools.convert_checkpoints --help
-```
+The [MLX README](canvit-mlx/README.md) and [NNX README](canvit-nnx/README.md)
+contain installed-package examples that load full Hugging Face IDs. Native
+models and segmentation probes are separate checkpoints; the package READMEs
+link the available model and probe choices.
 
 ## Demos
 
+The demos are repository files. From a checkout, run them in
+`canvit-pytorch/`:
+
 ```bash
-git clone https://github.com/m2b3/CanViT.git
-cd CanViT/canvit-pytorch
+cd canvit-pytorch
 
 # Classification with sequential glimpses
 uv run --extra demo python demos/classify.py                     # finetuned checkpoint
@@ -278,8 +263,6 @@ We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/
 [`paper/`](paper) holds the NeurIPS 2026 paper: its LaTeX sources, and the pipeline that turns evaluation
 results into its tables and figures.
 
-Pretraining, probe training and evaluation lived in separate repositories (CanViT-pretrain, CanViT-specialize, CanViT-eval), now archived; their histories are merged here.
-
 Related repositories:
 
 - [dinov3-in1k-probes](https://github.com/m2b3/dinov3-in1k-probes) — ImageNet-1k linear probes for the DINOv3 ViTs, used by CanViT's classification path
@@ -314,6 +297,16 @@ If you use this work, please cite our paper:
 ## Contact 
 
 Open an issue in this repository or email me@yberreby.com.
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=m2b3%2Fcanvit&type=date&legend=top-left">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=m2b3/canvit&type=date&theme=dark&legend=top-left" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=m2b3/canvit&type=date&legend=top-left" />
+    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=m2b3/canvit&type=date&legend=top-left" />
+  </picture>
+</a>
 
 ## License
 

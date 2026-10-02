@@ -22,6 +22,12 @@ and operate software.
   `canvit-pytorch/docs/`; SLURM job scripts in `canvit-pytorch/slurm/`.
 - `canvit-pytorch/tpu/`: a separate uv environment for ImageNet-1k
   fine-tuning on Cloud TPU (exact torch/torch_xla pins).
+- `canvit-mlx/` and `canvit-nnx/`: native model packages with the same public
+  model concepts and channels-last images. Each has its own uv environment.
+- `canvit-core/`: framework-independent architecture definitions and shared
+  checkpoint and preprocessing code. Backend packages depend on it.
+- `tests/backends/`: cross-framework contract tests; checkpoint conversion
+  commands live in `tools/`.
 - `site/`: the project page, published to https://m2b3.github.io/CanViT/ by
   `site/deploy.sh` as the single commit of the `gh-pages` branch.
   `site/record_bundles.sh` records its data with `canvit_pytorch.viz`;

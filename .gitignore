@@ -56,5 +56,8 @@ site/assets/paper/*.svg
 # Local screenshots of the project page
 site/.screens/
 
+# The talks' experiments' sweeps and exports (site/slides/*/experiments/): local, never committed
+site/.experiments/
+
 # Exported live models (python -m canvit_pytorch.viz.live export): hundreds of MB, never committed
 site/.live-model

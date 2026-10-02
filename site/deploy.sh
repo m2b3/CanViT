@@ -2,8 +2,8 @@
 # Publish the project page to https://m2b3.github.io/CanViT/: the page's files, the talks under slides/ and the
 # recorded data they load (record_bundles.sh, data/talk) become the only commit of the gh-pages branch, which GitHub
 # Pages serves. Recorded data are generated and never committed to main; replacing gh-pages at every deploy keeps them
-# out of all history. A talk ships its committed files except its notes (Markdown) and working pages (names starting
-# with _).
+# out of all history. A talk ships its committed files except its notes (Markdown), working pages (names starting
+# with _) and the experiments that compute its data (experiments/).
 #
 #   bash site/deploy.sh          # check and stage the page, list what would be published
 #   bash site/deploy.sh --push   # publish
@@ -17,7 +17,7 @@ python3 site/check_paper_numbers.py
 # own data, not a bundle.
 bundles=$(grep -ho 'data/[a-z0-9-]*' site/index.html site/slides/*/index.html | grep -v '^data/talk$' | sort -u)
 [ -n "$bundles" ] || { echo "site/index.html names no bundle under data/" >&2; exit 1; }
-talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$')
+talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$|/experiments/')
 if grep -q 'data/talk' site/slides/*/index.html; then
   [ -d site/data/talk ] || { echo "site/data/talk is missing: the talks' throwaway exports write it" >&2; exit 1; }
 fi

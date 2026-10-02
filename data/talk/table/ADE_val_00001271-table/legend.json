@@ -1,0 +1,22 @@
+[
+ {
+  "class": "wall",
+  "color": "#66dce1"
+ },
+ {
+  "class": "chair",
+  "color": "#b8bddd"
+ },
+ {
+  "class": "floor",
+  "color": "#0362f3"
+ },
+ {
+  "class": "table",
+  "color": "#f49719"
+ },
+ {
+  "class": "ceiling",
+  "color": "#2e6af4"
+ }
+]

@@ -1,0 +1,27 @@
+{
+ "_about": "Prior active models' own ablations of where to look: the model with its viewpoints chosen at random against the same model with its learned (or rule-based) choice, everything else equal. Each value read in the paper's table on 2026-10-01 (the arXiv PDF's text, by a Claude Code session). random: accuracy with random viewpoints; chosen: with the paper's own choice of viewpoints; both in %.",
+ "ablations": [
+  {
+   "model": "GFNet",
+   "task": "ImageNet-1k",
+   "setting": "ResNet-50, 5 glimpses of 96 px after a glance at the whole image",
+   "random": 74.46,
+   "chosen": 75.93,
+   "chosen_by": "a policy learned by reinforcement learning",
+   "citation": "Wang et al., NeurIPS 2020",
+   "url": "https://arxiv.org/abs/2010.05300",
+   "where": "Table 1, t = 5 (Random Policy + Glance Step; GFNet)"
+  },
+  {
+   "model": "AME",
+   "task": "SUN360",
+   "setting": "8 glimpses of 32 px, all weights trained",
+   "random": 72.4,
+   "chosen": 73.4,
+   "chosen_by": "the entropy of its decoder's attention",
+   "citation": "Pardyl et al., IJCAI 2023",
+   "url": "https://arxiv.org/abs/2303.06457",
+   "where": "Table 5, SUN360, train all (Random; Attention)"
+  }
+ ]
+}

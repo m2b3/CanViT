@@ -1,0 +1,9 @@
+{
+ "image_id": "ADE_val_00001780",
+ "bundle": "street-riid",
+ "input_px": 128,
+ "grid": 8,
+ "teacher": "facebook/dinov3-vitb16-pretrain-lvd1689m",
+ "probe": "canvit/probe-ade20k-40k-dv3b-128px",
+ "pixel_accuracy": 0.721252817393818
+}

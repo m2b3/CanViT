@@ -1,0 +1,14 @@
+[
+ {
+  "class": "signboard",
+  "color": "#fde047"
+ },
+ {
+  "class": "person",
+  "color": "#e879f9"
+ },
+ {
+  "class": "bicycle",
+  "color": "#22c55e"
+ }
+]

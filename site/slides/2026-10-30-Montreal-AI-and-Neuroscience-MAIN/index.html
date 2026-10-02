@@ -61,7 +61,7 @@
   <div class="foveation"><foveated-scene data-play src="../../data/street-riid/scene.png" alt="A street, sharp only around the point being looked at" fovea="0.1" fixations="0.08 0.57, 0.36 0.63, 0.12 0.41, 0.39 0.19, 0.8 0.62, 0.93 0.66, 0.38 0.49"></foveated-scene></div>
   <div class="yarbus">
     <figure><img src="assets/figures/yarbus-1967-face.png" alt="A photograph of a face and the record of an observer's eye movements over it"></figure>
-    <figure class="fragment" data-fragment-index="1"><img src="assets/yarbus-the-visitor.jpg" alt="One observer's eye movements over Repin's painting The Unexpected Visitor under seven different instructions"></figure>
+    <figure class="fragment" data-fragment-index="1"><img src="assets/figures/yarbus-1967-visitor-commons.jpg" alt="One observer's eye movements over Repin's painting The Unexpected Visitor under seven different instructions"></figure>
   </div>
   </div>
   <p class="cite">Yarbus 1967, <i>Eye Movements and Vision</i></p>
@@ -124,11 +124,11 @@
          the ViT-B shown here is distilled from it (§5.2). -->
     <dl class="scale-facts">
       <div><dt>1.7 billion</dt><dd>training images, no labels</dd></div>
-      <div><dt>6.7 billion</dt><dd>parameters in the teacher this ViT-B is distilled from</dd></div>
-      <div><dt>61,440</dt><dd>H100-hours to train that teacher</dd></div>
+      <div><dt>6.7 billion</dt><dd>parameters in the 7B model this ViT-B is distilled from</dd></div>
+      <div><dt>61,440</dt><dd>H100-hours to train the 7B model</dd></div>
     </dl>
   </div>
-  <p class="cite">DINOv3 ViT-B/16, Siméoni et al. 2025</p>
+  <p class="cite">DINOv3 ViT-B/16, Siméoni et al., <i>TMLR</i> 2026</p>
   <span class="fragment step-marker" data-shows="features"></span>
   <span class="fragment step-marker" data-shows="decode"></span>
   <span class="fragment step-marker" data-shows="scale"></span>
@@ -391,7 +391,7 @@
     </canvit-rollout>
     <div class="all-bars"><div class="bars certain"></div><div class="bars uncertain"></div></div>
     <canvit-rollout src="../../data/street-egc2f" t="0">
-      <figure class="map"><canvit-map layer="entropy"></canvit-map><div class="quadrants"></div><canvit-legend layer="entropy"></canvit-legend></figure>
+      <figure class="map"><canvit-map layer="entropy" domain="frame"></canvit-map><div class="quadrants"></div><canvit-legend layer="entropy" domain="frame"></canvit-legend></figure>
     </canvit-rollout>
   </div>
   <span class="fragment step-marker" data-shows="certain"></span>
@@ -440,7 +440,7 @@
     <figure class="imagenet"><figcaption>ImageNet-1k classification</figcaption><div data-benchmark="imagenet"></div></figure>
     <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption><div data-benchmark="ade20k"></div></figure>
   </div>
-  <p class="counted">Teachers and pretrained weights are not counted, on any side.</p>
+  <p class="counted">Not counted: training the teachers and pretrained weights each model starts from.</p>
   <span class="fragment step-marker" data-shows="ade20k"></span>
 </section>
 
@@ -462,7 +462,7 @@
   <!-- Each question beside the demonstration in this talk that shows it can be asked of CanViT, in the colors of the
        three parts of an active-vision model (#active-vision-model): instantaneous vision, memory, action selection.
        Top-down feedback: C2F against F2C on ADE20K, the same viewpoints in another order (#policy-accuracy). Memory:
-       the street of #memory after its third glimpse, kept and reset. Scanpaths: Yarbus's record over a face beside
+       the street of #memory (in Backup) after its third glimpse, kept and reset. Scanpaths: Yarbus's record over a face beside
        EG-C2F's first glimpses on the street of #policies. -->
   <div class="asks">
     <article class="ask fragment" style="--accent: var(--glimpse)">
@@ -475,6 +475,7 @@
       <div class="visual pair">
         <figure><img class="pixels" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="After three glimpses, memory kept: the sign, the people and the bicycle"><figcaption>kept</figcaption></figure>
         <figure><img class="pixels" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="Memory reset before each glimpse: only the bicycle"><figcaption>reset</figcaption></figure>
+        <p class="class-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
       </div>
       <p>What is kept from one view to the next?</p>
     </article>

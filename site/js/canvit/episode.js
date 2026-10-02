@@ -502,7 +502,7 @@ class CanvitEpisode extends HTMLElement {
     const now = t >= 0 ? this.#bundle.glimpses[t].pixelAccuracy : 0;
     this.$.value.textContent = t >= 0 ? percent(now) : "–";
     const gain = 100 * (now - first);
-    this.$.gain.textContent = t >= 1 ? `${gain < 0 ? "−" : "+"}${Math.abs(gain).toFixed(1)}` : "";
+    this.$.gain.textContent = t >= 1 ? `${gain < 0 ? "−" : "+"}${Math.abs(gain).toFixed(1)} since t = 0` : "";
     this.$.base.style.width = percent(Math.min(now, first));
     this.$.gained.style.left = percent(first);
     this.$.gained.style.width = percent(Math.max(0, now - first));

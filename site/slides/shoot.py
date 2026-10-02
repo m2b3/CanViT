@@ -4,14 +4,14 @@
 # ///
 """Screenshot every slide of a talk in Chromium, each with all its fragments shown, and report browser errors.
 
-    python3 -m http.server 8765 --directory site &        # from the repository root
+    node site/serve.mjs 8765 &                            # from the repository root
     uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/ \
         --out site/.screens/main-2026
 
 Writes NN-<slide id>.png (with --steps, one image per click) and errors.txt into --out; exits with status 1 when the page logged an error or a slide is
 missing an id. Animations are captured after --wait-ms on each slide. Layout problems on each captured state (a title
-that wraps, visible content in the footer band) go to layout.txt and are printed, without changing the exit status:
-some titles wrap by design.
+that wraps, visible content in the footer band, a word alone on the last line of a text block) go to layout.txt and
+are printed, without changing the exit status: some titles wrap by design.
 """
 
 import asyncio
@@ -23,10 +23,13 @@ import tyro
 from playwright.async_api import ConsoleMessage, Page, async_playwright
 
 FOOTER_TOP_PX = 676  # the footer band of the 1280 x 720 slide: the talk's name and the slide number
-# The current slide's layout problems, in slide pixels: its title wrapping, and the visible leaves (images, canvases,
-# SVGs, text without child elements) whose bottom enters the footer band. Visible: displayed, not hidden, and every
-# ancestor up to the slide with nonzero opacity; an ancestor that clips its overflow cuts the bottom at its own.
-LAYOUT_PROBLEMS_JS = """([footerTop]) => {
+# The current slide's layout problems, in slide pixels: its title wrapping; the visible leaves (images, canvases, SVGs,
+# text without child elements) whose bottom enters the footer band; and visible text blocks whose last line holds a
+# single word, found by comparing the line boxes of their last two words when one text node holds both and no
+# preserved line break separates them (words in separate elements, such as a label and its name, are often on
+# separate lines by design). Visible: displayed, not hidden, and every ancestor up to the slide with nonzero opacity;
+# an ancestor that clips its overflow cuts the bottom at its own.
+LAYOUT_PROBLEMS_JS = r"""([footerTop]) => {
   const slide = deck.getCurrentSlide(), scale = deck.getScale();
   const origin = document.querySelector(".reveal .slides").getBoundingClientRect().top;
   const problems = [];
@@ -51,6 +54,26 @@ LAYOUT_PROBLEMS_JS = """([footerTop]) => {
     const bottom = (clipped - origin) / scale;
     if (box.height > 0 && bottom > footerTop + 1 && visible(el)) {
       problems.push(`in the footer band (bottom ${Math.round(bottom)} px): <${el.tagName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().replace(/\s+/g, ".") : ""}> ${(el.textContent || "").trim().slice(0, 40)}`);
+    }
+  }
+  for (const block of slide.querySelectorAll("h2, h3, p, figcaption, li, dt, dd")) {
+    if (block.closest("aside.notes") || !block.getClientRects().length || !visible(block)) continue;
+    const words = [];
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      for (const match of node.data.matchAll(/\S+/g)) words.push([node, match.index, match.index + match[0].length]);
+    }
+    if (words.length < 2) continue;
+    const top = ([node, start, end]) => {
+      const range = document.createRange();
+      range.setStart(node, start);
+      range.setEnd(node, end);
+      return range.getBoundingClientRect().top;
+    };
+    const [last, before] = [words.at(-1), words.at(-2)];
+    const breaks = /^pre/.test(getComputedStyle(last[0].parentElement).whiteSpace) && last[0].data.slice(before[2], last[1]).includes("\n");
+    if (last[0] === before[0] && !breaks && top(last) - top(before) > 4 * scale) {
+      problems.push(`a word alone on the last line: "${last[0].data.slice(last[1], last[2])}" in <${block.tagName.toLowerCase()}> ${block.textContent.trim().slice(0, 50)}`);
     }
   }
   return problems;

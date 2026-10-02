@@ -1,7 +1,8 @@
 # Logos
 
-Fetched 2026-10-01 from each organization's own domain, unmodified except `laval.svg` (below). Shown on the title,
-code and acknowledgment slides of an academic talk.
+Fetched 2026-10-01 from each organization's own domain, unmodified except `laval.svg` (below). Shown on the title
+and acknowledgment slides of an academic talk; the `framework-*` logos are for a slide on where CanViT runs, which the
+authors have not decided on (`../../PLAN.md`, "Decisions for the authors").
 
 | File | Organization | Source | Notes |
 |---|---|---|---|

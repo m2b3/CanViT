@@ -26,7 +26,7 @@ html, body { background: var(--bg); }
 .reveal h1 { font-size: 64px; font-weight: 800; line-height: 1.05; letter-spacing: -.03em; }
 .reveal h2 { font-size: 44px; font-weight: 750; line-height: 1.12; letter-spacing: -.025em; margin-bottom: 26px; }
 .reveal h3 { font-size: 30px; font-weight: 700; line-height: 1.2; letter-spacing: -.015em; }
-.reveal p, .reveal li { text-wrap: pretty; }
+.reveal p, .reveal li, .reveal dt, .reveal dd, .reveal figcaption { text-wrap: pretty; }
 .reveal p { margin: 0; }
 .reveal strong, .reveal b { font-weight: 700; color: var(--ink); }
 .reveal h2 .term-glimpse, .reveal h2 .term-canvas, .reveal h2 .term-policy { font-weight: inherit; }

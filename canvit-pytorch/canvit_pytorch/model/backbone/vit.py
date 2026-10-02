@@ -1,32 +1,13 @@
 """The ViT that processes each glimpse: DINOv3-style blocks with 2D RoPE and LayerScale."""
 
 import math
-from dataclasses import dataclass
 
 import torch
 import torch.nn.functional as F
+from canvit_core.backbone import ViTSpec
 from torch import Tensor, nn
 
 from canvit_pytorch.model.rope import RoPE, apply_2d_rope
-
-
-@dataclass(frozen=True)
-class ViTSpec:
-    embed_dim: int
-    num_heads: int
-    num_blocks: int
-    patch_size: int = 16
-    ffn_ratio: float = 4.0
-    rope_base: float = 100.0
-    layerscale_init: float = 1e-5
-
-    @property
-    def head_dim(self) -> int:
-        return self.embed_dim // self.num_heads
-
-    @property
-    def mlp_hidden_dim(self) -> int:
-        return int(self.embed_dim * self.ffn_ratio)
 
 
 class PatchEmbed(nn.Module):

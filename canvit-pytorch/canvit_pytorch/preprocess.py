@@ -1,10 +1,8 @@
 """ImageNet normalization, the input convention of CanViT and of its DINOv3 teacher."""
 
+from canvit_core.preprocess import IMAGENET_MEAN, IMAGENET_STD
 from torch import Tensor
 from torchvision import transforms
-
-IMAGENET_MEAN = (0.485, 0.456, 0.406)
-IMAGENET_STD = (0.229, 0.224, 0.225)
 
 
 def imagenet_normalize(image: Tensor) -> Tensor:

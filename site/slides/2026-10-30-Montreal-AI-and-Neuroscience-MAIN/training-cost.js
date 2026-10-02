@@ -1,8 +1,8 @@
 // The training-cost slide: each active model's best accuracy against its own training compute, one chart per
-// benchmark, from experiments/training_cost/export.py's JSON (the rebuttal's FLOP accounting: teachers and pretrained
-// weights counted on no side). A model is a point at its compute, or a bar across a range of counts when its code and
-// paper differ. CanViT-B is in canvas red, filled when fine-tuned and hollow when frozen with a linear probe, as on the
-// history charts.
+// benchmark, from experiments/training_cost/export.py's JSON (the rebuttal's FLOP accounting: a teacher's inference
+// counts; the training of the teachers and pretrained weights a model starts from does not). A model is a point at its
+// compute, or a bar across a range of counts when its code and paper differ. CanViT-B is in canvas red, filled when
+// fine-tuned and hollow when frozen with a linear probe, as on the history charts.
 
 const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 540, HEIGHT = 420;
@@ -57,7 +57,7 @@ function chart(container, benchmark, entries) {
     const cx = range ? (x(low) + x(high)) / 2 : x(low); // a range's point at its geometric mean
     el("circle", { cx, cy: vy, r: 8, class: ours && entry.readout.startsWith("frozen") ? "hollow" : "filled" }, group);
     const name = ours ? `${entry.model}, ${entry.readout.split(",")[0]}` : entry.model;
-    const note = entry.model === "AME" ? " + pretrained ViT-L" : "";
+    const note = entry.model === "AME" ? " + SETR's ADE20K ViT-L" : "";
     // Labels sit on the side of the plot with more room: left of the mark in the right half, right of it otherwise.
     const right = cx > (PLOT.left + PLOT.right) / 2;
     text(`${name} ${value}${note}`, { x: right ? x(low) - 14 : (range ? x(high) : cx) + 14, y: vy + 6,

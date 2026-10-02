@@ -65,14 +65,15 @@ template.innerHTML = `
   .focus circle { fill: #fff; stroke-width: 2.5; }
   .reveal { transition: width 1.4s cubic-bezier(.3, .6, .2, 1); }
   .enter { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw-in 1.2s ease forwards; }
-  .enter-fade { opacity: 0; animation: fade-in .6s ease .5s forwards; }
+  /* Fades in to the element's own opacity (a band's is .15): the animation sets only where it starts. */
+  .enter-fade { animation: fade-in .6s ease .5s backwards; }
   @keyframes draw-in { to { stroke-dashoffset: 0; } }
-  @keyframes fade-in { to { opacity: 1; } }
+  @keyframes fade-in { from { opacity: 0; } }
   .tooltip { position: absolute; pointer-events: none; padding: 7px 10px; border-radius: 8px; background: var(--canvit-ink, #0f172a);
              color: #fff; font-size: 13.5px; line-height: 1.45; white-space: nowrap; transform: translate(-50%, calc(-100% - 12px)); }
   .tooltip b { font-weight: 650; }
   [hidden] { display: none !important; }
-  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } .enter, .enter-fade { animation: none; stroke-dashoffset: 0; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } .enter, .enter-fade { animation: none; stroke-dashoffset: 0; } }
 </style>
 <div class="frame"><svg class="chart" role="img"></svg><div class="tooltip" hidden></div></div>
 <div class="legend"></div>`;

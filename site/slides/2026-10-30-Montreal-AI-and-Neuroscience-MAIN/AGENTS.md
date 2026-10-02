@@ -150,10 +150,10 @@ transcript and Yohaï's requests, 2026-10-01; to be confirmed by the authors]:
   [Yohaï, 2026-10-01: "'amodal completion' can be a great keyword no? think of great keywords and concepts and things
   to link to that I MIGHT NOT HAVE IN MIND or EVEN KNOW"].
 - **Metacognition**: the model's own uncertainty about what is where, which a policy (EG-C2F) uses to choose where to
-  look (`#policies`) [Yohaï, 2026-10-01: "a keyword i really want to see emphasized on the policy stuff, particularly
+  look (`#uncertainty`; measured in Backup, `#calibration`) [Yohaï, 2026-10-01: "a keyword i really want to see emphasized on the policy stuff, particularly
   EG-C2F, is the idea of metacognition"].
 - **Order matters**: C2F against F2C, same views; what was seen changes how the next view is processed (top-down
-  feedback) (`#policies`) [Yohaï, 2026-10-01: "that IS a good point"].
+  feedback) (`#policy-accuracy`, `#neuro-ai`) [Yohaï, 2026-10-01: "that IS a good point"].
 - **Foundation model, cheap to use**: trained once, adapted with a linear layer; what it costs to train and to run
   (`#frontier`, `#quickstart`).
 

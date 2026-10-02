@@ -32,7 +32,7 @@ const ACTIVE = [
   { model: /^Saccader/, name: "Saccader", dx: -16, dy: 8, anchor: "end" },
   { model: /^GFNet/, name: "GFNet", dx: -16, dy: 8, anchor: "end" },
   { model: /^AdaGlimpse/, name: "AdaGlimpse", dx: 0, dy: 34, anchor: "middle" },
-  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: -10, dy: 30, anchor: "end" },
+  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: -16, dy: 8, anchor: "end" },
   { model: /^AME/, name: "AME", dx: 0, dy: 34, anchor: "middle" },
 ];
 
@@ -86,6 +86,9 @@ function draw(container, data, macros) {
   const passive = frontier(points.filter((p) => base(p) && p.series !== "frozen_ssl" && !FLAGGED.has(p.model)));
   const frozen = frontier(points.filter((p) => base(p) && p.series === "frozen_ssl" && p.protocol !== "linear probe + ms"));
   const passiveTop = passive.at(-1).value, frozenTop = frozen.at(-1).value;
+  // CanViT-B's points go under the lines, so a line's last step at CanViT's date (on ImageNet-1k, its own teacher
+  // probed by the paper) stays visible across them.
+  const canvitPoints = el("g", { class: "canvit" }, svg);
   const passiveGroup = el("g", { class: "passive" }, svg);
   el("path", { d: step(passive), class: "line" }, passiveGroup);
   // Each line named at its end; "Passive" heads the two, above the upper one.
@@ -136,7 +139,7 @@ function draw(container, data, macros) {
       const ly = Math.max(py + 7, floor + 28);
       floor = ly;
       el("path", { d: `M${px + 14},${py}L${labelX - 8},${ly - 7}`, class: "leader" }, canvit);
-      el("circle", { cx: px, cy: py, r: 12, class: filled ? "filled" : "hollow" }, canvit);
+      el("circle", { cx: px, cy: py, r: 12, class: filled ? "filled" : "hollow" }, canvitPoints);
       text(`${label} ${value}`, { x: labelX, y: ly, class: "label" }, canvit);
     }
     const compared = values.filter((v) => v.compared);

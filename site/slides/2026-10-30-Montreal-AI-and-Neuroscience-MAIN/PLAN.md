@@ -211,6 +211,31 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   `#uncertainty`; amodal completion and boundary extension on `#table` and `#extrapolation`; as keywords and a backup
   slide with their figures. S.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
+- Open from the second cold read (2026-10-01, a fresh subagent; its fixed defects are in git history), for the
+  authors:
+  - `#distillation`: the "Target" row does not say it is DINOv3 seeing the whole scene (the row labels are Yohaï's);
+    a label or a scene → DINOv3 column would.
+  - `#tradition`: Felleman & Van Essen's hierarchy is illegible at its size; the Yamins et al. panel has no x-axis
+    title (`assets/figures/PROVENANCE.md` asks to restate it on the slide).
+  - `#detail`: the scene keeps a source watermark; in the loupe state, "CanViT's input, 128 px" shows a magnified crop
+    of the input.
+  - Subtext: `#cost`'s subtitle restates its axes; `#calibration`'s and `#teacher`'s subtitles are conditions lines.
+    `#cost`'s line on what is not counted stays on screen: without it the chart misleads.
+  - Conventions: viewpoints are (x, y, scale) on `#distillation` and (row, col) in `#quickstart`'s code; components
+    count glimpses from t = 0, `#distillation` and the charts from glimpse 1; `#architecture`'s "after write 1, 2, 3"
+    are the paper's Write 0, 1, 2.
+  - `#architecture`'s title colors "Vision Transformer" in glimpse blue; the drawing paints it purple.
+  - `#rollout`: empty bands above and below the card; DINOv3's heading outweighs CanViT's panel; the canvas shows
+    classes beyond the five named.
+  - `#history`: the ImageNet-1k base-size line counts 144-crop ensembles (BN-Inception, Inception-v3) as base by
+    summing members; the two dashed lines probe DINOv3 ViT-B by different protocols (the paper's on ImageNet-1k,
+    DINOv3's on ADE20K); the ADE20K axis runs 10 to 70 with no data below 22.7.
+  - `#neuro-ai`: EG-C2F at t = 5 (one box and a quadrant grid) beside Yarbus's dense record invites "the policy looks
+    nothing like a scanpath".
+  - `#results`' notes quote the paper's "by a wide margin" for both benchmarks; on ImageNet-1k it is +2.3 fine-tuned,
+    and frozen CanViT-B is below AdaptiveNN.
+  - `#title` names the venue twice (the NeurIPS logo and "NeurIPS 2026"). Backup: `#live` gives entropy as "log 150"
+    without its base; `#canvas-attention` keeps the paper's panel letter "A".
 - Independent reviews of `OUTLINE.md` (a fresh subagent; `codex exec -m gpt-6-astra`), then the authors'. S.
 
 ## Known issues
@@ -218,8 +243,15 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - `#live` (Backup): shrunk with `zoom: .8`.
 - Segmentation colors differ between slides: the components (`#rollout`, `#policies`, `#live`) use the standard
   ADE20K palette (`../../js/canvit/ade20k.js`); `#extrapolation` uses canvit-pytorch's random `LABEL_COLORS`
-  (`specialize.ade20k.figures`), in which ceiling is nearly glimpse blue; `#history` and `#quickstart` give Tableau
-  colors by area, so the names written on regions stay legible. One palette for the talk is the authors' call.
+  (`specialize.ade20k.figures`), in which floor and ceiling are two blues close to glimpse blue; `#history` and
+  `#quickstart` give Tableau colors by area, so the names written on regions stay legible. One palette for the talk is
+  the authors' call.
+- Other colors change meaning between slides (second cold read, 2026-10-01): amber is every prior active model on
+  `#history`, `#results` and `#cost`, but AME alone on `#timeline`'s legend, and R-IID's orange sits between them; the
+  paper's C2F blue and F2C red are close to glimpse blue and canvas red (on `#neuro-ai`, a blue C2F and a red F2C
+  line in the blue card beside the red one); CanViT-B is canvas red on `#results` and `#cost`; the prior models are
+  amber dots on `#cost` and other shapes and colors on `#frontier`. The authors choose between the paper's policy
+  colors and talk-wide meanings.
 
 ## Experiments and exports
 

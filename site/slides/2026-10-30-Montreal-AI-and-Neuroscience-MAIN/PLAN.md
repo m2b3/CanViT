@@ -96,13 +96,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   (RFS aside), the ADE20K ones 3 points apart and still rising. "Matter much more for ADE20K" holds for the end of
   the rollouts and for C2F against the random policies (the paper's framing), not for the first glimpses.
 - [Yohaï, 2026-10-01] "you should also think of what needs to be introduced/highlighted when, when a concept first
-  occurs on screen or must be spoken, etc. this is very important." First pass done 2026-10-01 on the notes: each of
-  these is now said where it first occurs: ImageNet, passive vision (`#tradition`); glimpse, DINOv3 announced
-  (`#table`); ADE20K (`#foundation`); Vision Transformer, the canvas as one vector per region, its 32 × 32 and
-  64 × 64 grids (`#architecture`); distillation, dense, latent (`#distillation`); R-IID and F-IID by name, later
-  policies not named early (`#distillation`'s notes, `#policies`); fine-tuning, the same linear readout (`#results`); FLOPs
-  (`#frontier`). On screen, still open: `#architecture` shows the paper's figure with CLS, VPE and register tokens the
-  talk never names (a two-stream drawing, under "Decisions for the authors").
+  occurs on screen or must be spoken, etc. this is very important." Done on the notes (2026-10-01): each term is said
+  where it first occurs: ImageNet, passive vision (`#tradition`); glimpse, DINOv3 announced (`#table`); ADE20K
+  (`#history`, named on `#foundation` before it); the Vision Transformer, the canvas grids (`#architecture`); R-IID and
+  F-IID (`#distillation`'s notes), the other policies (`#policies`); fine-tuning (`#results`); FLOPs (`#cost`). Open: a
+  pass over what each slide shows on screen before the speaker names it.
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:
   Aborted(InternalError: out of memory)". Measured on 2026-10-01 in headless Chromium (`throwaway/live_memory.py`,
   `slide_memory.py`, `live_wasm.py`): the deck with no slide 376 MB RSS; every slide without the model 1.46 GB (static

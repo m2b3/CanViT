@@ -58,8 +58,8 @@
     <li>Fukushima 1980: the Neocognitron.</li>
     <li>Felleman &amp; Van Essen 1991: the hierarchy of visual areas.</li>
     <li>Yamins et al. 2014: better at recognizing objects, better at predicting IT.</li>
-    <li>Brain-Score: Schrimpf et al. 2018.</li>
-    <li>The networks see the whole image, all at once.</li>
+    <li>Brain-Score: Schrimpf et al. 2018. ImageNet: photos labeled with 1,000 object classes.</li>
+    <li>The networks see the whole image, all at once: passive vision.</li>
   </ul></aside>
 </section>
 
@@ -112,7 +112,8 @@
   <span class="fragment step-marker" data-shows="answer-near"></span>
   <span class="fragment step-marker" data-shows="gap"></span>
   <aside class="notes"><ul>
-    <li>DINOv3 on each glimpse alone, pasted back where the glimpse was taken: p(table).</li>
+    <li>Glimpse: a crop of the scene, all the model sees at a time.</li>
+    <li>DINOv3 (next slide) on each glimpse alone, pasted back where the glimpse was taken: p(table).</li>
     <li>The space in between: no clue.</li>
     <li>A smart observer should infer that the table extends between them.</li>
   </ul></aside>
@@ -564,6 +565,7 @@
   <p class="counted">Teachers and pretrained weights are not counted, on any side.</p>
   <span class="fragment step-marker" data-shows="ade20k"></span>
   <aside class="notes"><ul>
+    <li>FLOPs: floating-point operations, the compute spent. EFLOPs: 10<sup>18</sup>.</li>
     <li>Own training only; teachers and inherited weights not counted.</li>
     <li>CanViT-B: pretraining 52.5 EFLOPs + teacher features 2.8; ImageNet-1k fine-tuning 4.8; ADE20K probe 0.16.</li>
     <li>AdaGlimpse: 63 to 145 (ImageNet-1k), 84 to 167 (ADE20K): glimpses per image in its code vs in its paper.</li>

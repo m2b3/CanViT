@@ -75,12 +75,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
   scheme is still not great not great at all". Labels redone 2026-10-01 (no key; each passive line named at its end
   under one "Passive" heading, "linear decoding"; active models named at their points over "Active models"); awaiting
-  the authors' look. Codex (gpt-6-astra) audited the data
-  against primary sources (brief and outputs in `throwaway/history-audit/`) until the disk filled: REPORT.md covers
-  missing fields and the active entries; its sections on unverified leads and missing records are empty. Its seven
-  proposals (proposed_points.json) only fill fields from official code (test resolutions of SimCLR, MoCo v3, EsViT,
-  GFNet; DPT-Hybrid 98.2M parameters, base; Prisadnikov ViT-S size unknown); none changes a base-size line. To check
-  and merge; relaunch codex for leads and missing records once the disk has room.
+  the authors' look. Codex (gpt-6-astra) audited the data against primary sources until the disk filled: its
+  report covers missing fields and the active entries; its sections on unverified leads and missing records are
+  empty. Its seven field fills from official code were merged into `sources/sota-history.json` on 2026-10-01 (test
+  resolutions of SimCLR, MoCo v3, EsViT and two GFNets; DPT-Hybrid 98.2M parameters; Prisadnikov's size unknown);
+  none moves a drawn line. Open: relaunch it for leads and missing records.
 - [Yohaï, 2026-10-01] `#table`: "we're missing some kind of explanation of what the hell the colors correspond to...
   labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
   yet." Done 2026-10-01: DINOv3's probability of table per glimpse, with a 0-to-1 scale; `#extrapolation` uses the

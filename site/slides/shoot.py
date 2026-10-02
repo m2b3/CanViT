@@ -9,7 +9,9 @@
         --out site/.screens/main-2026
 
 Writes NN-<slide id>.png (with --steps, one image per click) and errors.txt into --out; exits with status 1 when the page logged an error or a slide is
-missing an id. Animations are captured after --wait-ms on each slide.
+missing an id. Animations are captured after --wait-ms on each slide. Layout problems on each captured state (a title
+that wraps, visible content in the footer band) go to layout.txt and are printed, without changing the exit status:
+some titles wrap by design.
 """
 
 import asyncio
@@ -18,7 +20,45 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import tyro
-from playwright.async_api import ConsoleMessage, async_playwright
+from playwright.async_api import ConsoleMessage, Page, async_playwright
+
+FOOTER_TOP_PX = 676  # the footer band of the 1280 x 720 slide: the talk's name and the slide number
+# The current slide's layout problems, in slide pixels: its title wrapping, and the visible leaves (images, canvases,
+# SVGs, text without child elements) whose bottom enters the footer band. Visible: displayed, not hidden, and every
+# ancestor up to the slide with nonzero opacity; an ancestor that clips its overflow cuts the bottom at its own.
+LAYOUT_PROBLEMS_JS = """([footerTop]) => {
+  const slide = deck.getCurrentSlide(), scale = deck.getScale();
+  const origin = document.querySelector(".reveal .slides").getBoundingClientRect().top;
+  const problems = [];
+  const title = slide.querySelector("h2");
+  if (title && title.getBoundingClientRect().height / scale > 1.5 * parseFloat(getComputedStyle(title).lineHeight)) {
+    problems.push(`title wraps: "${title.textContent.trim()}"`);
+  }
+  const visible = (el) => {
+    for (let node = el; node && node !== slide.parentElement; node = node.parentElement) {
+      const style = getComputedStyle(node);
+      if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) < 0.05) return false;
+    }
+    return true;
+  };
+  for (const el of slide.querySelectorAll("img, canvas, svg, :not(svg *):not(:has(*))")) {
+    if (el.closest("aside.notes, .step-marker") || !el.getClientRects().length) continue;
+    const box = el.getBoundingClientRect();
+    let clipped = box.bottom;
+    for (let node = el.parentElement; node && node !== slide.parentElement; node = node.parentElement) {
+      if (getComputedStyle(node).overflowY !== "visible") clipped = Math.min(clipped, node.getBoundingClientRect().bottom);
+    }
+    const bottom = (clipped - origin) / scale;
+    if (box.height > 0 && bottom > footerTop + 1 && visible(el)) {
+      problems.push(`in the footer band (bottom ${Math.round(bottom)} px): <${el.tagName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().replace(/\s+/g, ".") : ""}> ${(el.textContent || "").trim().slice(0, 40)}`);
+    }
+  }
+  return problems;
+}"""
+
+
+async def layout_problems(page: Page) -> list[str]:
+    return await page.evaluate(LAYOUT_PROBLEMS_JS, [FOOTER_TOP_PX])
 
 
 @dataclass(frozen=True)
@@ -39,6 +79,7 @@ class Shoot:
 async def shoot(args: Shoot) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     errors: list[str] = []
+    layout: list[str] = []
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch(channel="chrome", args=["--enable-unsafe-webgpu"])
         page = await browser.new_page(viewport={"width": 1280, "height": 720}, device_scale_factor=args.scale)
@@ -70,6 +111,7 @@ async def shoot(args: Shoot) -> int:
                     path = args.out / f"{index + 1:02d}-{slide_id}-{step:02d}.png"
                     await page.screenshot(path=path)
                     print(f"{path}", flush=True)
+                    layout += [f"[{slide_id} step {step}] {p}" for p in await layout_problems(page)]
                     if not await page.evaluate("deck.nextFragment()"):
                         break
                     step += 1
@@ -78,7 +120,11 @@ async def shoot(args: Shoot) -> int:
             path = args.out / f"{index + 1:02d}-{slide_id}.png"
             await page.screenshot(path=path)
             print(f"{path}", flush=True)
+            layout += [f"[{slide_id}] {p}" for p in await layout_problems(page)]
         await browser.close()
+    (args.out / "layout.txt").write_text("".join(f"{line}\n" for line in layout))
+    for line in layout:
+        print(f"layout: {line}", file=sys.stderr)
     (args.out / "errors.txt").write_text("".join(f"{e}\n" for e in errors))
     for error in errors:
         print(error, file=sys.stderr)

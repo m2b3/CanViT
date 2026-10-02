@@ -31,14 +31,14 @@
 #tradition figcaption b, #tradition figcaption .cite { display: block; }
 
 /* First a foveated street (foveate.js), then Yarbus's records in its place. */
-#human-vision .stage { position: relative; }
-#human-vision .foveation { position: absolute; left: 50%; top: 0; width: 520px; transform: translateX(-50%);
+#human-vision .views { position: relative; }
+#human-vision .foveation { position: absolute; left: 50%; top: 0; width: 516px; transform: translateX(-50%);
   transition: opacity .6s ease; }
 #human-vision.shows-yarbus .foveation { opacity: 0; }
 #human-vision .yarbus, #human-vision .cite { opacity: 0; transition: opacity .6s ease .3s; }
 #human-vision.shows-yarbus .yarbus, #human-vision.shows-yarbus .cite { opacity: 1; }
 #human-vision .yarbus { display: flex; justify-content: center; align-items: flex-end; gap: 64px; }
-#human-vision .yarbus img { height: 520px; width: auto; }
+#human-vision .yarbus img { height: 516px; width: auto; }
 #human-vision .cite { margin-top: 10px; text-align: center; }
 
 foveated-scene { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: 10px;

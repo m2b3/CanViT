@@ -30,9 +30,27 @@
 #tradition figcaption { margin-top: 8px; text-align: center; font-size: 18px; line-height: 1.3; }
 #tradition figcaption b, #tradition figcaption .cite { display: block; }
 
+/* First a foveated street (foveate.js), then Yarbus's records in its place. */
+#human-vision .stage { position: relative; }
+#human-vision .foveation { position: absolute; left: 50%; top: 0; width: 520px; transform: translateX(-50%);
+  transition: opacity .6s ease; }
+#human-vision.shows-yarbus .foveation { opacity: 0; }
+#human-vision .yarbus, #human-vision .cite { opacity: 0; transition: opacity .6s ease .3s; }
+#human-vision.shows-yarbus .yarbus, #human-vision.shows-yarbus .cite { opacity: 1; }
 #human-vision .yarbus { display: flex; justify-content: center; align-items: flex-end; gap: 64px; }
 #human-vision .yarbus img { height: 520px; width: auto; }
 #human-vision .cite { margin-top: 10px; text-align: center; }
+
+foveated-scene { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: 10px;
+  container-type: inline-size; transition: --fx 70ms ease-in-out, --fy 70ms ease-in-out; }
+foveated-scene img { position: absolute; inset: 0; width: 100%; height: 100%; filter: blur(calc(var(--blur) * 100cqw)); }
+/* Blurring spreads the image past its edges; the scale keeps the blurred layers' borders outside the frame. */
+foveated-scene img:first-child { transform: scale(1.06); }
+foveated-scene img.masked {
+  mask-image: radial-gradient(circle at var(--fx) var(--fy), #000 calc(var(--inner) * var(--fovea) * 100cqw),
+                              transparent calc(var(--outer) * var(--fovea) * 100cqw)); }
+foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); width: 14px; height: 14px;
+  margin: -7px 0 0 -7px; border-radius: 50%; border: 2.5px solid #fff; box-shadow: 0 0 0 1.5px rgb(0 0 0 / .45); }
 
 /* Each glimpse's answer is the map clipped to its box (--top, --left, --size from table.js); it appears over its glimpse
    on the photograph, one figure width and gap to the left, then flies to its place in the map. */

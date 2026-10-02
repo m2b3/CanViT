@@ -32,12 +32,14 @@ yet reviewed by the authors.
 
 ### Human vision is fundamentally active
 - **Title:** the UNIQUE application.
-- **Shows:** Yarbus 1967: an observer's scanpath over a face; the same painting under seven instructions.
+- **Shows:** first the street of the later slides, sharp only around a fixation that jumps from point to point,
+  blurrier with eccentricity (`<foveated-scene>`, `foveate.js`; the fixations chosen by hand, an illustration); then
+  Yarbus 1967 in its place: an observer's scanpath over a face; the same painting under seven instructions.
 - **Says:** "We have sharp central vision and blurry peripheral vision." We shift our gaze several times per second
   toward what matters, and where we look depends on what we are trying to do. It is sequential: strategic planning,
   evidence integrated across fixations in visual working memory, top-down recurrent feedback (the paper's three
   points and citations).
-- **Status:** ready. TODO (`PLAN.md`): a foveated scene, the fixation moving.
+- **Status:** ready.
 
 ## Knowledge of the world
 

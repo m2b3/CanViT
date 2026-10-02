@@ -65,13 +65,18 @@
 
 <section id="human-vision" data-status="ready">
   <h2>Human vision is fundamentally active</h2>
+  <!-- An illustration of foveation on the street of the later slides: the fixations were chosen by hand, not recorded. -->
+  <div class="stage">
+  <div class="foveation"><foveated-scene data-play src="../../data/street-riid/scene.png" alt="A street, sharp only around the point being looked at" fovea="0.1" fixations="0.08 0.57, 0.36 0.63, 0.12 0.41, 0.39 0.19, 0.8 0.62, 0.93 0.66, 0.38 0.49"></foveated-scene></div>
   <div class="yarbus">
     <figure><img src="assets/figures/yarbus-1967-face.png" alt="A photograph of a face and the record of an observer's eye movements over it"></figure>
-    <figure class="fragment"><img src="assets/yarbus-the-visitor.jpg" alt="One observer's eye movements over Repin's painting The Unexpected Visitor under seven different instructions"></figure>
+    <figure class="fragment" data-fragment-index="1"><img src="assets/yarbus-the-visitor.jpg" alt="One observer's eye movements over Repin's painting The Unexpected Visitor under seven different instructions"></figure>
+  </div>
   </div>
   <p class="cite">Yarbus 1967, <i>Eye Movements and Vision</i></p>
+  <span class="fragment step-marker" data-fragment-index="0" data-shows="yarbus"></span>
   <aside class="notes"><ul>
-    <li>Sharp central vision, blurry peripheral vision; we move our eyes.</li>
+    <li>Sharp central vision, blurry peripheral vision; we move our eyes. The street: an illustration, fixations chosen by hand.</li>
     <li>Yarbus 1967: the face; the same painting, different instructions, different scanpaths.</li>
     <li>Paper: sequential; strategic planning; integration across time in visual working memory; top-down recurrent feedback.</li>
   </ul></aside>
@@ -795,6 +800,7 @@
   import "../../js/canvit/frontier.js";
   import "../../js/canvit/policy-curves.js";
   import "./pretraining-rollout.js";
+  import "./foveate.js";
   import { drawHistoryCharts } from "./history.js";
   import { drawTimeline } from "./timeline.js";
   import { drawMapNames } from "./labeled-map.js";

@@ -232,7 +232,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 | Item | Slides | Diff. | Status |
 |---|---|---|---|
 | `shoot.py` checks: titles that wrap, content in the footer band (below 676 px), single words alone on a last line | all | S | todo |
-| `<canvit-foveate>`: glimpses jumping over a periphery blurred by eccentricity, which fades to nothing on a click | `#human-vision`, `#rollout` | M | todo |
+| A periphery that fades to nothing on a click, from blurry to unseen (`<foveated-scene>` on `#human-vision` has the blur): "a world of difference between seeing something blurry and seeing nothing at all" | `#rollout` | S | todo |
 | `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
 | The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |
 | `<canvit-live>` laid out for a slide; one model session for every live slide | `#live` | M | todo |

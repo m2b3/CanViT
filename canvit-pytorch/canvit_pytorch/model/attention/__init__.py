@@ -5,14 +5,12 @@ glimpse. The canvas side gets no learned projection (only LayerNorm and RoPE),
 so the cost of a Read/Write pair grows linearly with the number of canvas tokens.
 """
 
-from typing import Literal
+from canvit_core.config import CanvasProjections
 
 from canvit_pytorch.model.attention.base import CanvasAttention
 from canvit_pytorch.model.attention.qkvo import CanvasAttentionReadQKVO, CanvasAttentionWriteQKVO
 from canvit_pytorch.model.attention.read import CanvasAttentionRead
 from canvit_pytorch.model.attention.write import CanvasAttentionWrite
-
-CanvasProjections = Literal["asymmetric", "qkvo"]
 
 CANVAS_ATTENTION_CLASSES: dict[CanvasProjections, tuple[type[CanvasAttention], type[CanvasAttention]]] = {
     "asymmetric": (CanvasAttentionRead, CanvasAttentionWrite),

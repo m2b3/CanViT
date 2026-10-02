@@ -5,21 +5,23 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["canvit_pytorch"]
 
+[tool.hatch.build.hooks.custom]
+path = "license_build.py"
+
 [tool.hatch.build.targets.sdist]
-exclude = ["*.pt", "*.pt.bak", "*.pth", "test_data/", "slurm/", "tpu/"]
+exclude = ["*.pt", "*.pt.bak", "*.pth", "test_data/", "slurm/", "tpu/", "license_build.py"]
 
 # The license text is the repository's LICENSE; the sdist carries a copy, from which the wheel takes it.
 [tool.hatch.build.targets.sdist.force-include]
-"../LICENSE" = "LICENSE"
+"../tools/license_build.py" = "license_build.py"
 
 [project]
 name = "canvit-pytorch"
-# 0.1.10 is the last PyPI release; this development version adds the
-# pretrain, specialize and evaluate subpackages.
-version = "0.2.0"
+version = "0.2.1"
 description = "CanViT (Canvas Vision Transformer): model, pretraining, task specialization and evaluation"
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Yohaï-Eliel Berreby", email = "me@yberreby.com" },
     { name = "Sabrina Du", email = "sabrina.du@mail.mcgill.ca" }
@@ -42,6 +44,7 @@ dependencies = [
     "torch>=2.14.0; sys_platform == 'darwin'",
     "torchvision>=0.22.0",
     "safetensors>=0.7.0",
+    "canvit-core>=0.2.0",
 ]
 
 [project.urls]
@@ -116,6 +119,7 @@ dinov3 = { git = "https://github.com/facebookresearch/dinov3.git", rev = "54694f
 # macOS takes PyPI wheels (MPS).
 torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
 torchvision = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
+canvit-core = { path = "../canvit-core", editable = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

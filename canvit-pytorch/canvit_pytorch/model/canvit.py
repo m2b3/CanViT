@@ -4,6 +4,7 @@ import math
 from dataclasses import dataclass
 
 import torch
+from canvit_core.attention import canvas_attention_schedule
 from torch import Tensor, nn
 
 from canvit_pytorch.model.attention import CANVAS_ATTENTION_CLASSES
@@ -30,22 +31,6 @@ class CanViTOutput:
     state: RecurrentState
     glimpse_patches: Tensor  # [B, g*g, backbone_dim]: backbone patch tokens after the last block
     vpe: Tensor | None  # [B, backbone_dim]: the VPE token after the last block
-
-
-def canvas_attention_schedule(
-    *, num_blocks: int, rw_stride: int, enable_reads: bool,
-) -> tuple[tuple[int, ...], tuple[int, ...]]:
-    """Indices of the backbone blocks followed by a Canvas Attention Read, and by a Write.
-
-    Every rw_stride blocks comes one operation, alternating Read and Write and
-    starting with a Read; the last block is always followed by a Write. Disabling
-    reads leaves the Write positions unchanged.
-    """
-    positions = list(range(rw_stride - 1, num_blocks, rw_stride))
-    read_after_blocks, write_after_blocks = positions[0::2], positions[1::2]
-    if not write_after_blocks or write_after_blocks[-1] != num_blocks - 1:
-        write_after_blocks.append(num_blocks - 1)
-    return (tuple(read_after_blocks) if enable_reads else ()), tuple(write_after_blocks)
 
 
 class CanViT(nn.Module):

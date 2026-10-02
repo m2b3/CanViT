@@ -15,7 +15,8 @@ and operate software.
 ## Layout
 
 - `canvit-pytorch/`: the Python distribution `canvit-pytorch` (import
-  `canvit_pytorch`). The model lives at the package top level; subsystems are
+  `canvit_pytorch`). Public model classes are exported at the package top
+  level and implemented in `.model`; subsystems are
   verbs: `canvit_pytorch.pretrain`, `.specialize` (probes, fine-tuning),
   `.evaluate` (benchmarks), `.viz` (recorded rollouts and viewpoint paths
   for the page and slides, and the model exported to run in the browser). Docs in
@@ -26,6 +27,7 @@ and operate software.
   model concepts and channels-last images. Each has its own uv environment.
 - `canvit-core/`: framework-independent architecture definitions and shared
   checkpoint and preprocessing code. Backend packages depend on it.
+- `canvit/`: the PyPI placeholder linking to the backend packages and homepage.
 - `tests/backends/`: cross-framework contract tests; checkpoint conversion
   commands live in `tools/`.
 - `site/`: the project page, published to https://m2b3.github.io/CanViT/ by
@@ -36,8 +38,8 @@ and operate software.
 - `paper/`: the NeurIPS 2026 paper. `paper/latex/` holds its sources, `paper/exports/` the figures and data
   they read, `paper/exporter/` the pipeline that writes them from evaluation results (a uv project that
   depends on `canvit-pytorch/`). `paper/AGENTS.md` holds the paper's conventions.
-- `.github/workflows/release.yml`: PyPI release of `canvit-pytorch` on `v*`
-  tags.
+- `.github/workflows/release.yml`: PyPI releases use
+  `<package>-v<version>` tags matching the package's `pyproject.toml`.
 
 A fact, constant or URL lives in one place and everything else points to it.
 
@@ -64,6 +66,8 @@ neither use nor reference. The released checkpoints and
 the demos built on them count as uses; git history keeps what is removed.
 
 ## Design
+
+Fight inconsistencies.
 
 Aim for code that is obviously correct from its structure, not merely code
 with no obvious defects. Types, names and assertions should carry as much of
@@ -152,6 +156,7 @@ spelling.
 - Write plain, direct prose. Fix false claims immediately. Avoid unsupported
   guarantees, invented distinctions, stale counts and copied defaults. Keep
   historical explanations in commit messages.
+- Do not add AI rewrite markers or original-text preservation blocks to documentation.
 - Say what a thing is and does; never praise its design. Phrases like "the
   one source of", "single source of truth", "the canonical", "the one loop"
   in docstrings, comments or docs are self-congratulation, not information.
@@ -185,6 +190,7 @@ spelling.
   MORE SPECIFIC THAN IT HAS TO BE."].
 - Test interfaces as a user meets them: a fresh process, the installed
   package outside this checkout, released checkpoints from the Hub.
+- Usage examples load pretrained checkpoints from Hugging Face.
 
 ## Working method
 
@@ -229,8 +235,8 @@ spelling.
   brittle ones (pinning internals) go.
 - Review beyond the initial checklist: read the complete changed path for
   contradictions, missing prerequisites and assumptions.
-- Fix the in-scope instances of a reported defect and the design that produces
-  them.
+- Fix issues as you find them, including other in-scope instances and the
+  design that produces them.
 - Record enduring rules here at the level they apply; keep specific
   constraints beside the code they constrain.
 
@@ -260,6 +266,7 @@ uv run just            # lint, typecheck, test
   the compiled wrapper.
 - Numbers reported anywhere (README, site, papers) come from saved evaluation
   outputs, never typed by hand.
+- The paper is accepted; anonymization is no longer needed.
 
 ## Git
 

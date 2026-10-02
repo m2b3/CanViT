@@ -10,8 +10,8 @@
 
 Writes NN-<slide id>.png (with --steps, one image per click) and errors.txt into --out; exits with status 1 when the page logged an error or a slide is
 missing an id. Animations are captured after --wait-ms on each slide. Layout problems on each captured state (a title
-that wraps, visible content in the footer band, a word alone on the last line of a text block) go to layout.txt and
-are printed, without changing the exit status: some titles wrap by design.
+that wraps, visible content in the footer band, a word alone on the last line of a text block, text blocks that
+overlap) go to layout.txt and are printed, without changing the exit status: some titles wrap by design.
 """
 
 import asyncio
@@ -27,8 +27,9 @@ FOOTER_TOP_PX = 676  # the footer band of the 1280 x 720 slide: the talk's name 
 # text without child elements) whose bottom enters the footer band; and visible text blocks whose last line holds a
 # single word, found by comparing the line boxes of their last two words when one text node holds both and no
 # preserved line break separates them (words in separate elements, such as a label and its name, are often on
-# separate lines by design). Visible: displayed, not hidden, and every ancestor up to the slide with nonzero opacity;
-# an ancestor that clips its overflow cuts the bottom at its own.
+# separate lines by design); and visible text blocks whose text overlaps another's (neither inside the other).
+# Visible: displayed, not hidden, and every ancestor up to the slide with nonzero opacity; an ancestor that clips its
+# overflow cuts the bottom at its own.
 LAYOUT_PROBLEMS_JS = r"""([footerTop]) => {
   const slide = deck.getCurrentSlide(), scale = deck.getScale();
   const origin = document.querySelector(".reveal .slides").getBoundingClientRect().top;
@@ -56,8 +57,27 @@ LAYOUT_PROBLEMS_JS = r"""([footerTop]) => {
       problems.push(`in the footer band (bottom ${Math.round(bottom)} px): <${el.tagName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().replace(/\s+/g, ".") : ""}> ${(el.textContent || "").trim().slice(0, 40)}`);
     }
   }
-  for (const block of slide.querySelectorAll("h2, h3, p, figcaption, li, dt, dd")) {
-    if (block.closest("aside.notes") || !block.getClientRects().length || !visible(block)) continue;
+  const blocks = [...slide.querySelectorAll("h2, h3, p, figcaption, li, dt, dd")]
+    .filter((block) => !block.closest("aside.notes") && block.getClientRects().length && visible(block));
+  // A block's text extent: the union of its text's line boxes, narrower than the block itself.
+  const textBox = (block) => {
+    const range = document.createRange();
+    range.selectNodeContents(block);
+    const rects = [...range.getClientRects()].filter((r) => r.width > 0 && r.height > 0);
+    if (!rects.length) return null;
+    return { left: Math.min(...rects.map((r) => r.left)), right: Math.max(...rects.map((r) => r.right)),
+             top: Math.min(...rects.map((r) => r.top)), bottom: Math.max(...rects.map((r) => r.bottom)) };
+  };
+  const boxes = blocks.map(textBox);
+  for (let i = 0; i < blocks.length; i++) {
+    for (let j = i + 1; j < blocks.length; j++) {
+      const [a, b] = [boxes[i], boxes[j]];
+      if (!a || !b || blocks[i].contains(blocks[j]) || blocks[j].contains(blocks[i])) continue;
+      const overlap = Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2;
+      if (overlap) problems.push(`text overlaps: "${blocks[i].textContent.trim().slice(0, 40)}" and "${blocks[j].textContent.trim().slice(0, 40)}"`);
+    }
+  }
+  for (const block of blocks) {
     const words = [];
     const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {

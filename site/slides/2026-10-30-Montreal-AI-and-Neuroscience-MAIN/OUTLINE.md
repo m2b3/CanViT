@@ -62,7 +62,7 @@ yet reviewed by the authors.
 - **Shows:** a living room; DINOv3 ViT-B's patch features as colors (principal components 2 to 4, nearest neighbor);
   then the features small, with arrows to the probabilities of television, fireplace and armchair that a linear
   probe decodes from them; last, how much went into DINOv3: 1.7 billion training images, no labels; 6.7 billion
-  parameters in the 7B model this ViT-B is distilled from; 61,440 H100-hours to train the 7B model (arXiv:2508.10104:
+  parameters in the 7B model it was distilled from; 61,440 H100-hours to train the 7B model (arXiv:2508.10104:
   §3.1, Fig. 16a, Table 20).
 - **Says:** DINOv3 turns every patch into a vector computed in the context of the whole image; what is where is easy
   to read out of it with a linear layer. That is the knowledge of the world the table needs, and it comes from

@@ -43,8 +43,9 @@ class CanvitMosaic extends CanvitView {
 
   render(t) {
     const { glimpses } = this.bundle;
-    // Draw at device resolution so upscaled glimpse pixels stay crisp squares.
-    const side = Math.round(this.canvas.clientWidth * devicePixelRatio);
+    // Draw at device resolution so upscaled glimpse pixels stay crisp squares. The rendered width includes any scale
+    // transform around the element (a slide deck scales its slides), which clientWidth leaves out.
+    const side = Math.round(this.canvas.getBoundingClientRect().width * devicePixelRatio);
     const key = `${t}|${side}`;
     if (side > 0 && key !== this.drawn) {
       this.canvas.width = this.canvas.height = side;

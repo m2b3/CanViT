@@ -198,8 +198,10 @@ function schedule(count) {
   return { durations, starts, total: starts[count - 1] + durations[count - 1] };
 }
 
+// The canvas's buffer at the device pixels it covers: its rendered width includes any scale transform around it (a
+// slide deck scales its slides), which clientWidth leaves out.
 function sizeToDisplay(canvas) {
-  const width = Math.round(canvas.clientWidth * (window.devicePixelRatio || 1));
+  const width = Math.round(canvas.getBoundingClientRect().width * (window.devicePixelRatio || 1));
   if (width > 0 && canvas.width !== width) canvas.width = canvas.height = width;
   return canvas.width;
 }

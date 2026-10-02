@@ -567,6 +567,7 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #uncertainty .quadrants span { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
                                border: 2px dashed rgba(255, 255, 255, .85); color: #fff; font-size: 26px; font-weight: 800;
                                text-shadow: 0 0 4px #000; opacity: 0; transition: opacity .4s ease, border .4s ease; }
+#uncertainty .quadrants small { margin-left: 6px; font-size: 18px; font-weight: 650; }
 #uncertainty.shows-quadrants .quadrants span { opacity: 1; }
 #uncertainty.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }
 

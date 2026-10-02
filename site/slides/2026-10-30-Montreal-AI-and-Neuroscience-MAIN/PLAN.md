@@ -50,8 +50,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   look.
 - [Yohaï, 2026-10-01] "you will make sure, once you are satisfied with the slides etc, that they are force-pushed into
   gh pages rendered website"; then "you can merge into main and redeploy etc at checkpoints when things are
-  acceptable". Last checkpoint: 2026-10-01 ~23:00 EDT, main 887885c, gh-pages from f511c4d (`../../deploy.sh --push`
-  after the stress test and the dry run's file list); redeploy at the next acceptable checkpoint.
+  acceptable": squash-merge into `main`, `../../deploy.sh --push`, then `../check_published.py`.
 - [Yohaï, 2026-10-01] `#cost`: on the Adapt column ("< 15 h, fine-tuning on ImageNet-1k, one TPU v6e-4; or just a
   linear layer"): "no this is horrible"; on the Run column (2.3 ms per glimpse, 175 ms on a CPU): "no one cares";
   "this is marketing as [...] and without comparison points (what about other models? for example could be PEAK
@@ -76,11 +75,14 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
   scheme is still not great not great at all". Labels redone 2026-10-01 (no key; each passive line named at its end
   under one "Passive" heading, "linear decoding"; active models named at their points over "Active models"); awaiting
-  the authors' look. Codex (gpt-6-astra) audited the data against primary sources until the disk filled: its
-  report covers missing fields and the active entries; its sections on unverified leads and missing records are
-  empty. Its seven field fills from official code were merged into `sources/sota-history.json` on 2026-10-01 (test
-  resolutions of SimCLR, MoCo v3, EsViT and two GFNets; DPT-Hybrid 98.2M parameters; Prisadnikov's size unknown);
-  none moves a drawn line. Open: relaunch it for leads and missing records.
+  the authors' look. Codex (gpt-6-astra) audited the data against primary sources in two passes (2026-10-01; reports
+  in `throwaway/history-audit/`, merged into `sources/sota-history.json` and `.md`): fields filled from official code,
+  the leads resolved, and missing base-size records added. What moved on the charts: the ADE20K end-to-end line now
+  starts with Wider or Deeper Model A2 (43.73, 2016) and steps at APCNet (45.38, 2019); the frozen ImageNet-1k line
+  starts in 2016 below the axis and enters it in 2019, and Proteus ViT-B (84.9, 2024) raises its plateau. Open, in
+  `sota-history.md` ("Unverified leads"): DINOv3's TMLR supplement (ViT-B 85.3 and ConvNeXt-B 85.4 on ImageNet-1k,
+  ViT-B 52.7 on ADE20K, date unknown); whether the frozen line admits supervised distillation (RADIO-AMP-B, 51.2 on
+  ADE20K); SAFER-AiD, a sequential active model with no clean full-validation number.
 - [Yohaï, 2026-10-01] `#table`: "we're missing some kind of explanation of what the hell the colors correspond to...
   labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
   yet." Done 2026-10-01: DINOv3's probability of table per glimpse, with a 0-to-1 scale; `#extrapolation` uses the
@@ -97,13 +99,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   (RFS aside), the ADE20K ones 3 points apart and still rising. "Matter much more for ADE20K" holds for the end of
   the rollouts and for C2F against the random policies (the paper's framing), not for the first glimpses.
 - [Yohaï, 2026-10-01] "you should also think of what needs to be introduced/highlighted when, when a concept first
-  occurs on screen or must be spoken, etc. this is very important." First pass done 2026-10-01 on the notes: each of
-  these is now said where it first occurs: ImageNet, passive vision (`#tradition`); glimpse, DINOv3 announced
-  (`#table`); ADE20K (`#foundation`); Vision Transformer, the canvas as one vector per region, its 32 × 32 and
-  64 × 64 grids (`#architecture`); distillation, dense, latent (`#distillation`); R-IID and F-IID by name, later
-  policies not named early (`#policy-agnosticism`); fine-tuning, the same linear readout (`#results`); FLOPs
-  (`#frontier`). On screen, still open: `#architecture` shows the paper's figure with CLS, VPE and register tokens the
-  talk never names (a two-stream drawing, under "Decisions for the authors").
+  occurs on screen or must be spoken, etc. this is very important." Done on the notes (2026-10-01): each term is said
+  where it first occurs: ImageNet, passive vision (`#tradition`); glimpse, DINOv3 announced (`#table`); ADE20K
+  (`#history`, named on `#foundation` before it); the Vision Transformer, the canvas grids (`#architecture`); R-IID and
+  F-IID (`#distillation`'s notes), the other policies (`#policies`); fine-tuning (`#results`); FLOPs (`#cost`). Open: a
+  pass over what each slide shows on screen before the speaker names it.
 - [Yohaï, 2026-10-01] `<canvit-live>` in the deck failed: "no available backend found. ERR: [wasm] RuntimeError:
   Aborted(InternalError: out of memory)". Measured on 2026-10-01 in headless Chromium (`throwaway/live_memory.py`,
   `slide_memory.py`, `live_wasm.py`): the deck with no slide 376 MB RSS; every slide without the model 1.46 GB (static
@@ -112,6 +112,10 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   current or next slide (`data-load-near`, `../deck.js`), never in the speaker view's previews; with WebGPU disabled the
   model then starts on WebAssembly in the deck (peak about 1.9 GB). Open: whether Yohaï's browser (which one, speaker
   view open?) still fails; releasing the model when the slide is left; making the rollouts load only near their slide.
+- [Yohaï, 2026-10-01] "Give a sense of how good DINOv3 is and how much went into it". Built 2026-10-01 as the last
+  state of `#foundation`: 1.7 billion training images, the 6.7-billion-parameter teacher the ViT-B is distilled from,
+  61,440 H100-hours to train it (arXiv:2508.10104; `AGENTS.md`, "Checked facts"); where it stands on dense benchmarks
+  is in the notes. Awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#foundation`: the DINOv3 feature map "looks [bad]. it is blurry because you must have run
   interpolation instead of nearest ... choose other principal components. it looks washed out ... rerun it at higher
   res ... we want the objects to stand out. it could also transition into becoming smaller and having arrows that go
@@ -188,11 +192,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
     ablation is a more direct measure of feedback.
   - Pacing: CanViT first appears about ten minutes in, and four benchmark and cost slides run back to back before
     `#neuro-ai`, where neuroscientists may drift.
-- [Yohaï, 2026-10-01, an idea for after the rest] Give a sense of how good DINOv3 is and how much went into it: its
-  training data (LVD-1689M, 1.7 billion images), the 7B teacher it is distilled from, its compute, where it stands on
-  dense benchmarks; every number read in the DINOv3 paper (Siméoni et al. 2025, arXiv:2508.10104). A build state of
-  `#foundation` or a slide of its own. S–M.
-
 - [Yohaï, 2026-10-01] `#history` and `#results` fail at their jobs: overloaded, hard to parse, not showing the right
   things; make end-to-end training against frozen features with a linear readout explicit. ImageNet-1k and ADE20K one
   after the other, never side by side from the start, after explaining classification against segmentation and why
@@ -201,17 +200,13 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   counterproductive"); `#results` still to rework. M.
 - [Yohaï, 2026-10-01] An exploration page for the history data: `_explore-history.html` (a working page, not deployed) shows every point
   with series, size and numeric axes; extend it with training and inference cost once those fields exist. S.
-- [Yohaï, 2026-10-01] A training-cost view ("having a 'training flops' graph could be interesting as well idk. or
-  training cost"): training compute or cost of the active models and of CanViT-B, from their papers and the rebuttal
-  (training glimpses, epochs, GPU-hours); what each paper reports differs, so the qualifiers stay with each number. M.
-- [Yohaï, 2026-10-01] A first draft is `#cost`, before `#frontier` (train, adapt, run); awaiting the authors' look. `#frontier` (accuracy against cost) must first make the case for why anyone cares about cost:
-  money, cheap experiments (`AGENTS.md`, "The story"); training cost first, the main concern for scientists, then
-  inference. Training: pretrained once and released; adapting it is a linear probe or a fine-tuning run of under 15 h on a TPU v6e-4;
-  its pretraining is comparable to AdaGlimpse's own, not cheaper than every prior model (`AGENTS.md`, rebuttal facts).
-  Gather verified facts that make cost concrete: inference GFLOPs
-  per glimpse and per rollout against AME and AdaGlimpse (`../../assets/paper/ade20k_seg.json`), wall time per glimpse
-  measured on a laptop and in the browser, the paper's training costs (§6, App. H); then design how the slide shows
-  the case (a build state before the chart, or the chart's cost axis translated into time or money). M.
+- [Yohaï, 2026-10-01] The case for why anyone cares about cost, before the cost charts: money, cheap experiments
+  (`AGENTS.md`, "The story"); training cost first, the main concern for scientists, then inference. `#cost` (best
+  accuracy against each model's own training compute, `OUTLINE.md`) and `#frontier` now carry the comparison; the case
+  itself is not on screen. Facts that make it concrete: training (pretrained once and released; adapting is a linear
+  probe or LP-FT; its pretraining comparable to AdaGlimpse's own, never cheaper than every prior model; `AGENTS.md`,
+  rebuttal facts), inference GFLOPs per glimpse and per rollout against AME and AdaGlimpse
+  (`../../assets/paper/ade20k_seg.json`), wall time per glimpse on a laptop and in the browser. M.
 
 - The cognition links (`sources/cognition.md`, `sources/concepts.md`, read 2026-10-01): trans-saccadic integration
   (Irwin 1991; Melcher 2001) on the memory slide; coarse-to-fine scene categorization in humans (Musel et al. 2012;
@@ -219,11 +214,47 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   `#uncertainty`; amodal completion and boundary extension on `#table` and `#extrapolation`; as keywords and a backup
   slide with their figures. S.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
+- Open from the second cold read (2026-10-01, a fresh subagent; its fixed defects are in git history), for the
+  authors:
+  - `#distillation`: the "Target" row does not say it is DINOv3 seeing the whole scene (the row labels are Yohaï's);
+    a label or a scene → DINOv3 column would.
+  - `#tradition`: Felleman & Van Essen's hierarchy is illegible at its size; the Yamins et al. panel has no x-axis
+    title (`assets/figures/PROVENANCE.md` asks to restate it on the slide).
+  - `#detail`: the scene keeps a source watermark; in the loupe state, "CanViT's input, 128 px" shows a magnified crop
+    of the input.
+  - Subtext: `#cost`'s subtitle restates its axes; `#calibration`'s and `#teacher`'s subtitles are conditions lines.
+    `#cost`'s line on what is not counted stays on screen: without it the chart misleads.
+  - Conventions: viewpoints are (x, y, scale) on `#distillation` and (row, col) in `#quickstart`'s code; components
+    count glimpses from t = 0, `#distillation` and the charts from glimpse 1; `#architecture`'s "after write 1, 2, 3"
+    are the paper's Write 0, 1, 2.
+  - `#architecture`'s title colors "Vision Transformer" in glimpse blue; the drawing paints it purple.
+  - `#rollout`: empty bands above and below the card; DINOv3's heading outweighs CanViT's panel; the canvas shows
+    classes beyond the five named.
+  - `#history`: the ImageNet-1k base-size line counts 144-crop ensembles (BN-Inception, Inception-v3) as base by
+    summing members; the two dashed lines probe DINOv3 ViT-B by different protocols (the paper's on ImageNet-1k,
+    DINOv3's on ADE20K); the ADE20K axis runs 10 to 70 with no data below 22.7.
+  - `#neuro-ai`: EG-C2F at t = 5 (one box and a quadrant grid) beside Yarbus's dense record invites "the policy looks
+    nothing like a scanpath".
+  - `#results`' notes quote the paper's "by a wide margin" for both benchmarks; on ImageNet-1k it is +2.3 fine-tuned,
+    and frozen CanViT-B is below AdaptiveNN.
+  - `#title` names the venue twice (the NeurIPS logo and "NeurIPS 2026"). Backup: `#live` gives entropy as "log 150"
+    without its base; `#canvas-attention` keeps the paper's panel letter "A".
 - Independent reviews of `OUTLINE.md` (a fresh subagent; `codex exec -m gpt-6-astra`), then the authors'. S.
 
 ## Known issues
 
 - `#live` (Backup): shrunk with `zoom: .8`.
+- Segmentation colors differ between slides: the components (`#rollout`, `#policies`, `#live`) use the standard
+  ADE20K palette (`../../js/canvit/ade20k.js`); `#extrapolation` uses canvit-pytorch's random `LABEL_COLORS`
+  (`specialize.ade20k.figures`), in which floor and ceiling are two blues close to glimpse blue; `#history` and
+  `#quickstart` give Tableau colors by area, so the names written on regions stay legible. One palette for the talk is
+  the authors' call.
+- Other colors change meaning between slides (second cold read, 2026-10-01): amber is every prior active model on
+  `#history`, `#results` and `#cost`, but AME alone on `#timeline`'s legend, and R-IID's orange sits between them; the
+  paper's C2F blue and F2C red are close to glimpse blue and canvas red (on `#neuro-ai`, a blue C2F and a red F2C
+  line in the blue card beside the red one); CanViT-B is canvas red on `#results` and `#cost`; the prior models are
+  amber dots on `#cost` and other shapes and colors on `#frontier`. The authors choose between the paper's policy
+  colors and talk-wide meanings.
 
 ## Experiments and exports
 
@@ -238,7 +269,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 | Item | Slides | Diff. | Status |
 |---|---|---|---|
-| `shoot.py` checks: titles that wrap, content in the footer band (below 676 px), single words alone on a last line | all | S | todo |
 | A periphery that fades to nothing on a click, from blurry to unseen (`<foveated-scene>` on `#human-vision` has the blur): "a world of difference between seeing something blurry and seeing nothing at all" | `#rollout` | S | todo |
 | `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
 | The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |

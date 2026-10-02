@@ -150,10 +150,10 @@ transcript and Yohaï's requests, 2026-10-01; to be confirmed by the authors]:
   [Yohaï, 2026-10-01: "'amodal completion' can be a great keyword no? think of great keywords and concepts and things
   to link to that I MIGHT NOT HAVE IN MIND or EVEN KNOW"].
 - **Metacognition**: the model's own uncertainty about what is where, which a policy (EG-C2F) uses to choose where to
-  look (`#policies`) [Yohaï, 2026-10-01: "a keyword i really want to see emphasized on the policy stuff, particularly
+  look (`#uncertainty`; measured in Backup, `#calibration`) [Yohaï, 2026-10-01: "a keyword i really want to see emphasized on the policy stuff, particularly
   EG-C2F, is the idea of metacognition"].
 - **Order matters**: C2F against F2C, same views; what was seen changes how the next view is processed (top-down
-  feedback) (`#policies`) [Yohaï, 2026-10-01: "that IS a good point"].
+  feedback) (`#policy-accuracy`, `#neuro-ai`) [Yohaï, 2026-10-01: "that IS a good point"].
 - **Foundation model, cheap to use**: trained once, adapted with a linear layer; what it costs to train and to run
   (`#frontier`, `#quickstart`).
 
@@ -420,8 +420,7 @@ The code (`canvit-pytorch/`, by module and symbol) [read 2026-10-01]:
 
 The machine [checked 2026-10-01]: `ADE20K_ROOT` (the ADEChallengeData2016 directory) is not set in the
 shell, pass it; the Hugging Face cache holds every released checkpoint and probe and DINOv3 ViT-S/B; MPS inference
-matches CPU (relative L2 5e-6, identical argmax; `throwaway/bench_episode.log`); the disk is nearly full (under
-1 GB free on 2026-10-01).
+matches CPU (relative L2 5e-6, identical argmax; `throwaway/bench_episode.log`).
 
 Memory reset [measured 2026-10-01, `throwaway/memory_reset/`, summary in `../../data/talk/memory/overall-k1.json`,
 read]: every "thing" object covering 1–15% of an ADE20K validation scene (2,781 objects); one glimpse on the object
@@ -445,6 +444,16 @@ examples (other orders keep the first object at 0.52 to 0.75, reset stays at mos
 the current object scores 0.048 lower with the canvas kept than alone (unexplained). The slide's example,
 ADE_val_00000836 (shop sign 0.91 / 0.90 / 0.04, person 0.76 / 0.68 / 0.06 after its glimpse / kept / reset), is below
 the strict bar for person; ADE_val_00001182 (a bedroom) meets it.
+
+DINOv3 [read 2026-10-01 in arXiv:2508.10104v1]: LVD-1689M, 1,689 million images curated from about 17 billion web
+images (§3.1); the ViT-7B teacher, 6,716M parameters (Fig. 16a), trained for 1M iterations at 4,096 images per batch,
+61,440 H100-hours for its pretraining (Table 20); about 9 million GPU-hours for the whole project (its carbon
+footprint section); the smaller ViTs, ViT-B included, distilled from the 7B (§5.2); ADE20K with a linear layer: ViT-B
+51.8 mIoU (Table 14), ViT-7B 55.9 (the text of its dense evaluation).
+
+DINOv3 ViT-B on the whole scene at 128 px [measured 2026-10-01, `experiments/whole_scene_baseline`, pixel accuracy
+as the bundles measure it]: 72.1, 69.9 and 40.7% on the street, shop and ferry of the recorded R-IID bundles, against
+CanViT-B's 87.9, 77.8 and 71.4% after their 21 glimpses.
 
 Experiments behind slides: `experiments/`, a package per experiment, each step run from this directory as
 `python -m experiments.<experiment>.<step>` in the canvit-pytorch environment (`training_cost` in

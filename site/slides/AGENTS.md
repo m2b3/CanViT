@@ -75,7 +75,7 @@ A note points to its source (paper section, module and symbol, file path) and st
 generates stay in its macros.
 
 `shoot.py` exits nonzero when the page logged an error; read `errors.txt`, `layout.txt` (titles that wrap, content in
-the footer band) and the images of every slide you touched, with all fragments shown (default) and before them
+the footer band, a word alone on the last line of a text block) and the images of every slide you touched, with all fragments shown (default) and before them
 (`--first-fragment`), or click by click (`--steps`).
 Screenshots are review material and are never committed (`site/.screens/` is ignored).
 

@@ -13,8 +13,7 @@ yet reviewed by the authors.
 ## Vision, brains and machines
 
 ### Title
-- **Shows:** the CanViT wordmark; "Toward Active-Vision Foundation Models"; "the Canvas Vision Transformer"; the four
-  authors' faces with their names; McGill, Mila and Université Laval logos; NeurIPS 2026.
+- **Shows:** the CanViT wordmark; "Toward Active-Vision Foundation Models"; the four authors' faces with their names; McGill, Mila and Université Laval logos; NeurIPS 2026.
 - **Says:** "This is CanViT, the Canvas Vision Transformer, joint work with Sabrina Du, Audrey Durand and Suresh
   Krishna."
 - **Status:** ready.
@@ -63,7 +62,7 @@ yet reviewed by the authors.
 - **Shows:** a living room; DINOv3 ViT-B's patch features as colors (principal components 2 to 4, nearest neighbor);
   then the features small, with arrows to the probabilities of television, fireplace and armchair that a linear
   probe decodes from them; last, how much went into DINOv3: 1.7 billion training images, no labels; 6.7 billion
-  parameters in the teacher this ViT-B is distilled from; 61,440 H100-hours to train that teacher (arXiv:2508.10104:
+  parameters in the 7B model this ViT-B is distilled from; 61,440 H100-hours to train the 7B model (arXiv:2508.10104:
   §3.1, Fig. 16a, Table 20).
 - **Says:** DINOv3 turns every patch into a vector computed in the context of the whole image; what is where is easy
   to read out of it with a linear layer. That is the knowledge of the world the table needs, and it comes from
@@ -327,8 +326,9 @@ yet reviewed by the authors.
   144.6 (77.5; its code and its paper differ on pretraining glimpses); AdaptiveNN 22.6 (82.2), counted from its code
   [Yohaï, 2026-10-01: "should be possible to read the code, the paper, etc, and figure this [...] out"]. ADE20K:
   CanViT-B 55.5 (45.9); AME 1.4 to 1.8 on top of pretrained ViT-L weights (27.6); AdaGlimpse 83.7 to 166.6 over its
-  pretraining, reconstruction and segmentation stages (25.7). The counts: `sources/baseline-training-compute.md`. One line under both: teachers and pretrained weights are not counted,
-  on any side (the rebuttal's rule).
+  pretraining, reconstruction and segmentation stages (25.7). The counts: `sources/baseline-training-compute.md`. One line under both: the training of the teachers and pretrained
+  weights each model starts from is not counted (the rebuttal's rule; a teacher's inference is, such as CanViT-B's
+  DINOv3 features). AME's label names the SETR weights, already trained on ADE20K, that it starts from.
 - **Says:** compute is money and time; then the comparison; that the teachers are not counted, DINOv3 included; one
   model for both tasks and any policy.
 - **Status:** draft (built 2026-10-01).
@@ -368,7 +368,7 @@ yet reviewed by the authors.
   shows CanViT can be asked it, one card per click, in the colors of the three parts of an active-vision model
   (`#active-vision-model`): top-down feedback (instantaneous vision, blue): how what was seen changes how the next
   view is processed, over C2F against F2C on ADE20K (`<canvit-policy-curves policies>`); trans-saccadic memory
-  (memory, red): what is kept from one view to the next, over the street of `#memory` kept and reset; scanpaths
+  (memory, red): what is kept from one view to the next, over the street of `#memory` (in Backup) kept and reset; scanpaths
   (action selection, teal): how human scanpaths compare with policies on the same observer, over Yarbus's record
   beside EG-C2F's first glimpses. The questions are CC's synthesis from the paper and the UNIQUE application [CC,
   2026-10-01; for the authors to confirm]. Alternative not drawn: a bookend of `#human-vision`, each property of human
@@ -465,8 +465,7 @@ btw (even if it just says 'Backup')"].
 - **Takeaway:** the asymmetry: every learned projection is on the glimpse side; the canvas side has only LayerNorm and
   RoPE.
 - **Shows:** a Canvas Attention read–write pair (the paper's Fig. 3A), as large as the slide allows; a click rings the
-  four learned projections (glimpse side); the next marks the canvas side; then the line "Learned projections on the
-  glimpse side only".
+  four learned projections (glimpse side); the next marks the canvas side.
 - **Says:** "dumb, but not too dumb": "Just dumb enough that I could interact with it cheaply, while leaving it
   flexible enough to reconstruct unseen things from world-knowledge priors, like the table example." Prior dense
   models had "a cheap encoder and a massive decoder". The cost (2.8 against 37.3 GFLOPs per read–write pair on a

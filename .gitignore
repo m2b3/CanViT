@@ -50,7 +50,7 @@ node_modules/
 # site/deploy.sh, never committed.
 site/data/
 
-# The paper's figures the page shows (site/copy_paper_figures.sh): generated with the paper, published by deploy.sh.
+# The paper's diagrams the page shows (site/copy_paper_figures.sh): generated with the paper, published by deploy.sh.
 site/assets/paper/*.svg
 
 # Local screenshots of the project page

@@ -34,12 +34,26 @@
 #human-vision .yarbus img { height: 520px; width: auto; }
 #human-vision .cite { margin-top: 10px; text-align: center; }
 
-#table .table-demo { display: flex; justify-content: center; gap: 44px; }
-#table figure { position: relative; }
-#table figure > img { width: 420px; height: 420px; border-radius: 10px; }
-#table figure img.over { position: absolute; inset: 0; }
+/* Each glimpse's answer is the map clipped to its box (--top, --left, --size from table.js); it appears over its glimpse
+   on the photograph, one figure width and gap to the left, then flies to its place in the map. */
+#table .table-demo { --side: 420px; --gap: 44px; display: flex; justify-content: center; gap: var(--gap); }
+#table figure { position: relative; width: var(--side); }
+#table figure > img, #table .blank { display: block; width: var(--side); height: var(--side); border-radius: 10px; }
+#table .photo .over { position: absolute; inset: 0; opacity: 0; transition: opacity .4s ease; }
+#table.shows-glimpses .photo .over { opacity: 1; }
+#table .blank { background: #ebebf0; opacity: 0; transition: opacity .5s ease .5s; }
+#table .map > img.answer { position: absolute; left: 0; top: 0;
+  clip-path: inset(calc(var(--top) * 100%) calc((1 - var(--left) - var(--size)) * 100%)
+                   calc((1 - var(--top) - var(--size)) * 100%) calc(var(--left) * 100%));
+  opacity: 0; transform: translateX(calc(-1 * (var(--side) + var(--gap))));
+  transition: opacity .35s ease, transform 1s cubic-bezier(.45, 0, .2, 1) .55s; }
+#table.shows-answer-far .answer:nth-of-type(1), #table.shows-answer-near .answer:nth-of-type(2) { opacity: 1; transform: none; }
+#table.shows-answer-far .blank { opacity: 1; }
+#table .map figcaption, #table .map .scale { opacity: 0; transition: opacity .5s ease .5s; }
+#table.shows-answer-far .map figcaption, #table.shows-answer-far .map .scale { opacity: 1; }
 #table figcaption { margin-top: 10px; font-size: 19px; color: var(--muted); }
-#table .marks { height: 420px; }
+#table .marks { height: var(--side); opacity: 0; transition: opacity .5s ease; }
+#table.shows-gap .marks { opacity: 1; }
 #table .marks .ring { stroke: var(--ink); }
 #table .marks .halo { stroke: var(--bg); }
 #table .marks .query { fill: var(--ink); font-size: 44px; font-weight: 800; }

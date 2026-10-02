@@ -82,13 +82,17 @@
 <section id="table" data-status="draft">
   <h2>Integrating multiple viewpoints into a coherent understanding</h2>
   <div class="table-demo">
-    <figure>
+    <figure class="photo">
       <img src="../../data/talk/table-clean/ADE_val_00001271-table/scene.png" alt="A conference room with a long table">
-      <img class="over fragment" data-fragment-index="0" src="../../data/talk/table/ADE_val_00001271-table/scene.png" alt="The same room, with two glimpses at the two ends of the table">
+      <img class="over" src="../../data/talk/table/ADE_val_00001271-table/scene.png" alt="The same room, with two glimpses at the two ends of the table">
     </figure>
-    <figure class="fragment" data-fragment-index="1">
-      <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="A passive model's probability of table from each glimpse alone, pasted where the glimpse was taken; nothing elsewhere">
-      <svg class="marks fragment" data-fragment-index="2" viewBox="0 0 470 470">
+    <figure class="map">
+      <div class="blank"></div>
+      <!-- Each glimpse's answer appears over its glimpse on the photograph and flies to its place in the map
+           (table.js clips prob_dinov3.png to each box). -->
+      <img class="pixels answer" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="A passive model's probability of table from the far glimpse alone, pasted where the glimpse was taken">
+      <img class="pixels answer" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="A passive model's probability of table from the near glimpse alone, pasted where the glimpse was taken">
+      <svg class="marks" viewBox="0 0 470 470">
         <ellipse class="halo" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
         <ellipse class="ring" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
         <text class="query" x="320" y="283" text-anchor="middle">?</text>
@@ -97,8 +101,11 @@
       <p class="scale"><span>0</span><i></i><span>1</span><b>probability of table</b></p>
     </figure>
   </div>
-  <!-- XXX: the cognitive-science citation for this slide is being verified (sources/cognition.md). TODO (PLAN.md): each
-       glimpse's answer flying to its place. -->
+  <!-- XXX: the cognitive-science citation for this slide is being verified (sources/cognition.md). -->
+  <span class="fragment step-marker" data-shows="glimpses"></span>
+  <span class="fragment step-marker" data-shows="answer-far"></span>
+  <span class="fragment step-marker" data-shows="answer-near"></span>
+  <span class="fragment step-marker" data-shows="gap"></span>
   <aside class="notes"><ul>
     <li>DINOv3 on each glimpse alone, pasted back where the glimpse was taken: p(table).</li>
     <li>The space in between: no clue.</li>
@@ -799,6 +806,7 @@
   import { drawUncertaintyCalibration } from "./uncertainty-calibration.js";
   import { drawArchitecture } from "./architecture.js";
   import { followEpisode } from "./whole-scene.js";
+  import { placeTableAnswers } from "./table.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
   function colorByPolicy(rollout) {
@@ -845,6 +853,7 @@
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
   await drawArchitecture(document.querySelector("#architecture .arch-build"));
   followEpisode(document.querySelector("#rollout .whole-scene"), document.querySelector("#rollout canvit-episode"));
+  await placeTableAnswers(document.querySelector("#table"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await drawUncertaintyCalibration(document.querySelector("#calibration .calibration"), "../../data/talk/metacognition/calibration.json");
   await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
   await drawTrainingCost(document.querySelector("#cost"), "../../data/talk/training-cost.json");

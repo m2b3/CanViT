@@ -45,15 +45,15 @@ yet reviewed by the authors.
 - **Title:** the UNIQUE application ("integrate information from multiple viewpoints into a coherent understanding");
   "Two glimpses of a table" was "dry and bad" [Yohaï, 2026-10-01]. "What about the space in between? No clue." is said.
 - **Shows,** click by click, on the conference room (ADE_val_00001271): the photograph; two glimpses at the two ends
-  of the table; a passive model's answer for each glimpse alone (DINOv3 ViT-B and its ADE20K probe), pasted where the
-  glimpse was taken, nothing elsewhere; then a ring with a question mark on the empty middle. The answer is said.
+  of the table; a passive model's answer for the far glimpse alone (DINOv3 ViT-B and its ADE20K probe), appearing over
+  its glimpse and flying to its place in an empty scene map; the same for the near glimpse; then a ring with a question
+  mark on the empty middle. The answer is said.
 - **Says:** "Suppose I see one corner of the table, then another corner. The naïve approach is to paste the
   understanding from here and paste the understanding from there. What about the space in between? No clue." You
-  know: more table, because you understand objects and you know the world. That knowledge also tells you where you
-  do not need to look.
+  know: more table, because you understand objects and you know the world.
 - **Sources:** `sources/cognition.md` (being verified): which cognitive-science work to cite for inference beyond
   what is sampled.
-- **Status:** ready, citations pending. TODO: the passive answers flying from each glimpse to the scene map.
+- **Status:** ready, citations pending.
 
 ### DINOv3 feature maps
 - **Title:** names what the slide shows (Yohaï's phrase for it); "We already know what good visual representations

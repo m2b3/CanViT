@@ -232,7 +232,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 | Item | Slides | Diff. | Status |
 |---|---|---|---|
 | `shoot.py` checks: titles that wrap, content in the footer band (below 676 px), single words alone on a last line | all | S | todo |
-| The table demonstration animated: each glimpse's passive answer flying to its place in the scene map (stepped CSS, `--x0/--y0/--s0` to `--x1/--y1/--s1`) | `#table` | M | todo |
 | `<canvit-foveate>`: glimpses jumping over a periphery blurred by eccentricity, which fades to nothing on a click | `#human-vision`, `#rollout` | M | todo |
 | `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
 | The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |

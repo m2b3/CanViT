@@ -3,8 +3,9 @@
 pasted in place, blank elsewhere), a, b, ab (CanViT's labels after A, B, A then B), prob_a, prob_b, prob_ab (CanViT's
 probability of the object's class), logit_a, logit_b, logit_ab (the class's logit, one scale for the three),
 entropy_a, entropy_b, entropy_ab. Writes a contact sheet per export, or with --separate each panel as
-<dir>/<export>/<panel>.png and legend.json: the classes covering at least LEGEND_MIN of CanViT's maps after A, B or A
-then B, with their colors."""
+<dir>/<export>/<panel>.png, legend.json (the classes covering at least LEGEND_MIN of CanViT's maps after A, B or A
+then B, with their colors) and boxes.json (each glimpse's box, A then B: top, left and side as fractions of the
+scene)."""
 
 import json
 import logging
@@ -154,6 +155,9 @@ def main(cfg: Config) -> None:
                 tile.save(target / f"{name}.png")
             entries = legend(data, meta, cfg)
             (target / "legend.json").write_text(json.dumps(entries, indent=1))
+            boxes = [{"top": (row - s + 1) / 2, "left": (col - s + 1) / 2, "size": s}
+                     for row, col, s in data["viewpoints"].tolist()]
+            (target / "boxes.json").write_text(json.dumps(boxes, indent=1))
             log.info("%s  legend: %s", target, ", ".join(e["class"] for e in entries))
             continue
         gap = cfg.size // 24

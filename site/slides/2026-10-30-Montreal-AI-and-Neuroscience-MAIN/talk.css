@@ -26,6 +26,10 @@
 #tradition .lineage figure { grid-column: span 2; display: flex; flex-direction: column; align-items: center; }
 #tradition .lineage figure.wide { grid-column: span 3; }
 #tradition .lineage img { height: 210px; width: auto; max-width: 100%; object-fit: contain; }
+/* The panel's crop leaves out its x-axis title, shared with panel B in the paper; restated under it, the panel shrunk
+   by the line's height so the row stays level. */
+#tradition .lineage .yamins img { height: 190px; }
+#tradition .lineage .axis { font-size: 14px; line-height: 20px; color: var(--muted); }
 #tradition figcaption { margin-top: 8px; text-align: center; font-size: 18px; line-height: 1.3; }
 #tradition figcaption b, #tradition figcaption .cite { display: block; }
 

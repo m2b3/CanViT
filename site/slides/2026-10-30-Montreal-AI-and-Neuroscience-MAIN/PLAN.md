@@ -208,18 +208,17 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   rebuttal facts), inference GFLOPs per glimpse and per rollout against AME and AdaGlimpse
   (`../../assets/paper/ade20k_seg.json`), wall time per glimpse on a laptop and in the browser. M.
 
-- The cognition links (`sources/cognition.md`, `sources/concepts.md`, read 2026-10-01): trans-saccadic integration
-  (Irwin 1991; Melcher 2001) on the memory slide; coarse-to-fine scene categorization in humans (Musel et al. 2012;
-  Kauffmann et al. 2015) beside C2F against F2C; uncertainty-driven fixations (Renninger et al. 2007) on
-  `#uncertainty`; amodal completion and boundary extension on `#table` and `#extrapolation`; as keywords and a backup
-  slide with their figures. S.
+- The cognition links (`sources/cognition.md`, `sources/concepts.md`, read 2026-10-01) are keywords in the notes:
+  trans-saccadic integration (`#memory`), boundary extension (`#extrapolation`), coarse-to-fine categorization
+  (`#policy-accuracy`), uncertainty-driven fixations (`#uncertainty`). Open: a backup slide with their figures
+  (`assets/figures/`: Intraub & Richardson, Biederman et al., Torralba et al., Oliva & Torralba), and citations on
+  `#table` (its `XXX`). S.
 - `#table`: the title wraps to two lines; a shorter written wording would keep one. S.
 - Open from the second cold read (2026-10-01, a fresh subagent; its fixed defects are in git history), for the
   authors:
   - `#distillation`: the "Target" row does not say it is DINOv3 seeing the whole scene (the row labels are Yohaï's);
     a label or a scene → DINOv3 column would.
-  - `#tradition`: Felleman & Van Essen's hierarchy is illegible at its size; the Yamins et al. panel has no x-axis
-    title (`assets/figures/PROVENANCE.md` asks to restate it on the slide).
+  - `#tradition`: Felleman & Van Essen's hierarchy is illegible at its size (a crop of V1 to IT, or more room).
   - `#detail`: the scene keeps a source watermark; in the loupe state, "CanViT's input, 128 px" shows a magnified crop
     of the input.
   - Subtext: `#cost`'s subtitle restates its axes; `#calibration`'s and `#teacher`'s subtitles are conditions lines.
@@ -273,7 +272,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 | `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
 | The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |
 | `<canvit-live>` laid out for a slide; one model session for every live slide | `#live` | M | todo |
-| Canvases sized from their displayed size, sharp when the deck scales (episode, mosaic) | all | S | todo |
 
 ## Logistics
 

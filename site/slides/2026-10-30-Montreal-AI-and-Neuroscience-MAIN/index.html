@@ -50,7 +50,7 @@
     <figure class="fragment"><img src="assets/figures/hubel-wiesel-1962-receptive-fields.png" alt="Receptive field maps of simple cells in cat visual cortex"><figcaption><b>Receptive fields</b><span class="cite">Hubel &amp; Wiesel 1962, <i>J. Physiol.</i></span></figcaption></figure>
     <figure class="fragment"><img src="assets/figures/fukushima-1980-neocognitron.png" alt="The Neocognitron's hierarchy of S and C layers"><figcaption><b>Neocognitron</b><span class="cite">Fukushima 1980, <i>Biol. Cybern.</i></span></figcaption></figure>
     <figure class="fragment"><img src="assets/figures/felleman-van-essen-1991-hierarchy.png" alt="The hierarchy of primate visual areas"><figcaption><b>The primate visual hierarchy</b><span class="cite">Felleman &amp; Van Essen 1991, <i>Cereb. Cortex</i></span></figcaption></figure>
-    <figure class="fragment wide"><img src="assets/figures/yamins-2014-performance-vs-it.png" alt="Categorization performance against IT neural predictivity for thousands of models"><figcaption><b>Better at recognizing objects, better at predicting IT</b><span class="cite">Yamins et al. 2014, <i>PNAS</i></span></figcaption></figure>
+    <figure class="fragment wide yamins"><img src="assets/figures/yamins-2014-performance-vs-it.png" alt="Categorization performance against IT neural predictivity for thousands of models"><p class="axis">Categorization performance</p><figcaption><b>Better at recognizing objects, better at predicting IT</b><span class="cite">Yamins et al. 2014, <i>PNAS</i></span></figcaption></figure>
     <figure class="fragment wide"><img src="assets/figures/brain-score-2018.png" alt="Brain-Score against ImageNet top-1 accuracy for many networks"><figcaption><b>Brain-Score</b><span class="cite">Schrimpf et al. 2018, <i>bioRxiv</i></span></figcaption></figure>
   </div>
   <aside class="notes"><ul>
@@ -291,7 +291,7 @@
   <span class="fragment step-marker" data-shows="passive"></span>
   <aside class="notes"><ul>
     <li>Viewpoint: center and scale (the crop's half side). Here random (R-IID): CanViT does not choose them.</li>
-    <li>Glimpse: 128 &times; 128 px at any scale; nothing outside it.</li>
+    <li>Glimpse: 128 &times; 128 px at any scale; nothing outside it. t: the glimpse's index, from 0.</li>
     <li>A world of difference between seeing something blurry and seeing nothing at all.</li>
     <li>Canvas colors: PCA, as for DINOv3.</li>
     <li>Readout: a linear layer, at any time.</li>
@@ -416,6 +416,7 @@
   <aside class="notes"><ul>
     <li>1,436 large ADE20K objects, a glimpse at each end. Mean share of the unseen middle labeled as the object: 52 to 53% after one end, 65% after both. Mean share of the other labeled pixels between the glimpses labeled as the object too: 46%.</li>
     <li>This table: chosen for few false positives (8%).</li>
+    <li>Keyword: boundary extension: people remember seeing beyond the edges of a view, filled with what such a place should contain (Intraub &amp; Richardson 1989).</li>
   </ul></aside>
 </section>
 
@@ -553,6 +554,7 @@
   <aside class="notes"><ul>
     <li>ADE20K, 21 glimpses, 64 &times; 64 canvas: C2F <span data-macro="adeCTFCSixFourTTwenty">45.9</span>, F-IID <span data-macro="adeFIIDCSixFourTTwenty">44.9</span>, R-IID <span data-macro="adeRIIDCSixFourTTwenty">43.1</span>, F2C <span data-macro="adeFTCCSixFourTTwenty">42.9</span>.</li>
     <li>C2F and F2C: same viewpoints by the end, different order.</li>
+    <li>Keyword: coarse-to-fine: people categorize coarse-to-fine sequences of the same scene faster than fine-to-coarse ones (Kauffmann et al. 2015; filtered images, not viewpoints).</li>
     <li>ImageNet-1k: far apart after one glimpse (C2F 76.8, F2C 32.2 top-1), within 1.3 points after 21 (RFS aside).</li>
     <li>RFS: recurrent processing alone helps at first; without new viewpoints, accuracy then declines (paper).</li>
   </ul></aside>

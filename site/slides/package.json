@@ -1,0 +1,9 @@
+{
+  "name": "canvit-slides",
+  "private": true,
+  "description": "Talks built from the CanViT project page's components. npm ci installs reveal.js locally, so a talk runs offline.",
+  "type": "module",
+  "devDependencies": {
+    "reveal.js": "6.0.2"
+  }
+}

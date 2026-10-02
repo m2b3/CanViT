@@ -1,0 +1,533 @@
+/* What only this talk's slides use; the deck's look is ../deck.css. Rules are scoped by slide id. The content area is
+   1152 × 628 px under a one-line title; nothing goes below the footer band (676 px). */
+
+.reveal figure { margin: 0; }
+.reveal figure img { display: block; }
+.reveal .big { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+/* A slide's closing statement: centered, bold, one line where it can. */
+.reveal .claim { margin-top: 26px; font-size: 32px; font-weight: 750; letter-spacing: -.015em; text-align: center; }
+/* Token grids (32 × 32 PCA images) stay square blocks when scaled. */
+
+#title .layout { display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; height: 100%;
+                 text-align: center; }
+#title .wordmark { display: block; width: 340px; height: auto; margin: 0 auto; }
+#title h1 { margin-top: 20px; font-size: 60px; }
+#title .authors { display: grid; grid-template-columns: repeat(4, 250px); }
+#title .authors figure { display: flex; flex-direction: column; align-items: center; }
+#title .authors img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; }
+#title .authors figcaption { margin-top: 16px; font-size: 22px; font-weight: 650; white-space: nowrap; }
+#title .logos { display: flex; align-items: center; gap: 40px; font-size: 21px; }
+#title .logos img { height: 40px; width: auto; }
+#title .logos img.neurips { height: 46px; margin-right: -24px; }
+#title .logos .rule { width: 1px; height: 40px; background: var(--rule); }
+/* The title slide names the talk itself. */
+.reveal:has(#title.present) .footer { display: none; }
+
+#tradition .lineage { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px 26px; align-items: end; }
+#tradition .lineage figure { grid-column: span 2; display: flex; flex-direction: column; align-items: center; }
+#tradition .lineage figure.wide { grid-column: span 3; }
+#tradition .lineage img { height: 210px; width: auto; max-width: 100%; object-fit: contain; }
+#tradition figcaption { margin-top: 8px; text-align: center; font-size: 18px; line-height: 1.3; }
+#tradition figcaption b, #tradition figcaption .cite { display: block; }
+
+#human-vision .yarbus { display: flex; justify-content: center; align-items: flex-end; gap: 64px; }
+#human-vision .yarbus img { height: 520px; width: auto; }
+#human-vision .cite { margin-top: 10px; text-align: center; }
+
+#table .table-demo { display: flex; justify-content: center; gap: 44px; }
+#table figure { position: relative; }
+#table figure > img { width: 420px; height: 420px; border-radius: 10px; }
+#table figure img.over { position: absolute; inset: 0; }
+#table figcaption { margin-top: 10px; font-size: 19px; color: var(--muted); }
+#table .marks { height: 420px; }
+#table .marks .ring { stroke: var(--ink); }
+#table .marks .halo { stroke: var(--bg); }
+#table .marks .query { fill: var(--ink); font-size: 44px; font-weight: 800; }
+#table .scale { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 17px; color: var(--muted); }
+#table .scale i { width: 160px; height: 12px; border-radius: 3px;
+  background: linear-gradient(90deg, #000004, #420a68, #932667, #dd513a, #fca50a, #fcffa4); }
+#table .scale b { margin-left: 8px; font-weight: 650; color: var(--text); }
+
+/* DINOv3 feature maps: the photo; then the feature map beside it; then the feature map small, with arrows to the
+   linear probe's probability maps. Positions per state, so the images glide between them. */
+#foundation .stage { position: relative; height: 556px; }
+#foundation .stage img { display: block; border-radius: 8px; }
+#foundation .photo, #foundation .features { position: absolute; transition: left .8s ease, top .8s ease, width .8s ease, opacity .6s ease, clip-path 1.2s ease; }
+#foundation .photo { left: 216px; top: 18px; width: 720px; }
+#foundation .features { left: 600px; top: 40px; width: 552px; }
+#foundation.shows-features .photo { left: 0; top: 40px; width: 552px; }
+#foundation.shows-features .features { clip-path: inset(0); }
+#foundation.shows-decode .photo { opacity: 0; }
+#foundation.shows-decode .features { left: 0; top: 126px; width: 456px; }
+#foundation .arrows { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+#foundation .arrows path { stroke: var(--ink); stroke-width: 3; transition-delay: .7s; }
+#foundation .arrows text { font: 700 22px var(--sans); fill: var(--ink); opacity: 0; transition: opacity .4s ease 1.2s; }
+#foundation.shows-decode .arrows .draw { stroke-dashoffset: 0; }
+#foundation.shows-decode .arrows text { opacity: 1; }
+#foundation .prob { position: absolute; left: 788px; top: calc(var(--row) * 188px); width: 270px; margin: 0;
+                    display: grid; grid-template-columns: 270px auto; gap: 14px; align-items: center;
+                    opacity: 0; transition: opacity .5s ease calc(1.1s + var(--row) * .25s); }
+#foundation .prob img { width: 270px; grid-column: 1; grid-row: 1; }
+#foundation .prob figcaption { grid-column: 2; grid-row: 1; font-size: 22px; font-weight: 750; white-space: nowrap; }
+#foundation.shows-decode .prob { opacity: 1; }
+#foundation > .cite { position: absolute; left: var(--slide-pad-x); bottom: 50px; }
+
+/* The history charts (history.js), one benchmark at a time on a stage: passive (ink), frozen features (dashed slate),
+   active models (amber), the gap (amber bracket), CanViT-B (canvas red; hollow when frozen). */
+.reveal .stage { position: relative; height: 556px; }
+.reveal .history-chart { position: absolute; left: 0; right: 0; bottom: 0; opacity: 0; transition: opacity .6s ease; }
+.reveal .history-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.reveal .history-chart text { font: 500 18px var(--sans); fill: var(--muted); }
+.reveal .history-chart .unit { font-weight: 650; fill: var(--text); }
+.reveal .history-chart .grid { stroke: var(--rule); stroke-width: 1; }
+.reveal .history-chart .line { fill: none; stroke-width: 4; }
+.reveal .history-chart .passive .line { stroke: var(--ink); }
+/* Frozen features: the family's color, dashed. */
+.reveal .history-chart .frozen .line { stroke: var(--ink); stroke-width: 3; stroke-dasharray: 9 6; }
+.reveal .history-chart .label { font-size: 20px; font-weight: 600; fill: var(--text); }
+.reveal .history-chart .label.head { font-weight: 800; fill: var(--ink); }
+.reveal .history-chart .active circle { fill: #d97706; stroke: var(--bg); stroke-width: 2; }
+.reveal .history-chart .active .label { fill: #b45309; font-weight: 700; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
+.reveal .history-chart .active .label.head { fill: #b45309; }
+.reveal .history-chart .gap .bracket { fill: none; stroke: #b45309; stroke-width: 3; }
+.reveal .history-chart .gap .gap-label { font-size: 28px; font-weight: 800; fill: #b45309; }
+.reveal .history-chart .canvit circle { stroke: var(--canvas); stroke-width: 4; }
+.reveal .history-chart .canvit .filled { fill: var(--canvas); }
+.reveal .history-chart .canvit .hollow { fill: var(--bg); }
+.reveal .history-chart .canvit .leader { fill: none; stroke: var(--canvas); stroke-width: 1.5; }
+.reveal .history-chart .canvit .label { fill: var(--canvas); font-weight: 800; font-size: 21px;
+                                         paint-order: stroke; stroke: var(--bg); stroke-width: 6px; }
+.reveal .history-chart g { transition: opacity .5s ease; }
+
+/* The history slide: each task's example large, then small in its chart's empty corner as the chart arrives. */
+#history .example { position: absolute; margin: 0; transform-origin: 0 0; transition: transform .8s ease, opacity .6s ease; }
+#history .example figcaption { margin-bottom: 8px; font-size: 30px; font-weight: 800; transition: opacity .4s ease; }
+#history .example .frame { position: relative; }
+#history .example img { display: block; width: 100%; height: auto; border-radius: 10px; }
+#history .example .tag { position: absolute; left: 16px; bottom: 16px; padding: 6px 16px; border-radius: 10px;
+                         background: var(--ink); color: #fff; font-size: 28px; font-weight: 700; opacity: 0;
+                         transition: opacity .4s ease; }
+#history.shows-label .example .tag { opacity: 1; }
+#history .classification { left: 313px; top: 0; width: 526px; }
+#history.shows-imagenet .classification { transform: translate(-243px, 44px) scale(.34); }
+#history.shows-imagenet .example figcaption { opacity: 0; }
+#history.shows-segmentation .classification { opacity: 0; }
+#history .segmentation { left: 226px; top: 0; width: 700px; opacity: 0; }
+#history.shows-segmentation .segmentation { opacity: 1; }
+#history.shows-segmentation .segmentation figcaption { opacity: 1; }
+#history.shows-ade20k .segmentation { transform: translate(-160px, 44px) scale(.3); }
+#history.shows-ade20k .segmentation figcaption { opacity: 0; }
+#history .segmentation .map { position: absolute; inset: 0; }
+#history.shows-map .segmentation .map { clip-path: inset(0); }
+#history .names { position: absolute; inset: 0; transition: opacity .4s ease; }
+#history .names span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; color: #fff;
+                       font-size: 17px; font-weight: 750; text-shadow: 0 0 3px #000, 0 0 6px rgba(0, 0, 0, .6);
+                       opacity: 0; transition: opacity .4s ease; }
+#history.shows-map .names span { opacity: 1; transition-delay: calc(.9s + var(--i) * 70ms); }
+#history.shows-ade20k .names { opacity: 0; }
+#history.shows-imagenet:not(.shows-segmentation) .history-chart.imagenet { opacity: 1; }
+#history.shows-ade20k .history-chart.ade20k { opacity: 1; }
+#history .history-chart .gap, #history .history-chart .canvit { opacity: 0; }
+#history:not(.shows-frozen) .history-chart.imagenet .frozen,
+#history:not(.shows-active) .history-chart.imagenet .active { opacity: 0; }
+#history.shows-gap .history-chart.ade20k .gap { opacity: 1; }
+
+/* The results slide: the same charts with CanViT-B, ImageNet-1k then ADE20K. */
+#results .history-chart .gap { opacity: 0; }
+#results:not(.shows-ade20k) .history-chart.imagenet, #results.shows-ade20k .history-chart.ade20k { opacity: 1; }
+#results:not(.shows-canvit-imagenet) .history-chart.imagenet .canvit,
+#results:not(.shows-canvit-ade20k) .history-chart.ade20k .canvit { opacity: 0; }
+
+/* The project page's "What's in an active-vision model?", at slide size. */
+#active-vision-model .axes { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 10px; }
+#active-vision-model .group { position: relative; display: flex; flex-direction: column; padding: 16px; border-radius: 20px; }
+#active-vision-model .group.observer { background: var(--soft); }
+#active-vision-model .group.policy { border: 2px dashed #cbd5e1; }
+#active-vision-model .does { margin-bottom: 12px; font-size: 22px; font-weight: 700; color: var(--muted); text-align: center; }
+#active-vision-model .jobs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 14px; }
+#active-vision-model .job { padding: 26px 18px; border: 1px solid var(--rule); border-top: 5px solid var(--accent); border-radius: 14px; background: var(--bg); }
+#active-vision-model .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
+#active-vision-model .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
+#active-vision-model .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
+#active-vision-model .focus { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap;
+                              padding: 4px 14px; border-radius: 999px; background: var(--policy); color: #fff; font-size: 18px; font-weight: 700; }
+/* Below the diagram, the prior models' ablations, then the claim in their place. */
+#active-vision-model .bottom { display: grid; margin-top: 58px; }
+#active-vision-model .bottom > * { grid-area: 1 / 1; opacity: 0; transition: opacity .6s ease; }
+#active-vision-model.shows-ablations:not(.shows-claim) .ablations, #active-vision-model.shows-claim .claim { opacity: 1; }
+#active-vision-model .claim { align-self: center; }
+#active-vision-model .claim span { display: block; }
+#active-vision-model .ablations svg { display: block; width: 100%; height: auto; overflow: visible; }
+#active-vision-model .ablations .value { font: 600 15px var(--sans); fill: var(--muted); }
+#active-vision-model .ablations .model { font: 800 22px var(--sans); fill: var(--ink); }
+#active-vision-model .ablations .where { font: 500 16px var(--sans); fill: var(--muted); }
+#active-vision-model .ablations .span { stroke: #94a3b8; stroke-width: 4; }
+#active-vision-model .ablations .random { fill: var(--bg); stroke: #64748b; stroke-width: 3; }
+#active-vision-model .ablations .chosen { fill: var(--policy); }
+#active-vision-model .ablations .delta { font: 800 22px var(--sans); fill: var(--policy); }
+#active-vision-model .ablations .key { font: 700 16px var(--sans); }
+#active-vision-model .ablations .random-key { fill: #64748b; }
+#active-vision-model .ablations .chosen-key { fill: var(--policy); }
+
+
+/* Spatial coverage and perception of detail: scene, the model's 128 px input, p(class), then DINOv3's p(class) from the
+   whole scene at 128 px; the input zooms into the zoomed glimpse's box (--zoom-*, detail.js), then the zoomed glimpse
+   replaces it at the same framing. */
+#detail .detail-row { display: grid; grid-template-columns: repeat(4, 270px); gap: 24px; justify-content: center; margin-top: 70px; }
+#detail figure { margin: 0; }
+#detail figcaption { min-height: 2.5em; margin-bottom: 8px; font-size: 19px; font-weight: 750; line-height: 1.25; white-space: pre-line; }
+#detail .frame { position: relative; width: 270px; height: 270px; overflow: hidden; border-radius: 8px; }
+#detail .frame img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .6s ease; }
+#detail .scene .boxed { opacity: 0; }
+#detail.shows-loupe .scene .boxed { opacity: 1; }
+#detail.shows-full .scene .frame { outline: 4px solid var(--glimpse); outline-offset: -4px; }
+#detail.shows-loupe .scene .frame { outline: none; }
+/* The model's answer follows its input on the same click, a moment later (the delay only on the way in). */
+#detail .input, #detail .prob, #detail .passive { opacity: 0; transition: opacity .6s ease; }
+#detail.shows-passive .passive { opacity: 1; }
+#detail.shows-full .input { opacity: 1; }
+#detail.shows-full .prob { opacity: 1; transition-delay: .8s; }
+#detail .input .full { transform-origin: 0 0; transition: transform 1.4s ease, opacity .6s ease; }
+#detail.shows-loupe .input .full {
+  transform: translate(calc(-100% * var(--zoom-left) / var(--zoom-side)), calc(-100% * var(--zoom-top) / var(--zoom-side)))
+             scale(calc(1 / var(--zoom-side))); }
+#detail .input .zoomed, #detail .prob .fz { opacity: 0; }
+#detail.shows-zoom .input .zoomed { opacity: 1; }
+#detail.shows-zoom .prob .fz { opacity: 1; transition-delay: .8s; }
+#detail .object-ring { position: absolute; box-sizing: border-box; border: 3px solid #fff; border-radius: 50%;
+                       box-shadow: 0 0 0 3px rgba(0, 0, 0, .35); opacity: 0; transition: opacity .4s ease;
+                       top: calc(100% * (var(--object-top) - .03)); left: calc(100% * (var(--object-left) - .03));
+                       height: calc(100% * (var(--object-height) + .06)); width: calc(100% * (var(--object-width) + .06)); }
+#detail.shows-full:not(.shows-loupe) .object-ring { opacity: 1; transition-delay: 1.6s; }
+
+#architecture-paper img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
+
+/* Canvas Vision Transformer architecture, drawn by architecture.js, depth left to right: the glimpse through the
+   blocks; then the canvas before it; then the glimpse runs through the network, its reads and writes in depth order
+   (--depth): a read's arrow, or a write's glimpse tokens, its arrow and the canvas it leaves; then the next glimpse,
+   the same again. */
+#architecture .arch-build { position: relative; margin: 8px auto 0; }
+#architecture .arch-build > img { position: absolute; z-index: 1; border-radius: 8px; transition: opacity .5s ease; }
+#architecture .wires { position: absolute; inset: 0; z-index: 2; overflow: visible; pointer-events: none; }
+#architecture .wires.under { z-index: 0; }
+#architecture .wires :is(rect, text) { transition: opacity .5s ease; }
+#architecture .block { fill: #d0a8e0; stroke: #b48ac9; stroke-width: 1.5; }
+#architecture .patches line { stroke: rgba(255, 255, 255, .6); stroke-width: 1; }
+#architecture .glimpse-stream { stroke: var(--glimpse); stroke-width: 5; }
+#architecture .canvas-stream { stroke: var(--canvas); stroke-width: 5; transition: opacity .5s ease; }
+#architecture .glimpse-tokens { outline: 3px solid var(--glimpse); outline-offset: -3px; border-radius: 6px; }
+#architecture .box { fill: none; stroke: var(--glimpse); stroke-width: 3; }
+#architecture .wire .line { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 1; stroke-dashoffset: 1;
+                            transition: stroke-dashoffset .45s ease var(--start, 0s); }
+#architecture .wire .head { fill: var(--ink); opacity: 0; transition: opacity .15s ease calc(var(--start, 0s) + .4s); }
+#architecture .feed .line { stroke: var(--glimpse); stroke-width: 3; stroke-dashoffset: 0; }
+#architecture .feed .head { fill: var(--glimpse); opacity: 1; }
+#architecture .exchange-label { font: 700 18px var(--sans); fill: var(--muted); }
+#architecture .label { position: absolute; margin: 0; translate: -50% 0; text-align: center; line-height: 1.25;
+                       white-space: nowrap; transition: opacity .5s ease; }
+#architecture .label span { display: block; }
+#architecture .caption span { font-size: 20px; font-weight: 700; color: var(--muted); }
+#architecture :is(.scene-label, .glimpse-label, .tower-label, .canvas-label) span:first-child { font-size: 22px; font-weight: 750; }
+#architecture .scene-label span { color: var(--ink); }
+#architecture .tower-label span { color: #7e4fa0; }
+#architecture .glimpse-label span:first-child { color: var(--glimpse); }
+#architecture .canvas-label span { color: var(--canvas); }
+#architecture .glimpse-label span + span { font: 500 15px var(--mono); color: var(--text); }
+
+/* An exchange's moment in the run: a read at once, a write's arrow after its tokens appear, its canvas after the arrow. */
+#architecture .exchange { --start: calc(var(--depth) * .9s); }
+#architecture .exchange.write { --start: calc(var(--depth) * .9s + .3s); }
+#architecture :is(.canvas, .canvas-stream, .canvas-label, .snapshot-label, .source, .exchange-label, .next) { opacity: 0; }
+#architecture.shows-canvas :is(.before.now, .canvas-stream, .canvas-label) { opacity: 1; }
+#architecture.shows-run .exchange .line { stroke-dashoffset: 0; }
+#architecture.shows-run :is(.exchange .head, .exchange-label) { opacity: 1; }
+#architecture.shows-run .source.now { opacity: 1; transition-delay: calc(var(--depth) * .9s); }
+#architecture.shows-run :is(.snapshot.now, .snapshot-label) { opacity: 1; transition-delay: calc(var(--depth) * .9s + .8s); }
+
+@keyframes architecture-redraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes architecture-appear { from { opacity: 0; } to { opacity: 1; } }
+#architecture.shows-next :is(.box.now, .glimpse.now, .glimpse-label.now, .before.now, .snapshot.now, .source.now) { opacity: 0; transition-delay: 0s; }
+#architecture.shows-next :is(.box.next, .glimpse.next, .glimpse-label.next, .before.next) { opacity: 1; }
+#architecture.shows-next .source.next { opacity: 1; transition-delay: calc(.8s + var(--depth) * .9s); }
+#architecture.shows-next .snapshot.next { opacity: 1; transition-delay: calc(1.6s + var(--depth) * .9s); }
+#architecture.shows-next .exchange .line { animation: architecture-redraw .45s ease both calc(.8s + var(--start)); }
+#architecture.shows-next .exchange .head { animation: architecture-appear .15s ease both calc(1.2s + var(--start)); }
+
+#canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden; }
+#canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
+#canvas-attention .canvas-side { fill: none; stroke: var(--canvas); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
+
+/* A training step unrolled in time: one column per glimpse (1, 2, 3, then 21 after an ellipsis), one row per role;
+   the target repeats in every column. Each column appears on its click, its rows in order, input to output. */
+#distillation .unrolled { --col: 176px; --gap: 22px; --ellipsis: 34px; --img: 128px; --logo: 104px;
+  display: grid; grid-template-columns: 190px repeat(3, var(--col)) var(--ellipsis) var(--col);
+  grid-template-rows: 22px var(--img) 22px 20px 24px 20px var(--img) 30px var(--img); column-gap: var(--gap);
+  row-gap: 3px; justify-content: center; align-items: center; justify-items: center; }
+#distillation .unrolled > * { margin: 0; }
+#distillation .t0 { grid-column: 2; } #distillation .t1 { grid-column: 3; }
+#distillation .t2 { grid-column: 4; } #distillation .t20 { grid-column: 6; }
+#distillation .head { grid-row: 1; font-size: 18px; font-weight: 700; color: var(--glimpse); }
+#distillation .glimpse { grid-row: 2; outline: 3px solid var(--glimpse); outline-offset: -3px; }
+#distillation .viewpoint { grid-row: 3; font: 500 14px var(--mono); color: var(--text); white-space: nowrap; }
+#distillation .in { grid-row: 4; }
+#distillation :is(.model, .carry) { grid-row: 5; }
+#distillation .out { grid-row: 6; }
+#distillation .prediction { grid-row: 7; }
+#distillation .score { grid-row: 8; padding: 1px 10px; border: 2px solid currentColor; border-radius: 7px;
+  background: color-mix(in srgb, currentColor 10%, white); font: 700 17px var(--mono); }
+#distillation .target { grid-row: 9; }
+#distillation :is(.glimpse, .prediction, .target) { width: var(--img); height: var(--img); border-radius: 6px; }
+#distillation .model { width: var(--logo); height: auto; }
+#distillation .row-label { grid-column: 1; justify-self: end; text-align: right; font-size: 19px; font-weight: 700;
+  line-height: 1.2; }
+#distillation .of-input { grid-row: 2 / span 2; } #distillation .of-prediction { grid-row: 7; }
+#distillation .of-score { grid-row: 8; } #distillation .of-target { grid-row: 9; }
+#distillation .ellipsis { grid-column: 5; grid-row: 1; font-size: 22px; font-weight: 700; color: var(--glimpse); }
+/* Straight connectors: glimpse to model to prediction (ink), the canvas carried from one model to the next (canvas
+   red). */
+#distillation .down { position: relative; width: 3px; height: 100%; background: var(--ink); }
+#distillation .down::after { content: ""; position: absolute; left: -5px; bottom: -2px;
+  border: 6.5px solid transparent; border-top: 8px solid var(--ink); border-bottom: 0; }
+#distillation .carry { position: relative; justify-self: start; height: 3px; background: var(--canvas);
+  width: calc(var(--gap) + var(--col) - var(--logo) - 8px); margin-left: calc(var(--logo) / 2 - var(--col) / 2 - var(--gap)); }
+#distillation .carry.skip { width: calc(2 * var(--gap) + var(--ellipsis) + var(--col) - var(--logo) - 8px);
+  margin-left: calc(var(--logo) / 2 - var(--col) / 2 - 2 * var(--gap) - var(--ellipsis));
+  background: repeating-linear-gradient(90deg, var(--canvas) 0 8px, transparent 8px 14px); }
+#distillation .carry::after { content: ""; position: absolute; right: -8px; top: -5px;
+  border: 6.5px solid transparent; border-left: 9px solid var(--canvas); border-right: 0; }
+#distillation .carry.t1::before { content: "canvas"; position: absolute; left: 50%; bottom: 6px; translate: -50% 0;
+  font-size: 15px; font-weight: 700; color: var(--canvas); }
+/* Visibility: the first column without its target, then the target and the error, then one column per click. */
+#distillation .unrolled > :not(.of-input, .of-prediction) { opacity: 0; transition: opacity .5s ease; }
+#distillation .unrolled > .t0:not(.score, .target) { opacity: 1; }
+#distillation.shows-score .unrolled > :is(.t0, .row-label) { opacity: 1; }
+#distillation.shows-second .unrolled > .t1, #distillation.shows-third .unrolled > .t2,
+#distillation.shows-last .unrolled > :is(.t20, .ellipsis) { opacity: 1; }
+#distillation :is(.head, .glimpse, .viewpoint) { --delay: 0s; } #distillation :is(.in, .model, .carry) { --delay: .35s; }
+#distillation :is(.out, .prediction) { --delay: .7s; } #distillation :is(.score, .target) { --delay: 1.05s; }
+#distillation:is(.shows-second, .shows-third, .shows-last) .unrolled > :not(.t0, .row-label) { transition-delay: var(--delay); }
+
+/* Policy agnosticism: R-IID rollouts, then F-IID below them, drawn from the pretraining sampler. */
+#policy-agnosticism .rollout-grid { display: grid; grid-template-columns: 90px repeat(4, 248px); gap: 18px 16px;
+                                    align-items: center; justify-content: center; margin-top: 10px; }
+#policy-agnosticism .row-label { font-size: 26px; font-weight: 800; }
+#policy-agnosticism pretraining-rollout { position: relative; display: block; width: 248px; height: 248px; }
+#policy-agnosticism pretraining-rollout img, #policy-agnosticism pretraining-rollout svg {
+  position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 6px; }
+/* The full-scene glimpse's box coincides with the photo's edge: let its stroke show outside it. */
+#policy-agnosticism pretraining-rollout svg { overflow: visible; }
+#policy-agnosticism pretraining-rollout rect { fill: none; stroke: var(--policy-color); stroke-width: .022;
+                                               transition: opacity .3s ease; }
+#policy-agnosticism pretraining-rollout rect.hidden { opacity: 0; }
+#policy-agnosticism pretraining-rollout rect.past { opacity: .45; stroke-width: .014; }
+#policy-agnosticism pretraining-rollout rect.current { stroke: #fff; stroke-width: .03;
+                                                       filter: drop-shadow(0 0 .02px var(--policy-color)); }
+#policy-agnosticism .fiid { opacity: 0; transition: opacity .6s ease; }
+#policy-agnosticism.shows-fiid .fiid { opacity: 1; }
+
+#rollout .episode { width: 1060px; margin: 0 auto; padding: 14px 20px; }
+#rollout canvit-episode { font-size: 15px; }
+
+#extrapolation .extrapolation { display: grid; grid-template-columns: 110px repeat(4, 235px); gap: 10px 14px;
+                                align-items: center; justify-content: center; }
+#extrapolation img { width: 235px; height: 235px; border-radius: 8px; }
+#extrapolation .col-label { font-size: 17px; font-weight: 700; text-align: center; }
+#extrapolation .row-label { font-size: 18px; font-weight: 700; color: var(--muted); }
+#extrapolation .class-legend { display: grid; gap: 4px; margin-top: 10px; font-size: 15px; font-weight: 650; color: var(--text); }
+
+/* A class legend (index.html fills it from a legend.json): each class name after a chip of its color. */
+.reveal .class-legend span::before { content: ""; display: inline-block; width: .8em; height: .8em; margin-right: .4em;
+                                     border-radius: 3px; background: var(--chip); vertical-align: -.05em; }
+
+:is(#frontier, #teacher) .chart { width: 1040px; margin: 0 auto; padding: 14px 20px 10px; font-size: 14px; }
+
+#live .live-stage { width: 1100px; margin: 0 auto; font-size: 15px; zoom: .8; }
+
+/* Three questions, each over the demonstration in this talk that shows it can be asked of CanViT; accents of the
+   three parts of an active-vision model. */
+#neuro-ai .asks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 30px; }
+#neuro-ai .ask { display: flex; flex-direction: column; padding: 20px 14px 24px; border: 1px solid var(--rule);
+                 border-top: 6px solid var(--accent); border-radius: 16px; }
+#neuro-ai .ask h3 { color: var(--accent); font-size: 28px; text-align: center; white-space: nowrap; }
+#neuro-ai .visual { display: grid; align-content: center; height: 300px; margin: 14px 0 18px; }
+#neuro-ai .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+#neuro-ai .pair figure { margin: 0; }
+#neuro-ai .pair img, #neuro-ai .pair canvit-rollout { display: block; width: 100%; aspect-ratio: 1; border-radius: 8px; }
+#neuro-ai .pair .scanpath { object-fit: cover; object-position: 50% 100%; }
+#neuro-ai .pair figcaption { margin-top: 6px; font-size: 17px; font-weight: 700; text-align: center; color: var(--muted); }
+#neuro-ai .pair figcaption span { display: none; }
+#neuro-ai .pair figcaption b { color: var(--canvit-glimpse); }
+#neuro-ai .ask p { margin-top: auto; font-size: 24px; font-weight: 650; line-height: 1.3; text-align: center; }
+
+#links .layout { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding-top: 4px; }
+#links .qr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+#links .qr a { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 18px 12px 20px; border-radius: 18px;
+               background: var(--soft); color: var(--ink); text-decoration: none; }
+#links .qr .head { display: flex; align-items: center; gap: 12px; height: 44px; font-size: 28px; font-weight: 750; }
+#links .qr .logo { height: 40px; width: auto; }
+#links .qr .code { width: 270px; height: 270px; padding: 12px; border-radius: 12px; background: #fff; }
+#links .homepage { text-align: center; font-size: 26px; font-weight: 650; }
+#links .homepage a { color: var(--glimpse); text-decoration: none; }
+#links .start { display: flex; justify-content: center; align-items: center; gap: 18px; font-size: 26px; }
+#links .start code { padding: 10px 24px; border-radius: 12px; background: var(--ink); color: #fff; font-size: 26px; }
+#links .funders { display: flex; justify-content: space-between; align-items: center; padding-top: 18px;
+                  border-top: 1px solid var(--rule); }
+#links .funders img { height: 44px; width: auto; max-width: 150px; object-fit: contain; }
+#links .funders img.tall { height: 64px; }
+
+/* The policies: each still at its fifth glimpse with its full name, then playing, then smaller beside the race. Each
+   card sits at (--col, --row) of a grid whose pitch and panel scale change with the state, so the cards glide. */
+/* Viewing policies, one at a time: the street's rollout under the current policy, left; the policies so far, right,
+   the current one in its color, the earlier ones dimmed. */
+#policies .policy-stage { display: grid; grid-template-columns: 480px 1fr; gap: 64px; align-items: center; margin-top: 6px; }
+#policies figure { margin: 0; }
+#policies canvit-rollout { display: block; width: 480px; }
+#policies .policy-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+#policies .policy-list li { display: flex; align-items: baseline; gap: 14px; opacity: 0; transition: opacity .5s ease; }
+#policies .policy-list b { min-width: 92px; color: var(--policy-color); font-size: 28px; font-weight: 800; }
+#policies .policy-list span { color: var(--text); font-size: 22px; }
+#policies li.riid, #policies.shows-fiid li.fiid, #policies.shows-c2f li.c2f, #policies.shows-f2c li.f2c,
+#policies.shows-egc2f li.egc2f, #policies.shows-rfs li.rfs { opacity: .35; }
+#policies:not(.shows-fiid) li.riid, #policies.shows-fiid:not(.shows-c2f) li.fiid, #policies.shows-c2f:not(.shows-f2c) li.c2f,
+#policies.shows-f2c:not(.shows-egc2f) li.f2c, #policies.shows-egc2f:not(.shows-rfs) li.egc2f,
+#policies.shows-rfs li.rfs { opacity: 1; }
+
+/* Accuracy by viewing policy: ImageNet-1k, then ADE20K beside it. */
+#policy-accuracy .charts { display: grid; grid-template-columns: repeat(2, 540px); gap: 48px; justify-content: center; }
+#policy-accuracy figure { margin: 0; transition: opacity .6s ease; }
+#policy-accuracy figcaption { margin-bottom: 6px; font-size: 22px; font-weight: 750; }
+#policy-accuracy .ade20k { opacity: 0; }
+
+/* Training and inference cost: one column per click, each a large number with its conditions under it. */
+/* Training cost (training-cost.js): ImageNet-1k, then ADE20K beside it; CanViT-B in canvas red, prior active models in
+   the history charts' amber. */
+#cost .cost-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 4px; }
+#cost figure { margin: 0; transition: opacity .6s ease; }
+#cost figure.ade20k { opacity: 0; }
+#cost.shows-ade20k figure.ade20k { opacity: 1; }
+#cost figcaption { font-size: 24px; font-weight: 750; text-align: center; }
+#cost svg { display: block; width: 100%; height: auto; overflow: visible; }
+#cost .grid { stroke: var(--rule); }
+#cost .axis { stroke: var(--muted); stroke-width: 1.5; }
+#cost .tick { font: 500 16px var(--sans); fill: var(--muted); }
+#cost .title { font: 650 17px var(--sans); fill: var(--text); }
+#cost .counted { margin-top: 10px; font-size: 19px; color: var(--muted); text-align: center; }
+#cost .label { font: 700 17px var(--sans); paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
+#cost .prior .label { fill: #b45309; }
+#cost .canvit .label { fill: var(--canvas); font-weight: 800; }
+#cost .prior :is(.filled, .range) { fill: #d97706; stroke: #d97706; }
+#cost .range { stroke-width: 5; stroke-linecap: round; }
+#cost .prior circle { stroke: var(--bg); stroke-width: 2; }
+#cost .canvit circle { stroke: var(--canvas); stroke-width: 4; }
+#cost .canvit .filled { fill: var(--canvas); }
+#cost .canvit .hollow { fill: var(--bg); }
+
+#policy-accuracy.shows-ade20k .ade20k { opacity: 1; }
+
+/* Quickstart: the install line alone and large, then small above the code; the code walked through block by block,
+   the street and the segmentation each model call returns beside it, the map a moment after its glimpse's box. */
+#quickstart .install { position: absolute; left: 0; right: 0; top: 300px; text-align: center; transition: top .7s ease, font-size .7s ease;
+                       font-size: 44px; }
+#quickstart .install code { padding: .3em .7em; border-radius: .3em; background: var(--ink); color: #fff; font-size: 1em; }
+#quickstart.shows-code .install { top: 104px; font-size: 20px; }
+#quickstart pre { position: absolute; left: var(--slide-pad-x); top: 156px; width: 800px; box-sizing: border-box;
+                  padding: 14px 22px; font-size: 13.5px; line-height: 1.42; }
+#quickstart pre::before { top: calc(14px + (var(--line-from, 1) - 1) * 1lh); }
+#quickstart .result { position: absolute; right: var(--slide-pad-x); top: 136px; width: 226px; display: grid; gap: 8px; }
+#quickstart .result figure { margin: 0; opacity: 0; transition: opacity .5s ease; }
+#quickstart.shows-scene .result .scene, #quickstart.shows-first .result .map { opacity: 1; }
+#quickstart.shows-first .result .map { transition-delay: .8s; }
+#quickstart .result figcaption { margin-bottom: 4px; font-size: 16px; }
+#quickstart .result .frame { position: relative; width: 226px; height: 226px; }
+#quickstart .result .frame > * { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .5s ease; }
+#quickstart .result .frame img { border-radius: 6px; }
+#quickstart .result :is(.first, .second) { opacity: 0; }
+#quickstart.shows-first .result .first { opacity: 1; }
+#quickstart.shows-second .result .first { opacity: 0; }
+#quickstart.shows-second .result .second { opacity: 1; }
+#quickstart.shows-second .result .map .second { transition-delay: .8s; }
+#quickstart .names span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; color: #fff;
+                          font-size: 13px; font-weight: 750; text-shadow: 0 0 3px #000, 0 0 6px rgba(0, 0, 0, .6); }
+
+/* The deep active vision timeline (timeline.js): active models in the history chart's amber; on the last click, those
+   whose policy is learned by reinforcement learning turn policy teal. */
+#timeline .timeline svg { display: block; width: 100%; height: auto; overflow: visible; }
+#timeline .axis { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+#timeline .tick { stroke: var(--ink); stroke-width: 1.5; }
+#timeline .year { font: 600 18px var(--sans); fill: var(--muted); paint-order: stroke; stroke: var(--bg); stroke-width: 8px; }
+#timeline .marker { fill: #d97706; stroke: var(--bg); stroke-width: 2.5; transition: fill .5s ease, r .5s ease; }
+#timeline.shows-rl .marker.rl { fill: var(--policy); r: 13; }
+#timeline .legend { position: absolute; right: var(--slide-pad-x); top: 120px; display: flex; align-items: center; gap: 10px;
+                    font-size: 20px; font-weight: 650; color: var(--policy); }
+#timeline .legend .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--policy); }
+#timeline .leader { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 5; }
+#timeline .name { font: 800 24px var(--sans); fill: var(--ink); }
+#timeline .cite { font: italic 400 15px var(--sans); fill: var(--muted); }
+/* The last click: the axis extends into 2026 and CanViT arrives, in the brand's gradient. */
+#timeline .slides { transition: transform 1s ease; }
+#timeline.shows-canvit .slides { transform: translateX(var(--dx)); }
+#timeline .after-only { opacity: 0; transition: opacity .5s ease; }
+#timeline.shows-canvit .after-only { opacity: 1; transition-delay: .7s; }
+#timeline .canvit { opacity: 0; transition: opacity .6s ease; }
+#timeline.shows-canvit .canvit { opacity: 1; transition-delay: .8s; }
+#timeline .canvit .name { font-size: 30px; fill: url(#timeline-brand); }
+#timeline .canvit .cite { font-style: normal; font-weight: 650; fill: var(--ink); }
+#timeline .marker.ours { fill: url(#timeline-brand); }
+
+/* A persistent, evolving understanding of the scene: glimpses, the composite with the canvas kept, then with it reset;
+   each glimpse a named state (second, third), the reset column last. */
+#memory .memory-demo { display: grid; grid-template-columns: repeat(3, 360px); justify-content: center; gap: 30px; }
+#memory .memory-demo figure { margin: 0; }
+#memory .memory-demo figcaption { margin-bottom: 8px; font-size: 26px; font-weight: 800; }
+#memory .stack { display: grid; }
+#memory .stack img { grid-area: 1 / 1; display: block; width: 360px; height: 360px; border-radius: 8px; opacity: 0;
+                     transition: opacity .5s ease; }
+#memory .stack .t0 { opacity: 1; }
+#memory.shows-second .stack .t1, #memory.shows-third .stack .t2 { opacity: 1; }
+#memory .reset { opacity: 0; transition: opacity .6s ease; }
+#memory.shows-reset .reset, #memory .reset .t2 { opacity: 1; }
+#memory .class-legend { display: flex; justify-content: center; gap: 28px; margin-top: 18px; font-size: 22px; font-weight: 700; }
+
+/* The model's own uncertainty: the scene with two rings, the class probabilities at each as bars, then the
+   uncertainty map, its quadrants, and the one EG-C2F visits next. */
+#uncertainty .layout { display: grid; grid-template-columns: 400px 300px 400px; gap: 26px; justify-content: center;
+                       align-items: start; margin-top: 10px; }
+#uncertainty figure { position: relative; margin: 0; }
+#uncertainty canvit-scene, #uncertainty canvit-map { display: block; width: 400px; }
+#uncertainty .rings text { font-size: 4.2px; }
+#uncertainty .rings .halo { stroke-width: 1.4; }
+#uncertainty .rings .ring { stroke-width: .7; }
+#uncertainty .ring-certain, #uncertainty .ring-uncertain { opacity: 0; transition: opacity .4s ease; }
+#uncertainty.shows-certain .ring-certain, #uncertainty.shows-uncertain .ring-uncertain { opacity: 1; }
+#uncertainty .bars { opacity: 0; transition: opacity .5s ease; margin-bottom: 26px; }
+#uncertainty.shows-certain .bars.certain, #uncertainty.shows-uncertain .bars.uncertain { opacity: 1; }
+#uncertainty .bars .head { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+#uncertainty .bars .row { display: grid; grid-template-columns: 96px 150px 46px; align-items: center; gap: 8px; font-size: 17px; }
+#uncertainty .bars .name { text-align: right; color: var(--text); }
+#uncertainty .bars .bar { height: 16px; width: calc(var(--p) * 150px); border-radius: 3px; background: var(--ink); }
+#uncertainty .bars .p { color: var(--muted); font-variant-numeric: tabular-nums; }
+#uncertainty .bars .entropy { margin-top: 6px; font-size: 18px; font-weight: 700; color: var(--text); opacity: 0;
+                              transition: opacity .4s ease; }
+#uncertainty.shows-map .bars .entropy { opacity: 1; }
+#uncertainty .map { opacity: 0; transition: opacity .6s ease; }
+#uncertainty.shows-map .map { opacity: 1; }
+#uncertainty .quadrants { position: absolute; left: 0; top: 0; width: 400px; height: 400px; pointer-events: none; }
+#uncertainty .quadrants span { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+                               border: 2px dashed rgba(255, 255, 255, .85); color: #fff; font-size: 26px; font-weight: 800;
+                               text-shadow: 0 0 4px #000; opacity: 0; transition: opacity .4s ease, border .4s ease; }
+#uncertainty.shows-quadrants .quadrants span { opacity: 1; }
+#uncertainty.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }
+
+
+/* The divider before the Backup slides. */
+#backup .divider { display: grid; place-items: center; height: 100%; margin: 0; font-size: 96px; font-weight: 800;
+                   letter-spacing: -.03em; color: var(--muted); }
+
+/* Accuracy by uncertainty (uncertainty-calibration.js): the full-scene glimpse in gray, five C2F glimpses in C2F's
+   color. */
+#calibration .calibration svg { display: block; width: 100%; height: auto; margin-top: 6px; overflow: visible; }
+#calibration .grid { stroke: var(--rule); }
+#calibration .tick { font: 500 17px var(--sans); fill: var(--muted); }
+#calibration .title { font: 650 18px var(--sans); fill: var(--text); }
+#calibration .series-0 { fill: #94a3b8; }
+#calibration .series-1 { fill: #1f77b4; }

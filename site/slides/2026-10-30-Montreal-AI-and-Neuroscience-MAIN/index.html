@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CanViT · MAIN 2026</title>
+  <link rel="icon" href="data:,">
+  <link rel="preload" href="../../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../css/canvit.css">
+  <link rel="stylesheet" href="../deck.css">
+  <link rel="stylesheet" href="talk.css">
+</head>
+<body>
+<div class="reveal">
+<div class="footer"><span class="brand">CanViT</span> · MAIN 2026</div>
+<div class="slides">
+
+<!-- The talk as OUTLINE.md designs it, slide by slide. Wording comes from the paper, the project page and the README (../AGENTS.md, "Writing slides"); notes are what he says, in his voice. Figures from other papers:
+     assets/figures/PROVENANCE.md. Data under ../../data/talk is generated (throwaway/: table_corners, distillation)
+     and not committed. -->
+
+<!-- ============================================================== Vision, brains and machines -->
+
+<section id="title" data-status="draft">
+  <div class="layout">
+    <div class="name">
+      <img class="wordmark" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+      <h1>Toward Active-Vision Foundation Models</h1>
+    </div>
+    <div class="authors">
+      <figure><img src="../../assets/authors/berreby.jpg" alt=""><figcaption>Yohaï-Eliel Berreby</figcaption></figure>
+      <figure><img src="../../assets/authors/du.jpg" alt=""><figcaption>Sabrina Du</figcaption></figure>
+      <figure><img src="../../assets/authors/durand.jpg" alt=""><figcaption>Audrey Durand</figcaption></figure>
+      <figure><img src="../../assets/authors/krishna.jpg" alt=""><figcaption>B. Suresh Krishna</figcaption></figure>
+    </div>
+    <div class="logos">
+      <img src="assets/logos/mcgill.svg" alt="McGill University">
+      <img src="assets/logos/mila.svg" alt="Mila – Quebec AI Institute">
+      <img src="assets/logos/laval.svg" alt="Université Laval">
+      <span class="rule"></span>
+      <img src="../../assets/logos/neurips.svg" alt="NeurIPS 2026" class="neurips"><b>NeurIPS 2026</b>
+    </div>
+  </div>
+</section>
+
+<section id="tradition" data-status="ready">
+  <h2>Computational models of biological visual processing</h2>
+  <div class="lineage">
+    <figure class="fragment"><img src="assets/figures/hubel-wiesel-1962-receptive-fields.png" alt="Receptive field maps of simple cells in cat visual cortex"><figcaption><b>Receptive fields</b><span class="cite">Hubel &amp; Wiesel 1962, <i>J. Physiol.</i></span></figcaption></figure>
+    <figure class="fragment"><img src="assets/figures/fukushima-1980-neocognitron.png" alt="The Neocognitron's hierarchy of S and C layers"><figcaption><b>Neocognitron</b><span class="cite">Fukushima 1980, <i>Biol. Cybern.</i></span></figcaption></figure>
+    <figure class="fragment"><img src="assets/figures/felleman-van-essen-1991-hierarchy.png" alt="The hierarchy of primate visual areas"><figcaption><b>The primate visual hierarchy</b><span class="cite">Felleman &amp; Van Essen 1991, <i>Cereb. Cortex</i></span></figcaption></figure>
+    <figure class="fragment wide"><img src="assets/figures/yamins-2014-performance-vs-it.png" alt="Categorization performance against IT neural predictivity for thousands of models"><figcaption><b>Better at recognizing objects, better at predicting IT</b><span class="cite">Yamins et al. 2014, <i>PNAS</i></span></figcaption></figure>
+    <figure class="fragment wide"><img src="assets/figures/brain-score-2018.png" alt="Brain-Score against ImageNet top-1 accuracy for many networks"><figcaption><b>Brain-Score</b><span class="cite">Schrimpf et al. 2018, <i>bioRxiv</i></span></figcaption></figure>
+  </div>
+</section>
+
+<section id="human-vision" data-status="ready">
+  <h2>Human vision is fundamentally active</h2>
+  <div class="yarbus">
+    <figure><img src="assets/figures/yarbus-1967-face.png" alt="A photograph of a face and the record of an observer's eye movements over it"></figure>
+    <figure class="fragment"><img src="assets/yarbus-the-visitor.jpg" alt="One observer's eye movements over Repin's painting The Unexpected Visitor under seven different instructions"></figure>
+  </div>
+  <p class="cite">Yarbus 1967, <i>Eye Movements and Vision</i></p>
+</section>
+
+<!-- ============================================================== Knowledge of the world -->
+
+<section id="table" data-status="draft">
+  <h2>Integrating multiple viewpoints into a coherent understanding</h2>
+  <div class="table-demo">
+    <figure>
+      <img src="../../data/talk/table-clean/ADE_val_00001271-table/scene.png" alt="A conference room with a long table">
+      <img class="over fragment" data-fragment-index="0" src="../../data/talk/table/ADE_val_00001271-table/scene.png" alt="The same room, with two glimpses at the two ends of the table">
+    </figure>
+    <figure class="fragment" data-fragment-index="1">
+      <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="A passive model's probability of table from each glimpse alone, pasted where the glimpse was taken; nothing elsewhere">
+      <svg class="marks fragment" data-fragment-index="2" viewBox="0 0 470 470">
+        <ellipse class="halo" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
+        <ellipse class="ring" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
+        <text class="query" x="320" y="283" text-anchor="middle">?</text>
+      </svg>
+      <figcaption>DINOv3, each glimpse alone</figcaption>
+      <p class="scale"><span>0</span><i></i><span>1</span><b>probability of table</b></p>
+    </figure>
+  </div>
+  <!-- XXX: the cognitive-science citation for this slide is being verified (sources/cognition.md). TODO (PLAN.md): each
+       glimpse's answer flying to its place. -->
+</section>
+
+<section id="foundation" data-status="draft">
+  <h2>DINOv3 feature maps</h2>
+  <!-- The living room segmented on #history. DINOv3 ViT-B/16 at 1536 x 1024 px (96 x 64 patches); the feature colors
+       are principal components 2 to 4 clipped at their 2nd and 98th percentiles, chosen among variants for how
+       distinct the objects look; the maps are the released DINOv3 ADE20K linear probe's class probabilities (trained
+       at 512 px; patch accuracy 0.81 on this scene). Upsampled with nearest neighbor. maps.json beside the images
+       records all of it (throwaway/foundation). -->
+  <div class="stage">
+    <img class="photo" src="../../data/talk/foundation/ADE_val_00001509/photo.png" alt="A living room">
+    <img class="pixels features wipe" src="../../data/talk/foundation/ADE_val_00001509/pca.png" alt="DINOv3's patch features as colors: television, fireplace, windows, armchair and floor each in their own color">
+    <svg class="arrows" viewBox="0 0 1152 556">
+      <path class="draw" pathLength="1" d="M478,278 C620,278 640,92 772,92"/>
+      <path class="draw" pathLength="1" d="M478,278 L772,278"/>
+      <path class="draw" pathLength="1" d="M478,278 C620,278 640,464 772,464"/>
+      <text x="625" y="54" text-anchor="middle">linear decoding</text>
+    </svg>
+    <figure class="prob" style="--row: 0"><figcaption>television</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-television.png" alt="The probability of television: bright on the TV only"></figure>
+    <figure class="prob" style="--row: 1"><figcaption>fireplace</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-fireplace.png" alt="The probability of fireplace: bright on the fireplace only"></figure>
+    <figure class="prob" style="--row: 2"><figcaption>armchair</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-armchair.png" alt="The probability of armchair: bright on the armchair only"></figure>
+  </div>
+  <p class="cite">DINOv3 ViT-B/16, Siméoni et al. 2025</p>
+  <span class="fragment step-marker" data-shows="features"></span>
+  <span class="fragment step-marker" data-shows="decode"></span>
+</section>
+
+<!-- ============================================================== Active computer vision -->
+
+<section id="timeline" data-status="draft">
+  <h2>A brief history of deep active computer vision</h2>
+  <!-- Drawn by timeline.js from sources/active-vision-timeline.json; each model a fragment, then how each chose where
+       to look. Evidence for every entry: sources/active-vision-timeline.md. -->
+  <div class="timeline"></div>
+  <p class="legend fragment" data-shows="rl"><span class="dot"></span>where to look, learned by reinforcement learning</p>
+  <span class="fragment step-marker" data-shows="canvit"></span>
+</section>
+
+<section id="history" data-status="draft">
+  <h2>The wide gap between passive and active computer vision</h2>
+  <!-- One benchmark after the other, each introduced by its task. Examples chosen by sweeps (OUTLINE.md, this slide;
+       throwaway/history_examples): an ImageNet-1k validation photo the passive classifier names with p = 0.994, and an
+       ADE20K validation living room with 13 named classes and 0.9% unlabeled pixels. -->
+  <div class="stage">
+    <figure class="example classification">
+      <figcaption>Classification</figcaption>
+      <div class="frame"><img src="../../data/talk/history/classification/ILSVRC2012_val_00037182/image.png" alt="An English springer spaniel lying down"><span class="tag">English springer</span></div>
+    </figure>
+    <div class="history-chart imagenet" data-benchmark="imagenet"></div>
+    <figure class="example segmentation">
+      <figcaption>Semantic segmentation</figcaption>
+      <div class="frame">
+        <img src="../../data/talk/history/segmentation/ADE_val_00001509/image.png" alt="A living room">
+        <img class="pixels map wipe" src="../../data/talk/history/segmentation/ADE_val_00001509/map.png" alt="The living room's annotation: a class for every pixel">
+        <div class="names" data-src="../../data/talk/history/segmentation/ADE_val_00001509/names.json"></div>
+      </div>
+    </figure>
+    <div class="history-chart ade20k" data-benchmark="ade20k"></div>
+  </div>
+  <span class="fragment step-marker" data-shows="label"></span>
+  <span class="fragment step-marker" data-shows="imagenet"></span>
+  <span class="fragment step-marker" data-shows="frozen"></span>
+  <span class="fragment step-marker" data-shows="active"></span>
+  <span class="fragment step-marker" data-shows="segmentation"></span>
+  <span class="fragment step-marker" data-shows="map"></span>
+  <span class="fragment step-marker" data-shows="ade20k"></span>
+  <span class="fragment step-marker" data-shows="gap"></span>
+</section>
+
+<section id="active-vision-model" data-status="draft">
+  <h2>What's in an active-vision model?</h2>
+  <div class="axes">
+    <div class="group observer">
+      <p class="does">Seeing</p>
+      <div class="jobs">
+        <article class="job" style="--accent: var(--glimpse)"><h3>Instantaneous vision</h3><p>making sense of what it sees at a given moment</p></article>
+        <article class="job" style="--accent: var(--canvas)"><h3>Memory</h3><p>updating a persistent, evolving understanding of the scene</p></article>
+      </div>
+      <p class="role">Observer</p>
+    </div>
+    <div class="group policy">
+      <p class="does">Choosing where to look</p>
+      <div class="jobs">
+        <article class="job" style="--accent: var(--policy)"><h3>Action selection</h3><p>deciding where and at what zoom level to look next</p></article>
+      </div>
+      <p class="role">Policy</p>
+      <p class="focus fragment">prior work focused here</p>
+    </div>
+  </div>
+  <!-- What learning where to look bought, in the papers' own ablations (sources/policy-ablations.json), then the claim in
+       its place: demonstrate, then name. -->
+  <div class="bottom">
+    <div class="ablations"></div>
+    <p class="claim"><span>No policy can make up for a poor observer.</span> <span>A general-purpose observer lets you use any policy.</span></p>
+  </div>
+  <span class="fragment step-marker" data-shows="ablations"></span>
+  <span class="fragment step-marker" data-shows="claim"></span>
+</section>
+
+<!-- ============================================================== CanViT -->
+
+<section id="rollout" data-status="draft">
+  <h2><span class="brand">CanViT</span> in action</h2>
+  <!-- The loop introduced part by part, each in its place [Yohaï, 2026-10-01]: the fragments set the episode's stage; once
+       everything is shown it plays on from the first glimpse (data-play="play") without redrawing it [Yohaï: "ensure
+       that there is no flickering from the gradual-reveal to the beginning of actually running the animation"]. The
+       canvas shows features first, segmentation on the last click [Yohaï: "START WITH FEATURES, not segmentation
+       map"]. -->
+  <div class="card episode"><canvit-episode data-play="play" src="../../data/street-riid ../../data/shop-riid ../../data/ferry-riid" readout="canvas" stage="scene"></canvit-episode></div>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="viewpoint"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="glimpse"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="model"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="canvas"></span>
+  <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-episode" data-canvit-stage="all"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="all" data-canvit-readout="labels"></span>
+</section>
+
+<section id="architecture" data-status="draft">
+  <h2><span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span> architecture</h2>
+  <!-- The paper's two streams drawn on the street of #rollout, its first glimpse and then its second (architecture.js),
+       from the same rollout recorded with each Write's canvas (data/talk/architecture/street-riid: the street-riid
+       command of record_bundles.sh with --capture-writes and --scene.out there): the blocks, reads and writes from the
+       bundle's manifest; the canvas before the glimpse and after each Write, its features in three principal
+       components as colors, as in the paper's canvas-evolution figure [Yohaï, 2026-10-01]. The paper's full figure, with the CLS, VPE and register tokens, is in Backup
+       (#architecture-paper). -->
+  <div class="arch-build" data-src="../../data/talk/architecture/street-riid" data-t="0"></div>
+  <span class="fragment step-marker" data-shows="canvas"></span>
+  <span class="fragment step-marker" data-shows="run"></span>
+  <span class="fragment step-marker" data-shows="next"></span>
+</section>
+
+<section id="distillation" data-status="draft">
+  <h2>Passive-to-active dense latent distillation</h2>
+  <!-- A training step unrolled in time, one column per glimpse [Yohaï, 2026-10-01]. A bedroom (ADE_val_00000124, chosen by a
+       sweep over ADE20K validation, throwaway/distillation) and 21 random glimpses (riid-s124-n21); predictions and
+       target in one PCA basis; viewpoints and losses from throwaway/distillation/training_step.py's steps.json,
+       filled in by distillation.js. -->
+  <div class="unrolled">
+    <p class="row-label of-input">Glimpse<br>(x, y, scale)</p>
+    <p class="row-label of-prediction">Prediction</p>
+    <p class="row-label of-score">MSE</p>
+    <p class="row-label of-target">Target</p>
+    <p class="ellipsis">…</p>
+    <p class="head t0">Glimpse 1</p>
+    <img class="glimpse pixels t0" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-0.png" alt="">
+    <p class="viewpoint t0" data-t="0"></p>
+    <span class="down in t0"></span>
+    <img class="model t0" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="down out t0"></span>
+    <img class="prediction pixels t0" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-0.png" alt="">
+    <p class="score t0" data-t="0"></p>
+    <img class="target pixels t0" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="">
+    <p class="head t1">Glimpse 2</p>
+    <img class="glimpse pixels t1" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-1.png" alt="">
+    <p class="viewpoint t1" data-t="1"></p>
+    <span class="down in t1"></span>
+    <span class="carry t1"></span>
+    <img class="model t1" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="down out t1"></span>
+    <img class="prediction pixels t1" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-1.png" alt="">
+    <p class="score t1" data-t="1"></p>
+    <img class="target pixels t1" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="">
+    <p class="head t2">Glimpse 3</p>
+    <img class="glimpse pixels t2" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-2.png" alt="">
+    <p class="viewpoint t2" data-t="2"></p>
+    <span class="down in t2"></span>
+    <span class="carry t2"></span>
+    <img class="model t2" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="down out t2"></span>
+    <img class="prediction pixels t2" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-2.png" alt="">
+    <p class="score t2" data-t="2"></p>
+    <img class="target pixels t2" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="">
+    <p class="head t20">Glimpse 21</p>
+    <img class="glimpse pixels t20" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-20.png" alt="">
+    <p class="viewpoint t20" data-t="20"></p>
+    <span class="down in t20"></span>
+    <span class="carry t20 skip"></span>
+    <img class="model t20" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="down out t20"></span>
+    <img class="prediction pixels t20" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-20.png" alt="">
+    <p class="score t20" data-t="20"></p>
+    <img class="target pixels t20" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="">
+  </div>
+  <span class="fragment step-marker" data-shows="score"></span>
+  <span class="fragment step-marker" data-shows="second"></span>
+  <span class="fragment step-marker" data-shows="third"></span>
+  <span class="fragment step-marker" data-shows="last"></span>
+</section>
+
+<section id="policy-agnosticism" data-status="draft">
+  <h2>Policy agnosticism</h2>
+  <!-- Viewpoints drawn by the package's pretraining sampler for four ImageNet photographs (throwaway/pretraining):
+       rollout lengths from the pretraining config's process (K = 2, p_stop = 0.5), F-IID and R-IID as in pretraining.
+       Labels and colors from js/canvit/policies.js. -->
+  <div class="rollout-grid">
+    <p class="row-label" data-policy-label="random"></p>
+    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="dog" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="church" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="truck" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="parachute" policy="random"></pretraining-rollout>
+    <p class="row-label fiid" data-policy-label="full_then_random"></p>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="dog" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="church" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="truck" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="parachute" policy="full_then_random"></pretraining-rollout>
+  </div>
+  <span class="fragment step-marker" data-shows="fiid"></span>
+</section>
+
+<!-- ============================================================== What it does -->
+
+<section id="memory" data-status="draft">
+  <h2>A persistent, evolving understanding of the scene</h2>
+  <!-- ADE_val_00000836, a street, from a sweep of 6,218 three-object sequences in ADE20K validation
+       (throwaway/memory_reset, trio_*): a glimpse on a shop sign, then on people walking, then on a bicycle; each
+       object's class probability in its color over the dimmed scene, per canvas cell. Kept: the canvas carried; reset:
+       cleared before each glimpse. Alternative, numerically cleaner but less lively: ADE_val_00001182 (a bedroom). -->
+  <div class="memory-demo">
+    <figure><figcaption>Glimpses</figcaption><div class="stack">
+      <img class="t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t0.png" alt="A street with a glimpse on a shop sign">
+      <img class="t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t1.png" alt="A second glimpse, on people walking">
+      <img class="t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t2.png" alt="A third glimpse, on a bicycle"></div></figure>
+    <figure><figcaption>Memory kept</figcaption><div class="stack">
+      <img class="pixels t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t0.png" alt="The sign lights up">
+      <img class="pixels t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t1.png" alt="The people light up; the sign stays">
+      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="The bicycle lights up; the sign and the people stay"></div></figure>
+    <figure class="reset"><figcaption>Memory reset</figcaption><div class="stack">
+      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="With the memory reset before each glimpse, only the bicycle remains"></div></figure>
+  </div>
+  <p class="class-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
+  <span class="fragment step-marker" data-shows="second"></span>
+  <span class="fragment step-marker" data-shows="third"></span>
+  <span class="fragment step-marker" data-shows="reset"></span>
+</section>
+
+<section id="extrapolation" data-status="ready">
+  <h2>Extrapolation to unobserved regions</h2>
+  <div class="extrapolation">
+    <div></div><p class="col-label">DINOv3, each glimpse</p><p class="col-label">CanViT, far end</p><p class="col-label">CanViT, near end</p><p class="col-label">CanViT, both</p>
+    <div class="row-label">Classes<p class="class-legend" data-src="../../data/talk/table/ADE_val_00001271-table/legend.json"></p></div>
+    <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/dinov3.png" alt="">
+    <img class="pixels fragment" data-fragment-index="0" src="../../data/talk/table/ADE_val_00001271-table/a.png" alt="">
+    <img class="pixels fragment" data-fragment-index="1" src="../../data/talk/table/ADE_val_00001271-table/b.png" alt="">
+    <img class="pixels fragment" data-fragment-index="2" src="../../data/talk/table/ADE_val_00001271-table/ab.png" alt="">
+    <p class="row-label">p(table)</p>
+    <img class="pixels" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="">
+    <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_a.png" alt="">
+    <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_b.png" alt="">
+    <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_ab.png" alt="">
+  </div>
+</section>
+
+<section id="detail" data-status="draft">
+  <h2>Spatial coverage and perception of detail</h2>
+  <!-- ADE_val_00001715, chosen among 4,151 small objects of ADE20K validation (throwaway/looking_closer): a television
+       CanViT-B misses after the full-scene glimpse (p 0.03) and finds after a zoomed one (p 0.77), with few false
+       positives. The input panel zooms into the zoomed glimpse's box (geometry from meta.json, detail.js), then the
+       zoomed glimpse itself replaces it. Last, DINOv3 ViT-B on the whole scene at 128 px with its released 128 px probe
+       (throwaway/looking_closer/dinov3_full.py: mean p(television) over the object 0.004, CanViT's full-scene glimpse 0.03,
+       after the zoom 0.77). -->
+  <div class="detail-row">
+    <figure class="scene"><figcaption>Scene</figcaption>
+      <div class="frame"><img src="../../data/talk/looking-closer-clean/ADE_val_00001715-television/scene.png" alt="A billiard room with a television on the far wall"><img class="boxed" src="../../data/talk/looking-closer/ADE_val_00001715-television/scene.png" alt="The same room with the zoomed glimpse's box around the television"></div></figure>
+    <figure class="input"><figcaption>CanViT's input, 128 px</figcaption>
+      <div class="frame">
+        <img class="pixels full" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_full.png" alt="The whole scene in 128 by 128 pixels">
+        <img class="pixels zoomed" src="../../data/talk/looking-closer/ADE_val_00001715-television/glimpse_zoom.png" alt="The zoomed glimpse in 128 by 128 pixels: a television">
+        <span class="object-ring"></span>
+      </div></figure>
+    <figure class="prob"><figcaption data-class-caption="CanViT"></figcaption>
+      <div class="frame"><img class="pixels f" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_f.png" alt="After the full-scene glimpse: nothing"><img class="pixels fz" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_fz.png" alt="After the zoomed glimpse: the television"></div></figure>
+    <figure class="passive"><figcaption data-class-caption="DINOv3, whole scene"></figcaption>
+      <div class="frame"><img class="pixels" src="../../data/talk/looking-closer/ADE_val_00001715-television/prob_dinov3_128.png" alt="DINOv3 on the whole scene at 128 px: nothing"></div></figure>
+  </div>
+  <span class="fragment step-marker" data-shows="full"></span>
+  <span class="fragment step-marker" data-shows="loupe"></span>
+  <span class="fragment step-marker" data-shows="zoom"></span>
+  <span class="fragment step-marker" data-shows="passive"></span>
+</section>
+
+<section id="policies" data-status="draft">
+  <h2>Viewing policies</h2>
+  <!-- One policy at a time [Yohaï, 2026-10-01]: one rollout on the street, its recorded bundle
+       switched on each click, its viewpoints in the policy's color; beside it the policies so far, the current one in
+       its color. Labels, names and colors from js/canvit/policies.js (script below). Results: #policy-accuracy. -->
+  <div class="policy-stage">
+    <figure class="current">
+      <canvit-rollout class="policy" data-play src="../../data/street-riid" interval="700"><canvit-scene trail="past"></canvit-scene></canvit-rollout></figure>
+    <ul class="policy-list">
+      <li class="riid" data-policy="random"></li>
+      <li class="fiid" data-policy="full_then_random"></li>
+      <li class="c2f" data-policy="coarse_to_fine"></li>
+      <li class="f2c" data-policy="fine_to_coarse"></li>
+      <li class="egc2f" data-policy="entropy_coarse_to_fine"></li>
+      <li class="rfs" data-policy="repeated_full_scene"></li>
+    </ul>
+  </div>
+  <span class="fragment step-marker" data-shows="fiid" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-fiid" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="c2f" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-c2f" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="f2c" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-f2c" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="egc2f" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-egc2f" data-canvit-t="0"></span>
+  <span class="fragment step-marker" data-shows="rfs" data-canvit-target="canvit-rollout.policy" data-canvit-src="../../data/street-rfs" data-canvit-t="0"></span>
+</section>
+
+<section id="uncertainty" data-status="draft">
+  <h2>Uncertainty-based viewpoint selection</h2>
+  <!-- How EG-C2F chooses, on the street of #policies after its first glimpse (the full scene). The street-egc2f
+       bundle draws the scene, the boxes and the uncertainty map; uncertainty.js draws the rings, the bars and the
+       quadrants from throwaway/metacognition/export.py's data, a replay of that rollout checked against the bundle's
+       viewpoints. -->
+  <div class="layout">
+    <!-- The scene moves on to the next glimpse; the map stays at the first, whose uncertainty chose it. -->
+    <canvit-rollout class="next-glimpse" src="../../data/street-egc2f" t="0">
+      <figure class="scene"><canvit-scene trail="past"></canvit-scene><svg class="marks rings" viewBox="0 0 100 100"></svg></figure>
+    </canvit-rollout>
+    <div class="all-bars"><div class="bars certain"></div><div class="bars uncertain"></div></div>
+    <canvit-rollout src="../../data/street-egc2f" t="0">
+      <figure class="map"><canvit-map layer="entropy"></canvit-map><div class="quadrants"></div><canvit-legend layer="entropy"></canvit-legend></figure>
+    </canvit-rollout>
+  </div>
+  <span class="fragment step-marker" data-shows="certain"></span>
+  <span class="fragment step-marker" data-shows="uncertain"></span>
+  <span class="fragment step-marker" data-shows="map"></span>
+  <span class="fragment step-marker" data-shows="quadrants"></span>
+  <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
+</section>
+
+<!-- ============================================================== Results -->
+
+<section id="results" data-status="draft">
+  <h2>Benchmark results on ADE20K and ImageNet-1k</h2>
+  <div class="stage">
+    <div class="history-chart imagenet" data-benchmark="imagenet" data-canvit></div>
+    <div class="history-chart ade20k" data-benchmark="ade20k" data-canvit></div>
+  </div>
+  <span class="fragment step-marker" data-shows="canvit-imagenet"></span>
+  <span class="fragment step-marker" data-shows="ade20k"></span>
+  <span class="fragment step-marker" data-shows="canvit-ade20k"></span>
+</section>
+
+<section id="policy-accuracy" data-status="draft">
+  <h2>Accuracy by viewing policy</h2>
+  <!-- The paper's Figure 3B and 3C as one view [Yohaï, 2026-10-01]. Both frozen with a linear
+       probe: ImageNet-1k at the 32 x 32 canvas of its export, ADE20K at 64 x 64 (the headline's). Both vertical axes
+       span the same 12 points around where the rollouts end, so the spreads compare; lines starting lower enter from
+       below [Yohaï: "need axis cutoffs intelligently for visual storytelling"]. One task after the other. -->
+  <div class="charts">
+    <figure class="in1k"><figcaption>ImageNet-1k classification</figcaption>
+      <canvit-policy-curves src="../../assets/paper/in1k_clf_frozen.json" task="in1k" canvas-grid="32" y-range="70 82" x-scale="log"></canvit-policy-curves></figure>
+    <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption>
+      <canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" y-range="35 47" x-scale="log"></canvit-policy-curves></figure>
+  </div>
+  <span class="fragment step-marker" data-shows="ade20k"></span>
+</section>
+
+<section id="cost" data-status="draft">
+  <hgroup><h2>Training cost</h2><p>Best accuracy v. each model's own training compute</p></hgroup>
+  <!-- [Yohaï, 2026-10-01]. training-cost.js draws
+       ../../data/talk/training-cost.json, which throwaway/training_cost/export.py writes from the authors' training-FLOP
+       accounting (teachers and pretrained weights counted on no side), the paper's macros and sources/sota-history.json.
+       ImageNet-1k first, then ADE20K beside it. -->
+  <div class="cost-charts">
+    <figure class="imagenet"><figcaption>ImageNet-1k classification</figcaption><div data-benchmark="imagenet"></div></figure>
+    <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption><div data-benchmark="ade20k"></div></figure>
+  </div>
+  <p class="counted">Teachers and pretrained weights are not counted, on any side.</p>
+  <span class="fragment step-marker" data-shows="ade20k"></span>
+</section>
+
+<section id="frontier" data-status="draft">
+  <hgroup><h2>Active ADE20K segmentation</h2><p>Accuracy v. efficiency</p></hgroup>
+  <!-- Built step by step [Yohaï, 2026-10-01]: the frontier's series attribute, set by the
+       fragments; the cost axis glides to fit what is shown. Best policy: EG-C2F, the frontier policy of the paper's
+       Figure 3A. -->
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="f2c-32" height="480"></canvit-frontier></div>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
+</section>
+
+<!-- ============================================================== Closing -->
+
+<section id="neuro-ai" data-status="draft">
+  <h2>Toward action-aware neuro-AI research on vision</h2>
+  <!-- Each question beside the demonstration in this talk that shows it can be asked of CanViT, in the colors of the
+       three parts of an active-vision model (#active-vision-model): instantaneous vision, memory, action selection.
+       Top-down feedback: C2F against F2C on ADE20K, the same viewpoints in another order (#policy-accuracy). Memory:
+       the street of #memory after its third glimpse, kept and reset. Scanpaths: Yarbus's record over a face beside
+       EG-C2F's first glimpses on the street of #policies. -->
+  <div class="asks">
+    <article class="ask fragment" style="--accent: var(--glimpse)">
+      <h3>Top-down feedback</h3>
+      <div class="visual"><canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" policies="coarse_to_fine fine_to_coarse" y-range="0 50" x-scale="log"></canvit-policy-curves></div>
+      <p>How does what was seen change how the next view is processed?</p>
+    </article>
+    <article class="ask fragment" style="--accent: var(--canvas)">
+      <h3>Trans-saccadic memory</h3>
+      <div class="visual pair">
+        <figure><img class="pixels" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="After three glimpses, memory kept: the sign, the people and the bicycle"><figcaption>kept</figcaption></figure>
+        <figure><img class="pixels" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="Memory reset before each glimpse: only the bicycle"><figcaption>reset</figcaption></figure>
+      </div>
+      <p>What is kept from one view to the next?</p>
+    </article>
+    <article class="ask fragment" style="--accent: var(--policy)">
+      <h3>Scanpaths</h3>
+      <div class="visual pair">
+        <figure><img class="scanpath" src="assets/figures/yarbus-1967-face.png" alt="An observer's eye movements over a face"><figcaption>Yarbus 1967</figcaption></figure>
+        <figure><canvit-rollout class="policy" src="../../data/street-egc2f" t="5"><canvit-scene trail="past"></canvit-scene></canvit-rollout><figcaption></figcaption></figure>
+      </div>
+      <p>How do human scanpaths compare with policies on the same observer?</p>
+    </article>
+  </div>
+</section>
+
+<section id="quickstart" data-status="draft">
+  <h2>Quickstart</h2>
+  <p class="install"><code>uv add canvit-pytorch</code></p>
+  <!-- quickstart.py runs as shown: throwaway/quickstart/export.py executes it on the street (ADE_val_00001780, the 512 px
+       scene of the recorded bundles) and saves what each model call returned; plot.py draws the boxes, the maps and
+       the class names. The second viewpoint was chosen by throwaway/quickstart/sweep.py. -->
+  <pre class="fragment" data-shows="code"><code class="language-python" data-src="quickstart.py"></code></pre>
+  <div class="result">
+    <figure class="scene"><figcaption><code>street.jpg</code></figcaption><div class="frame">
+      <img src="../../data/street-c2f/scene.png" alt="A street">
+      <img class="first" src="../../data/talk/quickstart/scene-1.png" alt="The street, the whole scene as the first glimpse">
+      <img class="second" src="../../data/talk/quickstart/scene-2.png" alt="The street, the second glimpse's box on its left"></div></figure>
+    <figure class="map"><figcaption><code>logits.argmax(1)</code></figcaption><div class="frame">
+      <img class="pixels first" src="../../data/talk/quickstart/map-1.png" alt="The segmentation after the first glimpse">
+      <div class="names first" data-src="../../data/talk/quickstart/names-1.json"></div>
+      <img class="pixels second" src="../../data/talk/quickstart/map-2.png" alt="The segmentation after the second glimpse: people and a van appear">
+      <div class="names second" data-src="../../data/talk/quickstart/names-2.json"></div></div></figure>
+  </div>
+  <!-- Line ranges of quickstart.py: the model, the scene and state, the first glimpse, the second. -->
+  <span class="fragment step-marker" data-lines="6-10"></span>
+  <span class="fragment step-marker" data-shows="scene" data-lines="11-12"></span>
+  <span class="fragment step-marker" data-shows="first" data-lines="14-17"></span>
+  <span class="fragment step-marker" data-shows="second" data-lines="19-22"></span>
+</section>
+
+<section id="links" data-status="draft">
+  <div class="layout">
+    <div class="qr">
+      <a href="https://arxiv.org/abs/2603.22570"><span class="head"><img class="logo" src="../../assets/logos/arxiv.svg" alt="">Paper</span><img class="code" src="../../assets/qr/paper.svg" alt="QR code: arxiv.org/abs/2603.22570"></a>
+      <a href="https://github.com/m2b3/CanViT"><span class="head"><img class="logo" src="../../assets/logos/github.svg" alt="">Code</span><img class="code" src="../../assets/qr/code.svg" alt="QR code: github.com/m2b3/CanViT"></a>
+      <a href="https://huggingface.co/canvit"><span class="head"><img class="logo" src="../../assets/logos/huggingface-color.svg" alt="">Models</span><img class="code" src="../../assets/qr/models.svg" alt="QR code: huggingface.co/canvit"></a>
+    </div>
+    <p class="homepage">Homepage: <a href="https://m2b3.github.io/CanViT/">m2b3.github.io/CanViT</a></p>
+    <p class="start"><b>Get started</b><code>uv add canvit-pytorch</code></p>
+    <div class="funders">
+      <img src="assets/logos/vsrn.png" alt="Vision Sciences Research Network">
+      <img src="assets/logos/unique.png" alt="UNIQUE" class="tall">
+      <img src="assets/logos/cambam.jpg" alt="CAMBAM">
+      <img src="assets/logos/mcgill.svg" alt="McGill University">
+      <img src="assets/logos/nserc.svg" alt="NSERC">
+      <img src="assets/logos/cifar.svg" alt="CIFAR">
+      <img src="assets/logos/calcul-quebec.png" alt="Calcul Québec" class="tall">
+      <img src="assets/logos/alliance.svg" alt="Digital Research Alliance of Canada">
+    </div>
+  </div>
+  <!-- XXX: the funders and computing providers of the paper's acknowledgments; the authors confirm the list. -->
+</section>
+
+<!-- ============================================================== Backup: slides whose place in the story is not settled -->
+
+<section id="backup" data-status="ready">
+  <p class="divider">Backup</p>
+</section>
+
+<section id="canvas-attention" data-status="draft">
+  <h2>Canvas Attention</h2>
+  <svg class="figure" viewBox="0 0 250 216" role="img" aria-label="A Canvas Attention read–write pair: learned projections on the glimpse side only">
+    <image href="../../assets/paper/canvas_attention_combined.svg" width="396" height="216"/>
+    <g class="fragment rings">
+      <ellipse cx="84.5" cy="65" rx="8" ry="6"/><ellipse cx="84.5" cy="76" rx="8" ry="6"/>
+      <ellipse cx="84" cy="148" rx="8" ry="6"/><ellipse cx="142.6" cy="120.5" rx="8" ry="6"/>
+    </g>
+    <rect class="fragment canvas-side" x="158" y="60" width="58" height="102" rx="6"/>
+  </svg>
+</section>
+
+<section id="architecture-paper" data-status="draft">
+  <h2>CanViT architecture diagram</h2>
+  <!-- The paper's Figure 2, for questions about what #architecture leaves out: the recurrent CLS token, the viewpoint
+       encoding (VPE) token and the registers, over three glimpses. -->
+  <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
+</section>
+
+<section id="teacher" data-status="draft">
+  <hgroup><h2>CanViT-B and its DINOv3 teacher</h2><p>ADE20K accuracy v. inference compute</p></hgroup>
+  <!-- For "isn't it just DINOv3?": the paper's Figure 4C view. DINOv3 ViT-B/16
+       sees the whole scene at 128 to 512 px (the export's probe_table), then CanViT-B under EG-C2F, glimpse by glimpse,
+       at 32 x 32 and 64 x 64 canvases. -->
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="dinov3" height="460" x-scale="log" y-range="25 50"></canvit-frontier></div>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="dinov3 egc2f-32 egc2f-64"></span>
+</section>
+
+<section id="calibration" data-status="draft">
+  <hgroup><h2>Accuracy by uncertainty</h2><p>ADE20K validation, every canvas cell</p></hgroup>
+  <!-- For "is that uncertainty meaningful?": throwaway/metacognition/calibration.py over the 2,000 ADE20K validation
+       images, CanViT-B and its probe on the 64 x 64 canvas, each cell's decoded class against the annotation at its
+       center; uncertainty-calibration.js draws ../../data/talk/metacognition/calibration.json. -->
+  <div class="calibration"></div>
+</section>
+
+<section id="live" data-status="draft">
+  <h2>Live demo</h2>
+  <div class="live-stage" data-no-advance>
+    <canvit-live data-load-near scene="../../data/street-path/scene.png"></canvit-live>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script type="module">
+  import "../../js/canvit/index.js";
+  import "../../js/canvit/episode.js";
+  import "../../js/canvit/frontier.js";
+  import "../../js/canvit/policy-curves.js";
+  import "./pretraining-rollout.js";
+  import { drawHistoryCharts } from "./history.js";
+  import { drawTimeline } from "./timeline.js";
+  import { drawMapNames } from "./labeled-map.js";
+  import { drawUncertainty } from "./uncertainty.js";
+  import { drawDetail } from "./detail.js";
+  import { drawDistillation } from "./distillation.js";
+  import { drawTrainingCost } from "./training-cost.js";
+  import { drawPolicyAblations } from "./policy-ablations.js";
+  import { drawUncertaintyCalibration } from "./uncertainty-calibration.js";
+  import { drawArchitecture } from "./architecture.js";
+  import { POLICIES } from "../../js/canvit/policies.js";
+  // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
+  function colorByPolicy(rollout) {
+    const name = rollout.bundle.manifest.policy.name;
+    const policy = POLICIES[name];
+    if (!policy) throw new Error(`${rollout.getAttribute("src")}: policy "${name}" is not in js/canvit/policies.js`);
+    const figure = rollout.closest("figure");
+    figure.style.setProperty("--canvit-glimpse", policy.color);
+    // A figure with a caption names its policy there; the policies slide names it in its list instead.
+    const caption = figure.querySelector("figcaption");
+    if (caption === null) return;
+    const label = document.createElement("b"), full = document.createElement("span");
+    label.textContent = policy.label;
+    full.textContent = policy.name;
+    caption.replaceChildren(label, full);
+  }
+  // A policy rollout recolors on every bundle it loads: the policies slide switches its bundle on each click.
+  for (const rollout of document.querySelectorAll("canvit-rollout.policy")) {
+    rollout.addEventListener("canvit-load", (event) => event.target === rollout && colorByPolicy(rollout));
+    if (rollout.bundle) colorByPolicy(rollout);
+  }
+  // The policies slide's list: each policy's label and name, in its color.
+  for (const item of document.querySelectorAll("#policies .policy-list li")) {
+    const policy = POLICIES[item.dataset.policy];
+    if (!policy) throw new Error(`#policies: policy "${item.dataset.policy}" is not in js/canvit/policies.js`);
+    const label = Object.assign(document.createElement("b"), { textContent: policy.label });
+    item.replaceChildren(label, Object.assign(document.createElement("span"), { textContent: policy.name }));
+    item.style.setProperty("--policy-color", policy.color);
+  }
+  import { startDeck } from "../deck.js";
+  await drawHistoryCharts();
+  await drawTimeline(document.querySelector("#timeline .timeline"));
+  await drawMapNames();
+  // Class legends: each class in its color, from a plot step's legend.json.
+  for (const legend of document.querySelectorAll(".class-legend[data-src]")) {
+    const entries = await (await fetch(legend.dataset.src)).json();
+    legend.replaceChildren(...entries.map(({ class: name, color }) => {
+      const chip = document.createElement("span");
+      chip.textContent = name;
+      chip.style.setProperty("--chip", color);
+      return chip;
+    }));
+  }
+  await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
+  await drawArchitecture(document.querySelector("#architecture .arch-build"));
+  await drawUncertaintyCalibration(document.querySelector("#calibration .calibration"), "../../data/talk/metacognition/calibration.json");
+  await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
+  await drawTrainingCost(document.querySelector("#cost"), "../../data/talk/training-cost.json");
+  await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
+  const uncertainty = document.querySelector("#uncertainty");
+  await drawUncertainty(uncertainty, "../../data/talk/metacognition/street");
+  uncertainty.style.setProperty("--canvit-glimpse", POLICIES.entropy_coarse_to_fine.color);
+  await startDeck();
+</script>
+</body>
+</html>

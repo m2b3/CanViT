@@ -7,7 +7,13 @@ import torch
 from huggingface_hub import HfApi
 
 from canvit_pytorch.benchmarks.ade20k import CLASS_NAMES
-from canvit_pytorch.hub.repos import FLAGSHIP, RELEASED_GLIMPSE_SIZE_PX, RELEASED_SCENE_SIZE_PX, released_ade20k_probe
+from canvit_pytorch.hub.repos import (
+    FLAGSHIP,
+    RELEASED_GLIMPSE_SIZE_PX,
+    RELEASED_SCENE_SIZE_PX,
+    VIZ_CANVAS_GRID_SIZE,
+    released_ade20k_probe,
+)
 from canvit_pytorch.model.segmentation import CanViTForSemanticSegmentation
 from canvit_pytorch.project import HUB_ORGANIZATION
 
@@ -15,7 +21,7 @@ from canvit_pytorch.project import HUB_ORGANIZATION
 # probe the project page shows.
 SCENE_SIZE_PX = RELEASED_SCENE_SIZE_PX
 GLIMPSE_SIZE_PX = RELEASED_GLIMPSE_SIZE_PX
-CANVAS_GRID_SIZE = 64
+CANVAS_GRID_SIZE = VIZ_CANVAS_GRID_SIZE
 
 
 def hub_identity(repo: str) -> dict[str, str]:

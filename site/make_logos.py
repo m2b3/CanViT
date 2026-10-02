@@ -26,7 +26,7 @@ from fontTools.ttLib import TTFont
 ASSETS = Path(__file__).parent / "assets"
 LOGOS = ASSETS / "logos"
 WORDMARK = "CanViT"
-# style.css: the title's letter-spacing, --canvas and --glimpse.
+# css/page.css: the title's letter-spacing; css/canvit.css: --canvas and --glimpse.
 LETTER_SPACING_EM = -0.022
 CANVAS_RED = "#e0483e"
 GLIMPSE_BLUE = "#2d6cdf"

@@ -52,7 +52,8 @@ def _add_training_record(staged: Path, record: dict[str, Any]) -> None:
     config_path.write_text(json.dumps(config | {"training": record}, indent=2, sort_keys=True, default=str) + "\n")
 
 
-def _upload(staged: Path, repo: str, *, push: bool) -> None:
+def upload(staged: Path, repo: str, *, push: bool) -> None:
+    """Create `repo` private on the Hub and upload the staged directory, only with push."""
     if not push:
         log.info(f"Staged {repo} in {staged}; not pushed")
         return
@@ -98,7 +99,7 @@ class Pretrained:
         reloaded = CanViTForPretraining.from_pretrained(str(staged))
         for name, value in reloaded.state_dict().items():
             assert torch.equal(value, model.state_dict()[name]), name
-        _upload(staged, self.repo, push=self.push)
+        upload(staged, self.repo, push=self.push)
 
 
 def _hub_id(name: str) -> str:
@@ -171,7 +172,7 @@ class Probe:
         reloaded = SegmentationProbe.from_pretrained(str(staged))
         for key, value in reloaded.state_dict().items():
             assert torch.equal(value, probe.state_dict()[key]), key
-        _upload(staged, _hub_id(name), push=self.push)
+        upload(staged, _hub_id(name), push=self.push)
 
 
 @dataclass(frozen=True)
@@ -246,7 +247,7 @@ class Classifier:
             repo=self.repo, pretrained_repo=base, pretraining=self.pretraining, details=details,
             top1_accuracy=self.top1_accuracy, conditions=self.accuracy_conditions,
         ))
-        _upload(staged, self.repo, push=self.push)
+        upload(staged, self.repo, push=self.push)
 
 
 if __name__ == "__main__":

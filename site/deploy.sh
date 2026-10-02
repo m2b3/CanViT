@@ -31,7 +31,8 @@ out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
 cp -R site/index.html site/live.html site/css site/js "$out/"
 mkdir "$out/data" && for bundle in $bundles; do cp -R "site/$bundle" "$out/data/"; done
-mkdir "$out/assets" && cp -R site/assets/fonts site/assets/logos site/assets/paper site/assets/authors site/assets/qr \
+# -L: assets/paper/ links to the paper's files in paper/.
+mkdir "$out/assets" && cp -RL site/assets/fonts site/assets/logos site/assets/paper site/assets/authors site/assets/qr \
   site/assets/social-preview.png "$out/assets/"
 mkdir -p "$out/slides/node_modules/reveal.js" && cp site/slides/deck.js site/slides/deck.css "$out/slides/"
 cp -R site/slides/node_modules/reveal.js/dist "$out/slides/node_modules/reveal.js/"

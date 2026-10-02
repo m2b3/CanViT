@@ -7,7 +7,7 @@ Scope: own training compute behind AdaptiveNN-DeiT-S at 82.2% ImageNet-1k top-1,
 - AdaptiveNN: "Emulating Human-like Adaptive Vision for Efficient and Flexible Machine Visual Perception" (Wang, Yue, Yue et al., Nature Machine Intelligence 2025, arXiv:2509.15333). It trains a glance network plus a fixation ("focus") network with a PPO-trained fixation policy.
 - AdaGlimpse: "AdaGlimpse: Active Visual Exploration with Arbitrary Glimpse Position and Scale" (Pardyl, Wronka, Wołczyk, Adamczewski, Trzciński, Zieliński, ECCV 2024, arXiv:2404.03482). It is a ViT-B encoder over accumulated glimpse patches, with an MAE-style decoder and a Soft Actor-Critic (SAC) agent that picks glimpse position and scale.
 
-Reproduce, from the talk's directory: `uv run --no-sync --project ~/code/CanViT-paper-exporter python -u -m experiments.training_cost.baselines`. Teacher measurement: `experiments/training_cost/deeplab_teacher_flops.py`.
+Reproduce, from the talk's directory: `uv run --project ../../../paper/exporter python -u -m experiments.training_cost.baselines`. Teacher measurement: `experiments/training_cost/deeplab_teacher_flops.py`.
 
 ## Results
 
@@ -25,7 +25,7 @@ Training glimpse counts:
 
 ## Conventions
 
-These follow `~/code/CanViT-Toward-AVFMs/rebuttal/training_flops.py`:
+These follow the rebuttal's `training_flops.py`, whose accounting the talk carries in `experiments/training_cost/accounting.py`:
 - 1 MAC = 2 FLOPs.
 - Backward = 2 × forward for every part a loss backpropagates through; frozen parts are forward only.
 - Pretrained weights and teachers a system starts from are excluded. A teacher run online during training has its forwards counted.

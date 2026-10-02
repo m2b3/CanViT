@@ -4,7 +4,6 @@
 #
 #   ADE20K_ROOT=/path/to/ADEChallengeData2016 IMAGENETTE=/path/to/imagenette2/val \
 #   REAL_LABELS=/path/to/dinov3-in1k-probes/dinov3_in1k_probes/data/in1k/real.json \
-#   PAPER_EXPORTER=/path/to/CanViT-paper-exporter REBUTTAL_FLOPS=/path/to/CanViT-Toward-AVFMs/rebuttal/training_flops.py \
 #   bash site/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/experiments/build_deck_data.sh [experiment ...]
 #
 # Each experiment needs only its own inputs. Sweeps write to site/.experiments/; the memory sweep takes about half an
@@ -94,11 +93,9 @@ history_examples() {
   run history_examples.plot --scene ADE_val_00001509
 }
 
+# In the paper exporter's environment, whose FLOP formulas the accounting uses.
 training_cost() {
-  : "${PAPER_EXPORTER:?set PAPER_EXPORTER to the CanViT-paper-exporter checkout}"
-  : "${REBUTTAL_FLOPS:?set REBUTTAL_FLOPS to training_flops.py of the rebuttal}"
-  uv run --no-sync --project "$PAPER_EXPORTER" python -u -m experiments.training_cost.export \
-    --rebuttal-flops "$REBUTTAL_FLOPS"
+  uv run --project ../../../paper/exporter python -u -m experiments.training_cost.export
 }
 
 # The street of the recorded bundles under R-IID (seed 0), as site/record_bundles.sh records street-riid, with the

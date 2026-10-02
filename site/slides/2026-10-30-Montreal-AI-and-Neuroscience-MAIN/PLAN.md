@@ -217,9 +217,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 ## Known issues
 
 - `#live` (Backup): shrunk with `zoom: .8`.
-- `experiments/training_cost` runs in the external CanViT-paper-exporter checkout: the rebuttal's `training_flops.py`
-  imports `canvit_paper_exporter.flops.arch` and `.teacher`, which the exporter in `../../../paper/exporter` no longer
-  has (its FLOP counts come from `canvit_pytorch.flops`).
 
 ## Experiments and exports
 

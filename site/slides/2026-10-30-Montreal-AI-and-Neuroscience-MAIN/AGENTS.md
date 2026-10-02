@@ -447,8 +447,8 @@ ADE_val_00000836 (shop sign 0.91 / 0.90 / 0.04, person 0.76 / 0.68 / 0.06 after 
 the strict bar for person; ADE_val_00001182 (a bedroom) meets it.
 
 Experiments behind slides: `experiments/`, a package per experiment, each step run from this directory as
-`python -m experiments.<experiment>.<step>` in the canvit-pytorch environment (`training_cost` in the paper
-exporter's); the sweeps write to `../../.experiments/` (ignored by git), the exports the deck loads to
+`python -m experiments.<experiment>.<step>` in the canvit-pytorch environment (`training_cost` in
+`../../../paper/exporter`'s); the sweeps write to `../../.experiments/` (ignored by git), the exports the deck loads to
 `../../data/talk/` (deployed, never committed). `experiments/build_deck_data.sh` reruns them all, or the named ones,
 with the examples the slides show.
 

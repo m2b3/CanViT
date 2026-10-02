@@ -2,9 +2,9 @@
 derivation (sources/baseline-training-compute.md in the talk); export.py reads ann_total_code, lo and hi. Runs in the
 paper exporter's environment, from the talk's directory:
 
-    uv run --no-sync --project ~/code/CanViT-paper-exporter python -u -m experiments.training_cost.baselines
+    uv run --project ../../../paper/exporter python -u -m experiments.training_cost.baselines
 
-Conventions (the rebuttal's training_flops.py): 1 MAC = 2 FLOPs; backward = 2x forward
+Conventions (accounting.py, the rebuttal's): 1 MAC = 2 FLOPs; backward = 2x forward
 for every part a loss backpropagates through; frozen parts forward only; teachers'
 own training excluded, their online forwards counted. Matmul/conv FLOPs only
 (LayerNorm, softmax, GELU, interpolation, grid_sample excluded, as in primitives).
@@ -17,10 +17,10 @@ import numpy as np
 from canvit_paper_exporter.flops import primitives as P
 from canvit_paper_exporter.flops.adaglimpse import ADAGLIMPSE, adaglimpse_flops
 
+from experiments.training_cost.accounting import BWD_MULT, IN1K_TRAIN
+
 GF = 1e9
 EF = 1e18
-BWD_MULT = 2.0
-IN1K_TRAIN = 1_281_167
 
 
 def gf(x: float) -> str:

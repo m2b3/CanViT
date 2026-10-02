@@ -4,15 +4,15 @@ on:
   push:
     tags:
       - "v*"
+      - "canvit-core-v*"
+      - "canvit-mlx-v*"
+      - "canvit-nnx-v*"
 
-# Publishes canvit-pytorch to PyPI (trusted publishing) when a v* tag is pushed.
-# The PyPI trusted-publisher entry must name m2b3/CanViT and this workflow file.
+# v* tags release canvit-pytorch. Package-qualified tags release the independent
+# packages. Register this workflow as a trusted publisher for each PyPI project.
 jobs:
   publish:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: canvit-pytorch
     environment: pypi
     permissions:
       id-token: write
@@ -22,9 +22,58 @@ jobs:
 
       - uses: astral-sh/setup-uv@v5
 
-      - run: uv build
+      - name: Select and verify package
+        id: package
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$RELEASE_TAG" in
+            v*)
+              package_dir=canvit-pytorch
+              expected_version="${RELEASE_TAG#v}"
+              ;;
+            canvit-core-v*)
+              package_dir=canvit-core
+              expected_version="${RELEASE_TAG#canvit-core-v}"
+              ;;
+            canvit-mlx-v*)
+              package_dir=canvit-mlx
+              expected_version="${RELEASE_TAG#canvit-mlx-v}"
+              ;;
+            canvit-nnx-v*)
+              package_dir=canvit-nnx
+              expected_version="${RELEASE_TAG#canvit-nnx-v}"
+              ;;
+            *)
+              printf 'unsupported release tag: %s\n' "$RELEASE_TAG" >&2
+              exit 1
+              ;;
+          esac
 
-      - name: The wheel carries the license text
-        run: unzip -l dist/*.whl | grep -q 'dist-info/licenses/LICENSE'
+          package_version="$(uv run --no-project python -c \
+            'import pathlib, sys, tomllib; print(tomllib.loads(pathlib.Path(sys.argv[1], "pyproject.toml").read_text())["project"]["version"])' \
+            "$package_dir")"
+          if [[ "$package_version" != "$expected_version" ]]; then
+            printf 'tag %s names version %s, but %s declares %s\n' \
+              "$RELEASE_TAG" "$expected_version" "$package_dir" "$package_version" >&2
+            exit 1
+          fi
+          printf 'package_dir=%s\n' "$package_dir" >> "$GITHUB_OUTPUT"
 
-      - run: uv publish
+      - name: Build package
+        run: uv build "${{ steps.package.outputs.package_dir }}" --out-dir dist
+
+      - name: Check wheel license
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          wheels=(dist/*.whl)
+          test "${#wheels[@]}" -eq 1
+          unzip -p "${wheels[0]}" '*dist-info/licenses/LICENSE' > /tmp/canvit-wheel-license.txt
+          test -s /tmp/canvit-wheel-license.txt
+
+      - name: Publish package
+        run: uv publish dist/*

@@ -34,6 +34,8 @@
 
 This repository holds the reference PyTorch implementation of CanViT, with pretraining, task specialization and
 evaluation; the package is [`canvit-pytorch`](https://pypi.org/project/canvit-pytorch/) on PyPI.
+The native MLX and JAX/Flax NNX packages live under [`canvit-mlx/`](canvit-mlx/) and [`canvit-nnx/`](canvit-nnx/) and
+share [`canvit-core/`](canvit-core/).
 
 ## News
 
@@ -190,6 +192,48 @@ with torch.inference_mode():
 
 The standalone `SegmentationProbe` head is also exported from `canvit_pytorch` for use on any spatial feature map. The published probes are listed under [Checkpoints](#checkpoints).
 
+## Backend packages
+
+CanViT's PyTorch, MLX and JAX/Flax NNX implementations share model names and
+architecture definitions in [`canvit-core/`](canvit-core/). Constructing an
+NNX model from scratch also takes `rngs=nnx.Rngs(0)`.
+
+Native arrays use NHWC: a model glimpse has shape `[B, H, W, 3]`, and
+`sample_at_viewpoint` accepts `[B, H, W, C]`. PyTorch tensors use NCHW: images
+and feature maps are `[B, C, H, W]`, while model glimpses are `[B, 3, h, w]`.
+Viewpoint centers are `(row, col)` scene coordinates in `[-1, 1]`, and scales
+are crop half-sides across all backends.
+
+For example, an MLX rollout from the released ImageNet-21k checkpoint is:
+
+```python
+import mlx.core as mx
+from PIL import Image
+
+from canvit_mlx import CanViTForPretraining, Viewpoint, sample_at_viewpoint
+from canvit_mlx.preprocess import preprocess
+
+image = preprocess(512)(Image.open("image.jpg").convert("RGB"))
+image = mx.array(image)[None]  # [B, H, W, 3]
+model = CanViTForPretraining.from_pretrained(
+    "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02-mlx"
+)
+viewpoint = Viewpoint.full_scene(batch_size=1)
+state = model.init_state(batch_size=1, canvas_grid_size=32)
+glimpse = sample_at_viewpoint(spatial=image, viewpoint=viewpoint, glimpse_size_px=128)
+output = model(glimpse=glimpse, state=state, viewpoint=viewpoint)
+mx.eval(output)
+```
+
+Native loaders read `config.json` and `model.safetensors` with strict backend
+and tensor validation. See the backend-specific converter options from the
+repository root:
+
+```bash
+uv run --project canvit-mlx python -m tools.convert_checkpoints --help
+uv run --project canvit-nnx python -m tools.convert_checkpoints --help
+```
+
 ## Demos
 
 ```bash
@@ -225,6 +269,9 @@ We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/
 | `canvit_pytorch.specialize` | Downstream training: ADE20K segmentation probes, ImageNet-1k fine-tuning | [docs/specialize.md](canvit-pytorch/docs/specialize.md) |
 | `canvit_pytorch.evaluate` | Evaluation and benchmarking: ADE20K mIoU, ImageNet-1k top-k, DINOv3 reconstruction | [docs/evaluate.md](canvit-pytorch/docs/evaluate.md) |
 | `canvit_pytorch.viz` | Recorded rollouts and smooth viewpoint paths for the project page and slides | [docs/viz.md](canvit-pytorch/docs/viz.md) |
+| `canvit-core` | Shared configuration, architecture specifications, readout fusion and checkpoint schema | [README](canvit-core/README.md) |
+| `canvit-mlx` | MLX implementation for Apple Silicon | [README](canvit-mlx/README.md) |
+| `canvit-nnx` | JAX/Flax NNX implementation | [README](canvit-nnx/README.md) |
 
 [`site/`](site) is the [project page](https://m2b3.github.io/CanViT/).
 
@@ -236,8 +283,6 @@ Pretraining, probe training and evaluation lived in separate repositories (CanVi
 Related repositories:
 
 - [dinov3-in1k-probes](https://github.com/m2b3/dinov3-in1k-probes) — ImageNet-1k linear probes for the DINOv3 ViTs, used by CanViT's classification path
-- [CanViT-MLX](https://github.com/yberreby/CanViT-MLX) — MLX implementation for Apple Silicon (experimental)
-- [CanViT-NNX](https://github.com/yberreby/CanViT-NNX) — JAX/Flax NNX implementation (experimental)
 
 ## Troubleshooting
 

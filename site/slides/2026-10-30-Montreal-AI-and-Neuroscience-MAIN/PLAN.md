@@ -218,8 +218,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   authors:
   - `#distillation`: the "Target" row does not say it is DINOv3 seeing the whole scene (the row labels are Yohaï's);
     a label or a scene → DINOv3 column would.
-  - `#tradition`: Felleman & Van Essen's hierarchy is illegible at its size; the Yamins et al. panel has no x-axis
-    title (`assets/figures/PROVENANCE.md` asks to restate it on the slide).
+  - `#tradition`: Felleman & Van Essen's hierarchy is illegible at its size (a crop of V1 to IT, or more room).
   - `#detail`: the scene keeps a source watermark; in the loupe state, "CanViT's input, 128 px" shows a magnified crop
     of the input.
   - Subtext: `#cost`'s subtitle restates its axes; `#calibration`'s and `#teacher`'s subtitles are conditions lines.

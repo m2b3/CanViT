@@ -1,0 +1,11 @@
+% Camera-ready wrapper. Mirrors `preprint_wrapper.tex` but uses the .sty's
+% `[final]` option (vs. `[preprint]`).
+%
+% `[main]` is required alongside `[final]`: the .sty's `\if@neuripsfinal`
+% branch in `\@noticestring` expands `\@trackname`, which is ONLY defined
+% inside the `\DeclareOption{main|position|eandd|creativeai|...}` blocks
+% in `neurips_2026.sty`. Without an explicit track option, `\@trackname`
+% is undefined and `\maketitle` errors with "Undefined control sequence".
+% We submit to the main track, so `[main]` is the correct choice.
+\PassOptionsToPackage{final,main}{neurips_2026}
+\input{CanViT_Toward_AVFMs}

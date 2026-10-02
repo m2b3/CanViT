@@ -27,6 +27,9 @@ and operate software.
   `site/record_bundles.sh` records its data with `canvit_pytorch.viz`;
   `site/check_paper_numbers.py` checks its numbers against the paper's
   generated macros. `site/AGENTS.md` holds the site's own conventions.
+- `paper/`: the NeurIPS 2026 paper. `paper/latex/` holds its sources, `paper/exports/` the figures and data
+  they read, `paper/exporter/` the pipeline that writes them from evaluation results (a uv project that
+  depends on `canvit-pytorch/`). `paper/AGENTS.md` holds the paper's conventions.
 - `.github/workflows/release.yml`: PyPI release of `canvit-pytorch` on `v*`
   tags.
 

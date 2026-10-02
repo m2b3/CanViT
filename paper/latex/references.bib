@@ -1,0 +1,1507 @@
+@inproceedings{heMaskedAutoencodersAre2022,
+  title = {{Masked {{Autoencoders Are Scalable Vision Learners}}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {He, Kaiming and Chen, Xinlei and Xie, Saining and Li, Yanghao and Doll{\'a}r, Piotr and Girshick, Ross},
+  year = 2022,
+  pages = {16000--16009},
+}
+
+@inproceedings{dosovitskiyImageWorth16x162020,
+  title = {{An {{Image}} Is {{Worth}} 16x16 {{Words}}: {{Transformers}} for {{Image Recognition}} at {{Scale}}}},
+  shorttitle = {An {{Image}} Is {{Worth}} 16x16 {{Words}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and Uszkoreit, Jakob and Houlsby, Neil},
+  year = 2021,
+  urldate = {2026-01-30},
+  abstract = {While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classification tasks. When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks (ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent results compared to state-of-the-art convolutional networks while requiring substantially fewer computational resources to train.},
+  langid = {english},
+}
+
+@inproceedings{heoRotaryPositionEmbedding2025,
+  title = {{Rotary {{Position Embedding}} for {{Vision Transformer}}}},
+  booktitle = {Computer {{Vision}} -- {{ECCV}} 2024},
+  author = {Heo, Byeongho and Park, Song and Han, Dongyoon and Yun, Sangdoo},
+  year = 2025,
+  pages = {289--305},
+  publisher = {Springer Nature Switzerland},
+  address = {Cham},
+  doi = {10.1007/978-3-031-72684-2_17},
+  abstract = {Rotary Position Embedding (RoPE) performs remarkably on language models, especially for length extrapolation of Transformers. However, the impacts of RoPE on computer vision domains have been underexplored, even though RoPE appears capable of enhancing Vision Transformer (ViT) performance in a way similar to the language domain. This study provides a comprehensive analysis of RoPE when applied to ViTs, utilizing practical implementations of RoPE for 2D vision data. The analysis reveals that RoPE demonstrates impressive extrapolation performance, i.e., maintaining precision while increasing image resolution at inference. It eventually leads to performance improvement for ImageNet-1k, COCO detection, and ADE-20k segmentation. We believe this study provides thorough guidelines to apply RoPE into ViT, promising improved backbone performance with minimal extra computational overhead. Our code and pre-trained models are available at https://github.com/naver-ai/rope-vit},
+  langid = {english},
+}
+
+
+@inproceedings{darcetVisionTransformersNeed2023,
+  title = {{Vision {{Transformers Need Registers}}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Darcet, Timoth{\'e}e and Oquab, Maxime and Mairal, Julien and Bojanowski, Piotr},
+  year = 2024,
+  urldate = {2026-01-30},
+  abstract = {Transformers have recently emerged as a powerful tool for learning visual representations. In this paper, we identify and characterize artifacts in feature maps of both supervised and self-supervised ViT networks. The artifacts correspond to high-norm tokens appearing during inference primarily in low-informative background areas of images, that are repurposed for internal computations. We propose a simple yet effective solution based on providing additional tokens to the input sequence of the Vision Transformer to fill that role. We show that this solution fixes that problem entirely for both supervised and self-supervised models, sets a new state of the art for self-supervised visual models on dense visual prediction tasks, enables object discovery methods with larger models, and most importantly leads to smoother feature maps and attention maps for downstream visual processing.},
+  langid = {english},
+}
+
+@article{simeoniDINOv32026,
+  title = {{{DINOv3}}},
+  author = {Sim{\'e}oni, Oriane and Vo, Huy V. and Seitzer, Maximilian and Baldassarre, Federico and Oquab, Maxime and Jose, Cijo and Khalidov, Vasil and Szafraniec, Marc and Yi, Seungeun and Ramamonjisoa, Micha{\"e}l and Massa, Francisco and Haziza, Daniel and Wehrstedt, Luca and Wang, Jianyuan and Darcet, Timoth{\'e}e and Moutakanni, Th{\'e}o and Sentana, Leonel and Roberts, Claire and Vedaldi, Andrea and Tolan, Jamie and Brandt, John and Couprie, Camille and Mairal, Julien and J{\'e}gou, Herv{\'e} and Labatut, Patrick and Bojanowski, Piotr},
+  year = 2026,
+  month = feb,
+  journal = {Transactions on Machine Learning Research},
+  issn = {2835-8856},
+  urldate = {2026-05-16},
+  abstract = {Self-supervised learning holds the promise of eliminating the need for manual data annotation, enabling models to scale effortlessly to massive datasets and larger architectures. By not being tailored to specific tasks or domains, this training paradigm has the potential to learn visual representations from diverse sources, ranging from natural to aerial images---using a single algorithm. This technical report introduces DINOv3, a major milestone toward realizing this vision by leveraging simple yet effective strategies. First, we leverage the benefit of scaling both dataset and model size by careful data preparation, design, and optimization. Second, we introduce a new method called Gram anchoring, which effectively addresses the known yet unsolved issue of dense feature maps degrading during long training schedules. Finally, we apply post-hoc strategies that further enhance our models' flexibility with respect to resolution, model size, and alignment with text. As a result, we present a versatile vision foundation model that outperforms the specialized state of the art across a broad range of settings, without fine-tuning. DINOv3 produces high-quality dense features that achieve outstanding performance on various vision tasks, significantly surpassing previous self- and weakly-supervised foundation models. We also share the DINOv3 suite of vision models, designed to advance the state of the art on a wide spectrum of tasks and data by providing scalable solutions for diverse resource constraints and deployment scenarios.},
+  langid = {english},
+}
+
+@inproceedings{mnihRecurrentModelsVisual2014,
+  title = {{Recurrent {{Models}} of {{Visual Attention}}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Mnih, Volodymyr and Heess, Nicolas and Graves, Alex and {Kavukcuoglu}, Koray},
+  year = 2014,
+  volume = {27},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2024-10-02},
+  abstract = {Applying convolutional neural networks to large images is computationally expensive because the amount of computation scales linearly with the number of image pixels. We present a novel recurrent neural network model that is capable of extracting information from an image or video by adaptively selecting a sequence of regions or locations and only processing the selected regions at high resolution. Like convolutional neural networks, the proposed model has a degree of translation invariance built-in, but the amount of computation it performs can be controlled independently of the input image size. While the model is non-differentiable, it can be trained using reinforcement learning methods to learn task-specific policies. We evaluate our model on several image classification tasks, where it significantly outperforms a convolutional neural network baseline on cluttered images, and on a dynamic visual control problem, where it learns to track a simple object without an explicit training signal for doing so.},
+  keywords = {YB},
+}
+
+
+% DRAM
+@inproceedings{DRAMBaMK14,
+  author       = {Jimmy Ba and
+                  Volodymyr Mnih and
+                  Koray Kavukcuoglu},
+  title        = {{Multiple Object Recognition with Visual Attention}},
+  booktitle    = {International Conference on Learning Representations},
+  year         = {2015},
+}
+
+
+% Saccader
+@inproceedings{elsayedSaccaderImprovingAccuracy2019,
+  title = {{Saccader: {{Improving Accuracy}} of {{Hard Attention Models}} for {{Vision}}}},
+  shorttitle = {Saccader},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Elsayed, Gamaleldin F. and Kornblith, Simon and Le, Quoc V.},
+  year = 2019,
+  volume = {32},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2025-02-16},
+  keywords = {YB},
+}
+
+
+% AME
+@inproceedings{AMEPardylRK0T23,
+  author       = {Adam Pardyl and
+                  Grzegorz Rypesc and
+                  Grzegorz Kurzejamski and
+                  Bartosz Zielinski and
+                  Tomasz Trzcinski},
+  title        = {{Active Visual Exploration Based on Attention-Map Entropy}},
+  booktitle    = {Proceedings of the International Joint Conference on Artificial Intelligence},
+  pages        = {1303--1311},
+  publisher    = {ijcai.org},
+  year         = {2023},
+  doi          = {10.24963/IJCAI.2023/145},
+  timestamp    = {Tue, 15 Oct 2024 16:43:28 +0200},
+  biburl       = {https://dblp.org/rec/conf/ijcai/PardylRK0T23.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+% AdaGlimpse
+@inproceedings{pardylAdaGlimpseActiveVisual2025,
+  title = {{{{AdaGlimpse}}: {{Active Visual Exploration}} with {{Arbitrary Glimpse Position}} and {{Scale}}}},
+  shorttitle = {{{AdaGlimpse}}},
+  booktitle = {Computer {{Vision}} -- {{ECCV}} 2024},
+  author = {Pardyl, Adam and Wronka, Micha{\l} and Wo{\l}czyk, Maciej and Adamczewski, Kamil and Trzci{\'n}ski, Tomasz and Zieli{\'n}ski, Bartosz},
+  year = 2025,
+  pages = {112--129},
+  publisher = {Springer Nature Switzerland},
+  address = {Cham},
+  doi = {10.1007/978-3-031-72664-4_7},
+  abstract = {Active Visual Exploration (AVE) is a task that involves dynamically selecting observations (glimpses), which is critical to facilitate comprehension and navigation within an environment. While modern AVE methods have demonstrated impressive performance, they are constrained to fixed-scale glimpses from rigid grids. In contrast, existing mobile platforms equipped with optical zoom capabilities can capture glimpses of arbitrary positions and scales. To address this gap between software and hardware capabilities, we introduce AdaGlimpse. It uses Soft Actor-Critic, a reinforcement learning algorithm tailored for exploration tasks, to select glimpses of arbitrary position and scale. This approach enables our model to rapidly establish a general awareness of the environment before zooming in for detailed analysis.Experimental results demonstrate that AdaGlimpse surpasses previous methods across various visual tasks while maintaining greater applicability in realistic AVE scenarios.},
+  langid = {english},
+  keywords = {Active visual exploration,Reinforcement learning,Vision transformers},
+}
+
+
+% AdaptiveNN
+@article{wangEmulatingHumanlikeAdaptive2025,
+  title = {{Emulating Human-like Adaptive Vision for Efficient and Flexible Machine Visual Perception}},
+  author = {Wang, Yulin and Yue, Yang and Yue, Yang and Wang, Huanqian and Jiang, Haojun and Han, Yizeng and Ni, Zanlin and Pu, Yifan and Shi, Minglei and Lu, Rui and Yang, Qisen and Zhao, Andrew and Xia, Zhuofan and Song, Shiji and Huang, Gao},
+  year = 2025,
+  journal = {Nature Machine Intelligence},
+  volume = {7},
+  number = {11},
+  pages = {1804--1822},
+  publisher = {Nature Publishing Group},
+  doi = {10.1038/s42256-025-01130-7},
+  urldate = {2026-01-30},
+  abstract = {Human vision is highly adaptive, efficiently sampling intricate environments by sequentially fixating on task-relevant regions. In contrast, prevailing machine vision models passively process entire scenes at once, resulting in excessive resource demands scaling with spatial--temporal input resolution and model size, yielding critical limitations impeding both future advancements and real-world application. Here we introduce AdaptiveNN, a general framework aiming to enable the transition from `passive' to `active and adaptive' vision models. AdaptiveNN formulates visual perception as a coarse-to-fine sequential decision-making process, progressively identifying and attending to regions pertinent to the task, incrementally combining information across fixations and actively concluding observation when sufficient. We establish a theory integrating representation learning with self-rewarding reinforcement learning, enabling end-to-end training of the non-differentiable AdaptiveNN without additional supervision on fixation locations. We assess AdaptiveNN on 17 benchmarks spanning 9 tasks, including large-scale visual recognition, fine-grained discrimination, visual search, processing images from real driving and medical scenarios, language-driven embodied artificial intelligence and side-by-side comparisons with humans. AdaptiveNN achieves up to 28 times inference cost reduction without sacrificing accuracy, flexibly adapts to varying task demands and resource budgets without retraining, and provides enhanced interpretability via its fixation patterns, demonstrating a promising avenue towards efficient, flexible and interpretable computer vision. Furthermore, AdaptiveNN exhibits closely human-like perceptual behaviours in many cases, revealing its potential as a valuable tool for investigating visual cognition.},
+  copyright = {2025 The Author(s), under exclusive licence to Springer Nature Limited},
+  langid = {english},
+  keywords = {Computational science,Computer science,Learning algorithms,Machine learning,Visual system}
+}
+
+
+% Segment Anything (SAM, SA-1B)
+@inproceedings{kirillovSegmentAnything2023,
+  title = {{Segment {{Anything}}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}}},
+  author = {Kirillov, Alexander and Mintun, Eric and Ravi, Nikhila and Mao, Hanzi and Rolland, Chloe and Gustafson, Laura and Xiao, Tete and Whitehead, Spencer and Berg, Alexander C. and Lo, Wan-Yen and Dollar, Piotr and Girshick, Ross},
+  year = 2023,
+  pages = {4015--4026},
+  urldate = {2026-01-30},
+  langid = {english},
+}
+
+
+% ADE20k SceneParse150
+@inproceedings{zhouSceneParsingADE20K2017,
+  title = {{Scene {{Parsing Through ADE20K Dataset}}}},
+  booktitle = {Proceedings of the {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Zhou, Bolei and Zhao, Hang and Puig, Xavier and Fidler, Sanja and Barriuso, Adela and Torralba, Antonio},
+  year = 2017,
+  pages = {633--641},
+  urldate = {2026-01-30},
+}
+
+
+% SAM 3
+@inproceedings{carion2026sam,
+  title = {{{{SAM}} 3: {{Segment Anything}} with {{Concepts}}}},
+  shorttitle = {{{SAM}} 3},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Carion, Nicolas and Gustafson, Laura and Hu, Yuan-Ting and Debnath, Shoubhik and Hu, Ronghang and Suris Coll-Vinent, Didac and Ryali, Chaitanya and Alwala, Kalyan Vasudev and Khedr, Haitham and Huang, Andrew and Lei, Jie and Ma, Tengyu and Guo, Baishan and Kalla, Arpit and Marks, Markus and Greer, Joseph and Wang, Meng and Sun, Peize and R{\"a}dle, Roman and Afouras, Triantafyllos and Mavroudi, Effrosyni and Xu, Katherine and Wu, Tsung-Han and Zhou, Yu and Momeni, Liliane and Hazra, Rishi and Ding, Shuangrui and Vaze, Sagar and Porcher, Francois and Li, Feng and Li, Siyuan and Kamath, Aishwarya and Cheng, Ho Kei and Dollar, Piotr and Ravi, Nikhila and Saenko, Kate and Zhang, Pengchuan and Feichtenhofer, Christoph},
+  year = 2026,
+  url = {https://openreview.net/forum?id=r35clVtGzw},
+}
+
+
+
+% Yamins goal driven 2016 ANNs neuroAI
+@article{yaminsUsingGoaldrivenDeep2016,
+  title = {{Using Goal-Driven Deep Learning Models to Understand Sensory Cortex}},
+  author = {Yamins, Daniel L. K. and DiCarlo, James J.},
+  year = 2016,
+  journal = {Nature Neuroscience},
+  volume = {19},
+  number = {3},
+  pages = {356--365},
+  publisher = {Nature Publishing Group},
+  doi = {10.1038/nn.4244},
+  urldate = {2025-02-20},
+  abstract = {Recent computational neuroscience developments have used deep neural networks to model neural responses in higher visual areas. This Perspective describes key algorithmic underpinnings in computer vision and artificial intelligence that have contributed to this progress and outlines how deep networks could drive future improvements in understanding sensory cortical processing.},
+  copyright = {2016 Springer Nature America, Inc.},
+  langid = {english},
+  keywords = {Computational neuroscience,Object vision,YB},
+}
+
+
+
+% Brain-Score
+@misc{schrimpfBrainScoreWhichArtificial2018,
+  title = {{Brain-{{Score}}: {{Which Artificial Neural Network}} for {{Object Recognition}} Is Most {{Brain-Like}}?}},
+  shorttitle = {Brain-{{Score}}},
+  author = {Schrimpf, Martin and Kubilius, Jonas and Hong, Ha and Majaj, Najib J. and Rajalingham, Rishi and Issa, Elias B. and Kar, Kohitij and Bashivan, Pouya and {Prescott-Roy}, Jonathan and Schmidt, Kailyn and Yamins, Daniel L. K. and DiCarlo, James J.},
+  year = 2018,
+  primaryclass = {New Results},
+  publisher = {bioRxiv},
+  doi = {10.1101/407007},
+  urldate = {2023-10-26},
+  abstract = {The internal representations of early deep artificial neural networks (ANNs) were found to be remarkably similar to the internal neural representations measured experimentally in the primate brain. Here we ask, as deep ANNs have continued to evolve, are they becoming more or less brain-like? ANNs that are most functionally similar to the brain will contain mechanisms that are most like those used by the brain. We therefore developed Brain-Score -- a composite of multiple neural and behavioral benchmarks that score any ANN on how similar it is to the brain's mechanisms for core object recognition -- and we deployed it to evaluate a wide range of state-of-the-art deep ANNs. Using this scoring system, we here report that: (1) DenseNet-169, CORnet-S and ResNet-101 are the most brain-like ANNs. There remains considerable variability in neural and behavioral responses that is not predicted by any ANN, suggesting that no ANN model has yet captured all the relevant mechanisms. (3) Extending prior work, we found that gains in ANN ImageNet performance led to gains on Brain-Score. However, correlation weakened at {$\geq$} 70\% top-1 ImageNet performance, suggesting that additional guidance from neuroscience is needed to make further advances in capturing brain mechanisms. (4) We uncovered smaller (i.e. less complex) ANNs that are more brain-like than many of the best-performing ImageNet models, which suggests the opportunity to simplify ANNs to better understand the ventral stream. The scoring system used here is far from complete. However, we propose that evaluating and tracking model-benchmark correspondences through a Brain-Score that is regularly updated with new brain data is an exciting opportunity: experimental benchmarks can be used to guide machine network evolution, and machine networks are mechanistic hypotheses of the brain's network and thus drive next experiments. To facilitate both of these, we release Brain-Score.org: a platform that hosts the neural and behavioral benchmarks, where ANNs for visual processing can be submitted to receive a Brain-Score and their rank relative to other models, and where new experimental data can be naturally incorporated.},
+  archiveprefix = {bioRxiv},
+  chapter = {New Results},
+  copyright = {\copyright{} 2018, Posted by Cold Spring Harbor Laboratory. This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at http://creativecommons.org/licenses/by/4.0/},
+  langid = {english},
+  keywords = {YB},
+  note = {bioRxiv preprint, doi:10.1101/407007},
+}
+
+@article{zhuangUnsupervisedNeuralNetwork2021,
+  title = {{Unsupervised Neural Network Models of the Ventral Visual Stream}},
+  author = {Zhuang, Chengxu and Yan, Siming and Nayebi, Aran and Schrimpf, Martin and Frank, Michael C. and DiCarlo, James J. and Yamins, Daniel L. K.},
+  year = 2021,
+  journal = {Proceedings of the National Academy of Sciences},
+  volume = {118},
+  number = {3},
+  pages = {e2014196118},
+  publisher = {Proceedings of the National Academy of Sciences},
+  doi = {10.1073/pnas.2014196118},
+  urldate = {2026-02-05},
+  abstract = {Deep neural networks currently provide the best quantitative models of the response patterns of neurons throughout the primate ventral visual stream. However, such networks have remained implausible as a model of the development of the ventral stream, in part because they are trained with supervised methods requiring many more labels than are accessible to infants during development. Here, we report that recent rapid progress in unsupervised learning has largely closed this gap. We find that neural network models learned with deep unsupervised contrastive embedding methods achieve neural prediction accuracy in multiple ventral visual cortical areas that equals or exceeds that of models derived using today's best supervised methods and that the mapping of these neural network models' hidden layers is neuroanatomically consistent across the ventral stream. Strikingly, we find that these methods produce brain-like representations even when trained solely with real human child developmental data collected from head-mounted cameras, despite the fact that these datasets are noisy and limited. We also find that semisupervised deep contrastive embeddings can leverage small numbers of labeled examples to produce representations with substantially improved error-pattern consistency to human behavior. Taken together, these results illustrate a use of unsupervised learning to provide a quantitative model of a multiarea cortical brain system and present a strong candidate for a biologically plausible computational theory of primate sensory learning.},
+}
+
+@inproceedings{bakhtiariFunctionalSpecializationVisual2021,
+  title = {{The Functional Specialization of Visual Cortex Emerges from Training Parallel Pathways with Self-Supervised Predictive Learning}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Bakhtiari, Shahab and Mineault, Patrick and Lillicrap, Timothy and Pack, Christopher and Richards, Blake},
+  year = 2021,
+  volume = {34},
+  pages = {25164--25178},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2023-06-06},
+  abstract = {The visual system of mammals is comprised of parallel, hierarchical specialized pathways. Different pathways are specialized in so far as they use representations that are more suitable for supporting specific downstream behaviours. In particular, the clearest example is the specialization of the ventral ("what") and dorsal ("where") pathways of the visual cortex. These two pathways support behaviours related to visual recognition and movement, respectively. To-date, deep neural networks have mostly been used as models of the ventral, recognition pathway. However, it is unknown whether both pathways can be modelled with a single deep ANN. Here, we ask whether a single model with a single loss function can capture the properties of both the ventral and the dorsal pathways. We explore this question using data from mice, who like other mammals, have specialized pathways that appear to support recognition and movement behaviours. We show that when we train a deep neural network architecture with two parallel pathways using a self-supervised predictive loss function, we can outperform other models in fitting mouse visual cortex. Moreover, we can model both the dorsal and ventral pathways. These results demonstrate that a self-supervised predictive learning approach applied to parallel pathway architectures can account for some of the functional specialization seen in mammalian visual systems.},
+  keywords = {YB},
+}
+
+@inproceedings{raugelDisentanglingFactorsConvergence2025,
+  title = {Disentangling the {{Factors}} of {{Convergence}} between {{Brains}} and {{DINOv3}}},
+  booktitle = {The {{Fourteenth International Conference}} on {{Learning Representations}}},
+  author = {Raugel, Jos{\'e}phine and Szafraniec, Marc and Vo, Huy V. and Couprie, Camille and Rapin, J{\'e}r{\'e}my and {d'Ascoli}, St{\'e}phane and Labatut, Patrick and Bojanowski, Piotr and Wyart, Valentin and King, Jean-Remi},
+  year = 2025,
+  month = oct,
+  urldate = {2026-05-16},
+  abstract = {Many AI models trained on natural images develop representations that resemble those of the human brain. However, the factors driving this brain-model similarity remain poorly understood. To disentangle how the model, training and data independently lead a neural network to develop brain-like representations, we train a family of self-supervised vision transformers (DINOv3) that systematically vary these factors. We compare their representations of images to those of the human brain recorded through fMRI and MEG, providing high resolution in both spatial and temporal analyses. We assess the brain-model similarity with three complementary metrics focusing on representational similarity, topographical organization, and temporal dynamics. We show that all three factors - model size, training amount, and image type - independently and interactively impact each of these brain similarity metrics. In particular, the largest DINOv3 models trained with the most human-centric images reach the highest brain-similarity. These findings generalize across seven additional models. This emergence of brain-like representations in AI models follows a specific chronology during training: models first align with the early representations of the sensory cortices, and only align with the late and prefrontal representations of the brain with considerably more training. Finally, this developmental trajectory is indexed by structural and functional properties of the human cortex: representations acquired last by the models specifically align with cortical areas with the largest developmental expansion, thickness, least myelination and slowest timescales. Overall, these findings disentangle the interplay between architecture and experience in shaping how artificial neural networks come to see the world as humans do, thus offering a promising framework to understand how the human brain comes to represent its visual world.},
+  langid = {english},
+}
+
+
+
+% PNAS 2021 eco image dataset
+@article{mehrerEcologicallyMotivatedImage2021,
+  title = {{An Ecologically Motivated Image Dataset for Deep Learning Yields Better Models of Human Vision}},
+  author = {Mehrer, Johannes and Spoerer, Courtney J. and Jones, Emer C. and Kriegeskorte, Nikolaus and Kietzmann, Tim C.},
+  year = 2021,
+  journal = {Proceedings of the National Academy of Sciences},
+  volume = {118},
+  number = {8},
+  pages = {e2011417118},
+  publisher = {Proceedings of the National Academy of Sciences},
+  doi = {10.1073/pnas.2011417118},
+  urldate = {2024-11-13},
+  abstract = {Deep neural networks provide the current best models of visual information processing in the primate brain. Drawing on work from computer vision, the most commonly used networks are pretrained on data from the ImageNet Large Scale Visual Recognition Challenge. This dataset comprises images from 1,000 categories, selected to provide a challenging testbed for automated visual object recognition systems. Moving beyond this common practice, we here introduce ecoset, a collection of {$>$}1.5 million images from 565 basic-level categories selected to better capture the distribution of objects relevant to humans. Ecoset categories were chosen to be both frequent in linguistic usage and concrete, thereby mirroring important physical objects in the world. We test the effects of training on this ecologically more valid dataset using multiple instances of two neural network architectures: AlexNet and vNet, a novel architecture designed to mimic the progressive increase in receptive field sizes along the human ventral stream. We show that training on ecoset leads to significant improvements in predicting representations in human higher-level visual cortex and perceptual judgments, surpassing the previous state of the art. Significant and highly consistent benefits are demonstrated for both architectures on two separate functional magnetic resonance imaging (fMRI) datasets and behavioral data, jointly covering responses to 1,292 visual stimuli from a wide variety of object categories. These results suggest that computational visual neuroscience may take better advantage of the deep learning framework by using image sets that reflect the human perceptual and cognitive experience. Ecoset and trained network models are openly available to the research community.},
+  keywords = {YB},
+}
+
+% in biology - top-down recurrence in vision
+@article{gilbertTopdownInfluencesVisual2013,
+  title = {{Top-down Influences on Visual Processing}},
+  author = {Gilbert, Charles D. and Li, Wu},
+  year = 2013,
+  journal = {Nature Reviews Neuroscience},
+  volume = {14},
+  number = {5},
+  pages = {350--363},
+  publisher = {Nature Publishing Group},
+  doi = {10.1038/nrn3476},
+  urldate = {2026-02-05},
+  abstract = {In contrast to the traditional idea that the processing of visual information consists of a sequence of feedforward operations, with neuronal functional properties taking on increasing complexity as the information progresses through a hierarchy of cortical areas, increasing evidence points towards a reverse process, with higher-order cognitive influences interacting with information coming from the retina.Thus, rather than having a fixed functional role, neurons should be thought of as adaptive processors, changing their function according to the behavioural context.Vision is an active process in which higher-order cognitive influences affect the operations performed by cortical neurons.Visual pathways operate bidirectionally, with each feedforward connection being matched by feedback or re-entrant connections going from higher- to lower-order cortical areas.Top-down influences include various forms of attention, such as spatial, object oriented and feature oriented attention.Top-down influences are not limited to attention but mediate a much broader range of functional roles, including perceptual task, object expectation, scene segmentation, efference copy, working memory and the encoding and recall of learned information.The effect of top-down influences is to change the information conveyed by neurons, both by altering the tuning of their responses to stimulus attributes and by changing the structure of correlations over neuronal ensembles.All areas of the visual pathway, except for the retina, are subject to top-down influences, including early cortical stages of visual processing such as the primary visual cortex and the lateral geniculate nucleus, and all areas along the dorsal and ventral visual cortical pathways. Each area contains an association field of potential interactions, and expresses a subset of these interactions to execute different functions.The sources of top-down influences are widespread, with each area providing information reflecting the functional properties of that area. As a consequence, even a single neuron can be viewed as a microcosm of activity occurring throughout the visual pathway.We propose that the circuit mechanism of top-down control and adaptive processing involves a gating of intrinsic cortical circuits within an area mediated by long-range feedback connections to that area. By selecting a subset of inputs, a neuron can express different components of its association field, and as a result take on different functional roles.},
+  copyright = {2013 Springer Nature Limited},
+  langid = {english},
+  keywords = {Sensory systems},
+}
+
+% DICARLO paper, recurrence, challenging images
+@article{karEvidenceThatRecurrent2019,
+  title = {{Evidence That Recurrent Circuits Are Critical to the Ventral Stream's Execution of Core Object Recognition Behavior}},
+  author = {Kar, Kohitij and Kubilius, Jonas and Schmidt, Kailyn and Issa, Elias B. and DiCarlo, James J.},
+  year = 2019,
+  journal = {Nature Neuroscience},
+  volume = {22},
+  number = {6},
+  pages = {974--983},
+  publisher = {Nature Publishing Group},
+  doi = {10.1038/s41593-019-0392-5},
+  urldate = {2026-02-05},
+  abstract = {Non-recurrent deep convolutional neural networks (CNNs) are currently the best at modeling core object recognition, a behavior that is supported by the densely recurrent primate ventral stream, culminating in the inferior temporal (IT) cortex. If recurrence is critical to this behavior, then primates should outperform feedforward-only deep CNNs for images that require additional recurrent processing beyond the feedforward IT response. Here we first used behavioral methods to discover hundreds of these `challenge' images. Second, using large-scale electrophysiology, we observed that behaviorally sufficient object identity solutions emerged \textasciitilde 30\,ms later in the IT cortex for challenge images compared with primate performance-matched `control' images. Third, these behaviorally critical late-phase IT response patterns were poorly predicted by feedforward deep CNN activations. Notably, very-deep CNNs and shallower recurrent CNNs better predicted these late IT responses, suggesting that there is a functional equivalence between additional nonlinear transformations and recurrence. Beyond arguing that recurrent circuits are critical for rapid object identification, our results provide strong constraints for future recurrent model development.},
+  copyright = {2019 The Author(s), under exclusive licence to Springer Nature America, Inc.},
+  langid = {english},
+  keywords = {Neural decoding,Neural encoding,Object vision},
+}
+
+@article{wyatteLimitsFeedforwardVision2012,
+  title = {{The Limits of Feedforward Vision: Recurrent Processing Promotes Robust Object Recognition When Objects Are Degraded}},
+  shorttitle = {The Limits of Feedforward Vision},
+  author = {Wyatte, Dean and Curran, Tim and O'Reilly, Randall},
+  year = 2012,
+  journal = {Journal of Cognitive Neuroscience},
+  volume = {24},
+  number = {11},
+  pages = {2248--2261},
+  doi = {10.1162/jocn_a_00282},
+  abstract = {Everyday vision requires robustness to a myriad of environmental factors that degrade stimuli. Foreground clutter can occlude objects of interest, and complex lighting and shadows can decrease the contrast of items. How does the brain recognize visual objects despite these low-quality inputs? On the basis of predictions from a model of object recognition that contains excitatory feedback, we hypothesized that recurrent processing would promote robust recognition when objects were degraded by strengthening bottom-up signals that were weakened because of occlusion and contrast reduction. To test this hypothesis, we used backward masking to interrupt the processing of partially occluded and contrast reduced images during a categorization experiment. As predicted by the model, we found significant interactions between the mask and occlusion and the mask and contrast, such that the recognition of heavily degraded stimuli was differentially impaired by masking. The model provided a close fit of these results in an isomorphic version of the experiment with identical stimuli. The model also provided an intuitive explanation of the interactions between the mask and degradations, indicating that masking interfered specifically with the extensive recurrent processing necessary to amplify and resolve highly degraded inputs, whereas less degraded inputs did not require much amplification and could be rapidly resolved, making them less susceptible to masking. Together, the results of the experiment and the accompanying model simulations illustrate the limits of feedforward vision and suggest that object recognition is better characterized as a highly interactive, dynamic process that depends on the coordination of multiple brain areas.},
+  langid = {english},
+  pmid = {22905822},
+  keywords = {Adolescent,Biofeedback Psychology,Female,Humans,Male,Pattern Recognition Visual,Perceptual Masking,Photic Stimulation,Recognition Psychology,Visual Perception,Young Adult}
+}
+
+
+@article{hoppeMultistepPlanningEye2019,
+  title = {{Multi-Step Planning of Eye Movements in Visual Search}},
+  author = {Hoppe, David and Rothkopf, Constantin A.},
+  year = 2019,
+  journal = {Scientific Reports},
+  volume = {9},
+  number = {1},
+  pages = {144},
+  publisher = {Nature Publishing Group},
+  doi = {10.1038/s41598-018-37536-0},
+  urldate = {2025-08-26},
+  abstract = {The capability of directing gaze to relevant parts in the environment is crucial for our survival. Computational models have proposed quantitative accounts of human gaze selection in a range of visual search tasks. Initially, models suggested that gaze is directed to the locations in a visual scene at which some criterion such as the probability of target location, the reduction of uncertainty or the maximization of reward appear to be maximal. But subsequent studies established, that in some tasks humans instead direct their gaze to locations, such that after the single next look the criterion is expected to become maximal. However, in tasks going beyond a single action, the entire action sequence may determine future rewards thereby necessitating planning beyond a single next gaze shift. While previous empirical studies have suggested that human gaze sequences are planned, quantitative evidence for whether the human visual system is capable of finding optimal eye movement sequences according to probabilistic planning is missing. Here we employ a series of computational models to investigate whether humans are capable of looking ahead more than the next single eye movement. We found clear evidence that subjects' behavior was better explained by the model of a planning observer compared to a myopic, greedy observer, which selects only a single saccade at a time. In particular, the location of our subjects' first fixation differed depending on the stimulus and the time available for the search, which was well predicted quantitatively by a probabilistic planning model. Overall, our results are the first evidence that the human visual system's gaze selection agrees with optimal planning under uncertainty.},
+  copyright = {2019 The Author(s)},
+  langid = {english},
+  keywords = {Decision,Human behaviour},
+}
+
+
+@article{yaminsPerformanceoptimizedHierarchicalModels2014,
+  title = {{Performance-Optimized Hierarchical Models Predict Neural Responses in Higher Visual Cortex}},
+  author = {Yamins, Daniel L. K. and Hong, Ha and Cadieu, Charles F. and Solomon, Ethan A. and Seibert, Darren and DiCarlo, James J.},
+  year = 2014,
+  journal = {Proceedings of the National Academy of Sciences},
+  volume = {111},
+  number = {23},
+  pages = {8619--8624},
+  publisher = {Proceedings of the National Academy of Sciences},
+  doi = {10.1073/pnas.1403112111},
+  urldate = {2023-11-28},
+  abstract = {The ventral visual stream underlies key human visual object recognition abilities. However, neural encoding in the higher areas of the ventral stream remains poorly understood. Here, we describe a modeling approach that yields a quantitatively accurate model of inferior temporal (IT) cortex, the highest ventral cortical area. Using high-throughput computational techniques, we discovered that, within a class of biologically plausible hierarchical neural network models, there is a strong correlation between a model's categorization performance and its ability to predict individual IT neural unit response data. To pursue this idea, we then identified a high-performing neural network that matches human performance on a range of recognition tasks. Critically, even though we did not constrain this model to match neural data, its top output layer turns out to be highly predictive of IT spiking responses to complex naturalistic images at both the single site and population levels. Moreover, the model's intermediate layers are highly predictive of neural responses in the V4 cortex, a midlevel visual area that provides the dominant cortical input to IT. These results show that performance optimization---applied in a biologically appropriate model class---can be used to build quantitative predictive models of neural processing.},
+  keywords = {YB},
+}
+
+@article{raoPredictiveCodingVisual1999,
+  title = {{Predictive Coding in the Visual Cortex: A Functional Interpretation of Some Extra-Classical Receptive-Field Effects}},
+  shorttitle = {Predictive Coding in the Visual Cortex},
+  author = {Rao, Rajesh P. N. and Ballard, Dana H.},
+  year = 1999,
+  journal = {Nature Neuroscience},
+  volume = {2},
+  number = {1},
+  pages = {79--87},
+  publisher = {Nature Publishing Group},
+  doi = {10.1038/4580},
+  urldate = {2024-09-07},
+  abstract = {We describe a model of visual processing in which feedback connections from a higher- to a lower-order visual cortical area carry predictions of lower-level neural activities, whereas the feedforward connections carry the residual errors between the predictions and the actual lower-level activities. When exposed to natural images, a hierarchical network of model neurons implementing such a model developed simple-cell-like receptive fields. A subset of neurons responsible for carrying the residual errors showed endstopping and other extra-classical receptive-field effects. These results suggest that rather than being exclusively feedforward phenomena, nonclassical surround effects in the visual cortex may also result from cortico-cortical feedback as a consequence of the visual system using an efficient hierarchical strategy for encoding natural images.},
+  copyright = {1999 Nature America Inc.},
+  langid = {english},
+  keywords = {Animal Genetics and Genomics,Behavioral Sciences,Biological Techniques,Biomedicine,general,Neurobiology,Neurosciences,YB},
+}
+
+@article{melcherPersistenceVisualMemory2001,
+  title = {{Persistence of Visual Memory for Scenes}},
+  author = {Melcher, David},
+  year = 2001,
+  journal = {Nature},
+  volume = {412},
+  number = {6845},
+  pages = {401--401},
+  publisher = {Nature Publishing Group},
+  doi = {10.1038/35086646},
+  urldate = {2026-02-05},
+  abstract = {A medium-term memory may help us to keep track of objects during visual tasks.},
+  copyright = {2001 Springer Nature Limited},
+  langid = {english},
+  keywords = {Humanities and Social Sciences,multidisciplinary,Science},
+}
+
+
+@inproceedings{savovStateSpaceDiffuserBringingLong2025,
+  title = {{{{StateSpaceDiffuser}}: {{Bringing Long Context}} to {{Diffusion World Models}}}},
+  shorttitle = {{{StateSpaceDiffuser}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Savov, Nedko and Kazemi, Naser and Zhang, Deheng and Paudel, Danda Pani and Wang, Xi and Gool, Luc Van},
+  year = 2025,
+  urldate = {2026-02-05},
+  abstract = {World models have recently gained prominence for action-conditioned visual prediction in complex environments. However, relying on only a few recent observations causes them to lose long-term context. Consequently, within a few steps, the generated scenes drift from what was previously observed, undermining temporal coherence. This limitation, common in state-of-the-art world models, which are diffusion-based, stems from the lack of a lasting environment state. To address this problem, we introduce StateSpaceDiffuser, where a diffusion model is enabled to perform long-context tasks by integrating features from a state-space model, representing the entire interaction history. This design restores long-term memory while preserving the high-fidelity synthesis of diffusion models. To rigorously measure temporal consistency, we develop an evaluation protocol that probes a model's ability to reinstantiate seen content in extended rollouts. Comprehensive experiments show that StateSpaceDiffuser significantly outperforms a strong diffusion-only baseline, maintaining a coherent visual context for an order of magnitude more steps. It delivers consistent views in both a 2D maze navigation and a complex 3D environment. These results establish that bringing state-space representations into diffusion models is highly effective in demonstrating both visual details and long-term memory. Project page: https://insait-institute.github.io/StateSpaceDiffuser/},
+  langid = {english},
+}
+
+
+@misc{baiQwen3VLTechnicalReport2025,
+  title = {{Qwen3-{{VL Technical Report}}}},
+  author = {Bai, Shuai and Cai, Yuxuan and Chen, Ruizhe and Chen, Keqin and Chen, Xionghui and Cheng, Zesen and Deng, Lianghao and Ding, Wei and Gao, Chang and Ge, Chunjiang and Ge, Wenbin and Guo, Zhifang and Huang, Qidong and Huang, Jie and Huang, Fei and Hui, Binyuan and Jiang, Shutong and Li, Zhaohai and Li, Mingsheng and Li, Mei and Li, Kaixin and Lin, Zicheng and Lin, Junyang and Liu, Xuejing and Liu, Jiawei and Liu, Chenglong and Liu, Yang and Liu, Dayiheng and Liu, Shixuan and Lu, Dunjie and Luo, Ruilin and Lv, Chenxu and Men, Rui and Meng, Lingchen and Ren, Xuancheng and Ren, Xingzhang and Song, Sibo and Sun, Yuchong and Tang, Jun and Tu, Jianhong and Wan, Jianqiang and Wang, Peng and Wang, Pengfei and Wang, Qiuyue and Wang, Yuxuan and Xie, Tianbao and Xu, Yiheng and Xu, Haiyang and Xu, Jin and Yang, Zhibo and Yang, Mingkun and Yang, Jianxin and Yang, An and Yu, Bowen and Zhang, Fei and Zhang, Hang and Zhang, Xi and Zheng, Bo and Zhong, Humen and Zhou, Jingren and Zhou, Fan and Zhou, Jing and Zhu, Yuanzhi and Zhu, Ke},
+  year = 2025,
+  number = {arXiv:2511.21631},
+  eprint = {2511.21631},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2511.21631},
+  urldate = {2026-02-05},
+  abstract = {We introduce Qwen3-VL, the most capable vision-language model in the Qwen series to date, achieving superior performance across a broad range of multimodal benchmarks. It natively supports interleaved contexts of up to 256K tokens, seamlessly integrating text, images, and video. The model family includes both dense (2B/4B/8B/32B) and mixture-of-experts (30B-A3B/235B-A22B) variants to accommodate diverse latency-quality trade-offs. Qwen3-VL delivers three core pillars: (i) markedly stronger pure-text understanding, surpassing comparable text-only backbones in several cases; (ii) robust long-context comprehension with a native 256K-token window for both text and interleaved multimodal inputs, enabling faithful retention, retrieval, and cross-referencing across long documents and videos; and (iii) advanced multimodal reasoning across single-image, multi-image, and video tasks, demonstrating leading performance on comprehensive evaluations such as MMMU and visual-math benchmarks (e.g., MathVista and MathVision). Architecturally, we introduce three key upgrades: (i) an enhanced interleaved-MRoPE for stronger spatial-temporal modeling across images and video; (ii) DeepStack integration, which effectively leverages multi-level ViT features to tighten vision-language alignment; and (iii) text-based time alignment for video, evolving from T-RoPE to explicit textual timestamp alignment for more precise temporal grounding. Under comparable token budgets and latency constraints, Qwen3-VL achieves superior performance in both dense and Mixture-of-Experts (MoE) architectures. We envision Qwen3-VL serving as a foundational engine for image-grounded reasoning, agentic decision-making, and multimodal code intelligence in real-world workflows.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computer Vision and Pattern Recognition},
+  note = {arXiv preprint arXiv:2511.21631},
+}
+
+
+% post hoc processing
+@article{hanSeqNMSVideoObject2016,
+  title = {{Seq-{{NMS}} for {{Video Object Detection}}}},
+  author = {Han, Wei and Khorrami, Pooya and Paine, Tom Le and Ramachandran, Prajit and Babaeizadeh, Mohammad and Shi, Honghui and Li, Jiana and Yan, Shuicheng and Huang, Thomas S.},
+  year = 2016,
+  urldate = {2026-02-05},
+  abstract = {Video object detection is challenging because objects that are easily detected in one frame may be difficult to detect in another frame within the same clip. Recently, there have been major advances for doing object detection in a single image. These methods typically contain three phases: (i) object proposal generation (ii) object classification and (iii) post-processing. We propose a modification of the post-processing phase that uses high-scoring object detections from nearby frames to boost scores of weaker detections within the same clip. We show that our method obtains superior results to state-of-the-art single image object detection techniques. Our method placed \$3\textasciicircum\textbraceleft rd\textbraceright\$ in the video object detection (VID) task of the ImageNet Large Scale Visual Recognition Challenge 2015 (ILSVRC2015).},
+  langid = {english},
+}
+
+% post hoc
+@inproceedings{bewleySimpleOnlineRealtime2016,
+  title = {{Simple Online and Realtime Tracking}},
+  booktitle = {2016 {{IEEE International Conference}} on {{Image Processing}} ({{ICIP}})},
+  author = {Bewley, Alex and Ge, Zongyuan and Ott, Lionel and Ramos, Fabio and Upcroft, Ben},
+  year = 2016,
+  pages = {3464--3468},
+  doi = {10.1109/ICIP.2016.7533003},
+  urldate = {2026-02-05},
+  abstract = {This paper explores a pragmatic approach to multiple object tracking where the main focus is to associate objects efficiently for online and realtime applications. To this end, detection quality is identified as a key factor influencing tracking performance, where changing the detector can improve tracking by up to 18.9\%. Despite only using a rudimentary combination of familiar techniques such as the Kalman Filter and Hungarian algorithm for the tracking components, this approach achieves an accuracy comparable to state-of-the-art online trackers. Furthermore, due to the simplicity of our tracking method, the tracker updates at a rate of 260 Hz which is over 20x faster than other state-of-the-art trackers.},
+  keywords = {Benchmark testing,Complexity theory,Computer Vision,Data Association,Detection,Detectors,Kalman filters,Multiple Object Tracking,Target tracking,Visualization},
+}
+
+% ViViT
+@inproceedings{arnabViViTVideoVision2021,
+  title = {{{{ViViT}}: {{A Video Vision Transformer}}}},
+  shorttitle = {{{ViViT}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}}},
+  author = {Arnab, Anurag and Dehghani, Mostafa and Heigold, Georg and Sun, Chen and Lu{\v c}i{\'c}, Mario and Schmid, Cordelia},
+  year = 2021,
+  pages = {6836--6846},
+  urldate = {2026-02-05},
+  langid = {english},
+}
+
+@inproceedings{liuVideoSwinTransformer2022,
+  title = {{Video {{Swin Transformer}}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Liu, Ze and Ning, Jia and Cao, Yue and Wei, Yixuan and Zhang, Zheng and Lin, Stephen and Hu, Han},
+  year = 2022,
+  pages = {3202--3211},
+  urldate = {2026-02-05},
+  langid = {english},
+}
+
+
+% SEMINAL spatiotemporal CNN
+@article{ji3DConvolutionalNeural2013,
+  title = {{{{3D Convolutional Neural Networks}} for {{Human Action Recognition}}}},
+  author = {Ji, Shuiwang and Xu, Wei and Yang, Ming and Yu, Kai},
+  year = 2013,
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume = {35},
+  number = {1},
+  pages = {221--231},
+  doi = {10.1109/TPAMI.2012.59},
+  urldate = {2026-02-05},
+  abstract = {We consider the automated recognition of human actions in surveillance videos. Most current methods build classifiers based on complex handcrafted features computed from the raw inputs. Convolutional neural networks (CNNs) are a type of deep model that can act directly on the raw inputs. However, such models are currently limited to handling 2D inputs. In this paper, we develop a novel 3D CNN model for action recognition. This model extracts features from both the spatial and the temporal dimensions by performing 3D convolutions, thereby capturing the motion information encoded in multiple adjacent frames. The developed model generates multiple channels of information from the input frames, and the final feature representation combines information from all channels. To further boost the performance, we propose regularizing the outputs with high-level features and combining the predictions of a variety of different models. We apply the developed models to recognize human actions in the real-world environment of airport surveillance videos, and they achieve superior performance in comparison to baseline methods.},
+  keywords = {3D convolution,action recognition,Computational modeling,Computer architecture,convolutional neural networks,Deep learning,Feature extraction,Kernel,model combination,Solid modeling,Three dimensional displays,Videos},
+}
+
+% FROM META, seminal
+@inproceedings{bertasiusSpaceTimeAttentionAll2021,
+  title = {{Is {{Space-Time Attention All You Need}} for {{Video Understanding}}?}},
+  booktitle = {Proceedings of the {{International Conference}} on {{Machine Learning}}},
+  author = {Bertasius, Gedas and Wang, Heng and Torresani, Lorenzo},
+  year = 2021,
+  pages = {813--824},
+  publisher = {PMLR},
+  urldate = {2026-02-05},
+  abstract = {We present a convolution-free approach to video classification built exclusively on self-attention over space and time. Our method, named ``TimeSformer,'' adapts the standard Transformer architecture to video by enabling spatiotemporal feature learning directly from a sequence of frame-level patches. Our experimental study compares different self-attention schemes and suggests that ``divided attention,'' where temporal attention and spatial attention are separately applied within each block, leads to the best video classification accuracy among the design choices considered. Despite the radically new design, TimeSformer achieves state-of-the-art results on several action recognition benchmarks, including the best reported accuracy on Kinetics-400 and Kinetics-600. Finally, compared to 3D convolutional networks, our model is faster to train, it can achieve dramatically higher test efficiency (at a small drop in accuracy), and it can also be applied to much longer video clips (over one minute long). Code and models are available at: https://github.com/facebookresearch/TimeSformer.},
+  langid = {english},
+}
+
+% V-JEPA 2
+@misc{assranVJEPA2SelfSupervised2025,
+  title = {{V-{{JEPA}} 2: {{Self-Supervised Video Models Enable Understanding}}, {{Prediction}} and {{Planning}}}},
+  shorttitle = {V-{{JEPA}} 2},
+  author = {Assran, Mido and Bardes, Adrien and Fan, David and Garrido, Quentin and Howes, Russell and Mojtaba and Komeili and Muckley, Matthew and Rizvi, Ammar and Roberts, Claire and Sinha, Koustuv and Zholus, Artem and Arnaud, Sergio and Gejji, Abha and Martin, Ada and Hogan, Francois Robert and Dugas, Daniel and Bojanowski, Piotr and Khalidov, Vasil and Labatut, Patrick and Massa, Francisco and Szafraniec, Marc and Krishnakumar, Kapil and Li, Yong and Ma, Xiaodong and Chandar, Sarath and Meier, Franziska and LeCun, Yann and Rabbat, Michael and Ballas, Nicolas},
+  year = 2025,
+  number = {arXiv:2506.09985},
+  eprint = {2506.09985},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2506.09985},
+  urldate = {2026-02-05},
+  abstract = {A major challenge for modern AI is to learn to understand the world and learn to act largely by observation. This paper explores a self-supervised approach that combines internet-scale video data with a small amount of interaction data (robot trajectories), to develop models capable of understanding, predicting, and planning in the physical world. We first pre-train an action-free joint-embedding-predictive architecture, V-JEPA 2, on a video and image dataset comprising over 1 million hours of internet video. V-JEPA 2 achieves strong performance on motion understanding (77.3 top-1 accuracy on Something-Something v2) and state-of-the-art performance on human action anticipation (39.7 recall-at-5 on Epic-Kitchens-100) surpassing previous task-specific models. Additionally, after aligning V-JEPA 2 with a large language model, we demonstrate state-of-the-art performance on multiple video question-answering tasks at the 8 billion parameter scale (e.g., 84.0 on PerceptionTest, 76.9 on TempCompass). Finally, we show how self-supervised learning can be applied to robotic planning tasks by post-training a latent action-conditioned world model, V-JEPA 2-AC, using less than 62 hours of unlabeled robot videos from the Droid dataset. We deploy V-JEPA 2-AC zero-shot on Franka arms in two different labs and enable picking and placing of objects using planning with image goals. Notably, this is achieved without collecting any data from the robots in these environments, and without any task-specific training or reward. This work demonstrates how self-supervised learning from web-scale data and a small amount of robot interaction data can yield a world model capable of planning in the physical world.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning,Computer Science - Robotics},
+  note = {arXiv preprint arXiv:2506.09985},
+}
+
+
+% EDRAM
+@inproceedings{ablavatski2017enriched,
+  title={{Enriched Deep Recurrent Visual Attention Model for Multiple Object Recognition}},
+  author={Ablavatski, Artsiom and Lu, Shijian and Cai, Jianfei},
+  booktitle={Proceedings of the IEEE Winter Conference on Applications of Computer Vision},
+  pages={971--978},
+  year={2017},
+  organization={IEEE}
+}
+
+% GFNet
+@inproceedings{wangGlanceFocusDynamic2020,
+  title = {{Glance and Focus: A Dynamic Approach to Reducing Spatial Redundancy in Image Classification}},
+  shorttitle = {Glance and Focus},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Wang, Yulin and Lv, Kangchen and Huang, Rui and Song, Shiji and Yang, Le and Huang, Gao},
+  year = {2020},
+  volume = {33},
+  pages = {2432--2444},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2025-09-08},
+  abstract = {The accuracy of deep convolutional neural networks (CNNs) generally improves when fueled with high resolution images. However, this often comes at a high computational cost and high memory footprint. Inspired by the fact that not all regions in an image are task-relevant, we propose a novel framework that performs efficient image classification by processing a sequence of relatively small inputs, which are strategically selected from the original image with reinforcement learning. Such a dynamic decision process naturally facilitates adaptive inference at test time, i.e., it can be terminated once the model is sufficiently confident about its prediction and thus avoids further redundant computation. Notably, our framework is general and flexible as it is compatible with most of the state-of-the-art light-weighted CNNs (such as MobileNets, EfficientNets and RegNets), which can be conveniently deployed as the backbone feature extractor. Experiments on ImageNet show that our method consistently improves the computational efficiency of a wide variety of deep models. For example, it further reduces the average latency of the highly efficient MobileNet-V3 on an iPhone XS Max by 20\% without sacrificing accuracy.},
+}
+
+% FSVS
+% acronym derived from https://github.com/jliu206/Foveal_Saccadic_Vision_System
+@inproceedings{liuImprovedEfficiencyBased2023,
+  title = {{Improved {{Efficiency Based}} on {{Learned Saccade}} and {{Continuous Scene Reconstruction From Foveated Visual Sampling}}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Liu, Jiayang and Bu, Yiming and Ts'o, Daniel and Qiu, Qinru},
+  year = 2024,
+  urldate = {2025-02-16},
+  abstract = {High accuracy, low latency and high energy efficiency represent a set of contradictory goals when searching for system solutions for image classification and detection. While high-quality images naturally result in more precise detection and classification, they also result in a heavier computational workload for imaging and processing, reduce camera refresh rates, and increase the volume of data communication between the camera and processor. Taking inspiration from the foveal-peripheral sampling mechanism, saccade mechanism observed in the human visual system and the filling-in phenomena of brain, we have developed an active scene reconstruction architecture based on multiple foveal views. This model stitches together information from foveal and peripheral vision, which are sampled from multiple glances. Assisted by a reinforcement learning-based saccade mechanism, our model reduces the required input pixels by over 90\textbackslash\% per frame while maintaining the same level of performance in image recognition as with the original images. We evaluated the effectiveness of our model using the GTSRB dataset and the ImageNet dataset. Using an equal number of input pixels, our study demonstrates a 5\textbackslash\% higher image recognition accuracy compared to state-of-the-art foveal-peripheral vision systems. Furthermore, we demonstrate that our foveal sampling/saccadic scene reconstruction model exhibits significantly lower complexity and higher data efficiency during the training phase compared to existing approaches.},
+  langid = {english},
+  keywords = {YB},
+}
+
+% TNet
+@inproceedings{papadopoulosHardAttentionScalableImage2021,
+  title = {{Hard-{{Attention}} for {{Scalable Image Classification}}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Papadopoulos, Athanasios N. and Korus, Pawe{\l} and Memon, Nasir},
+  year = 2021,
+  volume = {34},
+  pages = {14694--14707},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2026-02-05},
+}
+
+
+
+@inproceedings{matheReinforcementLearningVisual2016,
+  title = {{Reinforcement {{Learning}} for {{Visual Object Detection}}}},
+  booktitle = {Proceedings of the {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Mathe, Stefan and Pirinen, Aleksis and Sminchisescu, Cristian},
+  year = 2016,
+  pages = {2894--2902},
+  doi = {10.1109/CVPR.2016.316},
+  urldate = {2026-02-05},
+  abstract = {One of the most widely used strategies for visual object detection is based on exhaustive spatial hypothesis search. While methods like sliding windows have been successful and effective for many years, they are still brute-force, independent of the image content and the visual category being searched. In this paper we present principled sequential models that accumulate evidence collected at a small set of image locations in order to detect visual objects effectively. By formulating sequential search as reinforcement learning of the search policy (including the stopping condition), our fully trainable model can explicitly balance for each class, specifically, the conflicting goals of exploration - sampling more image regions for better accuracy -, and exploitation - stopping the search efficiently when sufficiently confident about the target's location. The methodology is general and applicable to any detector response function. We report encouraging results in the PASCAL VOC 2012 object detection test set showing that the proposed methodology achieves almost two orders of magnitude speed-up over sliding window methods.},
+  keywords = {Computational efficiency,Computational modeling,Detectors,Feature extraction,History,Object detection,Visualization},
+}
+
+
+
+@misc{pourrahimiNeuralSignaturesAssociational2025,
+  title = {{Neural Signatures of Associational Cortex Emerge in a Goal-Directed Model of Visual Search}},
+  author = {Pourrahimi, Motahareh and Bashivan, Pouya},
+  year = 2025,
+  primaryclass = {New Results},
+  publisher = {bioRxiv},
+  doi = {10.1101/2025.06.06.658387},
+  urldate = {2026-04-24},
+  abstract = {Animals actively engage with their environment to gather information, continuously shaping both their sensory input and behavior. Understanding this closed loop between perception and action remains a central challenge in neuroscience. A key example is active vision, where observers decide where to look next, selectively sampling from their visual space to guide ongoing perception and action. However, despite major advances in linking neural activity with behavior and computational modeling of vision under passive viewing conditions, the interactive aspects of natural vision remain underexplored. Visual search, the act of locating a target among distractors, exemplifies this dynamic sampling process and has long served as a core paradigm for studying visual attention. While its behavioral and neural signatures have been characterized in humans and non-human primates, a unifying model that links these neural phenomena to behavior during visual search has been lacking. Here, we present a biologically aligned neural network model trained to perform visual search directly from natural scenes by generating sequences of saccades to locate a target. The model generalizes to novel objects and scenes, produces human-like scanpaths, and recapitulates classic behavioral biases in human visual search. Strikingly, units in the model exhibit neural response properties characteristic of the fronto-parietal network, including a stable cue template in working memory, a retinocentric cue-similarity map, and prospective fixation signals. Beyond reproducing known behavioral and neural phenomena, the model reveals a representational geometry that supports cue-driven prioritization, spatial memory, and planning of future fixations. These results establish a computational framework for studying visual search as an emergent property of goal-directed perception, offering concrete predictions for neurophysiological and behavioral testing, and paving the way toward a unified account of active vision.},
+  archiveprefix = {bioRxiv},
+  chapter = {New Results},
+  copyright = {\copyright{} 2025, Posted by Cold Spring Harbor Laboratory. This pre-print is available under a Creative Commons License (Attribution-NonCommercial-NoDerivs 4.0 International), CC BY-NC-ND 4.0, as described at http://creativecommons.org/licenses/by-nc-nd/4.0/},
+  langid = {english},
+  note = {bioRxiv preprint, doi:10.1101/2025.06.06.658387},
+}
+
+% key citation on neuro ai gap
+@article{rothkopfModelsVisionNeed2023,
+  title = {{Models of Vision Need Some Action}},
+  author = {Rothkopf, Constantin and Bremmer, Frank and Fiehler, Katja and Dobs, Katharina and Triesch, Jochen},
+  year = {2023},
+  journal = {Behavioral and Brain Sciences},
+  volume = {46},
+  pages = {e405},
+  doi = {10.1017/S0140525X23001577},
+
+  langid = {english}
+}
+
+% the one and only IN1k
+@article{russakovskyImageNetLargeScale2015,
+  title = {{{ImageNet Large Scale Visual Recognition Challenge}}},
+  author = {Russakovsky, Olga and Deng, Jia and Su, Hao and Krause, Jonathan and Satheesh, Sanjeev and Ma, Sean and Huang, Zhiheng and Karpathy, Andrej and Khosla, Aditya and Bernstein, Michael and Berg, Alexander C. and {Fei-Fei}, Li},
+  year = 2015,
+  journal = {International Journal of Computer Vision},
+  volume = {115},
+  number = {3},
+  pages = {211--252},
+  doi = {10.1007/s11263-015-0816-y},
+  urldate = {2026-02-05},
+  abstract = {The ImageNet Large Scale Visual Recognition Challenge is a benchmark in object category classification and detection on hundreds of object categories and millions of images. The challenge has been run annually from 2010 to present, attracting participation from more than fifty institutions. This paper describes the creation of this benchmark dataset and the advances in object recognition that have been possible as a result. We discuss the challenges of collecting large-scale ground truth annotation, highlight key breakthroughs in categorical object recognition, provide a detailed analysis of the current state of the field of large-scale image classification and object detection, and compare the state-of-the-art computer vision accuracy with human accuracy. We conclude with lessons learned in the 5~years of the challenge, and propose future directions and improvements.},
+  langid = {english},
+  keywords = {Benchmark,Dataset,Large-scale,Object detection,Object recognition},
+}
+
+
+@inproceedings{cordtsCityscapesDatasetSemantic2016,
+  title = {{The {{Cityscapes Dataset}} for {{Semantic Urban Scene Understanding}}}},
+  booktitle = {2016 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
+  author = {Cordts, Marius and Omran, Mohamed and Ramos, Sebastian and Rehfeld, Timo and Enzweiler, Markus and Benenson, Rodrigo and Franke, Uwe and Roth, Stefan and Schiele, Bernt},
+  year = 2016,
+  pages = {3213--3223},
+  publisher = {IEEE Computer Society},
+  doi = {10.1109/CVPR.2016.350},
+  urldate = {2026-02-05},
+  abstract = {Visual understanding of complex urban street scenes is an enabling factor for a wide range of applications. Object detection has benefited enormously from large-scale datasets, especially in the context of deep learning. For semantic urban scene understanding, however, no current dataset adequately captures the complexity of real-world urban scenes. To address this, we introduce Cityscapes, a benchmark suite and large-scale dataset to train and test approaches for pixel-level and instance-level semantic labeling. Cityscapes is comprised of a large, diverse set of stereo video sequences recorded in streets from 50 different cities. 5000 of these images have high quality pixel-level annotations, 20 000 additional images have coarse annotations to enable methods that leverage large volumes of weakly-labeled data. Crucially, our effort exceeds previous attempts in terms of dataset size, annotation richness, scene variability, and complexity. Our accompanying empirical study provides an in-depth analysis of the dataset characteristics, as well as a performance evaluation of several state-of-the-art approaches based on our benchmark.},
+  langid = {english},
+}
+
+@misc{pascal-voc-2012,
+	author = "Everingham, M. and Van~Gool, L. and Williams, C. K. I. and Winn, J. and Zisserman, A.",
+	title = "The {PASCAL} {V}isual {O}bject {C}lasses {C}hallenge 2012 {(VOC2012)} {R}esults",
+	howpublished = "http://www.pascal-network.org/challenges/VOC/voc2012/workshop/index.html"}
+
+
+
+ @inproceedings{silbermanIndoorSegmentationSupport2012,
+  title = {{Indoor {{Segmentation}} and {{Support Inference}} from {{RGBD Images}}}},
+  author = {Silberman, Nathan and Hoiem, Derek and Kohli, Pushmeet and Fergus, Rob},
+  year = 2012,
+  pages = {746--760},
+  publisher = {Springer},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/978-3-642-33715-4_54},
+  abstract = {We present an approach to interpret the major surfaces, objects, and support relations of an indoor scene from an RGBD image. Most existing work ignores physical interactions or is applied only to tidy rooms and hallways. Our goal is to parse typical, often messy, indoor scenes into floor, walls, supporting surfaces, and object regions, and to recover support relationships. One of our main interests is to better understand how 3D cues can best inform a structured 3D interpretation. We also contribute a novel integer programming formulation to infer physical support relations. We offer a new dataset of 1449 RGBD images, capturing 464 diverse indoor scenes, with detailed annotations. Our experiments demonstrate our ability to infer support relations in complex scenes and verify that our 3D scene cues and inferred support lead to better object segmentation.},
+  langid = {english},
+}
+
+@misc{linDepthAnything32025,
+  title = {{Depth {{Anything}} 3: {{Recovering}} the {{Visual Space}} from {{Any Views}}}},
+  shorttitle = {Depth {{Anything}} 3},
+  author = {Lin, Haotong and Chen, Sili and Liew, Junhao and Chen, Donny Y. and Li, Zhenyu and Shi, Guang and Feng, Jiashi and Kang, Bingyi},
+  year = 2025,
+  number = {arXiv:2511.10647},
+  eprint = {2511.10647},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2511.10647},
+  urldate = {2026-02-05},
+  abstract = {We present Depth Anything 3 (DA3), a model that predicts spatially consistent geometry from an arbitrary number of visual inputs, with or without known camera poses. In pursuit of minimal modeling, DA3 yields two key insights: a single plain transformer (e.g., vanilla DINO encoder) is sufficient as a backbone without architectural specialization, and a singular depth-ray prediction target obviates the need for complex multi-task learning. Through our teacher-student training paradigm, the model achieves a level of detail and generalization on par with Depth Anything 2 (DA2). We establish a new visual geometry benchmark covering camera pose estimation, any-view geometry and visual rendering. On this benchmark, DA3 sets a new state-of-the-art across all tasks, surpassing prior SOTA VGGT by an average of 44.3\% in camera pose accuracy and 25.1\% in geometric accuracy. Moreover, it outperforms DA2 in monocular depth estimation. All models are trained exclusively on public academic datasets.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  note = {arXiv preprint arXiv:2511.10647},
+}
+
+
+@inproceedings{schmidtSegmentThisThing2025,
+  title = {{Segment {{This Thing}}: {{Foveated Tokenization}} for {{Efficient Point-Prompted Segmentation}}}},
+  shorttitle = {Segment {{This Thing}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Schmidt, Tanner and Newcombe, Richard},
+  year = 2025,
+  pages = {29428--29437},
+  urldate = {2025-09-22},
+  langid = {english},
+}
+
+@inproceedings{zhengRethinkingSemanticSegmentation2021,
+  title = {{Rethinking {{Semantic Segmentation From}} a {{Sequence-to-Sequence Perspective With Transformers}}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Zheng, Sixiao and Lu, Jiachen and Zhao, Hengshuang and Zhu, Xiatian and Luo, Zekun and Wang, Yabiao and Fu, Yanwei and Feng, Jianfeng and Xiang, Tao and Torr, Philip H. S. and Zhang, Li},
+  year = 2021,
+  pages = {6881--6890},
+  urldate = {2026-02-05},
+  langid = {english},
+}
+
+@inproceedings{seifiGlimpseAttendandExploreSelfAttentionActive2021,
+  title = {{Glimpse-{{Attend-and-Explore}}: {{Self-Attention}} for {{Active Visual Exploration}}}},
+  shorttitle = {Glimpse-{{Attend-and-Explore}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}}},
+  author = {Seifi, Soroush and Jha, Abhishek and Tuytelaars, Tinne},
+  year = 2021,
+  pages = {16137--16146},
+  urldate = {2026-02-06},
+  langid = {english},
+}
+
+@inproceedings{olszewskiTORETokenRecycling2025,
+  title = {{{{TORE}}: {{Token Recycling}} in {{Vision Transformers}} for {{Efficient Active Visual Exploration}}}},
+  shorttitle = {{{TORE}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF Winter Conference}} on {{Applications}} of {{Computer Vision}}},
+  author = {Olszewski, Jan and Rymarczyk, Dawid and W{\'o}jcik, Piotr and Pach, Mateusz and Zieli{\'n}ski, Bartosz},
+  year = 2025,
+  pages = {8606--8616},
+  doi = {10.1109/WACV61041.2025.00834},
+  urldate = {2026-02-06},
+  abstract = {Active Visual Exploration (AVE) optimizes the utilization of robotic resources in real-world scenarios by sequentially selecting the most informative observations. However, modern methods require a high computational budget due to processing the same observations multiple times through the autoencoder transformers. As a remedy, we introduce a novel approach to AVE called TOken REcycling (TORE). It divides the encoder into extractor and aggregator components. The extractor processes each observation sepa-rately, enabling the reuse of tokens passed to the aggrega-tor. Moreover, to further reduce the computations, we de-crease the decoder to only one block. Through extensive experiments, we demonstrate that TORE outperforms state-of-the-art methods while reducing computational overhead by up to 90\%.},
+  keywords = {Autoencoders,Computer vision,Decoding,Recycling,Transformers,Visualization},
+}
+
+
+@inproceedings{zengFoveatedInstanceSegmentation2025,
+  title = {{Foveated {{Instance Segmentation}}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Zeng, Hongyi and Liu, Wenxuan and Xia, Tianhua and Chen, Jinhui and Li, Ziyun and Zhang, Sai Qian},
+  year = 2025,
+  pages = {24496--24505},
+  urldate = {2026-02-06},
+  langid = {english},
+}
+
+@software{mlx2023,
+  author = {Awni Hannun and Jagrit Digani and Angelos Katharopoulos and Ronan Collobert},
+  title = {{{MLX}: Efficient and flexible machine learning on Apple silicon}},
+  url = {https://github.com/ml-explore},
+  version = {0.0},
+  year = {2023},
+}
+
+@inproceedings{touvronGoingDeeperImage2021,
+  title = {{Going {{Deeper With Image Transformers}}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}}},
+  author = {Touvron, Hugo and Cord, Matthieu and Sablayrolles, Alexandre and Synnaeve, Gabriel and J{\'e}gou, Herv{\'e}},
+  year = 2021,
+  pages = {32--42},
+  urldate = {2026-01-30},
+  langid = {english},
+}
+
+
+
+@misc{zhaoLearningSparseVisual2026,
+  title = {{Learning {{Sparse Visual Representations}} via {{Spatial-Semantic Factorization}}}},
+  author = {Zhao, Theodore Zhengde and Kiblawi, Sid and Yang, Jianwei and Usuyama, Naoto and Tan, Reuben and Codella, Noel C. and Naumann, Tristan and Poon, Hoifung and Wei, Mu},
+  year = 2026,
+  number = {arXiv:2602.01905},
+  eprint = {2602.01905},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2602.01905},
+  urldate = {2026-02-08},
+  abstract = {Self-supervised learning (SSL) faces a fundamental conflict between semantic understanding and image reconstruction. High-level semantic SSL (e.g., DINO) relies on global tokens that are forced to be location-invariant for augmentation alignment, a process that inherently discards the spatial coordinates required for reconstruction. Conversely, generative SSL (e.g., MAE) preserves dense feature grids for reconstruction but fails to produce high-level abstractions. We introduce STELLAR, a framework that resolves this tension by factorizing visual features into a low-rank product of semantic concepts and their spatial distributions. This disentanglement allows us to perform DINO-style augmentation alignment on the semantic tokens while maintaining the precise spatial mapping in the localization matrix necessary for pixel-level reconstruction. We demonstrate that as few as 16 sparse tokens under this factorized form are sufficient to simultaneously support high-quality reconstruction (2.60 FID) and match the semantic performance of dense backbones (79.10\% ImageNet accuracy). Our results highlight STELLAR as a versatile sparse representation that bridges the gap between discriminative and generative vision by strategically separating semantic identity from spatial geometry. Code available at https://aka.ms/stellar.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning},
+  note = {arXiv preprint arXiv:2602.01905},
+}
+
+
+@article{huang2022cleanrl,
+  author  = {Shengyi Huang and Rousslan Fernand Julien Dossa and Chang Ye and Jeff Braga and Dipam Chakraborty and Kinal Mehta and João G.M. Araújo},
+  title   = {{CleanRL: High-quality Single-file Implementations of Deep Reinforcement Learning Algorithms}},
+  journal = {Journal of Machine Learning Research},
+  year    = {2022},
+  volume  = {23},
+  number  = {274},
+  pages   = {1--18},
+  url     = {http://jmlr.org/papers/v23/21-1342.html}
+}
+
+
+@inproceedings{tancikFourierFeaturesLet2020,
+  title = {{Fourier {{Features Let Networks Learn High Frequency Functions}} in {{Low Dimensional Domains}}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Tancik, Matthew and Srinivasan, Pratul and Mildenhall, Ben and {Fridovich-Keil}, Sara and Raghavan, Nithin and Singhal, Utkarsh and Ramamoorthi, Ravi and Barron, Jonathan and Ng, Ren},
+  year = {2020},
+  volume = {33},
+  pages = {7537--7547},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2025-08-25},
+  abstract = {We show that passing input points through a simple Fourier feature mapping enables a multilayer perceptron (MLP) to learn high-frequency functions in low-dimensional problem domains. These results shed light on recent advances in computer vision and graphics that achieve state-of-the-art results by using MLPs to represent complex 3D objects and scenes. Using tools from the neural tangent kernel (NTK) literature, we show that a standard MLP has impractically slow convergence to high frequency signal components. To overcome this spectral bias, we use a Fourier feature mapping to transform the effective NTK into a stationary kernel with a tunable bandwidth. We suggest an approach for selecting problem-specific Fourier features that greatly improves the performance of MLPs for low-dimensional regression tasks relevant to the computer vision and graphics communities.},
+}
+
+
+@inproceedings{saunshiReasoningLatentThoughts2024,
+  title = {{Reasoning with {{Latent Thoughts}}: {{On}} the {{Power}} of {{Looped Transformers}}}},
+  shorttitle = {Reasoning with {{Latent Thoughts}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Saunshi, Nikunj and Dikkala, Nishanth and Li, Zhiyuan and Kumar, Sanjiv and Reddi, Sashank J.},
+  year = 2025,
+  urldate = {2025-08-26},
+  abstract = {Large language models have shown remarkable reasoning abilities and scaling laws suggest that large parameter count, especially along the depth axis, is the primary driver. In this work, we make a stronger claim --- many reasoning problems require a large depth but not necessarily many parameters. This unlocks a novel application of looped models for reasoning. Firstly, we show that for many synthetic reasoning problems like addition, \$p\$-hop induction, and math problems, a \$k\$-layer transformer looped \$L\$ times nearly matches the performance of a \$kL\$-layer non-looped model, and is significantly better than a \$k\$-layer model. This is further corroborated by theoretical results showing that many such reasoning problems can be solved via iterative algorithms, and thus, can be solved effectively using looped models with nearly optimal depth. Perhaps surprisingly, these benefits also translate to practical settings of language modeling --- on many downstream reasoning tasks, a language model with \$k\$-layers looped \$L\$ times can be competitive to, if not better than, a \$kL\$-layer language model. In fact, our empirical analysis reveals an intriguing phenomenon: looped and non-looped models exhibit scaling behavior that depends on their effective depth, akin to the inference-time scaling of chain-of-thought (CoT) reasoning. We further elucidate the connection to CoT reasoning by proving that looped models implicitly generate latent thoughts and can simulate \$T\$ steps of CoT with \$T\$ loops. Inspired by these findings, we also present an interesting dichotomy between reasoning and memorization, and design a looping-based regularization that is effective on both fronts.},
+  langid = {english},
+}
+
+
+@inproceedings{xingStabilizingReinforcementLearning2024,
+  title = {{Stabilizing {{Reinforcement Learning}} in {{Differentiable Multiphysics Simulation}}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Xing, Eliot and Luk, Vernon and Oh, Jean},
+  year = 2024,
+  urldate = {2025-07-02},
+  abstract = {Recent advances in GPU-based parallel simulation have enabled practitioners to collect large amounts of data and train complex control policies using deep reinforcement learning (RL), on commodity GPUs. However, such successes for RL in robotics have been limited to tasks sufficiently simulated by fast rigid-body dynamics. Simulation techniques for soft bodies are comparatively several orders of magnitude slower, thereby limiting the use of RL due to sample complexity requirements. To address this challenge, this paper presents both a novel RL algorithm and a simulation platform to enable scaling RL on tasks involving rigid bodies and deformables. We introduce Soft Analytic Policy Optimization (SAPO), a maximum entropy first-order model-based actor-critic RL algorithm, which uses first-order analytic gradients from differentiable simulation to train a stochastic actor to maximize expected return and entropy. Alongside our approach, we develop Rewarped, a parallel differentiable multiphysics simulation platform that supports simulating various materials beyond rigid bodies. We re-implement challenging manipulation and locomotion tasks in Rewarped, and show that SAPO outperforms baselines over a range of tasks that involve interaction between rigid bodies, articulations, and deformables. Additional details at https://rewarped.github.io/.},
+  langid = {english},
+}
+
+@article{andriushchenkoWhyWeNeed2023,
+  title = {{Why {{Do We Need Weight Decay}} in {{Modern Deep Learning}}?}},
+  author = {Andriushchenko, Maksym and D'Angelo, Francesco and Varre, Aditya and Flammarion, Nicolas},
+  year = 2023,
+  urldate = {2026-02-13},
+  abstract = {Weight decay is a broadly used technique for training state-of-the-art deep networks, including large language models. Despite its widespread usage, its role remains poorly understood. In this work, we argue that the role of weight decay in modern deep learning is different from its regularization effect studied in classical learning theory. For overparameterized deep networks, we show how weight decay modifies the optimization dynamics enhancing the ever-present implicit regularization of SGD via the *loss stabilization mechanism*. In contrast, for underparameterized large language models trained with nearly online SGD, we describe how weight decay balances the *bias-variance tradeoff* in stochastic optimization leading to lower training loss. Moreover, we show that weight decay also prevents sudden loss divergences for \$\textbackslash texttt\textbraceleft bfloat16\textbraceright\$ mixed-precision training which is a crucial tool for LLM training. Overall, we present a unifying perspective from ResNets on vision tasks to LLMs: weight decay is never useful as an explicit regularizer but instead changes the training dynamics in a desirable way.},
+  langid = {english},
+}
+
+@misc{baLayerNormalization2016,
+  title = {{Layer {{Normalization}}}},
+  author = {Ba, Jimmy Lei and Kiros, Jamie Ryan and Hinton, Geoffrey E.},
+  year = 2016,
+  number = {arXiv:1607.06450},
+  eprint = {1607.06450},
+  primaryclass = {stat},
+  publisher = {arXiv},
+  note = {arXiv preprint arXiv:1607.06450},
+  doi = {10.48550/arXiv.1607.06450},
+  urldate = {2025-12-20},
+  abstract = {Training state-of-the-art, deep neural networks is computationally expensive. One way to reduce the training time is to normalize the activities of the neurons. A recently introduced technique called batch normalization uses the distribution of the summed input to a neuron over a mini-batch of training cases to compute a mean and variance which are then used to normalize the summed input to that neuron on each training case. This significantly reduces the training time in feed-forward neural networks. However, the effect of batch normalization is dependent on the mini-batch size and it is not obvious how to apply it to recurrent neural networks. In this paper, we transpose batch normalization into layer normalization by computing the mean and variance used for normalization from all of the summed inputs to the neurons in a layer on a single training case. Like batch normalization, we also give each neuron its own adaptive bias and gain which are applied after the normalization but before the non-linearity. Unlike batch normalization, layer normalization performs exactly the same computation at training and test times. It is also straightforward to apply to recurrent neural networks by computing the normalization statistics separately at each time step. Layer normalization is very effective at stabilizing the hidden state dynamics in recurrent networks. Empirically, we show that layer normalization can substantially reduce the training time compared with previously published techniques.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
+}
+
+
+@article{jaderberg2015spatial,
+  title={{Spatial Transformer Networks}},
+  author={Jaderberg, Max and Simonyan, Karen and Zisserman, Andrew and others},
+  journal={Advances in neural information processing systems},
+  volume={28},
+  year={2015}
+}
+
+@inproceedings{
+zhang2025accessing,
+title={{Accessing Vision Foundation Models via ImageNet-1K}},
+author={Yitian Zhang and Xu Ma and Yue Bai and Huan Wang and Yun Fu},
+booktitle={International Conference on Learning Representations},
+year={2025},
+url={https://openreview.net/forum?id=LC6ZtQV6u2}
+}
+
+@article{
+oquab2024dinov,
+title={{{DINO}v2: Learning Robust Visual Features without Supervision}},
+author={Maxime Oquab and Timoth{\'e}e Darcet and Th{\'e}o Moutakanni and Huy V. Vo and Marc Szafraniec and Vasil Khalidov and Pierre Fernandez and Daniel Haziza and Francisco Massa and Alaaeldin El-Nouby and Mido Assran and Nicolas Ballas and Wojciech Galuba and Russell Howes and Po-Yao Huang and Shang-Wen Li and Ishan Misra and Michael Rabbat and Vasu Sharma and Gabriel Synnaeve and Hu Xu and Herve Jegou and Julien Mairal and Patrick Labatut and Armand Joulin and Piotr Bojanowski},
+journal={Transactions on Machine Learning Research},
+year={2024},
+url={https://openreview.net/forum?id=a68SUt6zFt},
+note={Featured Certification}
+}
+
+@inproceedings{wolf-etal-2020-transformers,
+    title = "Transformers: State-of-the-Art Natural Language Processing",
+    author = "Thomas Wolf and Lysandre Debut and Victor Sanh and Julien Chaumond and Clement Delangue and Anthony Moi and Pierric Cistac and Tim Rault and Rémi Louf and Morgan Funtowicz and Joe Davison and Sam Shleifer and Patrick von Platen and Clara Ma and Yacine Jernite and Julien Plu and Canwen Xu and Teven Le Scao and Sylvain Gugger and Mariama Drame and Quentin Lhoest and Alexander M. Rush",
+    booktitle = "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations",
+    month = oct,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/2020.emnlp-demos.6",
+    pages = "38--45"
+}
+
+
+
+@inproceedings{ryali2023hiera,
+  title={{Hiera: A hierarchical vision transformer without the bells-and-whistles}},
+  author={Ryali, Chaitanya and Hu, Yuan-Ting and Bolya, Daniel and Wei, Chen and Fan, Haoqi and Huang, Po-Yao and Aggarwal, Vaibhav and Chowdhury, Arkabandhu and Poursaeed, Omid and Hoffman, Judy and others},
+  booktitle={International conference on machine learning},
+  pages={29441--29454},
+  year={2023},
+  organization={PMLR}
+}
+
+@inproceedings{tangQuadtreeAttentionVision2021,
+  title = {{Quadtree {{Attention}} for {{Vision Transformers}}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Tang, Shitao and Zhang, Jiahui and Zhu, Siyu and Tan, Ping},
+  year = 2021,
+  urldate = {2026-02-18},
+  abstract = {Transformers have been successful in many vision tasks, thanks to their capability of capturing long-range dependency. However, their quadratic computational complexity poses a major obstacle for applying them to vision tasks requiring dense predictions, such as object detection, feature matching, stereo, etc. We introduce QuadTree Attention, which reduces the computational complexity from quadratic to linear. Our quadtree transformer builds token pyramids and computes attention in a coarse-to-fine manner. At each level, the top K patches with the highest attention scores are selected, such that at the next level, attention is only evaluated within the relevant regions corresponding to these top K patches. We demonstrate that quadtree attention achieves state-of-the-art performance in various vision tasks, e.g. with 4.0\% improvement in feature matching on ScanNet, about 50\% flops reduction in stereo matching, 0.4-1.5\% improvement in top-1 accuracy on ImageNet classification, 1.2-1.8\% improvement on COCO object detection, and 0.7-2.4\% improvement on semantic segmentation over previous state-of-the-art transformers. The codes are available at https://github.com/Tangshitao/QuadtreeAttention.},
+  langid = {english},
+}
+
+@misc{zhouIBOTImageBERT2022,
+  title = {{{{iBOT}}: {{Image BERT Pre-Training}} with {{Online Tokenizer}}}},
+  shorttitle = {{{iBOT}}},
+  author = {Zhou, Jinghao and Wei, Chen and Wang, Huiyu and Shen, Wei and Xie, Cihang and Yuille, Alan and Kong, Tao},
+  year = 2022,
+  number = {arXiv:2111.07832},
+  eprint = {2111.07832},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2111.07832},
+  urldate = {2026-02-19},
+  abstract = {The success of language Transformers is primarily attributed to the pretext task of masked language modeling (MLM), where texts are first tokenized into semantically meaningful pieces. In this work, we study masked image modeling (MIM) and indicate the advantages and challenges of using a semantically meaningful visual tokenizer. We present a self-supervised framework iBOT that can perform masked prediction with an online tokenizer. Specifically, we perform self-distillation on masked patch tokens and take the teacher network as the online tokenizer, along with self-distillation on the class token to acquire visual semantics. The online tokenizer is jointly learnable with the MIM objective and dispenses with a multi-stage training pipeline where the tokenizer needs to be pre-trained beforehand. We show the prominence of iBOT by achieving an 82.3\% linear probing accuracy and an 87.8\% fine-tuning accuracy evaluated on ImageNet-1K. Beyond the state-of-the-art image classification results, we underline emerging local semantic patterns, which helps the models to obtain strong robustness against common corruptions and achieve leading results on dense downstream tasks, eg., object detection, instance segmentation, and semantic segmentation.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  note = {arXiv preprint arXiv:2111.07832},
+}
+
+
+
+@inproceedings{assranSelfSupervisedLearningImages2023,
+  title = {{Self-{{Supervised Learning From Images With}} a {{Joint-Embedding Predictive Architecture}}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Assran, Mahmoud and Duval, Quentin and Misra, Ishan and Bojanowski, Piotr and Vincent, Pascal and Rabbat, Michael and LeCun, Yann and Ballas, Nicolas},
+  year = 2023,
+  pages = {15619--15629},
+  urldate = {2026-02-19},
+  langid = {english},
+}
+
+@inproceedings{singhEffectivenessMAEPrePretraining2023,
+  title = {{The {{Effectiveness}} of {{MAE Pre-Pretraining}} for {{Billion-Scale Pretraining}}}},
+  booktitle = {Proceedings of the {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}}},
+  author = {Singh, Mannat and Duval, Quentin and Alwala, Kalyan Vasudev and Fan, Haoqi and Aggarwal, Vaibhav and Adcock, Aaron and Joulin, Armand and Dollar, Piotr and Feichtenhofer, Christoph and Girshick, Ross and Girdhar, Rohit and Misra, Ishan},
+  year = 2023,
+  pages = {5484--5494},
+  urldate = {2026-02-19},
+  langid = {english},
+}
+
+
+@inproceedings{dehghaniScalingVisionTransformers2023,
+  title = {{Scaling {{Vision Transformers}} to 22 {{Billion Parameters}}}},
+  booktitle = {Proceedings of the {{International Conference}} on {{Machine Learning}}},
+  author = {Dehghani, Mostafa and Djolonga, Josip and Mustafa, Basil and Padlewski, Piotr and Heek, Jonathan and Gilmer, Justin and Steiner, Andreas Peter and Caron, Mathilde and Geirhos, Robert and Alabdulmohsin, Ibrahim and Jenatton, Rodolphe and Beyer, Lucas and Tschannen, Michael and Arnab, Anurag and Wang, Xiao and Ruiz, Carlos Riquelme and Minderer, Matthias and Puigcerver, Joan and Evci, Utku and Kumar, Manoj and Steenkiste, Sjoerd Van and Elsayed, Gamaleldin Fathy and Mahendran, Aravindh and Yu, Fisher and Oliver, Avital and Huot, Fantine and Bastings, Jasmijn and Collier, Mark and Gritsenko, Alexey A. and Birodkar, Vighnesh and Vasconcelos, Cristina Nader and Tay, Yi and Mensink, Thomas and Kolesnikov, Alexander and Pavetic, Filip and Tran, Dustin and Kipf, Thomas and Lucic, Mario and Zhai, Xiaohua and Keysers, Daniel and Harmsen, Jeremiah J. and Houlsby, Neil},
+  year = 2023,
+  pages = {7480--7512},
+  publisher = {PMLR},
+  urldate = {2026-02-19},
+  abstract = {The scaling of Transformers has driven breakthrough capabilities for language models. At present, the largest large language models (LLMs) contain upwards of 100B parameters. Vision Transformers (ViT) have introduced the same architecture to image and video modelling, but these have not yet been successfully scaled to nearly the same degree; the largest dense ViT contains 4B parameters (Chen et al., 2022). We present a recipe for highly efficient and stable training of a 22B-parameter ViT (ViT-22B) and perform a wide variety of experiments on the resulting model. When evaluated on downstream tasks (often with a lightweight linear model on frozen features), ViT-22B demonstrates increasing performance with scale. We further observe other interesting benefits of scale, including an improved tradeoff between fairness and performance, state-of-the-art alignment to human visual perception in terms of shape/texture bias, and improved robustness. ViT-22B demonstrates the potential for "LLM-like" scaling in vision, and provides key steps towards getting there.},
+  langid = {english},
+}
+
+@misc{tschannenSigLIP2Multilingual2025,
+  title = {{{{SigLIP}} 2: {{Multilingual Vision-Language Encoders}} with {{Improved Semantic Understanding}}, {{Localization}}, and {{Dense Features}}}},
+  shorttitle = {{{SigLIP}} 2},
+  author = {Tschannen, Michael and Gritsenko, Alexey and Wang, Xiao and Naeem, Muhammad Ferjad and Alabdulmohsin, Ibrahim and Parthasarathy, Nikhil and Evans, Talfan and Beyer, Lucas and Xia, Ye and Mustafa, Basil and H{\'e}naff, Olivier and Harmsen, Jeremiah and Steiner, Andreas and Zhai, Xiaohua},
+  year = 2025,
+  number = {arXiv:2502.14786},
+  eprint = {2502.14786},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2502.14786},
+  urldate = {2026-02-19},
+  abstract = {We introduce SigLIP 2, a family of new multilingual vision-language encoders that build on the success of the original SigLIP. In this second iteration, we extend the original image-text training objective with several prior, independently developed techniques into a unified recipe -- this includes captioning-based pretraining, self-supervised losses (self-distillation, masked prediction) and online data curation. With these changes, SigLIP 2 models outperform their SigLIP counterparts at all model scales in core capabilities, including zero-shot classification, image-text retrieval, and transfer performance when extracting visual representations for Vision-Language Models (VLMs). Furthermore, the new training recipe leads to significant improvements on localization and dense prediction tasks. We also train variants which support multiple resolutions and preserve the input's native aspect ratio. Finally, we train on a more diverse data-mixture that includes de-biasing techniques, leading to much better multilingual understanding and improved fairness. To allow users to trade off inference cost with performance, we release model checkpoints at four sizes: ViT-B (86M), L (303M), So400m (400M), and g (1B).},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computer Vision and Pattern Recognition},
+  note = {arXiv preprint arXiv:2502.14786},
+}
+
+@inproceedings{radfordLearningTransferableVisual2021,
+  title = {{Learning {{Transferable Visual Models From Natural Language Supervision}}}},
+  booktitle = {Proceedings of the {{International Conference}} on {{Machine Learning}}},
+  author = {Radford, Alec and Kim, Jong Wook and Hallacy, Chris and Ramesh, Aditya and Goh, Gabriel and Agarwal, Sandhini and Sastry, Girish and Askell, Amanda and Mishkin, Pamela and Clark, Jack and Krueger, Gretchen and Sutskever, Ilya},
+  year = 2021,
+  pages = {8748--8763},
+  publisher = {PMLR},
+  urldate = {2026-02-19},
+  abstract = {State-of-the-art computer vision systems are trained to predict a fixed set of predetermined object categories. This restricted form of supervision limits their generality and usability since additional labeled data is needed to specify any other visual concept. Learning directly from raw text about images is a promising alternative which leverages a much broader source of supervision. We demonstrate that the simple pre-training task of predicting which caption goes with which image is an efficient and scalable way to learn SOTA image representations from scratch on a dataset of 400 million (image, text) pairs collected from the internet. After pre-training, natural language is used to reference learned visual concepts (or describe new ones) enabling zero-shot transfer of the model to downstream tasks. We study the performance of this approach by benchmarking on over 30 different existing computer vision datasets, spanning tasks such as OCR, action recognition in videos, geo-localization, and many types of fine-grained object classification. The model transfers non-trivially to most tasks and is often competitive with a fully supervised baseline without the need for any dataset specific training. For instance, we match the accuracy of the original ResNet-50 on ImageNet zero-shot without needing to use any of the 1.28 million training examples it was trained on.},
+  langid = {english},
+}
+
+@inproceedings{loshchilovDecoupledWeightDecay2018,
+  title = {{Decoupled {{Weight Decay Regularization}}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Loshchilov, Ilya and Hutter, Frank},
+  year = 2018,
+  urldate = {2025-08-15},
+  abstract = {L\$\_2\$ regularization and weight decay regularization are equivalent for standard stochastic gradient descent (when rescaled by the learning rate), but as we demonstrate this is \textbackslash emph\textbraceleft not\textbraceright{} the case for adaptive gradient algorithms, such as Adam. While common implementations of these algorithms employ L\$\_2\$ regularization (often calling it ``weight decay'' in what may be misleading due to the inequivalence we expose), we propose a simple modification to recover the original formulation of weight decay regularization by \textbackslash emph\textbraceleft decoupling\textbraceright{} the weight decay from the optimization steps taken w.r.t. the loss function. We provide empirical evidence that our proposed modification (i) decouples the optimal choice of weight decay factor from the setting of the learning rate for both standard SGD and Adam and (ii) substantially improves Adam's generalization performance, allowing it to compete with SGD with momentum on image classification datasets (on which it was previously typically outperformed by the latter). Our proposed decoupled weight decay has already been adopted by many researchers, and the community has implemented it in TensorFlow and PyTorch; the complete source code for our experiments is available at \textbackslash url\textbraceleft https://github.com/loshchil/AdamW-and-SGDW\textbraceright},
+  langid = {english},
+}
+
+
+@inproceedings{ridnikImageNet21KPretrainingMasses2021,
+  title = {{{{ImageNet-21K Pretraining}} for the {{Masses}}}},
+  booktitle = {Proceedings of the {{Neural Information Processing Systems Track}} on {{Datasets}} and {{Benchmarks}}},
+  author = {Ridnik, Tal and {Ben-Baruch}, Emanuel and Noy, Asaf and {Zelnik-Manor}, Lihi},
+  year = 2021,
+  volume = {1},
+  urldate = {2026-02-19},
+  abstract = {ImageNet-1K serves as the primary dataset for pretraining deep learning models for computer vision tasks. ImageNet-21K dataset, which is bigger and more diverse, is used less frequently for pretraining, mainly due to its complexity, low accessibility, and underestimation of its added value. This paper aims to close this gap, and make high-quality efficient pretraining on ImageNet-21K available for everyone. Via a dedicated preprocessing stage, utilization of WordNet hierarchical structure, and a novel training scheme called semantic softmax, we show that various models significantly benefit from ImageNet-21K pretraining on numerous datasets and tasks, including small mobile-oriented models. We also show that we outperform previous ImageNet-21K pretraining schemes for prominent new models like ViT and Mixer. Our proposed pretraining pipeline is efficient, accessible, and leads to SoTA reproducible results, from a publicly available dataset. The training code and pretrained models are available at: https://github.com/Alibaba-MIIL/ImageNet21K},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning},
+}
+
+
+@misc{wangHierarchicalReasoningModel2025,
+  title = {{Hierarchical {{Reasoning Model}}}},
+  author = {Wang, Guan and Li, Jin and Sun, Yuhao and Chen, Xing and Liu, Changling and Wu, Yue and Lu, Meng and Song, Sen and Yadkori, Yasin Abbasi},
+  year = 2025,
+  number = {arXiv:2506.21734},
+  eprint = {2506.21734},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2506.21734},
+  urldate = {2026-02-21},
+  abstract = {Reasoning, the process of devising and executing complex goal-oriented action sequences, remains a critical challenge in AI. Current large language models (LLMs) primarily employ Chain-of-Thought (CoT) techniques, which suffer from brittle task decomposition, extensive data requirements, and high latency. Inspired by the hierarchical and multi-timescale processing in the human brain, we propose the Hierarchical Reasoning Model (HRM), a novel recurrent architecture that attains significant computational depth while maintaining both training stability and efficiency. HRM executes sequential reasoning tasks in a single forward pass without explicit supervision of the intermediate process, through two interdependent recurrent modules: a high-level module responsible for slow, abstract planning, and a low-level module handling rapid, detailed computations. With only 27 million parameters, HRM achieves exceptional performance on complex reasoning tasks using only 1000 training samples. The model operates without pre-training or CoT data, yet achieves nearly perfect performance on challenging tasks including complex Sudoku puzzles and optimal path finding in large mazes. Furthermore, HRM outperforms much larger models with significantly longer context windows on the Abstraction and Reasoning Corpus (ARC), a key benchmark for measuring artificial general intelligence capabilities. These results underscore HRM's potential as a transformative advancement toward universal computation and general-purpose reasoning systems.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  note = {arXiv preprint arXiv:2506.21734},
+}
+
+@inproceedings{yangLoopedTransformersAre2023,
+  title = {{Looped {{Transformers}} Are {{Better}} at {{Learning Learning Algorithms}}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Yang, Liu and Lee, Kangwook and Nowak, Robert D. and Papailiopoulos, Dimitris},
+  year = 2024,
+  urldate = {2026-01-23},
+  abstract = {Transformers have demonstrated effectiveness in in-context solving data-fitting problems from various (latent) models, as reported by Garg et al. (2022). However, the absence of an inherent iterative structure in the transformer architecture presents a challenge in emulating the iterative algorithms, which are commonly employed in traditional machine learning methods. To address this, we propose the utilization of looped transformer architecture and its associated training methodology, with the aim of incorporating iterative characteristics into the transformer architectures. Experimental results suggest that the looped transformer achieves performance comparable to the standard transformer in solving various data-fitting problems, while utilizing less than 10\% of the parameter count.},
+  langid = {english},
+}
+
+
+@inproceedings{liExploringPlainVision2022,
+  title = {{Exploring {{Plain Vision Transformer Backbones}} for~{{Object Detection}}}},
+  booktitle = {Computer {{Vision}} -- {{ECCV}} 2022},
+  author = {Li, Yanghao and Mao, Hanzi and Girshick, Ross and He, Kaiming},
+  year = 2022,
+  pages = {280--296},
+  publisher = {Springer-Verlag},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/978-3-031-20077-9_17},
+  urldate = {2026-02-26},
+  abstract = {We explore the plain, non-hierarchical Vision Transformer (ViT) as a backbone network for object detection. This design enables the original ViT architecture to be fine-tuned for object detection without needing to redesign a hierarchical backbone for pre-training. With minimal adaptations for fine-tuning, our plain-backbone detector can achieve competitive results. Surprisingly, we observe: (i) it is sufficient to build a simple feature pyramid from a single-scale feature map (without the common FPN design) and (ii) it is sufficient to use window attention (without shifting) aided with very few cross-window propagation blocks. With plain ViT backbones pre-trained as Masked Autoencoders (MAE), our detector, named ViTDet, can compete with the previous leading methods that were all based on hierarchical backbones, reaching up to 61.3 APbox on the COCO dataset using only ImageNet-1K pre-training. We hope our study will draw attention to research on plain-backbone detectors. Code for ViTDet is available ().},
+}
+
+// Duplicate DINOv2 entry removed — use oquab2024dinov (TMLR 2024) instead.
+
+
+@misc{balestrieroLeJEPAProvableScalable2025,
+  title = {{{{LeJEPA}}: {{Provable}} and {{Scalable Self-Supervised Learning Without}} the {{Heuristics}}}},
+  shorttitle = {{{LeJEPA}}},
+  author = {Balestriero, Randall and LeCun, Yann},
+  year = 2025,
+  number = {arXiv:2511.08544},
+  eprint = {2511.08544},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2511.08544},
+  urldate = {2026-02-26},
+  abstract = {Learning manipulable representations of the world and its dynamics is central to AI. Joint-Embedding Predictive Architectures (JEPAs) offer a promising blueprint, but lack of practical guidance and theory has led to ad-hoc R\&D. We present a comprehensive theory of JEPAs and instantiate it in \textbraceleft\textbackslash bf LeJEPA\textbraceright, a lean, scalable, and theoretically grounded training objective. First, we identify the isotropic Gaussian as the optimal distribution that JEPAs' embeddings should follow to minimize downstream prediction risk. Second, we introduce a novel objective--\textbraceleft\textbackslash bf Sketched Isotropic Gaussian Regularization\textbraceright{} (SIGReg)--to constrain embeddings to reach that ideal distribution. Combining the JEPA predictive loss with SIGReg yields LeJEPA with numerous theoretical and practical benefits: (i) single trade-off hyperparameter, (ii) linear time and memory complexity, (iii) stability across hyper-parameters, architectures (ResNets, ViTs, ConvNets) and domains, (iv) heuristics-free, e.g., no stop-gradient, no teacher-student, no hyper-parameter schedulers, and (v) distributed training-friendly implementation requiring only \$\textbackslash approx\$50 lines of code. Our empirical validation covers 10+ datasets, 60+ architectures, all with varying scales and domains. As an example, using imagenet-1k for pretraining and linear evaluation with frozen backbone, LeJEPA reaches 79\textbackslash\% with a ViT-H/14. We hope that the simplicity and theory-friendly ecosystem offered by LeJEPA will reestablish self-supervised pre-training as a core pillar of AI research (\textbackslash href\textbraceleft https://github.com/rbalestr-lab/lejepa\textbraceright\textbraceleft GitHub repo\textbraceright ).},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning,Statistics - Machine Learning},
+  note = {arXiv preprint arXiv:2511.08544},
+}
+
+@inproceedings{jaeglePerceiverGeneralPerception2021,
+  title = {{Perceiver: {{General Perception}} with {{Iterative Attention}}}},
+  shorttitle = {Perceiver},
+  booktitle = {Proceedings of the {{International Conference}} on {{Machine Learning}}},
+  author = {Jaegle, Andrew and Gimeno, Felix and Brock, Andy and Vinyals, Oriol and Zisserman, Andrew and Carreira, Joao},
+  year = 2021,
+  pages = {4651--4664},
+  publisher = {PMLR},
+  urldate = {2026-02-27},
+  abstract = {Biological systems understand the world by simultaneously processing high-dimensional inputs from modalities as diverse as vision, audition, touch, proprioception, etc. The perception models used in deep learning on the other hand are designed for individual modalities, often relying on domain-specific assumptions such as the local grid structures exploited by virtually all existing vision models. These priors introduce helpful inductive biases, but also lock models to individual modalities. In this paper we introduce the Perceiver \textbraceleft --\textbraceright{} a model that builds upon Transformers and hence makes few architectural assumptions about the relationship between its inputs, but that also scales to hundreds of thousands of inputs, like ConvNets. The model leverages an asymmetric attention mechanism to iteratively distill inputs into a tight latent bottleneck, allowing it to scale to handle very large inputs. We show that this architecture is competitive with or outperforms strong, specialized models on classification tasks across various modalities: images, point clouds, audio, video and video+audio. The Perceiver obtains performance comparable to ResNet-50 and ViT on ImageNet without 2D convolutions by directly attending to 50,000 pixels. It is also competitive in all modalities in AudioSet.},
+  langid = {english},
+}
+
+
+@inproceedings{jaeglePerceiverIOGeneral2021,
+  title = {{Perceiver {{IO}}: {{A General Architecture}} for {{Structured Inputs}} \& {{Outputs}}}},
+  shorttitle = {Perceiver {{IO}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Jaegle, Andrew and Borgeaud, Sebastian and Alayrac, Jean-Baptiste and Doersch, Carl and Ionescu, Catalin and Ding, David and Koppula, Skanda and Zoran, Daniel and Brock, Andrew and Shelhamer, Evan and H{\'e}naff, Olivier J. and Botvinick, Matthew M. and Zisserman, Andrew and Vinyals, Oriol and Carreira, João},
+  year = 2022,
+  urldate = {2026-02-27},
+  abstract = {A central goal of machine learning is the development of systems that can solve many problems in as many data domains as possible. Current architectures, however, cannot be applied beyond a small set of stereotyped settings, as they bake in domain \& task assumptions or scale poorly to large inputs or outputs. In this work, we propose Perceiver IO, a general-purpose architecture that handles data from arbitrary settings while scaling linearly with the size of inputs and outputs. Our model augments the Perceiver with a flexible querying mechanism that enables outputs of various sizes and semantics, doing away with the need for task-specific architecture engineering. The same architecture achieves strong results on tasks spanning natural language and visual understanding, multi-task and multi-modal reasoning, and StarCraft II. As highlights, Perceiver IO outperforms a Transformer-based BERT baseline on the GLUE language benchmark despite removing input tokenization and achieves state-of-the-art performance on Sintel optical flow estimation with no explicit mechanisms for multiscale correspondence.},
+  langid = {english},
+}
+
+@inproceedings{jabriScalableAdaptiveComputation2023,
+  title = {{Scalable {{Adaptive Computation}} for {{Iterative Generation}}}},
+  booktitle = {Proceedings of the {{International Conference}} on {{Machine Learning}}},
+  author = {Jabri, Allan and Fleet, David J. and Chen, Ting},
+  year = 2023,
+  pages = {14569--14589},
+  publisher = {PMLR},
+  urldate = {2026-02-27},
+  abstract = {Natural data is redundant yet predominant architectures tile computation uniformly across their input and output space. We propose the Recurrent Interface Network (RIN), an attention-based architecture that decouples its core computation from the dimensionality of the data, enabling adaptive computation for more scalable generation of high-dimensional data. RINs focus the bulk of computation (i.e. global self-attention) on a set of latent tokens, using cross-attention to read and write (i.e. route) information between latent and data tokens. Stacking RIN blocks allows bottom-up (data to latent) and top-down (latent to data) feedback, leading to deeper and more expressive routing. While this routing introduces challenges, this is less problematic in recurrent computation settings where the task (and routing problem) changes gradually, such as iterative generation with diffusion models. We show how to leverage recurrence by conditioning the latent tokens at each forward pass of the reverse diffusion process with those from prior computation, i.e. latent self-conditioning. RINs yield state-of-the-art pixel diffusion models for image and video generation, scaling to1024\texttimes 1024 images without cascades or guidance, while being domain-agnostic and up to 10\texttimes{} more efficient than 2D and 3D U-Nets.},
+  langid = {english},
+}
+
+@inproceedings{leeSetTransformerFramework2019,
+  title = {{Set {{Transformer}}: {{A Framework}} for {{Attention-based Permutation-Invariant Neural Networks}}}},
+  shorttitle = {Set {{Transformer}}},
+  booktitle = {Proceedings of the {{International Conference}} on {{Machine Learning}}},
+  author = {Lee, Juho and Lee, Yoonho and Kim, Jungtaek and Kosiorek, Adam R. and Choi, Seungjin and Teh, Yee Whye},
+  year = 2019,
+  pages = {3744--3753},
+  publisher = {PMLR},
+  urldate = {2026-02-27},
+  abstract = {Many machine learning tasks such as multiple instance learning, 3D shape recognition, and few-shot image classification are defined on sets of instances. Since solutions to such problems do not depend on the order of elements of the set, models used to address them should be permutation invariant. We present an attention-based neural network module, the Set Transformer, specifically designed to model interactions among elements in the input set. The model consists of an encoder and a decoder, both of which rely on attention mechanisms. In an effort to reduce computational complexity, we introduce an attention scheme inspired by inducing point methods from sparse Gaussian process literature. It reduces the computation time of self-attention from quadratic to linear in the number of elements in the set. We show that our model is theoretically attractive and we evaluate it on a range of tasks, demonstrating the state-of-the-art performance compared to recent methods for set-structured data.},
+  langid = {english},
+}
+
+@inproceedings{locatelloObjectCentricLearningSlot2020,
+  title = {{Object-{{Centric Learning}} with {{Slot Attention}}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Locatello, Francesco and Weissenborn, Dirk and Unterthiner, Thomas and Mahendran, Aravindh and Heigold, Georg and Uszkoreit, Jakob and Dosovitskiy, Alexey and Kipf, Thomas},
+  year = 2020,
+  volume = {33},
+  pages = {11525--11538},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2026-02-27}
+}
+
+
+
+@misc{jolicoeur-martineauLessMoreRecursive2025,
+  title = {{Less Is {{More}}: {{Recursive Reasoning}} with {{Tiny Networks}}}},
+  shorttitle = {Less Is {{More}}},
+  author = {{Jolicoeur-Martineau}, Alexia},
+  year = 2025,
+  number = {arXiv:2510.04871},
+  eprint = {2510.04871},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2510.04871},
+  urldate = {2026-02-27},
+  abstract = {Hierarchical Reasoning Model (HRM) is a novel approach using two small neural networks recursing at different frequencies. This biologically inspired method beats Large Language models (LLMs) on hard puzzle tasks such as Sudoku, Maze, and ARC-AGI while trained with small models (27M parameters) on small data (around 1000 examples). HRM holds great promise for solving hard problems with small networks, but it is not yet well understood and may be suboptimal. We propose Tiny Recursive Model (TRM), a much simpler recursive reasoning approach that achieves significantly higher generalization than HRM, while using a single tiny network with only 2 layers. With only 7M parameters, TRM obtains 45\% test-accuracy on ARC-AGI-1 and 8\% on ARC-AGI-2, higher than most LLMs (e.g., Deepseek R1, o3-mini, Gemini 2.5 Pro) with less than 0.01\% of the parameters.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  note = {arXiv preprint arXiv:2510.04871},
+}
+
+@misc{gravesAdaptiveComputationTime2017,
+  title = {{Adaptive {{Computation Time}} for {{Recurrent Neural Networks}}}},
+  author = {Graves, Alex},
+  year = 2017,
+  number = {arXiv:1603.08983},
+  eprint = {1603.08983},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1603.08983},
+  urldate = {2026-02-27},
+  abstract = {This paper introduces Adaptive Computation Time (ACT), an algorithm that allows recurrent neural networks to learn how many computational steps to take between receiving an input and emitting an output. ACT requires minimal changes to the network architecture, is deterministic and differentiable, and does not add any noise to the parameter gradients. Experimental results are provided for four synthetic problems: determining the parity of binary vectors, applying binary logic operations, adding integers, and sorting real numbers. Overall, performance is dramatically improved by the use of ACT, which successfully adapts the number of computational steps to the requirements of the problem. We also present character-level language modelling results on the Hutter prize Wikipedia dataset. In this case ACT does not yield large gains in performance; however it does provide intriguing insight into the structure of the data, with more computation allocated to harder-to-predict transitions, such as spaces between words and ends of sentences. This suggests that ACT or other adaptive computation methods could provide a generic method for inferring segment boundaries in sequence data.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Neural and Evolutionary Computing},
+  note = {arXiv preprint arXiv:1603.08983},
+}
+
+@inproceedings{baninoPonderNetLearningPonder2021,
+  title = {{{{PonderNet}}: {{Learning}} to {{Ponder}}}},
+  shorttitle = {{{PonderNet}}},
+  booktitle = {{{ICML Workshop}} on {{Automated Machine Learning}} ({{AutoML}})},
+  author = {Banino, Andrea and Balaguer, Jan and Blundell, Charles},
+  year = 2021,
+  urldate = {2026-02-27},
+  abstract = {In standard neural networks the amount of computation used grows with the size of the inputs, but not with the complexity of the problem being learnt. To overcome this limitation we introduce PonderNet, a new algorithm that learns to adapt the amount of computation based on the complexity of the problem at hand. PonderNet learns end-to-end the number of computational steps to achieve an effective compromise between training prediction accuracy, computational cost and generalization. On a complex synthetic problem, PonderNet dramatically improves performance over previous adaptive computation methods and additionally succeeds at extrapolation tests where traditional neural networks fail. Also, our method matched the current state of the art results on a real world question and answering dataset, but using less compute. Finally, PonderNet reached state of the art results on a complex task designed to test the reasoning capabilities of neural networks.},
+  langid = {english},
+}
+
+@inproceedings{haoTrainingLargeLanguage2025,
+  title = {{Training {{Large Language Models}} to {{Reason}} in a {{Continuous Latent Space}}}},
+  booktitle = {Second {{Conference}} on {{Language Modeling}}},
+  author = {Hao, Shibo and Sukhbaatar, Sainbayar and Su, DiJia and Li, Xian and Hu, Zhiting and Weston, Jason E. and Tian, Yuandong},
+  year = 2025,
+  urldate = {2026-02-27},
+  abstract = {Large language models (LLMs) are restricted to reason in the "language space", where they typically express the reasoning process with a chain-of-thought (CoT) to solve a complex reasoning problem. However, we argue that language space may not always be optimal for reasoning. For example, most word tokens are primarily for textual coherence and not essential for reasoning, while some critical tokens require complex planning and pose huge challenges to LLMs. To explore the potential of LLM reasoning in an unrestricted latent space instead of using natural language, we introduce a new paradigm Coconut (Chain of Continuous Thought). We utilize the last hidden state of the LLM as a representation of the reasoning state (termed "continuous thought"). Rather than decoding this into a word token, we feed it back to the LLM as the subsequent input embedding directly in the continuous space. Experiments show that Coconut can effectively augment the LLM on several reasoning tasks. This novel latent reasoning paradigm leads to emergent advanced reasoning patterns: the continuous thought can encode multiple alternative next reasoning steps, allowing the model to perform a breadth-first search (BFS) to solve the problem, rather than prematurely committing to a single deterministic path like CoT. Coconut outperforms CoT in certain logical reasoning tasks that require substantial backtracking during planning, with fewer thinking tokens during inference. These findings demonstrate the promise of latent reasoning and offer valuable insights for future research.},
+  langid = {english},
+}
+
+@inproceedings{geipingScalingTestTimeCompute2025,
+  title = {Scaling up {{Test-Time Compute}} with {{Latent Reasoning}}: {{A Recurrent Depth Approach}}},
+  shorttitle = {Scaling up {{Test-Time Compute}} with {{Latent Reasoning}}},
+  booktitle = {The {{Thirty-ninth Annual Conference}} on {{Neural Information Processing Systems}}},
+  author = {Geiping, Jonas and McLeish, Sean Michael and Jain, Neel and Kirchenbauer, John and Singh, Siddharth and Bartoldson, Brian R. and Kailkhura, Bhavya and Bhatele, Abhinav and Goldstein, Tom},
+  year = 2025,
+  month = oct,
+  urldate = {2026-05-16},
+  abstract = {We study a novel language model architecture that is capable of scaling test-time computation by implicitly reasoning in latent space. Our model works by iterating a recurrent block, thereby unrolling to arbitrary depth at test-time. This stands in contrast to mainstream reasoning models that scale up compute by producing more tokens. Unlike approaches based on chain-of-thought, our approach does not require any specialized training data, can work with small context windows, and can capture types of reasoning that are not easily represented in words. We train a proof-of-concept model from scratch with 3.5 billion parameters and 800 billion tokens. We show that this model can effortlessly use varying levels of compute, significantly improving with additional compute especially on reasoning tasks, such as math and coding. Further, this architecture naturally reduces compute costs via zero-shot per-token adaptive compute, KV-cache sharing and speculative decoding.},
+  langid = {english},
+}
+
+@inproceedings{dehghaniUniversalTransformers2018,
+  title = {{Universal {{Transformers}}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Dehghani, Mostafa and Gouws, Stephan and Vinyals, Oriol and Uszkoreit, Jakob and Kaiser, Lukasz},
+  year = 2019,
+  urldate = {2026-02-27},
+  abstract = {Recurrent neural networks (RNNs) sequentially process data by updating their state with each new data point, and have long been the de facto choice for sequence modeling tasks. However, their inherently sequential computation makes them slow to train. Feed-forward and convolutional architectures have recently been shown to achieve superior results on some sequence modeling tasks such as machine translation, with the added advantage that they concurrently process all inputs in the sequence, leading to easy parallelization and faster training times. Despite these successes, however, popular feed-forward sequence models like the Transformer fail to generalize in many simple tasks that recurrent models handle with ease, e.g. copying strings or even simple logical inference when the string or formula lengths exceed those observed at training time. We propose the Universal Transformer (UT), a parallel-in-time self-attentive recurrent sequence model which can be cast as a generalization of the Transformer model and which addresses these issues. UTs combine the parallelizability and global receptive field of feed-forward sequence models like the Transformer with the recurrent inductive bias of RNNs. We also add a dynamic per-position halting mechanism and find that it improves accuracy on several tasks. In contrast to the standard Transformer, under certain assumptions UTs can be shown to be Turing-complete. Our experiments show that UTs outperform standard Transformers on a wide range of algorithmic and language understanding tasks, including the challenging LAMBADA language modeling task where UTs achieve a new state of the art, and machine translation where UTs achieve a 0.9 BLEU improvement over Transformers on the WMT14 En-De dataset.},
+  langid = {english},
+}
+
+
+@misc{gravesNeuralTuringMachines2014,
+  title = {{Neural {{Turing Machines}}}},
+  author = {Graves, Alex and Wayne, Greg and Danihelka, Ivo},
+  year = 2014,
+  number = {arXiv:1410.5401},
+  eprint = {1410.5401},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1410.5401},
+  urldate = {2026-02-27},
+  abstract = {We extend the capabilities of neural networks by coupling them to external memory resources, which they can interact with by attentional processes. The combined system is analogous to a Turing Machine or Von Neumann architecture but is differentiable end-to-end, allowing it to be efficiently trained with gradient descent. Preliminary results demonstrate that Neural Turing Machines can infer simple algorithms such as copying, sorting, and associative recall from input and output examples.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Neural and Evolutionary Computing},
+  note = {arXiv preprint arXiv:1410.5401},
+}
+
+@article{gravesHybridComputingUsing2016,
+  title = {{Hybrid Computing Using a Neural Network with Dynamic External Memory}},
+  author = {Graves, Alex and Wayne, Greg and Reynolds, Malcolm and Harley, Tim and Danihelka, Ivo and {Grabska-Barwi{\'n}ska}, Agnieszka and Colmenarejo, Sergio G{\'o}mez and Grefenstette, Edward and Ramalho, Tiago and Agapiou, John and Badia, Adri{\`a} Puigdom{\`e}nech and Hermann, Karl Moritz and Zwols, Yori and Ostrovski, Georg and Cain, Adam and King, Helen and Summerfield, Christopher and Blunsom, Phil and Kavukcuoglu, Koray and Hassabis, Demis},
+  year = 2016,
+  journal = {Nature},
+  volume = {538},
+  number = {7626},
+  pages = {471--476},
+  publisher = {Nature Publishing Group},
+  doi = {10.1038/nature20101},
+  urldate = {2026-02-27},
+  abstract = {Artificial neural networks are remarkably adept at sensory processing, sequence learning and reinforcement learning, but are limited in their ability to represent variables and data structures and to store data over long timescales, owing to the lack of an external memory. Here we introduce a machine learning model called a differentiable neural computer (DNC), which consists of a neural network that can read from and write to an external memory matrix, analogous to the random-access memory in a conventional computer. Like a conventional computer, it can use its memory to represent and manipulate complex data structures, but, like a neural network, it can learn to do so from data. When trained with supervised learning, we demonstrate that a DNC can successfully answer synthetic questions designed to emulate reasoning and inference problems in natural language. We show that it can learn tasks such as finding the shortest path between specified points and inferring the missing links in randomly generated graphs, and then generalize these tasks to specific graphs such as transport networks and family trees. When trained with reinforcement learning, a DNC can complete a moving blocks puzzle in which changing goals are specified by sequences of symbols. Taken together, our results demonstrate that DNCs have the capacity to solve complex, structured tasks that are inaccessible to neural networks without external read--write memory.},
+  copyright = {2016 Macmillan Publishers Limited, part of Springer Nature. All rights reserved.},
+  langid = {english},
+  keywords = {Learning algorithms,Network models},
+}
+
+@inproceedings{baiDeepEquilibriumModels2019,
+  title = {{Deep {{Equilibrium Models}}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Bai, Shaojie and Kolter, J. Zico and Koltun, Vladlen},
+  year = 2019,
+  volume = {32},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2026-02-27},
+}
+
+@misc{chungEmpiricalEvaluationGated2014,
+  title = {{Empirical {{Evaluation}} of {{Gated Recurrent Neural Networks}} on {{Sequence Modeling}}}},
+  author = {Chung, Junyoung and Gulcehre, Caglar and Cho, KyungHyun and Bengio, Yoshua},
+  year = 2014,
+  number = {arXiv:1412.3555},
+  eprint = {1412.3555},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1412.3555},
+  urldate = {2026-02-27},
+  abstract = {In this paper we compare different types of recurrent units in recurrent neural networks (RNNs). Especially, we focus on more sophisticated units that implement a gating mechanism, such as a long short-term memory (LSTM) unit and a recently proposed gated recurrent unit (GRU). We evaluate these recurrent units on the tasks of polyphonic music modeling and speech signal modeling. Our experiments revealed that these advanced recurrent units are indeed better than more traditional recurrent units such as tanh units. Also, we found GRU to be comparable to LSTM.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing},
+  note = {arXiv preprint arXiv:1412.3555},
+}
+
+@article{hochreiterLongShortTermMemory1997,
+  title = {{Long {{Short-Term Memory}}}},
+  author = {Hochreiter, Sepp and Schmidhuber, J{\"u}rgen},
+  year = 1997,
+  journal = {Neural Comput.},
+  volume = {9},
+  number = {8},
+  pages = {1735--1780},
+  doi = {10.1162/neco.1997.9.8.1735},
+  urldate = {2026-02-27},
+  abstract = {Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter's (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.}
+}
+
+
+@inproceedings{liModelingHumanEye2023,
+  title = {{Modeling {{Human Eye Movements}} with {{Neural Networks}} in a {{Maze-Solving Task}}}},
+  booktitle = {Proceedings of the {{Gaze Meets ML}} Workshop},
+  author = {Li, Jason and Watters, Nicholas and Sohn, Hansem and Jazayeri, Mehrdad},
+  year = 2023,
+  pages = {98--112},
+  publisher = {PMLR},
+  urldate = {2026-02-27},
+  abstract = {From smoothly pursuing moving objects to rapidly shifting gazes during visual search, humans employ a wide variety of eye movement strategies in different contexts. While eye movements provide a rich window into mental processes, building generative models of eye movements is notoriously difficult, and to date the computational objectives guiding eye movements remain largely a mystery. In this work, we tackled these problems in the context of a canonical spatial planning task, maze-solving. We collected eye movement data from human subjects and built deep generative models of eye movements using a novel differentiable architecture for gaze fixations and gaze shifts. We found that human eye movements are best predicted by a model that is optimized not to perform the task as efficiently as possible but instead to run an internal simulation of an object traversing the maze. This not only provides a generative model of eye movements in this task but also suggests a computational theory for how humans solve the task, namely that humans use mental simulation.},
+  langid = {english},
+}
+
+@incollection{BADDELEY197447,
+  title = {{Working Memory}},
+  author = {Baddeley, Alan D. and Hitch, Graham},
+  editor = {Bower, Gordon H.},
+  year = 1974,
+  booktitle = {Psychology of Learning and Motivation},
+  series = {Psychology of Learning and Motivation},
+  volume = {8},
+  pages = {47--89},
+  publisher = {Academic Press},
+  doi = {10.1016/S0079-7421(08)60452-1},
+  abstract = {Publisher Summary This chapter presents a body of new experimental evidence, which provides a firm basis for the working memory hypothesis. The chapter presents a series of experiments on the role of memory in reasoning, language comprehension, and learning. An attempt is made to apply the comparable techniques in all three cases to allow a common pattern to emerge, if the same working memory system is operative in all three instances. The chapter makes a case for postulating the working memory-LTS system as a modification of the current STS-LTS view. Working memory represents a control system with limits on both its storage and processing capabilities, and has access to phonemically coded information (possibly by controlling a rehearsal buffer), that it is responsible for the limited memory span, but does not underlie the recency effect in free recall. The experiments presented in the chapter suggest that the phonemic rehearsal buffer plays a limited role in this process, but is by no means essential. These experiments also suggest that working memory plays a part in verbal reasoning and in prose comprehension. Understanding the detailed role of working memory in these tasks, however, must proceed hand-in-hand with an understanding of the tasks themselves.}
+}
+
+@article{suRoFormerEnhancedTransformer2024,
+  title = {{{{RoFormer}}: {{Enhanced}} Transformer with {{Rotary Position Embedding}}}},
+  shorttitle = {{{RoFormer}}},
+  author = {Su, Jianlin and Ahmed, Murtadha and Lu, Yu and Pan, Shengfeng and Bo, Wen and Liu, Yunfeng},
+  year = 2024,
+  journal = {Neurocomputing},
+  volume = {568},
+  pages = {127063},
+  doi = {10.1016/j.neucom.2023.127063},
+  urldate = {2026-02-27},
+  abstract = {Position encoding has recently been shown to be effective in transformer architecture. It enables valuable supervision for dependency modeling between elements at different positions of the sequence. In this paper, we first investigate various methods to integrate positional information into the learning process of transformer-based language models. Then, we propose a novel method named Rotary Position Embedding (RoPE) to effectively leverage the positional information. Specifically, the proposed RoPE encodes the absolute position with a rotation matrix and meanwhile incorporates the explicit relative position dependency in the self-attention formulation. Notably, RoPE enables valuable properties, including the flexibility of sequence length, decaying inter-token dependency with increasing relative distances, and the capability of equipping linear self-attention with relative position encoding. Finally, we evaluate the enhanced transformer with rotary position embedding, also called RoFormer, on various long text classification benchmark datasets. Our experiments show that it consistently overcomes its alternatives. Furthermore, we provide a theoretical analysis to explain some experimental results. RoFormer is already integrated into Huggingface: https://huggingface.co/docs/transformers/model\_doc/roformer.},
+  keywords = {Natural language processing,Position information encoding,Pre-trained language models,Pre-training}
+}
+
+
+@book{yarbusEyeMovementsVision1967,
+  title = {{Eye {{Movements}} and {{Vision}}}},
+  author = {Yarbus, Alfred L.},
+  year = 1967,
+  publisher = {Springer US},
+  address = {Boston, MA},
+  doi = {10.1007/978-1-4899-5379-7},
+  urldate = {2025-08-26},
+  copyright = {http://www.springer.com/tdm},
+  langid = {english},
+  keywords = {eye,medicine,ophthalmology},
+}
+
+
+@article{tolmanCognitiveMapsRats1948,
+  title = {{Cognitive Maps in Rats and Men}},
+  author = {Tolman, Edward C.},
+  year = 1948,
+  journal = {Psychological Review},
+  volume = {55},
+  number = {4},
+  pages = {189--208},
+  publisher = {American Psychological Association},
+  address = {US},
+  doi = {10.1037/h0061626},
+  abstract = {This paper is devoted to a description of experiments with rats, mostly at the author's laboratory, and to indicating the significance of these findings on rats for the clinical behavior of men. While all students agree as to the facts reported, they disagree on theory and explanation. 5 kinds of experiments (latent learning, vicarious trial and error, searching for the stimulus, hypotheses, and spatial orientation) are described and discussed. The conditions which favor (cognitive) narrow strip-maps and which favor broad comprehensive maps in rats and in men are considered. Narrow strip-maps seem to be indicated by (1) a damaged brain, (2) an inadequate arrangement of environmentally presented cues, (3) a surplus of repetitions on the original trained-on path, and (4) the presence of too strongly frustrating conditions. The fourth point is elaborated. It is contended that some of the psychological mechanisms which clinical psychologists and other students of personality have uncovered as factors underlying many individual and social maladjustments can be interpreted "as narrowings of our cognitive maps due to too strong motivations or to too intense frustrations." (PsycINFO Database Record (c) 2016 APA, all rights reserved)},
+  keywords = {Cognitive Maps,Comparative Psychology,Personality,Rats,Spatial Orientation (Perception)},
+}
+
+
+@inproceedings{anselPyTorch2Faster2024,
+  title = {{{{PyTorch}} 2: {{Faster Machine Learning Through Dynamic Python Bytecode Transformation}} and {{Graph Compilation}}}},
+  shorttitle = {{{PyTorch}} 2},
+  booktitle = {Proceedings of the {{ACM International Conference}} on {{Architectural Support}} for {{Programming Languages}} and {{Operating Systems}}, {{Volume}} 2},
+  author = {Ansel, Jason and Yang, Edward and He, Horace and Gimelshein, Natalia and Jain, Animesh and Voznesensky, Michael and Bao, Bin and Bell, Peter and Berard, David and Burovski, Evgeni and Chauhan, Geeta and Chourdia, Anjali and Constable, Will and Desmaison, Alban and DeVito, Zachary and Ellison, Elias and Feng, Will and Gong, Jiong and Gschwind, Michael and Hirsh, Brian and Huang, Sherlock and Kalambarkar, Kshiteej and Kirsch, Laurent and Lazos, Michael and Lezcano, Mario and Liang, Yanbo and Liang, Jason and Lu, Yinghai and Luk, C. K. and Maher, Bert and Pan, Yunjie and Puhrsch, Christian and Reso, Matthias and Saroufim, Mark and Siraichi, Marcos Yukio and Suk, Helen and Zhang, Shunting and Suo, Michael and Tillet, Phil and Zhao, Xu and Wang, Eikan and Zhou, Keren and Zou, Richard and Wang, Xiaodong and Mathews, Ajit and Wen, William and Chanan, Gregory and Wu, Peng and Chintala, Soumith},
+  year = 2024,
+  series = {{{ASPLOS}} '24},
+  pages = {929--947},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3620665.3640366},
+  urldate = {2026-03-20},
+  abstract = {This paper introduces two extensions to the popular PyTorch machine learning framework, TorchDynamo and TorchInductor, which implement the torch.compile feature released in PyTorch 2. TorchDynamo is a Python-level just-in-time (JIT) compiler that enables graph compilation in PyTorch programs without sacrificing the flexibility of Python. It achieves this by dynamically modifying Python bytecode before execution and extracting sequences of PyTorch operations into an FX graph, which is then JIT compiled using one of many extensible backends. TorchInductor is the default compiler backend for TorchDynamo, which translates PyTorch programs into OpenAI's Triton for GPUs and C++ for CPUs. Results show that TorchDynamo is able to capture graphs more robustly than prior approaches while adding minimal overhead, and TorchInductor is able to provide a 2.27\texttimes{} inference and 1.41\texttimes{} training geometric mean speedup on an NVIDIA A100 GPU across 180+ real-world models, which outperforms six other compilers. These extensions provide a new way to apply optimizations through compilers in eager mode frameworks like PyTorch.},
+}
+
+@software{flax2020github,
+  author = {Jonathan Heek and Anselm Levskaya and Avital Oliver and Marvin Ritter and Bertrand Rondepierre and Andreas Steiner and Marc van {Z}ee},
+  title = {{{F}lax: A Neural Network Library and Ecosystem for {JAX}}},
+  url = {http://github.com/google/flax},
+  version = {0.12.6},
+  year = {2024},
+}
+
+@misc{beyerAreWeDone2020,
+  title = {{Are We Done with {{ImageNet}}?}},
+  author = {Beyer, Lucas and H{\'e}naff, Olivier J. and Kolesnikov, Alexander and Zhai, Xiaohua and van den Oord, A{\"a}ron},
+  year = 2020,
+  number = {arXiv:2006.07159},
+  eprint = {2006.07159},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2006.07159},
+  note = {arXiv preprint arXiv:2006.07159},
+}
+
+% LP-FT: linear probing then fine-tuning — ICLR 2022
+@inproceedings{kumarFineTuningCanDistort2022,
+  title = {{Fine-{{Tuning}} Can {{Distort Pretrained Features}} and {{Underperform Out-of-Distribution}}}},
+  booktitle = {International {{Conference}} on {{Learning Representations}}},
+  author = {Kumar, Ananya and Raghunathan, Aditi and Jones, Robbie Matthew and Ma, Tengyu and Liang, Percy},
+  year = 2022,
+}
+
+@software{jax2018github,
+  author = {James Bradbury and Roy Frostig and Peter Hawkins and Matthew James Johnson and Chris Leary and Dougal Maclaurin and George Necula and Adam Paszke and Jake Vander{P}las and Skye Wanderman-{M}ilne and Qiao Zhang},
+  title = {{{JAX}: Composable Transformations of {P}ython+{N}um{P}y Programs}},
+  url = {http://github.com/jax-ml/jax},
+  version = {0.3.13},
+  year = {2018},
+}
+
+
+@inproceedings{akibaOptunaNextgenerationHyperparameter2019,
+  title = {{Optuna: {{A Next-generation Hyperparameter Optimization Framework}}}},
+  shorttitle = {Optuna},
+  booktitle = {Proceedings of the {{ACM SIGKDD International Conference}} on {{Knowledge Discovery}} \& {{Data Mining}}},
+  author = {Akiba, Takuya and Sano, Shotaro and Yanase, Toshihiko and Ohta, Takeru and Koyama, Masanori},
+  year = 2019,
+  series = {{{KDD}} '19},
+  pages = {2623--2631},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3292500.3330701},
+  urldate = {2026-04-17},
+  abstract = {The purpose of this study is to introduce new design-criteria for next-generation hyperparameter optimization software. The criteria we propose include (1) define-by-run API that allows users to construct the parameter search space dynamically, (2) efficient implementation of both searching and pruning strategies, and (3) easy-to-setup, versatile architecture that can be deployed for various purposes, ranging from scalable distributed computing to light-weight experiment conducted via interactive interface. In order to prove our point, we will introduce Optuna, an optimization software which is a culmination of our effort in the development of a next generation optimization software. As an optimization software designed with define-by-run principle, Optuna is particularly the first of its kind. We will present the design-techniques that became necessary in the development of the software that meets the above criteria, and demonstrate the power of our new design through experimental results and real world applications. Our software is available under the MIT license (https://github.com/pfnet/optuna/).},
+}
+
+@inproceedings{seabold2010,
+  author    = {Skipper Seabold and Josef Perktold},
+  title     = {{statsmodels: Econometric and Statistical Modeling with {Python}}},
+  booktitle = {Proceedings of the Python in Science Conference},
+  pages     = {57--61},
+  year      = {2010},
+}
+
+@article{srivastavaDropoutSimpleWay2014,
+  title = {{Dropout: {{A Simple Way}} to {{Prevent Neural Networks}} from {{Overfitting}}}},
+  shorttitle = {Dropout},
+  author = {Srivastava, Nitish and Hinton, Geoffrey and Krizhevsky, Alex and Sutskever, Ilya and Salakhutdinov, Ruslan},
+  year = 2014,
+  journal = {Journal of Machine Learning Research},
+  volume = {15},
+  number = {56},
+  pages = {1929--1958},
+  urldate = {2026-04-22}
+}
+
+@misc{fvcoreFlopCount2021,
+  title = {{fvcore: {{Flop}} counter for pytorch models}},
+  author = {{Facebook AI Research}},
+  year = 2021,
+  howpublished = {\url{https://github.com/facebookresearch/fvcore/blob/c0fa8c4effa446a63855a3730965d9361db0ec04/docs/flop_count.md}}
+}
+
+@inproceedings{ioffeBatchNormalizationAccelerating2015,
+  title = {{Batch {{Normalization}}: {{Accelerating Deep Network Training}} by {{Reducing Internal Covariate Shift}}}},
+  shorttitle = {Batch {{Normalization}}},
+  booktitle = {Proceedings of the {{International Conference}} on {{Machine Learning}}},
+  author = {Ioffe, Sergey and Szegedy, Christian},
+  year = 2015,
+  pages = {448--456},
+  publisher = {PMLR},
+  urldate = {2026-04-22},
+  langid = {english}
+}
+
+
+@inproceedings{renEndToEndInstanceSegmentation2017,
+  title = {{End-{{To-End Instance Segmentation With Recurrent Attention}}}},
+  booktitle = {Proceedings of the {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Ren, Mengye and Zemel, Richard S.},
+  year = 2017,
+  pages = {6656--6664},
+  urldate = {2026-04-24},
+}
+
+@misc{mur-labadiaVJEPA21Unlocking2026,
+  title = {{V-{{JEPA}} 2.1: {{Unlocking Dense Features}} in {{Video Self-Supervised Learning}}}},
+  shorttitle = {V-{{JEPA}} 2.1},
+  author = {{Mur-Labadia}, Lorenzo and Muckley, Matthew and Bar, Amir and Assran, Mido and Sinha, Koustuv and Rabbat, Mike and LeCun, Yann and Ballas, Nicolas and Bardes, Adrien},
+  year = 2026,
+  number = {arXiv:2603.14482},
+  eprint = {2603.14482},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2603.14482},
+  urldate = {2026-03-25},
+  abstract = {We present V-JEPA 2.1, a family of self-supervised models that learn dense, high-quality visual representations for both images and videos while retaining strong global scene understanding. The approach combines four key components. First, a dense predictive loss uses a masking-based objective in which both visible and masked tokens contribute to the training signal, encouraging explicit spatial and temporal grounding. Second, deep self-supervision applies the self-supervised objective hierarchically across multiple intermediate encoder layers to improve representation quality. Third, multi-modal tokenizers enable unified training across images and videos. Finally, the model benefits from effective scaling in both model capacity and training data. Together, these design choices produce representations that are spatially structured, semantically coherent, and temporally consistent. Empirically, V-JEPA 2.1 achieves state-of-the-art performance on several challenging benchmarks, including 7.71 mAP on Ego4D for short-term object-interaction anticipation and 40.8 Recall@5 on EPIC-KITCHENS for high-level action anticipation, as well as a 20-point improvement in real-robot grasping success rate over V-JEPA-2 AC. The model also demonstrates strong performance in robotic navigation (5.687 ATE on TartanDrive), depth estimation (0.307 RMSE on NYUv2 with a linear probe), and global recognition (77.7 on Something-Something-V2). These results show that V-JEPA 2.1 significantly advances the state of the art in dense visual understanding and world modeling.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  note = {arXiv preprint arXiv:2603.14482},
+}
+
+@software{torchvision2016,
+    title        = {{TorchVision: PyTorch's Computer Vision library}},
+    author       = {{TorchVision maintainers and contributors}},
+    year         = 2016,
+    journal      = {GitHub repository},
+    publisher    = {GitHub},
+    howpublished = {\url{https://github.com/pytorch/vision}}
+}
+
+@article{zhouPlaces10Million2017,
+  title = {{Places: {{A}} 10 Million Image Database for Scene Recognition}},
+  author = {Zhou, Bolei and Lapedriza, Agata and Khosla, Aditya and Oliva, Aude and Torralba, Antonio},
+  year = 2017,
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  publisher = {IEEE},
+  urldate = {2026-05-02},
+}

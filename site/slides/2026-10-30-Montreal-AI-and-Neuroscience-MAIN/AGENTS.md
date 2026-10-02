@@ -420,8 +420,7 @@ The code (`canvit-pytorch/`, by module and symbol) [read 2026-10-01]:
 
 The machine [checked 2026-10-01]: `ADE20K_ROOT` (the ADEChallengeData2016 directory) is not set in the
 shell, pass it; the Hugging Face cache holds every released checkpoint and probe and DINOv3 ViT-S/B; MPS inference
-matches CPU (relative L2 5e-6, identical argmax; `throwaway/bench_episode.log`); the disk is nearly full (under
-1 GB free on 2026-10-01).
+matches CPU (relative L2 5e-6, identical argmax; `throwaway/bench_episode.log`).
 
 Memory reset [measured 2026-10-01, `throwaway/memory_reset/`, summary in `../../data/talk/memory/overall-k1.json`,
 read]: every "thing" object covering 1–15% of an ADE20K validation scene (2,781 objects); one glimpse on the object

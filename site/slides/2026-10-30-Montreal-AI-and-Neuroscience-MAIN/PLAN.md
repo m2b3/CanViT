@@ -50,8 +50,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   look.
 - [Yohaï, 2026-10-01] "you will make sure, once you are satisfied with the slides etc, that they are force-pushed into
   gh pages rendered website"; then "you can merge into main and redeploy etc at checkpoints when things are
-  acceptable". Last checkpoint: 2026-10-01 ~23:00 EDT, main 887885c, gh-pages from f511c4d (`../../deploy.sh --push`
-  after the stress test and the dry run's file list); redeploy at the next acceptable checkpoint.
+  acceptable": squash-merge into `main`, `../../deploy.sh --push`, then `../check_published.py`.
 - [Yohaï, 2026-10-01] `#cost`: on the Adapt column ("< 15 h, fine-tuning on ImageNet-1k, one TPU v6e-4; or just a
   linear layer"): "no this is horrible"; on the Run column (2.3 ms per glimpse, 175 ms on a CPU): "no one cares";
   "this is marketing as [...] and without comparison points (what about other models? for example could be PEAK
@@ -112,6 +111,10 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   current or next slide (`data-load-near`, `../deck.js`), never in the speaker view's previews; with WebGPU disabled the
   model then starts on WebAssembly in the deck (peak about 1.9 GB). Open: whether Yohaï's browser (which one, speaker
   view open?) still fails; releasing the model when the slide is left; making the rollouts load only near their slide.
+- [Yohaï, 2026-10-01] "Give a sense of how good DINOv3 is and how much went into it". Built 2026-10-01 as the last
+  state of `#foundation`: 1.7 billion training images, the 6.7-billion-parameter teacher the ViT-B is distilled from,
+  61,440 H100-hours to train it (arXiv:2508.10104; `AGENTS.md`, "Checked facts"); where it stands on dense benchmarks
+  is in the notes. Awaiting the authors' look.
 - [Yohaï, 2026-10-01] `#foundation`: the DINOv3 feature map "looks [bad]. it is blurry because you must have run
   interpolation instead of nearest ... choose other principal components. it looks washed out ... rerun it at higher
   res ... we want the objects to stand out. it could also transition into becoming smaller and having arrows that go
@@ -188,11 +191,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
     ablation is a more direct measure of feedback.
   - Pacing: CanViT first appears about ten minutes in, and four benchmark and cost slides run back to back before
     `#neuro-ai`, where neuroscientists may drift.
-- [Yohaï, 2026-10-01, an idea for after the rest] Give a sense of how good DINOv3 is and how much went into it: its
-  training data (LVD-1689M, 1.7 billion images), the 7B teacher it is distilled from, its compute, where it stands on
-  dense benchmarks; every number read in the DINOv3 paper (Siméoni et al. 2025, arXiv:2508.10104). A build state of
-  `#foundation` or a slide of its own. S–M.
-
 - [Yohaï, 2026-10-01] `#history` and `#results` fail at their jobs: overloaded, hard to parse, not showing the right
   things; make end-to-end training against frozen features with a linear readout explicit. ImageNet-1k and ADE20K one
   after the other, never side by side from the start, after explaining classification against segmentation and why
@@ -201,17 +199,13 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   counterproductive"); `#results` still to rework. M.
 - [Yohaï, 2026-10-01] An exploration page for the history data: `_explore-history.html` (a working page, not deployed) shows every point
   with series, size and numeric axes; extend it with training and inference cost once those fields exist. S.
-- [Yohaï, 2026-10-01] A training-cost view ("having a 'training flops' graph could be interesting as well idk. or
-  training cost"): training compute or cost of the active models and of CanViT-B, from their papers and the rebuttal
-  (training glimpses, epochs, GPU-hours); what each paper reports differs, so the qualifiers stay with each number. M.
-- [Yohaï, 2026-10-01] A first draft is `#cost`, before `#frontier` (train, adapt, run); awaiting the authors' look. `#frontier` (accuracy against cost) must first make the case for why anyone cares about cost:
-  money, cheap experiments (`AGENTS.md`, "The story"); training cost first, the main concern for scientists, then
-  inference. Training: pretrained once and released; adapting it is a linear probe or a fine-tuning run of under 15 h on a TPU v6e-4;
-  its pretraining is comparable to AdaGlimpse's own, not cheaper than every prior model (`AGENTS.md`, rebuttal facts).
-  Gather verified facts that make cost concrete: inference GFLOPs
-  per glimpse and per rollout against AME and AdaGlimpse (`../../assets/paper/ade20k_seg.json`), wall time per glimpse
-  measured on a laptop and in the browser, the paper's training costs (§6, App. H); then design how the slide shows
-  the case (a build state before the chart, or the chart's cost axis translated into time or money). M.
+- [Yohaï, 2026-10-01] The case for why anyone cares about cost, before the cost charts: money, cheap experiments
+  (`AGENTS.md`, "The story"); training cost first, the main concern for scientists, then inference. `#cost` (best
+  accuracy against each model's own training compute, `OUTLINE.md`) and `#frontier` now carry the comparison; the case
+  itself is not on screen. Facts that make it concrete: training (pretrained once and released; adapting is a linear
+  probe or LP-FT; its pretraining comparable to AdaGlimpse's own, never cheaper than every prior model; `AGENTS.md`,
+  rebuttal facts), inference GFLOPs per glimpse and per rollout against AME and AdaGlimpse
+  (`../../assets/paper/ade20k_seg.json`), wall time per glimpse on a laptop and in the browser. M.
 
 - The cognition links (`sources/cognition.md`, `sources/concepts.md`, read 2026-10-01): trans-saccadic integration
   (Irwin 1991; Melcher 2001) on the memory slide; coarse-to-fine scene categorization in humans (Musel et al. 2012;
@@ -224,6 +218,10 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 ## Known issues
 
 - `#live` (Backup): shrunk with `zoom: .8`.
+- Segmentation colors differ between slides: the components (`#rollout`, `#policies`, `#live`) use the standard
+  ADE20K palette (`../../js/canvit/ade20k.js`); `#extrapolation` uses canvit-pytorch's random `LABEL_COLORS`
+  (`specialize.ade20k.figures`), in which ceiling is nearly glimpse blue; `#history` and `#quickstart` give Tableau
+  colors by area, so the names written on regions stay legible. One palette for the talk is the authors' call.
 
 ## Experiments and exports
 
@@ -238,7 +236,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 | Item | Slides | Diff. | Status |
 |---|---|---|---|
-| `shoot.py` checks: titles that wrap, content in the footer band (below 676 px), single words alone on a last line | all | S | todo |
 | A periphery that fades to nothing on a click, from blurry to unseen (`<foveated-scene>` on `#human-vision` has the blur): "a world of difference between seeing something blurry and seeing nothing at all" | `#rollout` | S | todo |
 | `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
 | The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |

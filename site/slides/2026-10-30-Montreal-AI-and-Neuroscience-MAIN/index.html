@@ -155,7 +155,9 @@
     <li>DINOv3 ViT-B/16 (Meta, 2025): self-supervised, no labels.</li>
     <li>Colors: PCA of the patch features (components 2 to 4).</li>
     <li>A linear probe on the frozen features, trained with ADE20K labels: p(television), p(fireplace), p(armchair).</li>
-    <li>DINOv3 (arXiv:2508.10104): 1,689 million images curated from about 17 billion; a 7B teacher (6.7 billion parameters), 61,440 H100-hours; about 9 million GPU-hours for the whole project. The ViT-B is distilled from the 7B. CanViT-B's pretraining: 166 H100-hours.</li>
+    <li>The 1.7 billion images: curated from about 17 billion web images.</li>
+    <li>About 9 million GPU-hours for the whole DINOv3 project. CanViT-B's pretraining: 166 H100-hours.</li>
+    <li>ADE20K with a linear layer, DINOv3's protocol: ViT-B 51.8 mIoU, the 7B 55.9.</li>
   </ul></aside>
 </section>
 

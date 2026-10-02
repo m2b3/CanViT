@@ -3,8 +3,9 @@
 pasted in place, blank elsewhere), a, b, ab (CanViT's labels after A, B, A then B), prob_a, prob_b, prob_ab (CanViT's
 probability of the object's class), logit_a, logit_b, logit_ab (the class's logit, one scale for the three),
 entropy_a, entropy_b, entropy_ab. Writes a contact sheet per export, or with --separate each panel as
-<dir>/<export>/<panel>.png, legend.json (the classes covering at least LEGEND_MIN of CanViT's maps after A, B or A
-then B, with their colors) and boxes.json (each glimpse's box, A then B: top, left and side as fractions of the
+<dir>/<export>/<panel>.png, legend.json (every class in CanViT's maps after A, B or A then B, largest first, with
+its color: a class drawn without a name reads as something else, such as a strip of ceiling as a glimpse box) and
+boxes.json (each glimpse's box, A then B: top, left and side as fractions of the
 scene)."""
 
 import json
@@ -28,7 +29,6 @@ from experiments.outputs import WORK
 
 log = logging.getLogger(__name__)
 
-LEGEND_MIN = 0.02
 # How logits reach pixel resolution: "nearest" draws what each canvas cell or glimpse patch predicts, its grid
 # visible; "bilinear" is the paper's evaluation. Both stay available [Yohaï, 2026-10-01: "keep both possible"].
 UPSAMPLING = {"nearest": dict(mode="nearest-exact"), "bilinear": dict(mode="bilinear", align_corners=False)}
@@ -129,7 +129,7 @@ def legend(data: dict, meta: dict, cfg: Config) -> list[dict[str, str]]:
     maps = [upsampled(data[f"canvit_{cond}"], meta["scene_px"], cfg).argmax(0).numpy() for cond in ("a", "b", "ab")]
     share = {int(k): max(float((m == k).mean()) for m in maps) for k in np.unique(np.concatenate([m.ravel() for m in maps]))}
     return [{"class": CLASS_NAMES[k], "color": "#" + bytes(LABEL_COLORS[k].tolist()).hex()}
-            for k in sorted(share, key=lambda k: -share[k]) if share[k] >= LEGEND_MIN]
+            for k in sorted(share, key=lambda k: -share[k])]
 
 
 def main(cfg: Config) -> None:

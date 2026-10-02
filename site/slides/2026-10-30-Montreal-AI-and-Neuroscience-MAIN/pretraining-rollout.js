@@ -1,5 +1,6 @@
-// <pretraining-rollout src="rollouts.json" scene="NAME" policy="random|full_then_random" [period] [hold]>: a scene
-// and the viewpoints the pretraining sampler drew for it (experiments/pretraining/export.py), the boxes appearing one
+// <pretraining-rollout src="DIR" scene="NAME" policy="random|full_then_random" [period] [hold]>: a scene and the
+// viewpoints the pretraining sampler drew for it, from the directory experiments/pretraining/export.py writes (its
+// rollouts.json and the images it names, so the deploy ships them together), the boxes appearing one
 // by one in the policy's color from the paper's figures, the earlier ones fading, then starting over. play(), pause()
 // and restart() for data-play (deck.js).
 
@@ -8,14 +9,15 @@ import { POLICIES } from "../../js/canvit/policies.js";
 const SVG = "http://www.w3.org/2000/svg";
 const records = new Map();
 
-function record(src) {
-  if (!records.has(src)) {
-    records.set(src, fetch(src).then((r) => {
-      if (!r.ok) throw new Error(`<pretraining-rollout>: ${src} answered ${r.status}`);
+function record(dir) {
+  if (!records.has(dir)) {
+    const url = `${dir}/rollouts.json`;
+    records.set(dir, fetch(url).then((r) => {
+      if (!r.ok) throw new Error(`<pretraining-rollout>: ${url} answered ${r.status}`);
       return r.json();
     }));
   }
-  return records.get(src);
+  return records.get(dir);
 }
 
 class PretrainingRollout extends HTMLElement {
@@ -32,7 +34,7 @@ class PretrainingRollout extends HTMLElement {
     const viewpoints = scene.rollouts[policy];
     if (!viewpoints || !POLICIES[policy]) throw new Error(`<pretraining-rollout>: no ${policy} rollout for ${scene.name}`);
     const image = document.createElement("img");
-    image.src = new URL(scene.image, new URL(src, document.baseURI)).href;
+    image.src = new URL(scene.image, new URL(`${src}/`, document.baseURI)).href;
     image.alt = "";
     const svg = document.createElementNS(SVG, "svg");
     svg.setAttribute("viewBox", "0 0 2 2");

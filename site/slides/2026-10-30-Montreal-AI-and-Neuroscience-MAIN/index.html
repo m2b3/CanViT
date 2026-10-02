@@ -57,7 +57,7 @@
 <section id="human-vision" data-status="ready">
   <h2>Human vision is fundamentally active</h2>
   <!-- An illustration of foveation on the street of the later slides: the fixations were chosen by hand, not recorded. -->
-  <div class="stage">
+  <div class="views">
   <div class="foveation"><foveated-scene data-play src="../../data/street-riid/scene.png" alt="A street, sharp only around the point being looked at" fovea="0.1" fixations="0.08 0.57, 0.36 0.63, 0.12 0.41, 0.39 0.19, 0.8 0.62, 0.93 0.66, 0.38 0.49"></foveated-scene></div>
   <div class="yarbus">
     <figure><img src="assets/figures/yarbus-1967-face.png" alt="A photograph of a face and the record of an observer's eye movements over it"></figure>
@@ -118,10 +118,20 @@
     <figure class="prob" style="--row: 0"><figcaption>television</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-television.png" alt="The probability of television: bright on the TV only"></figure>
     <figure class="prob" style="--row: 1"><figcaption>fireplace</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-fireplace.png" alt="The probability of fireplace: bright on the fireplace only"></figure>
     <figure class="prob" style="--row: 2"><figcaption>armchair</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-armchair.png" alt="The probability of armchair: bright on the armchair only"></figure>
+    <!-- How much went into DINOv3 [Yohaï, 2026-10-01],
+         read in Siméoni et al. 2025, arXiv:2508.10104v1: LVD-1689M, 1,689 million images curated from about 17
+         billion (§3.1); the ViT-7B teacher, 6,716M parameters (Fig. 16a), trained for 61,440 H100-hours (Table 20);
+         the ViT-B shown here is distilled from it (§5.2). -->
+    <dl class="scale-facts">
+      <div><dt>1.7 billion</dt><dd>training images, no labels</dd></div>
+      <div><dt>6.7 billion</dt><dd>parameters in the teacher this ViT-B is distilled from</dd></div>
+      <div><dt>61,440</dt><dd>H100-hours to train that teacher</dd></div>
+    </dl>
   </div>
   <p class="cite">DINOv3 ViT-B/16, Siméoni et al. 2025</p>
   <span class="fragment step-marker" data-shows="features"></span>
   <span class="fragment step-marker" data-shows="decode"></span>
+  <span class="fragment step-marker" data-shows="scale"></span>
 </section>
 
 <!-- ============================================================== Active computer vision -->
@@ -131,7 +141,10 @@
   <!-- Drawn by timeline.js from sources/active-vision-timeline.json; each model a fragment, then how each chose where
        to look. Evidence for every entry: sources/active-vision-timeline.md. -->
   <div class="timeline"></div>
-  <p class="legend fragment" data-shows="rl"><span class="dot"></span>where to look, learned by reinforcement learning</p>
+  <div class="legend fragment" data-shows="rl">
+    <p><span class="dot"></span>where to look, learned by reinforcement learning</p>
+    <p class="by-rule"><span class="dot"></span>by the entropy of its decoder's attention</p>
+  </div>
   <span class="fragment step-marker" data-shows="canvit"></span>
 </section>
 
@@ -294,51 +307,7 @@
   <span class="fragment step-marker" data-shows="last"></span>
 </section>
 
-<section id="policy-agnosticism" data-status="draft">
-  <h2>Policy agnosticism</h2>
-  <!-- Viewpoints drawn by the package's pretraining sampler for four ImageNet photographs (experiments/pretraining):
-       rollout lengths from the pretraining config's process (K = 2, p_stop = 0.5), F-IID and R-IID as in pretraining.
-       Labels and colors from js/canvit/policies.js. -->
-  <div class="rollout-grid">
-    <p class="row-label" data-policy-label="random"></p>
-    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="dog" policy="random"></pretraining-rollout>
-    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="church" policy="random"></pretraining-rollout>
-    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="truck" policy="random"></pretraining-rollout>
-    <pretraining-rollout data-play src="../../data/talk/pretraining/rollouts.json" scene="parachute" policy="random"></pretraining-rollout>
-    <p class="row-label fiid" data-policy-label="full_then_random"></p>
-    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="dog" policy="full_then_random"></pretraining-rollout>
-    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="church" policy="full_then_random"></pretraining-rollout>
-    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="truck" policy="full_then_random"></pretraining-rollout>
-    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining/rollouts.json" scene="parachute" policy="full_then_random"></pretraining-rollout>
-  </div>
-  <span class="fragment step-marker" data-shows="fiid"></span>
-</section>
-
 <!-- ============================================================== What it does -->
-
-<section id="memory" data-status="draft">
-  <h2>A persistent, evolving understanding of the scene</h2>
-  <!-- ADE_val_00000836, a street, from a sweep of 6,218 three-object sequences in ADE20K validation
-       (experiments/memory): a glimpse on a shop sign, then on people walking, then on a bicycle; each object's class
-       probability in its color over the dimmed scene, per canvas cell. Kept: the state carried; reset: a fresh state
-       before each glimpse. Alternative, numerically cleaner but less lively: ADE_val_00001182 (a bedroom). -->
-  <div class="memory-demo">
-    <figure><figcaption>Glimpses</figcaption><div class="stack">
-      <img class="t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t0.png" alt="A street with a glimpse on a shop sign">
-      <img class="t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t1.png" alt="A second glimpse, on people walking">
-      <img class="t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t2.png" alt="A third glimpse, on a bicycle"></div></figure>
-    <figure><figcaption>Memory kept</figcaption><div class="stack">
-      <img class="pixels t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t0.png" alt="The sign lights up">
-      <img class="pixels t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t1.png" alt="The people light up; the sign stays">
-      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="The bicycle lights up; the sign and the people stay"></div></figure>
-    <figure class="reset"><figcaption>Memory reset</figcaption><div class="stack">
-      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="With the memory reset before each glimpse, only the bicycle remains"></div></figure>
-  </div>
-  <p class="class-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
-  <span class="fragment step-marker" data-shows="second"></span>
-  <span class="fragment step-marker" data-shows="third"></span>
-  <span class="fragment step-marker" data-shows="reset"></span>
-</section>
 
 <section id="extrapolation" data-status="ready">
   <h2>Extrapolation to unobserved regions</h2>
@@ -572,6 +541,50 @@
 
 <section id="backup" data-status="ready">
   <p class="divider">Backup</p>
+</section>
+
+<section id="policy-agnosticism" data-status="draft">
+  <h2>Policy agnosticism</h2>
+  <!-- Viewpoints drawn by the package's pretraining sampler for four ImageNet photographs (experiments/pretraining):
+       rollout lengths from the pretraining config's process (K = 2, p_stop = 0.5), F-IID and R-IID as in pretraining.
+       Labels and colors from js/canvit/policies.js. -->
+  <div class="rollout-grid">
+    <p class="row-label" data-policy-label="random"></p>
+    <pretraining-rollout data-play src="../../data/talk/pretraining" scene="dog" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining" scene="church" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining" scene="truck" policy="random"></pretraining-rollout>
+    <pretraining-rollout data-play src="../../data/talk/pretraining" scene="parachute" policy="random"></pretraining-rollout>
+    <p class="row-label fiid" data-policy-label="full_then_random"></p>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining" scene="dog" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining" scene="church" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining" scene="truck" policy="full_then_random"></pretraining-rollout>
+    <pretraining-rollout class="fiid" data-play="fiid" src="../../data/talk/pretraining" scene="parachute" policy="full_then_random"></pretraining-rollout>
+  </div>
+  <span class="fragment step-marker" data-shows="fiid"></span>
+</section>
+
+<section id="memory" data-status="draft">
+  <h2>A persistent, evolving understanding of the scene</h2>
+  <!-- ADE_val_00000836, a street, from a sweep of 6,218 three-object sequences in ADE20K validation
+       (experiments/memory): a glimpse on a shop sign, then on people walking, then on a bicycle; each object's class
+       probability in its color over the dimmed scene, per canvas cell. Kept: the state carried; reset: a fresh state
+       before each glimpse. Alternative, numerically cleaner but less lively: ADE_val_00001182 (a bedroom). -->
+  <div class="memory-demo">
+    <figure><figcaption>Glimpses</figcaption><div class="stack">
+      <img class="t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t0.png" alt="A street with a glimpse on a shop sign">
+      <img class="t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t1.png" alt="A second glimpse, on people walking">
+      <img class="t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/scene_t2.png" alt="A third glimpse, on a bicycle"></div></figure>
+    <figure><figcaption>Memory kept</figcaption><div class="stack">
+      <img class="pixels t0" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t0.png" alt="The sign lights up">
+      <img class="pixels t1" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t1.png" alt="The people light up; the sign stays">
+      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/kept_t2.png" alt="The bicycle lights up; the sign and the people stay"></div></figure>
+    <figure class="reset"><figcaption>Memory reset</figcaption><div class="stack">
+      <img class="pixels t2" src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/reset_t2.png" alt="With the memory reset before each glimpse, only the bicycle remains"></div></figure>
+  </div>
+  <p class="class-legend" data-src="../../data/talk/memory/ADE_val_00000836-signboard-person-bicycle/slide/legend.json"></p>
+  <span class="fragment step-marker" data-shows="second"></span>
+  <span class="fragment step-marker" data-shows="third"></span>
+  <span class="fragment step-marker" data-shows="reset"></span>
 </section>
 
 <section id="canvas-attention" data-status="draft">

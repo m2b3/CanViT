@@ -217,17 +217,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 ## Known issues
 
 - `#live` (Backup): shrunk with `zoom: .8`.
-- The paper moved into this repository (`../../../paper/`, main 74f2b71, merged 2026-10-01), but the site still checks
-  and loads its own tracked copies from the paper's previous repository: `../../assets/paper/data_macros.json` holds
-  64 macros `paper/latex/data_macros.json` no longer has (three of them in `#policy-accuracy`'s notes:
-  `adeFIIDCSixFourTTwenty`, `adeRIIDCSixFourTTwenty`, `adeFTCCSixFourTTwenty`) and writes `inkFtLr` and
-  `inkFtWeightDecay` without the space before `\times`; `../../assets/paper/in1k_clf_frozen.json` has a `best_at`
-  field `paper/exports/` lacks; `ade20k_seg.json` is identical. One source would have `check_paper_numbers.py` read
-  `paper/latex/data_macros.json` and the site's copies made from `paper/` (copied and ignored, as the SVGs are), once
-  `paper/latex/generate_data.py` writes what the site uses or the notes stop using it. For the authors: the paper
-  pipeline is theirs to change. `experiments/training_cost` still runs in the external CanViT-paper-exporter checkout:
-  the rebuttal's `training_flops.py` imports `canvit_paper_exporter.flops.arch` and `.teacher`, which the in-repo
-  exporter no longer has.
+- `experiments/training_cost` runs in the external CanViT-paper-exporter checkout: the rebuttal's `training_flops.py`
+  imports `canvit_paper_exporter.flops.arch` and `.teacher`, which the exporter in `../../../paper/exporter` no longer
+  has (its FLOP counts come from `canvit_pytorch.flops`).
 
 ## Experiments and exports
 

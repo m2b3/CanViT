@@ -7,11 +7,19 @@
 #   2. Configure ldconfig for torch_xla (uv's python-build-standalone libpython).
 #   3. Install gcsfuse (apt) if missing.
 #   4. Restore uv cache from GCS (if present) to speed up the first `uv sync`.
-#   5. `uv sync --project tpu`, then canvit-pytorch without its dependencies.
+#   5. `uv sync --project tpu` (including editable ../../canvit-core), then
+#      canvit-pytorch without resolving its CUDA-indexed dependencies.
 #
 # Working directory: canvit-pytorch/ (the directory holding tpu/pyproject.toml).
 # Environment: TPU VM, Ubuntu 22.04.
 set -euo pipefail
+
+for required in ../canvit-core ../LICENSE ../tools/license_build.py; do
+    if [ ! -e "$required" ]; then
+        echo "missing required checkout path: $required" >&2
+        exit 1
+    fi
+done
 
 SETUP_START=$(date +%s%3N)
 ts() { echo "$(($(date +%s%3N) - SETUP_START))ms | $*"; }
@@ -84,7 +92,8 @@ fi
 # 5) Resolve training deps from tpu/pyproject.toml: torch==2.9.0 and
 # torchvision==0.24.0 from https://download.pytorch.org/whl/cpu (no nvidia_*
 # CUDA packages on a TPU VM) to match torch_xla==2.9.0's _XLAC.so ABI. Then
-# canvit-pytorch without its dependencies (see tpu/pyproject.toml for why).
+# resolve canvit-core from ../../canvit-core and install canvit-pytorch without
+# its dependencies (see tpu/pyproject.toml for why).
 ts "uv sync --project tpu..."
 uv sync --project tpu
 uv pip install --python tpu/.venv --no-deps -e .

@@ -24,6 +24,7 @@ dependencies = [
     "tyro>=1.0.0",
     "comet-ml>=3.30.0",
     "matplotlib>=3.8.0",
+    "canvit-core>=0.2.1,<0.3.0",
 ]
 
 [tool.uv]
@@ -38,3 +39,4 @@ explicit = true
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
 torchvision = [{ index = "pytorch-cpu" }]
+canvit-core = { path = "../../canvit-core", editable = true }

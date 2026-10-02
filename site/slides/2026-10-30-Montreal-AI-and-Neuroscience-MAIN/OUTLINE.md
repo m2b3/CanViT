@@ -60,11 +60,14 @@ yet reviewed by the authors.
 ### DINOv3 feature maps
 - **Title:** names what the slide shows (Yohaï's phrase for it); "We already know what good visual representations
   look like" is said.
-- **Shows:** DINOv3's dense features: the similarity of every patch to a marked one (Siméoni et al. 2025, Fig. 3).
-- **Says:** a foundation model is trained once on broad data, without labels, and read out by many tasks; DINOv3
-  turns every patch into a vector computed in the context of the whole image; similar vectors mark the parts of the
-  same object and objects of the same kind. That is the knowledge of the world the table needs, and the same models
-  are among today's best models of visual cortex. They are passive: one image, all at once.
+- **Shows:** a living room; DINOv3 ViT-B's patch features as colors (principal components 2 to 4, nearest neighbor);
+  then the features small, with arrows to the probabilities of television, fireplace and armchair that a linear
+  probe decodes from them; last, how much went into DINOv3: 1.7 billion training images, no labels; 6.7 billion
+  parameters in the teacher this ViT-B is distilled from; 61,440 H100-hours to train that teacher (arXiv:2508.10104:
+  §3.1, Fig. 16a, Table 20).
+- **Says:** DINOv3 turns every patch into a vector computed in the context of the whole image; what is where is easy
+  to read out of it with a linear layer. That is the knowledge of the world the table needs, and it comes from
+  scale. These models are passive: one image, all at once.
 - **Status:** ready. TODO: the interactive version on the conference room (hover a patch, see its similarities,
   PCA colors, the probe's segmentation).
 
@@ -211,43 +214,7 @@ yet reviewed by the authors.
 - **Example:** a bedroom (ADE_val_00000124), 21 random glimpses.
 - **Status:** draft (built).
 
-### Policy agnosticism
-- **Title:** the paper's §5.2 heading.
-- **Must:** during pretraining every viewpoint is random: position anywhere, zoom from the whole scene down to 0.25%
-  of it, small glimpses favored (p(s) ∝ 1 − s), sequences of random length (mean 4, sometimes much longer); two
-  rollouts per scene, one random from the start (R-IID), one starting from the full scene (F-IID). So no policy is
-  built in, and any policy can be used afterwards (C2F, F2C, EG-C2F were never seen in training).
-- **Could:** the scale distribution as a histogram; the training scale (13.2 M scenes, about 1 B glimpses, 166 h on
-  one H100) said here.
-- **Builds:** several scenes, each with its random glimpse boxes appearing one by one, lengths differing, an R-IID and
-  an F-IID rollout side by side; then the histogram of zooms; viewpoints drawn by `canvit_pytorch.policies` itself
-  and exported, never re-implemented in the page.
-- **Status:** draft (built: four ImageNet photographs, R-IID then F-IID, the pretraining sampler's own draws; the
-  histogram of zooms not drawn).
-
 ## What it does
-
-### A persistent, evolving understanding of the scene
-- **Title:** the paper's and the page's words for memory ("updating a persistent, evolving understanding of the
-  scene"); "Resetting the memory" named a condition, not what the slide shows [Yohaï, 2026-10-01: "why would a slide
-  be called that"].
-- **Must:** trans-saccadic integration made visible: each glimpse adds what it saw to one picture of the scene, and
-  what was seen stays; with the memory reset before each glimpse, only the current glimpse remains.
-- **Could:** the average over ADE20K validation (said: 0.46 kept against 0.03 reset, single objects).
-- **Example properties** [stated 2026-10-01, before a new sweep; the person in a desert (ADE_val_00001425) was clean
-  but "really doesn't look inspiring"]: a scene the audience relates to and finds lively (a street with people and
-  cars, a kitchen, a living room), well photographed; three objects of distinct, nameable classes, each needing its own
-  glimpse and recognized confidently after it; glimpses mostly disjoint; after the last glimpse, the kept canvas shows
-  all three with readable shapes and the reset canvas only the last.
-- **Chosen** (2026-10-01, `experiments/memory`, `AGENTS.md`): ADE_val_00000836, a street: a shop sign,
-  people walking, a bicycle; alternative ADE_val_00001182, a bedroom (lamp, towels, painting), cleaner numbers, less
-  lively.
-- **Builds:** each class's probability in its own color over the dimmed scene, a glimpse per click: the first object
-  lights up, then the second while the first stays, then the third; then, beside it, the same glimpses with the memory
-  reset: only the last object.
-- **Says:** "unless you get a good look at something, the representation is bad"; the average, as a clean example's
-  context.
-- **Status:** draft (built).
 
 ### Extrapolation to unobserved regions
 - **Title:** the paper's Fig. 1 caption.
@@ -448,6 +415,47 @@ btw (even if it just says 'Backup')"].
 - **Must:** teasers of the work that follows, as the authors decide [Yohaï, 2026-10-01: "we might want future /
   teasers etc."].
 - **Status:** reserved.
+
+### Policy agnosticism
+- **In Backup** [Yohaï, 2026-10-01: "tbh that slide sucks and is unclear + redundant anyway"]: its facts are said on
+  `#distillation` (random viewpoints and lengths, the training scale) and `#policies` (which policies pretraining used).
+- **Title:** the paper's §5.2 heading.
+- **Must:** during pretraining every viewpoint is random: position anywhere, zoom from the whole scene down to 0.25%
+  of it, small glimpses favored (p(s) ∝ 1 − s), sequences of random length (mean 4, sometimes much longer); two
+  rollouts per scene, one random from the start (R-IID), one starting from the full scene (F-IID). So no policy is
+  built in, and any policy can be used afterwards (C2F, F2C, EG-C2F were never seen in training).
+- **Could:** the scale distribution as a histogram; the training scale (13.2 M scenes, about 1 B glimpses, 166 h on
+  one H100) said here.
+- **Builds:** several scenes, each with its random glimpse boxes appearing one by one, lengths differing, an R-IID and
+  an F-IID rollout side by side; then the histogram of zooms; viewpoints drawn by `canvit_pytorch.policies` itself
+  and exported, never re-implemented in the page.
+- **Status:** draft (built: four ImageNet photographs, R-IID then F-IID, the pretraining sampler's own draws; the
+  histogram of zooms not drawn).
+
+### A persistent, evolving understanding of the scene
+- **In Backup, to be reevaluated** [Yohaï, 2026-10-01: "also looks nice but its exact role / contribution is somewhat
+  unclear so maybe backup / to be reevaluated etc"]. `#neuro-ai`'s trans-saccadic memory card shows its kept and reset
+  maps.
+- **Title:** the paper's and the page's words for memory ("updating a persistent, evolving understanding of the
+  scene"); "Resetting the memory" named a condition, not what the slide shows [Yohaï, 2026-10-01: "why would a slide
+  be called that"].
+- **Must:** trans-saccadic integration made visible: each glimpse adds what it saw to one picture of the scene, and
+  what was seen stays; with the memory reset before each glimpse, only the current glimpse remains.
+- **Could:** the average over ADE20K validation (said: 0.46 kept against 0.03 reset, single objects).
+- **Example properties** [stated 2026-10-01, before a new sweep; the person in a desert (ADE_val_00001425) was clean
+  but "really doesn't look inspiring"]: a scene the audience relates to and finds lively (a street with people and
+  cars, a kitchen, a living room), well photographed; three objects of distinct, nameable classes, each needing its own
+  glimpse and recognized confidently after it; glimpses mostly disjoint; after the last glimpse, the kept canvas shows
+  all three with readable shapes and the reset canvas only the last.
+- **Chosen** (2026-10-01, `experiments/memory`, `AGENTS.md`): ADE_val_00000836, a street: a shop sign,
+  people walking, a bicycle; alternative ADE_val_00001182, a bedroom (lamp, towels, painting), cleaner numbers, less
+  lively.
+- **Builds:** each class's probability in its own color over the dimmed scene, a glimpse per click: the first object
+  lights up, then the second while the first stays, then the third; then, beside it, the same glimpses with the memory
+  reset: only the last object.
+- **Says:** "unless you get a good look at something, the representation is bad"; the average, as a clean example's
+  context.
+- **Status:** draft (built).
 
 ### Canvas Attention
 - **Title:** the paper's; "dumb, but not too dumb" is said.

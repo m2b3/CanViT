@@ -49,8 +49,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   glimpse in place; the drawing 500 px tall, checked at 1280 × 720 and in a 1512 × 860 window. Awaiting the authors'
   look.
 - [Yohaï, 2026-10-01] "you will make sure, once you are satisfied with the slides etc, that they are force-pushed into
-  gh pages rendered website". To do with `../../deploy.sh` (the `gh-pages` branch's single commit), after checking
-  what it ships from this branch (the talk, its data under `../../data/talk/`, the project page as it stands here).
+  gh pages rendered website"; then "you can merge into main and redeploy etc at checkpoints when things are
+  acceptable". Last checkpoint: 2026-10-01 ~23:00 EDT, main 887885c, gh-pages from f511c4d (`../../deploy.sh --push`
+  after the stress test and the dry run's file list); redeploy at the next acceptable checkpoint.
 - [Yohaï, 2026-10-01] `#cost`: on the Adapt column ("< 15 h, fine-tuning on ImageNet-1k, one TPU v6e-4; or just a
   linear layer"): "no this is horrible"; on the Run column (2.3 ms per glimpse, 175 ms on a CPU): "no one cares";
   "this is marketing as [...] and without comparison points (what about other models? for example could be PEAK
@@ -156,6 +157,13 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] Reuse the well-received primitives of the September deck, ported (never imported): see
   "Components and deck primitives".
 - [Yohaï, 2026-10-01] Keep every TODO, known issue and request in this file.
+- [Yohaï, 2026-10-01] `#policy-agnosticism`: "the policy agnosticism slide online has / had missing data for some
+  reason (but tbh that slide sucks and is unclear + redundant anyway soooo)". The missing data: its four photographs,
+  which the deck did not name, so `deploy.sh` did not ship them (fixed: the element now names its directory). The
+  slide moved to Backup; its facts are in the notes of `#distillation` and `#policies`.
+- [Yohaï, 2026-10-01] `#memory`: "also looks nice but its exact role / contribution is somewhat unclear so maybe backup /
+  to be reevaluated etc". Moved to Backup, to be reevaluated with the authors: it carries "trans-saccadic integration"
+  (`AGENTS.md`, "Key ideas"), and `#neuro-ai`'s memory card reuses its maps.
 - [Yohaï, 2026-10-01] On the deck's data coming from gitignored `throwaway/` scripts: "time for you to read all the
   throwaway scripts etc and begin with the easy version of having scripts committed alongside the website. for
   refactoring, that affects the core package so we will see. also, beware of polluting the core-package API with

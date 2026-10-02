@@ -13,7 +13,9 @@ FULLY UNDERSTAND. READ AND UNDERSTAND FIRST."
   every talk may use (`.draw` arrows, `.marks` rings, `.step-marker`). Slide conventions are documented at the top of `deck.js`: `data-play`,
   `data-canvit-target`/`data-canvit-t`, `data-shows`, `<section data-status>`.
 - `package.json`: reveal.js, pinned and installed locally (`npm ci --prefix site/slides`), so a talk runs offline.
-- `shoot.py`: screenshots of every slide in Chromium, and the browser errors (below).
+- `shoot.py`: screenshots of every slide in Chromium, the browser errors and layout problems (below).
+- `stress.py`, `check_published.py`: a talk skipped through at speed; its files checked against the published site
+  (below).
 - `YYYY-MM-DD-Event/`: one directory per talk: `AGENTS.md` (the talk's audience, framings, scoped claims and
   decisions), `OUTLINE.md` (the talk, slide by slide, designed before the slides), `index.html` (every slide, with
   speaker notes), `talk.css` (rules scoped by slide id), `PLAN.md` (the talk's open work, ranked), `sources/` (the
@@ -72,13 +74,19 @@ everything that you needed to check by reading code or paper"], so the next sess
 A note points to its source (paper section, module and symbol, file path) and states the fact; numbers the paper
 generates stay in its macros.
 
-`shoot.py` exits nonzero when the page logged an error; read `errors.txt` and look at the images of every slide
-you touched, with all fragments shown (default) and before them (`--first-fragment`), or click by click (`--steps`).
+`shoot.py` exits nonzero when the page logged an error; read `errors.txt`, `layout.txt` (titles that wrap, content in
+the footer band) and the images of every slide you touched, with all fragments shown (default) and before them
+(`--first-fragment`), or click by click (`--steps`).
 Screenshots are review material and are never committed (`site/.screens/` is ignored).
 
 `stress.py` skips through a talk quickly, forward, back and at random, and checks that each slide lands in the state
 a settled visit gives it, with nothing playing off its slide [Yohaï, 2026-10-01: "make sure that things work smoothly
 as well if we skip through slides rapidly back and forth"].
+
+After a deploy, `check_published.py` walks the project page and a talk locally, every click and every scene of its
+episodes, and requests each file they loaded from the published site [Yohaï, 2026-10-01: "make sure that all images
+that the slides need online are accessible from the online published version"]. Do not edit `site/` while it runs:
+the dev server reloads open pages on every change.
 
 Every slide carries `data-status`: `ready`, `draft` (content in place, visuals or wording to finish) or
 `aspirational` (shows what we want; the data or code behind it does not exist yet). Drafting views show it as a

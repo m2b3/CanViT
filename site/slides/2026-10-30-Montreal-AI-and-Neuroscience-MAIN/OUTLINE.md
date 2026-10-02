@@ -146,8 +146,10 @@ yet reviewed by the authors.
   crop and the glimpse; CanViT; the canvas after the first glimpse, as features (PCA colors) [Yohaï, 2026-10-01:
   "START WITH FEATURES, not segmentation map"]; then everything, the rollout playing on from the first glimpse with
   nothing redrawn [Yohaï: "ensure that there is no flickering from the gradual-reveal to the beginning of actually
-  running the animation (canvas full then empty then full again)"]; last, the canvas read out as segmentation, its
-  largest classes named.
+  running the animation (canvas full then empty then full again)"]; the canvas read out as segmentation, its
+  largest classes named; last, the episode shrinks left and DINOv3 ViT-B's segmentation of the same scene, seen whole
+  at 128 px (one glimpse's pixels, 8 × 8 patches), appears beside it with its pixel accuracy [Yohaï, 2026-10-01:
+  "contrast with simply having dinov3 128px full scene"].
 - **Says:** a viewpoint is a position and a scale; the glimpse is its crop at 128 px, all the model gets ("a world of
   difference between seeing something blurry and seeing nothing at all"); CanViT writes what it understood into the
   canvas, a memory of the whole scene; "It takes glimpses and gradually paints its understanding."

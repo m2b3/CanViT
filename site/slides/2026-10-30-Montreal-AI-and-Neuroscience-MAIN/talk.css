@@ -332,8 +332,21 @@
 #policy-agnosticism .fiid { opacity: 0; transition: opacity .6s ease; }
 #policy-agnosticism.shows-fiid .fiid { opacity: 1; }
 
-#rollout .episode { width: 1060px; margin: 0 auto; padding: 14px 20px; }
+#rollout .episode { width: 1060px; margin: 0 auto; padding: 14px 20px; transform-origin: 0 50%;
+  transition: transform .8s ease; }
 #rollout canvit-episode { font-size: 15px; }
+/* The passive contrast: the episode shrinks to the left and DINOv3's whole-scene map takes the right, about the size
+   of the shrunk canvas. */
+#rollout.shows-passive .episode { transform: translateX(-46px) scale(.76); }
+#rollout .whole-scene { position: absolute; right: 40px; top: 176px; width: 310px; margin: 0; text-align: center;
+  opacity: 0; transition: opacity .6s ease; }
+#rollout.shows-passive .whole-scene { opacity: 1; transition-delay: .5s; }
+#rollout .whole-scene figcaption { margin-bottom: 10px; font-size: 19px; font-weight: 750; color: var(--ink);
+  white-space: nowrap; }
+#rollout .whole-scene canvas { display: block; width: 220px; aspect-ratio: 1; margin: 0 auto; border-radius: 8px;
+  image-rendering: pixelated; box-shadow: 0 0 0 3px var(--ink); }
+#rollout .whole-scene p { margin: 14px 0 0; font-size: 18px; color: var(--muted); }
+#rollout .whole-scene b { margin-left: 6px; font-size: 22px; color: var(--ink); }
 
 #extrapolation .extrapolation { display: grid; grid-template-columns: 110px repeat(4, 235px); gap: 10px 14px;
                                 align-items: center; justify-content: center; }

@@ -250,12 +250,22 @@
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="canvas"></span>
   <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-episode" data-canvit-stage="all"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="all" data-canvit-readout="labels"></span>
+  <!-- The passive contrast [Yohaï, 2026-10-01: "when you show examples of canvit, contrast with simply having dinov3
+       128px full scene"]: the episode shrinks and DINOv3 ViT-B's segmentation of the same scene, seen whole at 128 px,
+       appears beside it (whole-scene.js). -->
+  <figure class="whole-scene" data-src="../../data/talk/whole-scene-dinov3">
+    <figcaption>DINOv3, whole scene at 128&nbsp;px</figcaption>
+    <canvas></canvas>
+    <p>Pixel accuracy <b class="accuracy"></b></p>
+  </figure>
+  <span class="fragment step-marker" data-shows="passive"></span>
   <aside class="notes"><ul>
     <li>Viewpoint: center and scale (the crop's half side).</li>
     <li>Glimpse: 128 &times; 128 px at any scale; nothing outside it.</li>
     <li>A world of difference between seeing something blurry and seeing nothing at all.</li>
     <li>Canvas colors: PCA, as for DINOv3.</li>
     <li>Readout: a linear layer, at any time.</li>
+    <li>DINOv3 on the whole scene at 128 px, the pixels of one glimpse: 8 &times; 8 patches. Pixel accuracy, street 72%, against CanViT's 88% after 21 glimpses; shop 70 against 78; ferry 41 against 71.</li>
   </ul></aside>
 </section>
 
@@ -788,6 +798,7 @@
   import { drawPolicyAblations } from "./policy-ablations.js";
   import { drawUncertaintyCalibration } from "./uncertainty-calibration.js";
   import { drawArchitecture } from "./architecture.js";
+  import { followEpisode } from "./whole-scene.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   // Each policy in the paper's label and figure color, read from the bundle's manifest: its caption and its boxes.
   function colorByPolicy(rollout) {
@@ -833,6 +844,7 @@
   }
   await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
   await drawArchitecture(document.querySelector("#architecture .arch-build"));
+  followEpisode(document.querySelector("#rollout .whole-scene"), document.querySelector("#rollout canvit-episode"));
   await drawUncertaintyCalibration(document.querySelector("#calibration .calibration"), "../../data/talk/metacognition/calibration.json");
   await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
   await drawTrainingCost(document.querySelector("#cost"), "../../data/talk/training-cost.json");

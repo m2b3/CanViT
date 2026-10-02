@@ -77,6 +77,11 @@ quickstart() {
   run quickstart.plot
 }
 
+whole_scene_baseline() {
+  ade20k
+  run whole_scene_baseline.export
+}
+
 history_examples() {
   ade20k
   imagenette
@@ -109,8 +114,8 @@ architecture() {
     --policy random --capture-writes
 }
 
-all=(table_corners looking_closer memory distillation foundation metacognition pretraining quickstart history_examples
-     training_cost architecture)
+all=(table_corners looking_closer memory distillation foundation metacognition pretraining quickstart
+     whole_scene_baseline history_examples training_cost architecture)
 chosen=("$@")
 [[ $# -gt 0 ]] || chosen=("${all[@]}")
 for experiment in "${chosen[@]}"; do

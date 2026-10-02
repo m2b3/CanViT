@@ -90,13 +90,13 @@ def _install(backend: Backend) -> str:
 def _backend_fragments(backend: Backend) -> tuple[str, str, str, str]:
     if backend == "nnx":
         return (
-            "import jax.numpy as jnp\nfrom canvit_nnx import Viewpoint, sample_at_viewpoint",
+            "import jax.numpy as jnp",
             "from canvit_nnx.preprocess import preprocess",
             "jnp.asarray",
             "canvit_nnx",
         )
     return (
-        "import mlx.core as mx\nfrom canvit_mlx import Viewpoint, sample_at_viewpoint",
+        "import mlx.core as mx",
         "from canvit_mlx.preprocess import preprocess",
         "mx.array",
         "canvit_mlx",
@@ -113,7 +113,8 @@ def _model_usage(*, backend: Backend, repo: str, model_name: str, scene_size_px:
         result = "logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)"
     return f'''{imports}
 from PIL import Image
-from {module_name} import {model_import}
+
+from {module_name} import {model_import}, Viewpoint, sample_at_viewpoint
 {preprocess_import}
 
 scene = {array_constructor}(preprocess({scene_size_px})(Image.open("scene.jpg").convert("RGB")))[None]
@@ -130,7 +131,8 @@ def _probe_usage(entry: ProbeEntry, *, num_classes: int) -> str:
     evaluation = "\nmx.eval(logits)" if entry.backend == "mlx" else ""
     return f'''{imports}
 from PIL import Image
-from {module_name} import CanViTForSemanticSegmentation
+
+from {module_name} import CanViTForSemanticSegmentation, Viewpoint, sample_at_viewpoint
 {preprocess_import}
 
 scene = {array_constructor}(preprocess({entry.scene_size_px})(Image.open("scene.jpg").convert("RGB")))[None]
@@ -163,7 +165,7 @@ def _model_card(entry: ModelEntry) -> tuple[str, dict[str, Any]]:
     glimpse_size_px = int(conversion["glimpse_size_px"])
     canvas_grid_size = int(conversion["canvas_grid_size"])
     title = f"CanViT {'pretraining checkpoint' if is_pretraining else 'classifier'} ({label})"
-    summary = f"A {label} CanViT {'pretraining' if is_pretraining else 'image-classification'} checkpoint."
+    summary = f"CanViT {'pretraining weights' if is_pretraining else 'image classifier'} for {label}."
     usage = _model_usage(
         backend=entry.backend,
         repo=entry.target_repo,
@@ -225,7 +227,7 @@ def _probe_card(entry: ProbeEntry) -> tuple[str, dict[str, Any]]:
     body = "\n\n".join((
         _frontmatter(frontmatter),
         f"# ADE20K probe on CanViT's canvas ({label})",
-        f"A {label} ADE20K segmentation probe for CanViT canvas features. Load it alongside the separately published CanViT checkpoint.",
+        f"ADE20K segmentation probe for CanViT canvas features, implemented in {label}. Load it alongside the separately published CanViT checkpoint.",
         project.DESCRIPTION,
         f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
         "## Install\n\n```bash\n" + _install(entry.backend) + "\n```",

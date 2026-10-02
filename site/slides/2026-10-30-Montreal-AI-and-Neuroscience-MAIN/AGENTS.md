@@ -256,9 +256,10 @@ authors' data and the history data:
 
 ## Checked facts
 
-What a session had to look up, with where it lives (`../AGENTS.md`). Paper: `~/code/CanViT-Toward-AVFMs/latex/
-CanViT_Toward_AVFMs.tex`, cited by section; its numbers are macros (`data.tex`, copied to
-`../../assets/paper/data_macros.json`).
+What a session had to look up, with where it lives (`../AGENTS.md`). Paper: `../../../paper/latex/
+CanViT_Toward_AVFMs.tex` (in this repository since 2026-10-01), cited by section; its numbers are macros
+(`../../../paper/latex/data.tex`). The site checks against its own copy, `../../assets/paper/data_macros.json`, which
+came from the paper's previous repository and differs from `paper/` (`PLAN.md`, "Known issues").
 
 The paper [read 2026-10-01]:
 - §1: deep networks as models of biological vision cite Yamins 2014, Yamins & DiCarlo 2016, Schrimpf 2018, Zhuang
@@ -300,8 +301,8 @@ The paper [read 2026-10-01]:
 - App. H: about 2500 H100-equivalent hours for the whole project; the ImageNet-1k fine-tuning experiments together
   (failed runs, preliminary experiments and sweeps included) under 800 USD; the reported fine-tuning run under 15
   wall-clock hours on a TPU v6e-4.
-- Figure exports (SVG, PDF and their JSON data): `~/code/CanViT-Toward-AVFMs/latex/figures/exported/`;
-  `../../copy_paper_figures.sh` copies the ones the site shows into `../../assets/paper/`.
+- Figure exports: `../../../paper/exports/` (PDF figures and their JSON data); the SVGs the site shows came from the
+  previous repository's exports; `../../copy_paper_figures.sh` copies them into `../../assets/paper/`.
 
 The rebuttal (`~/code/CanViT-Toward-AVFMs/rebuttal/DOSSIER.md`; results promised for the camera-ready, not yet in
 the paper's macros) [read 2026-10-01]:

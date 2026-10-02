@@ -58,6 +58,9 @@ python3 site/check_paper_numbers.py
 material and do things in such a way that it is easy for me and you to do quick back and forth on views into the
 data".
 
+A talk is developed on its own branch, which takes in `main` regularly [Yohaï, 2026-10-01: "rebase on top of, or
+merge, main regularly"].
+
 Every request of the authors that is not yet done goes into the talk's `PLAN.md` ("Open requests") the moment it
 arrives, in their words, before any work on it, and leaves only when it is done; requests survive the end of a
 session only there [Yohaï, 2026-10-01: "keep track of all of my unanswered-as-of-yet-requests, always, immediately, so

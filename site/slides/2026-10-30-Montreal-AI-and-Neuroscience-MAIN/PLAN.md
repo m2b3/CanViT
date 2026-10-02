@@ -230,8 +230,8 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
     of `#active-vision-model` give the one-glimpse numbers).
 - Open from the second cold read (2026-10-01, a fresh subagent; its fixed defects are in git history), for the
   authors:
-  - `#distillation`: the "Target" row does not say it is DINOv3 seeing the whole scene (the row labels are Yohaï's);
-    a label or a scene → DINOv3 column would.
+  - `#distillation`: the "Target" row did not say it is DINOv3 seeing the whole scene (both reviews tripped on it);
+    "DINOv3, whole scene" now sits in small type under Yohaï's "Target". Awaiting the authors' look.
   - `#tradition`: Felleman & Van Essen's hierarchy is illegible at its size (a crop of V1 to IT, or more room).
   - `#detail`: the scene keeps a source watermark; in the loupe state, "CanViT's input, 128 px" shows a magnified crop
     of the input.

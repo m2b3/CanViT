@@ -348,6 +348,8 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 /* Visibility: the first column without its target, then the target and the error, then one column per click. */
 #distillation .unrolled > :not(.of-input, .of-prediction) { opacity: 0; transition: opacity .5s ease; }
 #distillation .unrolled > .t0:not(.score, .target) { opacity: 1; }
+/* Who produces the target, under Yohaï's row label: two reviews could not tell it from the screen. */
+#distillation .row-label small { display: block; font-size: 15px; font-weight: 600; color: var(--muted); }
 #distillation.shows-score .unrolled > :is(.t0, .row-label) { opacity: 1; }
 #distillation.shows-second .unrolled > .t1, #distillation.shows-third .unrolled > .t2,
 #distillation.shows-last .unrolled > :is(.t20, .ellipsis) { opacity: 1; }

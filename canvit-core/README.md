@@ -1,15 +1,32 @@
-# canvit-core: shared CanViT (Canvas Vision Transformer) definitions
+# canvit-core
 
-`canvit-core` contains backend-independent CanViT definitions shared by the
-PyTorch, MLX and JAX/Flax NNX packages. It owns `CanViTConfig`, backbone
-specifications, the canvas-attention schedule, probe fusion and the strict
-checkpoint schema. It also provides the shared NHWC ImageNet preprocessing
-helpers used by the native packages.
+`canvit-core` contains the backend-independent definitions shared by the
+CanViT (Canvas Vision Transformer) packages. It provides `CanViTConfig`, the backbone specifications,
+canvas-attention schedules, readout fusion, ImageNet preprocessing for native
+arrays, and the native MLX/NNX checkpoint schema.
 
-The model and tensor-shape contract lives in the root
-[Backend packages](https://github.com/m2b3/CanViT#backend-packages) section.
-The package exports `CanViTConfig`; backend packages import the other
-definitions from its focused modules.
+Install `canvit-mlx`, `canvit-nnx`, or `canvit-pytorch` for model execution.
+The root
+[backend documentation](https://github.com/m2b3/CanViT#backend-packages)
+defines the shared model and tensor-shape contract.
+
+## Install
+
+```bash
+uv add canvit-core
+```
+
+## Public API
+
+The package exports `CanViTConfig` at the top level. Backend-specific modules
+use the focused modules for preprocessing, checkpoint handling, and the other
+shared definitions.
+
+```python
+from canvit_core import CanViTConfig
+
+config = CanViTConfig()
+```
 
 ## Develop from a checkout
 
@@ -18,6 +35,6 @@ cd canvit-core
 uv sync
 ```
 
-From the repository checkout, dependent packages resolve `canvit-core` through
-a local `uv` source. Direct installation from an index or a Git subdirectory
-requires a published `canvit-core` distribution.
+The repository's backend projects resolve this directory through their local
+`uv` sources. An index or Git installation resolves the published
+`canvit-core` distribution instead.

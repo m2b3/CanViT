@@ -33,12 +33,15 @@ ADE_TABLE_GRIDS = (32, 64)
 SWEEP_GRIDS = (8, 16, 32, 64)
 ADE_TABLE_TIMESTEPS = (0, 1, 2, 3, 4, 9, 16, 20)
 IN1K_TABLE_TIMESTEPS = (0, 1, 2, 3, 4, 5, 9, 15, 20)
-# (macro, policy, canvas grid, timestep): read by the project page, not by the paper.
+# (macro, policy, canvas grid, timestep): read by the project page and the talks (site/), not by the paper.
 PAGE_POINTS = (
     ("adeCTFTZero", "coarse_to_fine", 32, 0),
     ("adeCTFCSixFourTZero", "coarse_to_fine", 64, 0),
     ("adeCTFCSixFourTTwenty", "coarse_to_fine", 64, 20),
     ("adeECTFCSixFourTTwenty", "entropy_coarse_to_fine", 64, 20),
+    ("adeFIIDCSixFourTTwenty", "full_then_random", 64, 20),
+    ("adeRIIDCSixFourTTwenty", "random", 64, 20),
+    ("adeFTCCSixFourTTwenty", "fine_to_coarse", 64, 20),
 )
 
 # The prose cites rows of tab:ablations by letter, so this order is a contract with the manuscript.

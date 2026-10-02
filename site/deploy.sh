@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Publish the project page to https://m2b3.github.io/CanViT/: the page's files, the talks under slides/ and the
-# recorded data they load (record_bundles.sh, data/talk) become the only commit of the gh-pages branch, which GitHub
-# Pages serves. Recorded data are generated and never committed to main; replacing gh-pages at every deploy keeps them
-# out of all history. A talk ships its committed files except its notes (Markdown) and working pages (names starting
-# with _).
+# Publish the project page to https://m2b3.github.io/CanViT/: the page's files, the talks under slides/, the recorded
+# bundles they load (record_bundles.sh) and the files of data/talk the talks name (their experiments write them) become
+# the only commit of the gh-pages branch, which GitHub Pages serves. Recorded data are generated and never committed
+# to main; replacing gh-pages at every deploy keeps them out of all history. A talk ships its committed files except
+# its notes (Markdown), working pages (names starting with _) and the experiments that compute its data
+# (experiments/).
 #
 #   bash site/deploy.sh          # check and stage the page, list what would be published
 #   bash site/deploy.sh --push   # publish
@@ -17,10 +18,13 @@ python3 site/check_paper_numbers.py
 # own data, not a bundle.
 bundles=$(grep -ho 'data/[a-z0-9-]*' site/index.html site/slides/*/index.html | grep -v '^data/talk$' | sort -u)
 [ -n "$bundles" ] || { echo "site/index.html names no bundle under data/" >&2; exit 1; }
-talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$')
-if grep -q 'data/talk' site/slides/*/index.html; then
-  [ -d site/data/talk ] || { echo "site/data/talk is missing: the talks' throwaway exports write it" >&2; exit 1; }
-fi
+talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$|/experiments/')
+# The talks' own data: the files and directories under data/talk that their pages and scripts name (a trailing period
+# ends a sentence in a comment).
+talk_data=$(grep -ho 'data/talk/[A-Za-z0-9_./#-]*' site/slides/*/index.html site/slides/*/*.js | sed 's/\.$//' | sort -u)
+for path in $talk_data; do
+  [ -e "site/$path" ] || { echo "site/$path is missing: the talk's experiments/build_deck_data.sh writes it" >&2; exit 1; }
+done
 [ -f site/slides/node_modules/reveal.js/dist/reveal.mjs ] || { echo "reveal.js is missing: npm ci --prefix site/slides" >&2; exit 1; }
 for bundle in $bundles; do
   [ -f "site/$bundle/manifest.json" ] || { echo "site/$bundle is missing: run site/record_bundles.sh" >&2; exit 1; }
@@ -37,7 +41,7 @@ mkdir "$out/assets" && cp -RL site/assets/fonts site/assets/logos site/assets/pa
 mkdir -p "$out/slides/node_modules/reveal.js" && cp site/slides/deck.js site/slides/deck.css "$out/slides/"
 cp -R site/slides/node_modules/reveal.js/dist "$out/slides/node_modules/reveal.js/"
 for file in $talks; do mkdir -p "$out/$(dirname "${file#site/}")" && cp "$file" "$out/${file#site/}"; done
-[ ! -d site/data/talk ] || cp -R site/data/talk "$out/data/"
+for path in $talk_data; do mkdir -p "$out/$(dirname "$path")" && cp -R "site/$path" "$out/$(dirname "$path")/"; done
 find "$out" -type f | sed "s|^$out/||" | sort
 du -sh "$out"
 

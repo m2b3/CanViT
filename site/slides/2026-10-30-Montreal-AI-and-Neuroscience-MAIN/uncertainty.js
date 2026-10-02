@@ -1,4 +1,4 @@
-// The uncertainty slide's data, drawn from the export of throwaway/metacognition/export.py (a directory holding
+// The uncertainty slide's data, drawn from the export of experiments/metacognition/export.py (a directory holding
 // cells.json and tiles.json): rings on the scene at the most and least certain canvas cells, the class probabilities
 // at each as bars, and the four quadrants with the one EG-C2F visits next.
 
@@ -29,7 +29,8 @@ export async function drawUncertainty(section, dir) {
     const bars = section.querySelector(`.bars.${cell.kind}`);
     const rows = [...cell.top.slice(0, 4).map(({ class: name, p }) => [name, p]), ["other", cell.top.slice(4).reduce((s, { p }) => s + p, cell.p_rest)]];
     bars.innerHTML = `<p class="head">${ringLabels[cell.kind]}</p>` + rows.map(([name, p]) =>
-      `<div class="row"><span class="name">${name}</span><span class="bar" style="--p: ${p}"></span><span class="p">${Math.round(100 * p)}%</span></div>`).join("")
+      // Each bar at its printed percentage, so a 0% class draws no hairline.
+      `<div class="row"><span class="name">${name}</span><span class="bar" style="--p: ${Math.round(100 * p) / 100}"></span><span class="p">${Math.round(100 * p)}%</span></div>`).join("")
       + `<p class="entropy">entropy ${bits(cell.entropy_nats)} bits</p>`;
   }
 
@@ -42,5 +43,5 @@ export async function drawUncertainty(section, dir) {
   }
   section.querySelector(".quadrants").innerHTML = quadrants.map((q) =>
     `<span class="${q === highest ? "next" : ""}" style="left: ${(q.col - q.scale + 1) * 50}%; top: ${(q.row - q.scale + 1) * 50}%;`
-    + ` width: ${q.scale * 100}%; height: ${q.scale * 100}%">${bits(q.mean_entropy_nats)}</span>`).join("");
+    + ` width: ${q.scale * 100}%; height: ${q.scale * 100}%">${bits(q.mean_entropy_nats)}<small> bits</small></span>`).join("");
 }

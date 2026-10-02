@@ -2,7 +2,7 @@
 
 The talk slide by slide (`../AGENTS.md`, "Workflow"). The story, Yohaï's wording and the scoped claims are in
 `AGENTS.md`; the open work in `PLAN.md`. Each slide (by its title; its id in `index.html` where cited): where the title's wording comes from, what the screen shows
-and how it builds, what is said (notes, in Yohaï's voice), and its status: **ready**, **build** (the visual must be
+and how it builds, what is said, and its status: **ready**, **build** (the visual must be
 made from data we have), **data** (an export or experiment is missing), **decide** (the authors' call). **Must**
 lists what the slide has to show, say or carry across; **Could** what would be interesting or good to show as well
 (`../AGENTS.md`, "Workflow"); entries not yet split are being converted.
@@ -32,12 +32,14 @@ yet reviewed by the authors.
 
 ### Human vision is fundamentally active
 - **Title:** the UNIQUE application.
-- **Shows:** Yarbus 1967: an observer's scanpath over a face; the same painting under seven instructions.
+- **Shows:** first the street of the later slides, sharp only around a fixation that jumps from point to point,
+  blurrier with eccentricity (`<foveated-scene>`, `foveate.js`; the fixations chosen by hand, an illustration); then
+  Yarbus 1967 in its place: an observer's scanpath over a face; the same painting under seven instructions.
 - **Says:** "We have sharp central vision and blurry peripheral vision." We shift our gaze several times per second
   toward what matters, and where we look depends on what we are trying to do. It is sequential: strategic planning,
   evidence integrated across fixations in visual working memory, top-down recurrent feedback (the paper's three
   points and citations).
-- **Status:** ready. TODO (`PLAN.md`): a foveated scene, the fixation moving.
+- **Status:** ready.
 
 ## Knowledge of the world
 
@@ -45,15 +47,15 @@ yet reviewed by the authors.
 - **Title:** the UNIQUE application ("integrate information from multiple viewpoints into a coherent understanding");
   "Two glimpses of a table" was "dry and bad" [Yohaï, 2026-10-01]. "What about the space in between? No clue." is said.
 - **Shows,** click by click, on the conference room (ADE_val_00001271): the photograph; two glimpses at the two ends
-  of the table; a passive model's answer for each glimpse alone (DINOv3 ViT-B and its ADE20K probe), pasted where the
-  glimpse was taken, nothing elsewhere; then a ring with a question mark on the empty middle. The answer is said.
+  of the table; a passive model's answer for the far glimpse alone (DINOv3 ViT-B and its ADE20K probe), appearing over
+  its glimpse and flying to its place in an empty scene map; the same for the near glimpse; then a ring with a question
+  mark on the empty middle. The answer is said.
 - **Says:** "Suppose I see one corner of the table, then another corner. The naïve approach is to paste the
   understanding from here and paste the understanding from there. What about the space in between? No clue." You
-  know: more table, because you understand objects and you know the world. That knowledge also tells you where you
-  do not need to look.
+  know: more table, because you understand objects and you know the world.
 - **Sources:** `sources/cognition.md` (being verified): which cognitive-science work to cite for inference beyond
   what is sampled.
-- **Status:** ready, citations pending. TODO: the passive answers flying from each glimpse to the scene map.
+- **Status:** ready, citations pending.
 
 ### DINOv3 feature maps
 - **Title:** names what the slide shows (Yohaï's phrase for it); "We already know what good visual representations
@@ -146,8 +148,10 @@ yet reviewed by the authors.
   crop and the glimpse; CanViT; the canvas after the first glimpse, as features (PCA colors) [Yohaï, 2026-10-01:
   "START WITH FEATURES, not segmentation map"]; then everything, the rollout playing on from the first glimpse with
   nothing redrawn [Yohaï: "ensure that there is no flickering from the gradual-reveal to the beginning of actually
-  running the animation (canvas full then empty then full again)"]; last, the canvas read out as segmentation, its
-  largest classes named.
+  running the animation (canvas full then empty then full again)"]; the canvas read out as segmentation, its
+  largest classes named; last, the episode shrinks left and DINOv3 ViT-B's segmentation of the same scene, seen whole
+  at 128 px (one glimpse's pixels, 8 × 8 patches), appears beside it with its pixel accuracy [Yohaï, 2026-10-01:
+  "contrast with simply having dinov3 128px full scene"].
 - **Says:** a viewpoint is a position and a scale; the glimpse is its crop at 128 px, all the model gets ("a world of
   difference between seeing something blurry and seeing nothing at all"); CanViT writes what it understood into the
   canvas, a memory of the whole scene; "It takes glimpses and gradually paints its understanding."
@@ -199,7 +203,7 @@ yet reviewed by the authors.
   gets better"]; row labels "Prediction", "MSE", "Target" [Yohaï]; per-patch heatmaps `loss-<t>.png` exist if the authors prefer them), the target
   (DINOv3 on the whole scene) repeated in every column; the canvas carried from logo to logo by a straight arrow. The
   first column; then its target and error; then a column per click, its rows in order from input to output.
-- **Data:** `throwaway/distillation/training_step.py` writes `steps.json` (viewpoints, the pretraining patch loss after
+- **Data:** `experiments/distillation/training_step.py` writes `steps.json` (viewpoints, the pretraining patch loss after
   each glimpse, and the loss of a prediction of the average target), which `distillation.js` puts on the slide.
 - **Says:** "We already know what good visual representations look like." "Wherever the model was looking, and at
   whatever zoom, it should be able to produce its best guess about the entire scene." Separate the architecture from
@@ -235,7 +239,7 @@ yet reviewed by the authors.
   cars, a kitchen, a living room), well photographed; three objects of distinct, nameable classes, each needing its own
   glimpse and recognized confidently after it; glimpses mostly disjoint; after the last glimpse, the kept canvas shows
   all three with readable shapes and the reset canvas only the last.
-- **Chosen** (2026-10-01, `throwaway/memory_reset/trio_*`, `AGENTS.md`): ADE_val_00000836, a street: a shop sign,
+- **Chosen** (2026-10-01, `experiments/memory`, `AGENTS.md`): ADE_val_00000836, a street: a shop sign,
   people walking, a bicycle; alternative ADE_val_00001182, a bedroom (lamp, towels, painting), cleaner numbers, less
   lively.
 - **Builds:** each class's probability in its own color over the dimmed scene, a glimpse per click: the first object
@@ -262,13 +266,13 @@ yet reviewed by the authors.
   one, 0.19 for the full scene twice, over 4,151 small objects).
 - **Example properties** [stated 2026-10-01]: an object everyone names; a few pixels in the full-scene glimpse; the
   model's p(class) near zero after it and high after the zoom, with few false positives; a scene read at a glance.
-  Chosen: ADE_val_00001715, a television in a billiard room (p 0.03 → 0.77; `throwaway/looking_closer`, ranked over
+  Chosen: ADE_val_00001715, a television in a billiard room (p 0.03 → 0.77; `experiments/looking_closer`, ranked over
   all qualifying objects; runners-up: a basket of soaps, ADE_val_00001081; bottles on a counter, ADE_val_00000439).
 - **Builds:** the scene; its full-scene glimpse as the model receives it (128 px, hard nearest), p(television)
   following on the same click, dark; the input zooms into the zoomed glimpse's box, showing the few pixels it had of
   the television; the zoomed glimpse replaces it at the same framing and p(television) lights up on the same click.
   Last, DINOv3 ViT-B's p(television) from the whole scene at 128 px with its released 128 px probe: dark (mean 0.004
-  over the object; CanViT 0.03 after the full-scene glimpse, 0.77 after the zoom; `throwaway/looking_closer/dinov3_full.py`).
+  over the object; CanViT 0.03 after the full-scene glimpse, 0.77 after the zoom; `experiments/looking_closer/dinov3_whole_scene.py`).
   The model's answer changes with its input, never on a click of its own [Yohaï, 2026-10-01: "please think through
   when things should update and how, i shouldnt need an additional right-arrow to make the probability map
   update"].
@@ -312,7 +316,7 @@ yet reviewed by the authors.
   highest, without reinforcement learning.
 - **Could:** the next glimpses one by one; AME's attention-map entropy as the precedent (said).
 - **Example:** the street of `#policies` after its first glimpse (continuity with the race); the surest and least
-  sure canvas cells chosen by entropy (`throwaway/metacognition`).
+  sure canvas cells chosen by entropy (`experiments/metacognition`).
 - **Status:** draft (built).
 
 ## Results
@@ -321,6 +325,9 @@ yet reviewed by the authors.
 - **Title:** the paper's Fig. 3 caption.
 - **Shows:** the history chart of `#history`, now with CanViT-B: 45.9% ADE20K mIoU (frozen, linear probe, C2F, 64²
   canvas) and 84.5% ImageNet-1k top-1 (fine-tuned), named in the chart's margin.
+- **Builds:** ImageNet-1k with CanViT-B's two results; then ADE20K with its result; then a dotted line at AME's level
+  and an arrow up to CanViT-B's 45.9, "+18.3" (the paper: "up from 27.6%"). ImageNet-1k gets no arrow: 2.3 points
+  over AdaptiveNN is about 30 px and crowds AdaptiveNN's point; it is in the notes.
 - **Status:** draft (the breakdown of results is still to settle, `PLAN.md`).
 
 ### Accuracy by viewing policy
@@ -347,7 +354,7 @@ yet reviewed by the authors.
   without comparison points (what about other models? for example could be PEAK PERFORMANCE VS TRAINING
   COST/exaflops...)"].
 - **Shows:** one chart per benchmark, ImageNet-1k first, then ADE20K beside it: each active model's best accuracy
-  against its own training compute (EFLOPs, log), from `throwaway/training_cost/export.py`, which runs the rebuttal's
+  against its own training compute (EFLOPs, log), from `experiments/training_cost/export.py`, which runs the rebuttal's
   `training_flops.py` and adds CanViT-B's adaptation (ImageNet-1k fine-tuning 4.76 EFLOPs, the ADE20K probe 0.16)
   with the same formulas. ImageNet-1k: CanViT-B 55.3 frozen (81.1) and 60.1 fine-tuned (84.5); AdaGlimpse 62.9 to
   144.6 (77.5; its code and its paper differ on pretraining glimpses); AdaptiveNN 22.6 (82.2), counted from its code
@@ -410,8 +417,8 @@ yet reviewed by the authors.
   [Yohaï, 2026-10-01: "the point is to show them it's trivial to start using this"].
 - **Code** [Yohaï, 2026-10-01: "don't define both glimpses upfront, don't use a for loop, inline, and improve the viz /
   animation"; "NO LOOP PLEASE. ONE AFTER THE OTHER. DO NOT DEFINE BOTH UPFRONT."]: `quickstart.py`, the segmentation
-  model, each glimpse written where it is taken; it runs as shown (`throwaway/quickstart/export.py` executes it). The
-  second viewpoint, the left of the street, was chosen by `throwaway/quickstart/sweep.py`: it adds person and van.
+  model, each glimpse written where it is taken; it runs as shown (`experiments/quickstart/export.py` executes it). The
+  second viewpoint, the left of the street, was chosen by `experiments/quickstart/sweep.py`: it adds person and van.
 - **Builds:** `uv add canvit-pytorch` alone and large; the code; a band walks through it: the model, the scene and
   state (the street appears), the first glimpse (its box, then `logits.argmax(1)` with the class names), the second
   (its box, then the new map).

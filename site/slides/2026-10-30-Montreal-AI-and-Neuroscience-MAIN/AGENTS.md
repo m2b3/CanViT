@@ -216,7 +216,7 @@ authors' data and the history data:
   BE REMOVED"]: it saw ten times more scenes than ImageNet-1k-trained models, but AdaGlimpse's pipeline saw 38 to
   150 billion glimpses against CanViT's 1 billion (the posted responses; Checked facts). Training compute is "comparable or
   lower" against AdaGlimpse only, and higher than AME's own task training.
-- Table corners [measured 2026-10-01, `throwaway/table_corners/run.log` and `examples.json`]: over 1,436 large
+- Table corners [measured 2026-10-01, `experiments/table_corners/sweep.py`]: over 1,436 large
   objects of ADE20K validation, after glimpses at both ends the canvas labels on average 65% of the unseen middle as
   the object (53% after one end), and it also labels as the object 46% of the other pixels in the band between the
   glimpses (mean; median 41%). The extrapolation is real and imprecise. The conference-table example was selected
@@ -256,9 +256,9 @@ authors' data and the history data:
 
 ## Checked facts
 
-What a session had to look up, with where it lives (`../AGENTS.md`). Paper: `~/code/CanViT-Toward-AVFMs/latex/
-CanViT_Toward_AVFMs.tex`, cited by section; its numbers are macros (`data.tex`, copied to
-`../../assets/paper/data_macros.json`).
+What a session had to look up, with where it lives (`../AGENTS.md`). Paper: `../../../paper/latex/
+CanViT_Toward_AVFMs.tex` (in this repository since 2026-10-01), cited by section; its numbers are macros
+(`../../../paper/latex/data.tex`), which the site reads through a link (`../../assets/paper/data_macros.json`).
 
 The paper [read 2026-10-01]:
 - §1: deep networks as models of biological vision cite Yamins 2014, Yamins & DiCarlo 2016, Schrimpf 2018, Zhuang
@@ -300,10 +300,10 @@ The paper [read 2026-10-01]:
 - App. H: about 2500 H100-equivalent hours for the whole project; the ImageNet-1k fine-tuning experiments together
   (failed runs, preliminary experiments and sweeps included) under 800 USD; the reported fine-tuning run under 15
   wall-clock hours on a TPU v6e-4.
-- Figure exports (SVG, PDF and their JSON data): `~/code/CanViT-Toward-AVFMs/latex/figures/exported/`;
-  `../../copy_paper_figures.sh` copies the ones the site shows into `../../assets/paper/`.
+- Figure exports: `../../../paper/exports/` (figures and their JSON data); `../../copy_paper_figures.sh` copies the
+  diagrams the site shows into `../../assets/paper/`; the JSON is linked.
 
-The rebuttal (`~/code/CanViT-Toward-AVFMs/rebuttal/DOSSIER.md`; results promised for the camera-ready, not yet in
+The rebuttal (`rebuttal/DOSSIER.md` in the paper's previous, private repository; results promised for the camera-ready, not yet in
 the paper's macros) [read 2026-10-01]:
 - "THE DINOv3-DISTILLED PAIR": CanViT and an AdaGlimpse-derived design, both pretrained 26,875 steps on the same
   precomputed DINOv3 ViT-B features, data, glimpse budget, optimizer and schedule, then probed alike (ADE20K, EG-C2F,
@@ -319,7 +319,7 @@ the paper's macros) [read 2026-10-01]:
 
 The posted responses and the decision (`rebuttal/response_drafts_2026-07-26/response_*.md`,
 `follow_up_drafts_2026_07_31/response_DjZB.md`, `ac_comment_2026-08-03/response_AC.md`,
-`../camera_ready/decision_2026-09-24.md`, all under `~/code/CanViT-Toward-AVFMs/`) [read 2026-10-01]; what reviewers
+`../camera_ready/decision_2026-09-24.md`, all in the paper's previous, private repository) [read 2026-10-01]; what reviewers
 received, so the talk may say it:
 - The reviewers' and the AC's central concerns: attribution (architecture against the DINOv3 teacher against the
   pretraining scale) and one-time offline cost (the 19 TiB feature cache, ImageNet-21k pretraining) against
@@ -361,21 +361,21 @@ received, so the talk may say it:
   task. For a scientist the training cost that follows is adapting it: a linear probe on frozen features, or LP-FT
   (the reported ImageNet-1k run under 15 wall-clock hours on a TPU v6e-4); never claim CanViT-B was cheaper to pretrain
   than every prior model.
-- CanViT-B's adaptation, counted with the rebuttal's formulas (`throwaway/training_cost/export.py`, run 2026-10-01):
+- CanViT-B's adaptation, counted with the rebuttal's formulas (`experiments/training_cost/export.py`, run 2026-10-01):
   ImageNet-1k LP-FT 4.76 EFLOPs (100,080 steps × 256 scenes × 4 glimpses, full BPTT, 32² canvas); the ADE20K probe
   at the 64² canvas 0.16 EFLOPs (40,000 steps × 16 × 10 glimpses, CanViT-B frozen). The pretraining run's average rate:
   52.5 EFLOPs over 166 h is 87.9 TFLOP/s, 8.9% of an H100 SXM's dense bf16 peak (11.6% for a PCIe H100; which variant
   ran is not recorded here).
 - The prior active models' own training compute, counted from their code, papers and released checkpoints under the
   rebuttal's conventions [a subagent, 2026-10-01, `sources/baseline-training-compute.md`, script
-  `throwaway/training_cost/baselines.py`]: AdaptiveNN-DeiT-S on ImageNet-1k 22.6 EFLOPs per training run (1.53 B
+  `experiments/training_cost/baselines.py`]: AdaptiveNN-DeiT-S on ImageNet-1k 22.6 EFLOPs per training run (1.53 B
   fixations of 112 px; its count reproduces the paper's inference-cost curve within 1.3%, whose "GFLOPs" are
   multiply-adds; whether its 82.2 ± 0.12 averages five training runs is not determined); AdaGlimpse on ADE20K 83.7 to
   166.6 EFLOPs over pretraining, reconstruction and segmentation training (32.4 to 33.5 without the pretraining, which
   may come from "Beyond Grids", arXiv:2309.13353, by the same first author). Its segmentation glimpses of 48 px are 9
   patches, which corrects the rebuttal's note that its code always uses 4.
 - The uncertainty read out from the canvas tracks the segmentation's errors [measured 2026-10-01,
-  `throwaway/metacognition/calibration.py`, `../../data/talk/metacognition/calibration.json`]: over the 2,000 ADE20K
+  `experiments/metacognition/calibration.py`, `../../data/talk/metacognition/calibration.json`]: over the 2,000 ADE20K
   validation images (7.5 M labeled canvas cells, 64 × 64 canvas, each cell's decoded class against the annotation at
   its center), after the full-scene glimpse cell accuracy 77.9%, entropy tells wrong cells from right ones with an
   AUROC of 0.836 (mean 1.96 bits against 0.79), and accuracy falls from 99% in the surest tenth of cells to 37% in the
@@ -418,7 +418,7 @@ The code (`canvit-pytorch/`, by module and symbol) [read 2026-10-01]:
   `SmoothPath`).
 - URLs (paper, code, Hub, page): `canvit_pytorch.project`; `../../make_qr_codes.py` reads them.
 
-The machine [checked 2026-10-01]: `ADE20K_ROOT=/Users/yberreby/datasets/ADEChallengeData2016` is not set in the
+The machine [checked 2026-10-01]: `ADE20K_ROOT` (the ADEChallengeData2016 directory) is not set in the
 shell, pass it; the Hugging Face cache holds every released checkpoint and probe and DINOv3 ViT-S/B; MPS inference
 matches CPU (relative L2 5e-6, identical argmax; `throwaway/bench_episode.log`); the disk is nearly full (under
 1 GB free on 2026-10-01).
@@ -432,14 +432,12 @@ each glimpse, 0.038 when the object's own glimpse is skipped. Among objects reco
 
 Display of maps [Yohaï, 2026-10-01: "i do like the nearest viz"]: probability and feature maps are drawn per canvas
 cell or patch, repeated over its pixels (nearest neighbor), and the deck renders them with `img.pixels` (hard nearest
-when scaled). The table panels are redrawn with
-`uv run --project ../../canvit-pytorch python plot.py exports/ADE_val_00001271-table.npz --cmap inferno --size 640
---panels scene truth dinov3 prob_dinov3 a b ab prob_a prob_b prob_ab entropy_ab --separate ../../site/data/talk/table` from
-`throwaway/table_corners/` (and `--panels scene --box none --separate ../../site/data/talk/table-clean`). `--logits-upsampling bilinear` gives the smooth
-version (the paper's evaluation); both stay available [Yohaï: "we shall see. keep both possible"].
+when scaled). The table panels are drawn by the `table_corners` step of `experiments/build_deck_data.sh`; the plot's
+`--logits-upsampling bilinear` gives the smooth version (the paper's evaluation); both stay available [Yohaï: "we
+shall see. keep both possible"].
 
-Memory across three glimpses [measured 2026-10-01 by a subagent, `throwaway/memory_reset/trio_*` and their logs;
-numbers read from its report, not rerun]: 6,218 sequences of three objects of distinct classes in 442 ADE20K
+Memory across three glimpses [measured 2026-10-01 by a subagent; its sweep reproduced exactly the same day by
+`experiments/memory/sweep.py`; the numbers beyond the means were read from its report]: 6,218 sequences of three objects of distinct classes in 442 ADE20K
 validation images, one glimpse per object (box about half the glimpse), left to right; after the third glimpse, mean
 p over the first object's pixels 0.410 kept against 0.041 reset, the second's 0.451 against 0.042. Good examples sit
 above the 95th percentile of the weakest kept object (median 0.073). The left-to-right order flatters the chosen
@@ -448,10 +446,11 @@ the current object scores 0.048 lower with the canvas kept than alone (unexplain
 ADE_val_00000836 (shop sign 0.91 / 0.90 / 0.04, person 0.76 / 0.68 / 0.06 after its glimpse / kept / reset), is below
 the strict bar for person; ADE_val_00001182 (a bedroom) meets it.
 
-Experiments behind slides (gitignored `throwaway/`, outputs under `../../data/talk/`): `table_corners/` (two
-glimpses at the ends of large ADE20K objects; `run.log` has the averages), `distillation/` (DINOv3 features of a
-scene and CanViT's prediction of them after each glimpse; `export.log` has the cosine similarity per glimpse),
-`looking_closer/` (small objects found by a zoomed second glimpse).
+Experiments behind slides: `experiments/`, a package per experiment, each step run from this directory as
+`python -m experiments.<experiment>.<step>` in the canvit-pytorch environment (`training_cost` in
+`../../../paper/exporter`'s); the sweeps write to `../../.experiments/` (ignored by git), the exports the deck loads to
+`../../data/talk/` (deployed, never committed). `experiments/build_deck_data.sh` reruns them all, or the named ones,
+with the examples the slides show.
 
 ## Decisions
 

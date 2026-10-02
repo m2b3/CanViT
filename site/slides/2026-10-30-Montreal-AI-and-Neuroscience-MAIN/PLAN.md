@@ -75,12 +75,11 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] `#history`: "send codex on a mission to investigate missing data on these, also the labelling
   scheme is still not great not great at all". Labels redone 2026-10-01 (no key; each passive line named at its end
   under one "Passive" heading, "linear decoding"; active models named at their points over "Active models"); awaiting
-  the authors' look. Codex (gpt-6-astra) audited the data
-  against primary sources (brief and outputs in `throwaway/history-audit/`) until the disk filled: REPORT.md covers
-  missing fields and the active entries; its sections on unverified leads and missing records are empty. Its seven
-  proposals (proposed_points.json) only fill fields from official code (test resolutions of SimCLR, MoCo v3, EsViT,
-  GFNet; DPT-Hybrid 98.2M parameters, base; Prisadnikov ViT-S size unknown); none changes a base-size line. To check
-  and merge; relaunch codex for leads and missing records once the disk has room.
+  the authors' look. Codex (gpt-6-astra) audited the data against primary sources until the disk filled: its
+  report covers missing fields and the active entries; its sections on unverified leads and missing records are
+  empty. Its seven field fills from official code were merged into `sources/sota-history.json` on 2026-10-01 (test
+  resolutions of SimCLR, MoCo v3, EsViT and two GFNets; DPT-Hybrid 98.2M parameters; Prisadnikov's size unknown);
+  none moves a drawn line. Open: relaunch it for leads and missing records.
 - [Yohaï, 2026-10-01] `#table`: "we're missing some kind of explanation of what the hell the colors correspond to...
   labels? probability map of tableness instead? would probably be clearer esp. because we havent introduced semseg
   yet." Done 2026-10-01: DINOv3's probability of table per glimpse, with a 0-to-1 scale; `#extrapolation` uses the
@@ -118,11 +117,14 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
   from the feature map to probability maps using our ade20k segmentation heads to show it is EASY to decode what's
   where from those features"; and "beware of OVERLAYS - they can confuse ... exploring both side by side / one after
   the other, and overlays". In progress: 1024 px input, PCs 2–4 clipped 2–98%, nearest neighbor
-  (`throwaway/foundation`); the released DINOv3 ViT-B ADE20K probe decodes television, fireplace, armchair.
+  (`experiments/foundation`); the released DINOv3 ViT-B ADE20K probe decodes television, fireplace, armchair.
 - [Yohaï, 2026-10-01] "when you show examples of canvit, contrast with simply having dinov3 128px full scene": beside
   CanViT's maps, DINOv3 ViT-B on the whole scene at 128 px (the same input budget as a glimpse; its released 128 px
   ADE20K probe, `hub.repos.released_dinov3_ade20k_probe("dv3b", input_size_px=128)`), on the rollout, extrapolation
-  and detail slides. On `#detail` (its last click); open on the rollout and extrapolation. The paper's numbers for the matched comparison (passive_comparison_rows: DINOv3 ViT-B at 128 px
+  and detail slides. Done on `#detail` and `#rollout` (each on its last click; `#rollout`'s follows the scene tabs,
+  `experiments/whole_scene_baseline`: pixel accuracy 72, 70, 41% against CanViT's 88, 78, 71% after 21 glimpses).
+  Not on `#extrapolation`: DINOv3 at 128 px sees the whole table, while the slide shows inference from its two ends;
+  the authors' call. The paper's numbers for the matched comparison (passive_comparison_rows: DINOv3 ViT-B at 128 px
   28.8 mIoU against CanViT-B's 29.3 to 39.6 from one full-scene glimpse) say why it matters.
 - [Yohaï, 2026-10-01] `#uncertainty`'s title: "terrible title for a slide. think of possible titles". Proposed
   "Uncertainty-based viewpoint selection" (on the slide), "Entropy-Guided Coarse-to-Fine", "Guiding viewpoint
@@ -154,13 +156,21 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] Reuse the well-received primitives of the September deck, ported (never imported): see
   "Components and deck primitives".
 - [Yohaï, 2026-10-01] Keep every TODO, known issue and request in this file.
+- [Yohaï, 2026-10-01] On the deck's data coming from gitignored `throwaway/` scripts: "time for you to read all the
+  throwaway scripts etc and begin with the easy version of having scripts committed alongside the website. for
+  refactoring, that affects the core package so we will see. also, beware of polluting the core-package API with
+  adhoc [stuff] - if something is justified and would genuinely make the package better, we can do it, but
+  otherwise..."; on the name `record_talk.sh`: "why [...] is this called 'record' anyway" (the scripts run
+  experiments; bundles are recordings). The easy version is done (2026-10-01): every experiment behind the deck is
+  committed in this talk's `experiments/` and reproduces the deployed data exactly; `experiments/build_deck_data.sh`
+  rebuilds `../../data/talk/`; the core package is untouched. Open: whether any of it moves into the core package
+  (the authors' call).
 
 ## Next
 
 - An independent cold read of the deck (2026-10-01, `sources/talk-review.md`), its precision fixes applied. Open:
-  - The neuroscience case closes only in the notes ("networks that got good at vision turned out to be good models of
-    the visual cortex; active models were never good enough to enter that comparison"); `#neuro-ai` could call back
-    the Brain-Score figure of `#tradition` on screen.
+  - The neuroscience case is not closed on screen: `#neuro-ai` could call back the Brain-Score figure of
+    `#tradition`.
   - "Metacognition" on `#uncertainty` was asserted; now measured (AUROC 0.84, 99% to 37% accuracy from the surest
     tenth of cells to the least sure), said on `#uncertainty` and drawn in Backup (`#calibration`). Whether the number
     belongs on `#uncertainty`'s screen is the authors' call.
@@ -211,9 +221,9 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 
 | Item | Slides | Diff. | Also | Status |
 |---|---|---|---|---|
-| Table corners: two glimpses at an object's ends, CanViT against DINOv3 per glimpse, over ADE20K validation (`throwaway/table_corners`); to graduate into `canvit_pytorch.viz` | `#table`, `#extrapolation` | S | page | done |
-| Distillation: DINOv3's features of a scene and CanViT's prediction after each glimpse (`throwaway/distillation`) | `#distillation` | S | page, paper | done |
-| Looking closer: small objects missed by a full-scene glimpse and found by a zoomed one (`throwaway/looking_closer`); to graduate into `canvit_pytorch.viz` | `#detail` | S | page | done |
+| Table corners: two glimpses at an object's ends, CanViT against DINOv3 per glimpse, over ADE20K validation (`experiments/table_corners`); to graduate into `canvit_pytorch.viz` | `#table`, `#extrapolation` | S | page | done |
+| Distillation: DINOv3's features of a scene and CanViT's prediction after each glimpse (`experiments/distillation`) | `#distillation` | S | page, paper | done |
+| Looking closer: small objects missed by a full-scene glimpse and found by a zoomed one (`experiments/looking_closer`); to graduate into `canvit_pytorch.viz` | `#detail` | S | page | done |
 | Teacher features of the conference room for the browser (similarity to a hovered patch, PCA, probe segmentation) | `#foundation` | M | page | todo |
 
 ## Components and deck primitives
@@ -221,8 +231,7 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 | Item | Slides | Diff. | Status |
 |---|---|---|---|
 | `shoot.py` checks: titles that wrap, content in the footer band (below 676 px), single words alone on a last line | all | S | todo |
-| The table demonstration animated: each glimpse's passive answer flying to its place in the scene map (stepped CSS, `--x0/--y0/--s0` to `--x1/--y1/--s1`) | `#table` | M | todo |
-| `<canvit-foveate>`: glimpses jumping over a periphery blurred by eccentricity, which fades to nothing on a click | `#human-vision`, `#rollout` | M | todo |
+| A periphery that fades to nothing on a click, from blurry to unseen (`<foveated-scene>` on `#human-vision` has the blur): "a world of difference between seeing something blurry and seeing nothing at all" | `#rollout` | S | todo |
 | `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
 | The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |
 | `<canvit-live>` laid out for a slide; one model session for every live slide | `#live` | M | todo |

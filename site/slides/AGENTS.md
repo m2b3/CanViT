@@ -17,7 +17,9 @@ FULLY UNDERSTAND. READ AND UNDERSTAND FIRST."
 - `YYYY-MM-DD-Event/`: one directory per talk: `AGENTS.md` (the talk's audience, framings, scoped claims and
   decisions), `OUTLINE.md` (the talk, slide by slide, designed before the slides), `index.html` (every slide, with
   speaker notes), `talk.css` (rules scoped by slide id), `PLAN.md` (the talk's open work, ranked), `sources/` (the
-  material it draws on) and any talk-only modules or assets.
+  material it draws on), `experiments/` (the experiments that compute the talk's data under `../data/talk/`,
+  rebuilt by its `build_deck_data.sh`; `deploy.sh` ships the data files the deck names, never the experiments) and any
+  talk-only modules or assets.
 
 Computing, exporting and plotting are separate steps [Yohaï, 2026-10-01]: an experiment writes its results as
 uncolored data (labels, probabilities, scalar maps, metrics, viewpoints) to files; figures and slides read those files
@@ -55,6 +57,9 @@ python3 site/check_paper_numbers.py
 [Yohaï, 2026-10-01] "in your slide-prep process, try to avoid collapsing nuance and ambiguity upfront, gather primary
 material and do things in such a way that it is easy for me and you to do quick back and forth on views into the
 data".
+
+A talk is developed on its own branch, which takes in `main` regularly [Yohaï, 2026-10-01: "rebase on top of, or
+merge, main regularly"].
 
 Every request of the authors that is not yet done goes into the talk's `PLAN.md` ("Open requests") the moment it
 arrives, in their words, before any work on it, and leaves only when it is done; requests survive the end of a
@@ -200,8 +205,10 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   is the title, the labels a visual cannot be read without, and the citation of another paper's figure. A caption
   that restates the visual, a takeaway line, a conditions line, and a citation of the authors' own paper go to the
   notes.
-- The takeaway is said, not written: speaker notes (`<aside class="notes">`) hold the spoken text, in full
-  sentences, and say only what the paper or a cited source supports.
+- Speaker notes (`<aside class="notes">`) are bullet points at most, without invented logical links, and only where
+  they help [Yohaï, 2026-10-01: "the speaker notes you wrote are [...] so please nuke them and replace with bullet
+  points at most without hallucinating logical links, and only if genuinely helpful"; then: "if you aren't sure about
+  something shut up instead of trying to come up with fancy sentences that are AI bullshit . and respect my voice"].
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../css/canvit.css`).
 - A figure from another paper is cited on the slide (`.cite`: authors, year, venue).
 - Animations play while their slide is shown and pause when it is left (`data-play`); a slide that builds

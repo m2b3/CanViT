@@ -7,7 +7,8 @@
 // stage introduces the loop part by part, each in its place: "scene" (the scene alone), "viewpoint" (with the first
 // glimpse's box), "glimpse" (the crop), "model" (CanViT), "canvas" (the canvas after the first glimpse), "all" (the
 // default: everything, and it plays). Before "all" it holds at the first glimpse and does not play; released to "all",
-// it plays on from that glimpse, so what the stages built stays on screen.
+// it plays on from that glimpse, so what the stages built stays on screen. When a scene is shown, its bundle's source
+// is `source` and a canvit-select event carries it (detail.source).
 
 import { ADE20K_PALETTE } from "./ade20k.js";
 import { loadBundle } from "./bundle.js";
@@ -259,6 +260,8 @@ class CanvitEpisode extends HTMLElement {
 
   get playing() { return this.#playing; }
 
+  get source() { return this.#source; }
+
   /** Play from the first glimpse, or on from it when a stage held it there. */
   restart() {
     if (this.#staged()) return;
@@ -354,6 +357,7 @@ class CanvitEpisode extends HTMLElement {
       this.#time = this.#staged() ? this.#held() : this.#wantsAutoplay() ? 0 : this.#schedule.total;
       this.#renderPlayButton();
       this.#draw();
+      this.dispatchEvent(new CustomEvent("canvit-select", { detail: { source } }));
     } catch (error) {
       this.shadowRoot.querySelector(".flow").outerHTML = `<div class="error">${error.message}</div>`;
       throw error;

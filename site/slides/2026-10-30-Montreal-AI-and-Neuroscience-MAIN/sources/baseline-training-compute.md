@@ -1,4 +1,4 @@
-[Counted by a Claude Code subagent on 2026-10-01 from AdaptiveNN's and AdaGlimpse's code, papers and released checkpoints, under the rebuttal's conventions (training_flops.py); the script is throwaway/training_cost/baselines.py. Not reviewed by the authors.]
+[Counted by a Claude Code subagent on 2026-10-01 from AdaptiveNN's and AdaGlimpse's code, papers and released checkpoints, under the rebuttal's conventions (training_flops.py); the script is experiments/training_cost/baselines.py in the talk. Not reviewed by the authors.]
 
 # Training compute of two prior active-vision models (2026-10-01)
 
@@ -7,7 +7,7 @@ Scope: own training compute behind AdaptiveNN-DeiT-S at 82.2% ImageNet-1k top-1,
 - AdaptiveNN: "Emulating Human-like Adaptive Vision for Efficient and Flexible Machine Visual Perception" (Wang, Yue, Yue et al., Nature Machine Intelligence 2025, arXiv:2509.15333). It trains a glance network plus a fixation ("focus") network with a PPO-trained fixation policy.
 - AdaGlimpse: "AdaGlimpse: Active Visual Exploration with Arbitrary Glimpse Position and Scale" (Pardyl, Wronka, Wołczyk, Adamczewski, Trzciński, Zieliński, ECCV 2024, arXiv:2404.03482). It is a ViT-B encoder over accumulated glimpse patches, with an MAE-style decoder and a Soft Actor-Critic (SAC) agent that picks glimpse position and scale.
 
-Reproduce: `uv run --no-sync --project ~/code/CanViT-paper-exporter python -u /Users/yberreby/.claude/jobs/2e07edf0/tmp/baseline_training_flops.py` (output saved in `/Users/yberreby/.claude/jobs/2e07edf0/tmp/baseline_training_flops.log`). Teacher measurement: `deeplab_teacher_flops.py` in the same directory.
+Reproduce, from the talk's directory: `uv run --project ../../../paper/exporter python -u -m experiments.training_cost.baselines`. Teacher measurement: `experiments/training_cost/deeplab_teacher_flops.py`.
 
 ## Results
 
@@ -25,14 +25,14 @@ Training glimpse counts:
 
 ## Conventions
 
-These follow `~/code/CanViT-Toward-AVFMs/rebuttal/training_flops.py`:
+These follow the rebuttal's `training_flops.py`, whose accounting the talk carries in `experiments/training_cost/accounting.py`:
 - 1 MAC = 2 FLOPs.
 - Backward = 2 × forward for every part a loss backpropagates through; frozen parts are forward only.
 - Pretrained weights and teachers a system starts from are excluded. A teacher run online during training has its forwards counted.
 - Per-forward costs come from `canvit_paper_exporter.flops.primitives` (`vit_block`, `linear`, `patch_embed`, `conv2d`). These count matmul and conv FLOPs only; LayerNorm, softmax, GELU, interpolation and `grid_sample` are excluded.
 - Validation forwards and hyperparameter search are excluded and reported separately where computable.
 
-Code anchors: AdaptiveNN at `~/code/AdaptiveNN @ ba508e6`. For AdaGlimpse, the upstream state is `e5f37fd` (Adam Pardyl, 2024-07-30). `~/code/AdaGlimpse` is the m2b3 fork, whose later commits change only import paths, timing hooks and eval exploration mode; files were read from `git show e5f37fd:<path>`. Paper anchors: AdaptiveNN `~/code/AdaptiveNN/2509.15333v1.txt:<line>`. AdaGlimpse arXiv e-print extracted to `/Users/yberreby/.claude/jobs/2e07edf0/tmp/adaglimpse_src/` (`main.tex:<line>`, `tables_sup/hyperparams.tex:<line>`).
+Code anchors: AdaptiveNN's repository at `ba508e6`. For AdaGlimpse, the upstream state is `e5f37fd` (Adam Pardyl, 2024-07-30). The m2b3 fork of AdaGlimpse, whose later commits change only import paths, timing hooks and eval exploration mode; files were read from `git show e5f37fd:<path>`. Paper anchors: AdaptiveNN, lines of the text of arXiv:2509.15333v1. AdaGlimpse, its arXiv e-print's sources, extracted to a session scratchpad (not kept) (`main.tex:<line>`, `tables_sup/hyperparams.tex:<line>`).
 
 ---
 
@@ -119,7 +119,7 @@ The paper (`main.tex:326`) says: "In segmentation experiments we fine-tune a mod
 - **B.** Reconstruction RL training on ImageNet-1k (the paper trains reconstruction on ImageNet-1k only, `main.tex:361`).
 - **C.** Segmentation fine-tuning on ADE20K.
 
-No segmentation checkpoint is released. The Hugging Face repo `apardyl/AdaGlimpse` holds two reconstruction checkpoints and one classification checkpoint. I read their pickled headers (training arguments and loop state) by HTTP range request, without downloading the weights; the script is `/Users/yberreby/.claude/jobs/2e07edf0/tmp/read_remote_ckpt_header.py` and the outputs are the `hdr_*.log` and `loops_*.log` files in that directory.
+No segmentation checkpoint is released. The Hugging Face repo `apardyl/AdaGlimpse` holds two reconstruction checkpoints and one classification checkpoint. I read their pickled headers (training arguments and loop state) by HTTP range request, without downloading the weights; the script and its outputs were in a session scratchpad (not kept).
 
 ### Glimpse size and patches per glimpse
 

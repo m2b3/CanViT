@@ -273,7 +273,6 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 | `<canvit-features>`: similarity to the hovered patch, PCA colors, the probe's segmentation | `#foundation` | M | todo |
 | The architecture built click by click, pulses along read and write arrows (SVG `animateMotion`), real tokens from a bundle | `#architecture` | M | todo |
 | `<canvit-live>` laid out for a slide; one model session for every live slide | `#live` | M | todo |
-| Canvases sized from their displayed size, sharp when the deck scales (episode, mosaic) | all | S | todo |
 
 ## Logistics
 

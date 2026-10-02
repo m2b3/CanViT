@@ -21,7 +21,8 @@ bundles=$(grep -ho 'data/[a-z0-9-]*' site/index.html site/slides/*/index.html | 
 talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$|/experiments/')
 # The talks' own data: the files and directories under data/talk that their pages and scripts name (a trailing period
 # ends a sentence in a comment).
-talk_data=$(grep -ho 'data/talk/[A-Za-z0-9_./#-]*' site/slides/*/index.html site/slides/*/*.js | sed 's/\.$//' | sort -u)
+talk_data=$(grep -ho 'data/talk/[A-Za-z0-9_./#-]*' site/slides/[0-9][0-9][0-9][0-9]-*/index.html \
+  site/slides/[0-9][0-9][0-9][0-9]-*/*.js | sed 's/\.$//' | sort -u)
 for path in $talk_data; do
   [ -e "site/$path" ] || { echo "site/$path is missing: the talk's experiments/build_deck_data.sh writes it" >&2; exit 1; }
 done

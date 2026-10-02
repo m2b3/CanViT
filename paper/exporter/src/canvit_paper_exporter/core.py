@@ -5,8 +5,9 @@ import subprocess
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PosixPath
 
+import torch
 from matplotlib.figure import Figure as MplFigure
 
 from canvit_paper_exporter import paths
@@ -43,6 +44,13 @@ def write_json(path: Path, payload: dict) -> None:
 
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text())
+
+
+# Evaluation results load without running pickled code. Their metadata records paths as
+# PosixPath, the one type they hold beyond tensors and builtins.
+def load_result(path: Path) -> dict:
+    with torch.serialization.safe_globals([PosixPath]):
+        return torch.load(path, map_location="cpu", weights_only=True)
 
 
 def _fmt_elapsed(seconds: float) -> str:

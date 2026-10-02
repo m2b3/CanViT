@@ -4,12 +4,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
-import torch
 from canvit_pytorch.flops import dinov3_flops
 from canvit_pytorch.hub.repos import RELEASED_GLIMPSE_SIZE_PX
 
 from canvit_paper_exporter import paths
-from canvit_paper_exporter.core import Dataset
+from canvit_paper_exporter.core import Dataset, load_result
 from canvit_paper_exporter.flops.adaglimpse import adaglimpse_gflops
 from canvit_paper_exporter.flops.ame import ame_gflops
 from canvit_paper_exporter.flops.canvit import CANVIT_B, CANVIT_B_NAME, segmentation_glimpse_flops
@@ -65,7 +64,7 @@ def _cum_gflops(grid: int, n_timesteps: int) -> list[float]:
 def _summarise(key: PolicyKey, files: list[Path]) -> dict:
     curves: list[list[float]] = []
     for f in files:
-        r = torch.load(f, map_location="cpu", weights_only=False)
+        r = load_result(f)
         mious = r["mious"]
         T = len([k for k in mious if k.startswith("t")])
         curves.append([mious[f"t{t}"] for t in range(T)])
@@ -103,7 +102,7 @@ def _probe_table(seg_dir: Path) -> list[dict]:
         if mdv3 is not None:
             label = _DV3_MODELS[mdv3["variant"]]
             res = int(mdv3["res"])
-            r = torch.load(f, map_location="cpu", weights_only=False)
+            r = load_result(f)
             rows[f"{label}_{res}px"] = {
                 "model": label,
                 "input_px": res,
@@ -114,7 +113,7 @@ def _probe_table(seg_dir: Path) -> list[dict]:
         elif mcv is not None:
             scene = int(mcv["scene"])
             grid = int(mcv["grid"])
-            r = torch.load(f, map_location="cpu", weights_only=False)
+            r = load_result(f)
             rows[f"canvit_s{scene}_c{grid}"] = {
                 "model": f"{CANVIT_B_NAME} (t=0, full scene)",
                 "scene_size": scene,

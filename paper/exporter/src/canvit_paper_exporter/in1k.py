@@ -7,7 +7,7 @@ import numpy as np
 import torch
 
 from canvit_paper_exporter import paths
-from canvit_paper_exporter.core import Dataset
+from canvit_paper_exporter.core import Dataset, load_result
 from canvit_paper_exporter.stats import bootstrap_mean_ci
 from canvit_paper_exporter.style import POLICY_STYLES
 
@@ -66,7 +66,7 @@ def _compute_mode(data_dir: Path) -> dict:
 
     grouped: dict[PolicyKey, list[dict]] = defaultdict(list)
     for path in sorted(data_dir.glob("in1k_*.pt")):
-        run = torch.load(path, map_location="cpu", weights_only=False)
+        run = load_result(path)
         grouped[_key(path)].append(run)
 
     assert grouped, f"No in1k_*.pt files in {data_dir}"

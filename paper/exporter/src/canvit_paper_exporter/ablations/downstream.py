@@ -7,10 +7,10 @@ from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
-import torch
 from canvit_pytorch.policies import POLICIES
 
 from canvit_paper_exporter.ablations.registry import BASELINE, BY_SLUG
+from canvit_paper_exporter.core import load_result
 from canvit_paper_exporter.stats import bootstrap_per_column
 
 _SLUG_ALTERNATIVES = "|".join(re.escape(s) for s in sorted(BY_SLUG, key=len, reverse=True))
@@ -59,7 +59,7 @@ def _stochastic_n_runs(grouped: dict[tuple[str, str], list[Path]]) -> int | None
 def _summary(files: list[Path], *, curve_of: CurveOf, recorded_repos: RecordedRepos, expected: tuple[str, str]) -> dict:
     curves = []
     for path in files:
-        result = torch.load(path, map_location="cpu", weights_only=False)
+        result = load_result(path)
         repos = recorded_repos(result)
         assert repos == expected, f"{path.name}: evaluated (model, probe) {repos}, expected {expected}"
         curves.append(curve_of(result))

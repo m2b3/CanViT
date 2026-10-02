@@ -1,4 +1,4 @@
-// The distillation slide's numbers, from throwaway/distillation/training_step.py's steps.json: under each glimpse its
+// The distillation slide's numbers, from experiments/distillation/training_step.py's steps.json: under each glimpse its
 // viewpoint (x, y, scale), and between prediction and target the pretraining loss (mean squared error) after it,
 // colored from orange (the loss of predicting the average target everywhere) to green (no error).
 

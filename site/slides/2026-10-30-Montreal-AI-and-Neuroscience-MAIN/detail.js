@@ -1,4 +1,4 @@
-// The detail slide's geometry, from the export's meta.json (throwaway/looking_closer/plot.py): the zoomed viewpoint's
+// The detail slide's geometry, from the export's meta.json (experiments/looking_closer/plot.py): the zoomed viewpoint's
 // box and the object's box, as CSS variables in fractions of the scene, and the class name in its captions.
 
 export async function drawDetail(section, dir) {

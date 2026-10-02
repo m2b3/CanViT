@@ -1030,13 +1030,13 @@
       "date": "2020-02-13",
       "value": 74.2,
       "params_m": 94,
-      "test_px": null,
+      "test_px": 224,
       "pretraining": "none",
       "venue": "ICML 2020",
       "citation": "Chen, Kornblith, Norouzi & Hinton 2020, A Simple Framework for Contrastive Learning of Visual Representations",
       "url": "https://arxiv.org/abs/2002.05709",
       "where": "Table 6 of arXiv v1",
-      "notes": "Convnet; self-supervised on ImageNet-1k without labels; linear classifier on the frozen ResNet output. Earlier base-size results in the same table are lower (BigBiGAN RevNet-50 4x, 86M, 61.3; CPC v2 ResNet-50 63.8)."
+      "notes": "Convnet; self-supervised on ImageNet-1k without labels; linear classifier on the frozen ResNet output. Earlier base-size results in the same table are lower (BigBiGAN RevNet-50 4x, 86M, 61.3; CPC v2 ResNet-50 63.8). Audit 2026-10-01 (official code): Official google-research/simclr README, ImageNet linear-evaluation command: --dataset=imagenet2012 --image_size=224 --eval_split=validation."
     },
     {
       "model": "BYOL ResNet-200 (1×)",
@@ -1064,13 +1064,13 @@
       "date": "2021-04-05",
       "value": 79.5,
       "params_m": 86,
-      "test_px": null,
+      "test_px": 224,
       "pretraining": "none",
       "venue": "ICCV 2021",
       "citation": "Chen, Xie & He 2021, An Empirical Study of Training Self-Supervised Vision Transformers",
       "url": "https://arxiv.org/abs/2104.02057",
       "where": "Figure 8 (table under the plot) of arXiv v1",
-      "notes": "ViT-B with BatchNorm in the MLP blocks and 7x7 patches (about 6x the FLOPs of ViT-B/16, same parameter count); self-supervised on ImageNet-1k; linear probe on frozen features. Standard ViT-B/16 with MoCo v3: 76.7 (Table 1)."
+      "notes": "ViT-B with BatchNorm in the MLP blocks and 7x7 patches (about 6x the FLOPs of ViT-B/16, same parameter count); self-supervised on ImageNet-1k; linear probe on frozen features. Standard ViT-B/16 with MoCo v3: 76.7 (Table 1). Audit 2026-10-01 (official code): Official facebookresearch/moco-v3 main_lincls.py validation transform: Resize(256), CenterCrop(224). Released evaluation protocol; exact BN-B/7 experiment checkpoint not independently matched."
     },
     {
       "model": "DINO ViT-B/8",
@@ -1098,13 +1098,13 @@
       "date": "2021-06-17",
       "value": 81.3,
       "params_m": 87,
-      "test_px": null,
+      "test_px": 224,
       "pretraining": "none",
       "venue": "ICLR 2022",
       "citation": "Li, Yang, Zhang, Gao, Xiao, Dai, Yuan & Gao 2021, Efficient Self-supervised Vision Transformers for Representation Learning",
       "url": "https://arxiv.org/abs/2106.09785",
       "where": "Table 1 of arXiv v1",
-      "notes": "Swin-B with window size 14; self-supervised on ImageNet-1k without labels; linear probe on the concatenated features of the last 4 layers. Unchanged in v2 (80.5 with the region-level loss only)."
+      "notes": "Swin-B with window size 14; self-supervised on ImageNet-1k without labels; linear probe on the concatenated features of the last 4 layers. Unchanged in v2 (80.5 with the region-level loss only). Audit 2026-10-01 (official code): Official microsoft/esvit eval_linear.py::eval_linear: validation Resize(256), CenterCrop(224)."
     },
     {
       "model": "DINOv2 ViT-g/14",
@@ -1247,7 +1247,7 @@
       "value": 79.8,
       "params_m": 37.41,
       "params_detail": "global (glance) encoder EfficientNet-B3 with its classifier 12.23M (its classifier gives the glance prediction) + local (focus) encoder EfficientNet-B3 without classifier 10.70M + cascaded linear classifiers fc_2..fc_4 13.83M + patch-proposal network 0.65M (1x1 conv 1536->32, FC 800->256, GRU 256, FC 2) = 37.41M for 144 px patches (37.33M for 128 px patches)",
-      "test_px": null,
+      "test_px": 300,
       "glimpse_px": 144,
       "glimpses": null,
       "inference_compute": "about 0.75 G multiply-adds per image on average (x-position of the point in Figure 4(c), read from the PDF vector data)",
@@ -1256,7 +1256,7 @@
       "citation": "Wang, Lv, Huang, Song, Yang & Huang 2020, Glance and Focus: a Dynamic Approach to Reducing Spatial Redundancy in Image Classification",
       "url": "https://arxiv.org/abs/2010.05300",
       "where": "Figure 4(c), highest point of the GFNet curve, read from the PDF's vector data (± 0.1)",
-      "notes": "Approximate (79.81 by interpolation between axis ticks); no table gives it. Budgeted batch classification, about 0.75 GMACs per image on average. Appendix Table 2: EfficientNet-B2/B3 with 128 or 144 px patches, T=4, initialised from ImageNet-pretrained EfficientNets. The TPAMI version redraws this curve at the same height (Figure 10(b), 'GFNet (two models)')."
+      "notes": "Approximate (79.81 by interpolation between axis ticks); no table gives it. Budgeted batch classification, about 0.75 GMACs per image on average. Appendix Table 2: EfficientNet-B2/B3 with 128 or 144 px patches, T=4, initialised from ImageNet-pretrained EfficientNets. The TPAMI version redraws this curve at the same height (Figure 10(b), 'GFNet (two models)'). Audit 2026-10-01 (official code): GFNet-Pytorch configs.py efficientnet_b3 image_size=300 and inference.py CenterCrop(image_size). Conditional on the input record’s inference that the top Figure 4(c) curve is B3/144; the figure does not label backbone variants separately."
     },
     {
       "model": "GF-EfficientNet-B2 (TPAMI version, 128 px patches, T=4)",
@@ -1268,7 +1268,7 @@
       "value": 77.93,
       "params_m": 30.06,
       "params_detail": "global (glance) encoder EfficientNet-B2 with its classifier 9.11M + local (focus) encoder EfficientNet-B2 without classifier 7.70M + cascaded linear classifiers fc_2..fc_4 12.68M + patch-proposal network 0.57M (1x1 conv 1408->32, FC 512->256, GRU 256, FC 2) = 30.06M",
-      "test_px": null,
+      "test_px": 260,
       "glimpse_px": 128,
       "glimpses": 4,
       "inference_compute": null,
@@ -1277,7 +1277,7 @@
       "citation": "Huang, Wang, Lv, Jiang, Huang, Qi & Song 2022, Glance and Focus Networks for Dynamic Visual Recognition",
       "url": "https://arxiv.org/abs/2201.03014",
       "where": "Table 2(c) of arXiv v1, contrastive reward, t=4 (77.95 ± 0.03 in v2, 2022-08-04)",
-      "notes": "Highest top-1 printed as a number in the TPAMI paper, measured after training stage II only. arXiv v1 prints 77.93; v2 prints 77.95 ± 0.03."
+      "notes": "Highest top-1 printed as a number in the TPAMI paper, measured after training stage II only. arXiv v1 prints 77.93; v2 prints 77.95 ± 0.03. Audit 2026-10-01 (official code): Official GFNet-Pytorch configs.py efficientnet_b2 image_size=260; inference.py validation CenterCrop(image_size), before 128-pixel glance/focus extraction."
     },
     {
       "model": "MS-GFNet (EfficientNet-B3, T=4), read from figure",
@@ -1430,7 +1430,7 @@
       "model": "Prisadnikov et al. (ViT-S, self-supervised, frozen + linear probe, learned policy)",
       "kind": "active",
       "series": "active",
-      "size_class": "base",
+      "size_class": null,
       "year": 2026,
       "date": "2026-04-22",
       "value": 75.0,
@@ -1445,7 +1445,7 @@
       "citation": "Prisadnikov, Paudel, Fu & Van Gool 2026, Self-supervised pretraining for an iterative image size agnostic vision transformer",
       "url": "https://arxiv.org/abs/2604.20392",
       "where": "Tables 1 and 2",
-      "notes": "Linear probe on frozen features after 8 glimpses; self-supervised on ImageNet-1k. Random gazes: 71.7%."
+      "notes": "Linear probe on frozen features after 8 glimpses; self-supervised on ImageNet-1k. Random gazes: 71.7%. Audit 2026-10-01 (official code): The schema requires the complete test-time system to be bounded. arXiv:2604.20392v1 Section 4 gives a ViT-S core and a 6-block policy but no policy width or complete count. The existing params_detail itself says total not computable; base cannot be established from the named core alone."
     },
     {
       "model": "PatchDrop (ResNet-50 classifier, ~7.9 of 16 patches)",
@@ -1887,7 +1887,7 @@
       "year": 2021,
       "date": "2021-03-24",
       "value": 49.02,
-      "params_m": null,
+      "params_m": 98.181952,
       "params_total_m": null,
       "test_px": 480,
       "pretraining": "ImageNet (1k or 21k not stated)",
@@ -1895,7 +1895,7 @@
       "citation": "Ranftl, Bochkovskiy & Koltun 2021, Vision Transformers for Dense Prediction",
       "url": "https://arxiv.org/abs/2103.13413",
       "where": "Table 4",
-      "notes": "Images resized to 520 px, trained on 480 x 480 crops, multi-scale inference; encoder initialised from ImageNet-pretrained weights.",
+      "notes": "Images resized to 520 px, trained on 480 x 480 crops, multi-scale inference; encoder initialised from ImageNet-pretrained weights. Audit 2026-10-01 (official code): Official DPT dpt/vit.py::_make_pretrained_vitb_rn50_384 -> timm 0.4.5 vit_base_resnet50_384, counted locally: 98,950,952 minus unused 769,000-parameter ImageNet head = 98,181,952. See count_dpt.py and count_dpt.log.",
       "protocol": "multi-scale"
     },
     {

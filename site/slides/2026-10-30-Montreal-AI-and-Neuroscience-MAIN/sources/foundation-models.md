@@ -9,7 +9,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
 
 - **Bommasani R. et al. 2021. On the Opportunities and Risks of Foundation Models.** Stanford CRFM report,
   arXiv:2108.07258. https://arxiv.org/abs/2108.07258. Zotero:
-  `/Users/yberreby/Zotero/storage/N7GN7YH4/Bommasani et al. - 2022 - On the Opportunities and Risks of Foundation Models.pdf`.
+  `Bommasani et al. - 2022 - On the Opportunities and Risks of Foundation Models.pdf`.
   Read: §1. Coins the term: "A foundation model is any model that is trained on broad data (generally using
   self-supervision at scale) that can be adapted (e.g., fine-tuned) to a wide range of downstream tasks; current
   examples include BERT, GPT-3, and CLIP." Two consequences: emergence ("the behavior of a system is implicitly
@@ -20,32 +20,32 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   (emergence and homogenization across 30 years of AI).
 - **Radford A. et al. 2021. Learning Transferable Visual Models From Natural Language Supervision (CLIP).** ICML 2021,
   PMLR 139:8748–8763, arXiv:2103.00020. https://proceedings.mlr.press/v139/radford21a.html. Zotero:
-  `/Users/yberreby/Zotero/storage/T6XC2XBR/Radford et al. - 2021 - Learning Transferable Visual Models From Natural Language Supervision.pdf`.
+  `Radford et al. - 2021 - Learning Transferable Visual Models From Natural Language Supervision.pdf`.
   Contrastive image–caption pretraining on 400 million pairs; language then names visual concepts for zero-shot
   transfer: "we match the accuracy of the original ResNet-50 on ImageNet zero-shot without needing to use any of
   the 1.28 million training examples it was trained on." Fig. 1 (the approach).
 - **Caron M. et al. 2021. Emerging Properties in Self-Supervised Vision Transformers (DINO).** ICCV 2021,
   arXiv:2104.14294. https://openaccess.thecvf.com/content/ICCV2021/html/Caron_Emerging_Properties_in_Self-Supervised_Vision_Transformers_ICCV_2021_paper.
-  Zotero: `/Users/yberreby/Zotero/storage/NC52HIB6/Caron et al. - 2021 - Emerging Properties in Self-Supervised Vision Transformers.pdf`.
+  Zotero: `Caron et al. - 2021 - Emerging Properties in Self-Supervised Vision Transformers.pdf`.
   Self-distillation without labels: "self-supervised ViT features contain explicit information about the semantic
   segmentation of an image, which does not emerge as clearly with supervised ViTs, nor with convnets"; 80.1%
   ImageNet top-1 with a linear probe on ViT-B. Fig. 1: attention maps of the [CLS] token outline objects, with no
   label ever given. A strong first slide for "what emerges".
 - **He K. et al. 2022. Masked Autoencoders Are Scalable Vision Learners (MAE).** CVPR 2022, arXiv:2111.06377.
   https://openaccess.thecvf.com/content/CVPR2022/html/He_Masked_Autoencoders_Are_Scalable_Vision_Learners_CVPR_2022_paper.
-  Zotero: `/Users/yberreby/Zotero/storage/4PY6QEAW/He et al. - 2022 - Masked Autoencoders Are Scalable Vision Learners.pdf`.
+  Zotero: `He et al. - 2022 - Masked Autoencoders Are Scalable Vision Learners.pdf`.
   Mask 75% of patches and reconstruct the pixels; the encoder sees only the visible patches. Relevant to active
   vision twice over: inferring unseen regions from a few seen ones is the glimpse problem, and the dense active
   models AME and AdaGlimpse use MAE-style decoders (CanViT paper, related work). Its features encode depth poorly
   (El Banani et al. 2024, below). Fig. 1 (architecture).
 - **Kirillov A. et al. 2023. Segment Anything (SAM).** ICCV 2023, arXiv:2304.02643.
   https://openaccess.thecvf.com/content/ICCV2023/html/Kirillov_Segment_Anything_ICCV_2023_paper.html.
-  Zotero: `/Users/yberreby/Zotero/storage/XW9THL7H/Kirillov et al. - 2023 - Segment Anything.pdf`. "We aim to build a
+  Zotero: `Kirillov et al. - 2023 - Segment Anything.pdf`. "We aim to build a
   foundation model for segmentation": a promptable model, trained on SA-1B (over 1 billion masks on 11 million
   images), that "can transfer zero-shot to new image distributions and tasks". Fig. 1 (task, model, data engine).
 - **Oquab M. et al. 2024. DINOv2: Learning Robust Visual Features without Supervision.** TMLR (PDF header 01/2024),
   arXiv:2304.07193. https://openreview.net/forum?id=a68SUt6zFt. Zotero:
-  `/Users/yberreby/Zotero/storage/F5SB9ASV/Oquab et al. - 2023 - DINOv2 Learning Robust Visual Features without Supervision.pdf`.
+  `Oquab et al. - 2023 - DINOv2 Learning Robust Visual Features without Supervision.pdf`.
   States the vision version of the paradigm: "general-purpose visual features, i.e., features that work across
   image distributions and tasks without finetuning", obtained by self-supervision "if trained on enough curated
   data from diverse sources"; a 1B-parameter ViT distilled into smaller models. Segmentation and monocular depth
@@ -53,7 +53,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   components of patch features: "Same parts are matched between related images despite changes of pose, style or
   even objects"), Fig. 7 (linear-probe depth and segmentation), Fig. 10 (part matching across images and domains).
 - **Siméoni O. et al. DINOv3.** arXiv:2508.10104 (2025); TMLR 2026 (the TMLR PDF header reads "04/2026").
-  https://openreview.net/forum?id=2NlGyqNjns. Zotero: `/Users/yberreby/Zotero/storage/YYYUHM2M/Siméoni et al. - 2026 - DINOv3.pdf`.
+  https://openreview.net/forum?id=2NlGyqNjns. Zotero: `Siméoni et al. - 2026 - DINOv3.pdf`.
   A 7B-parameter self-supervised teacher on a curated 1.7-billion-image set (LVD-1689M), distilled into a family of
   smaller models. Gram anchoring "addresses the known yet unsolved issue of dense feature maps degrading during
   long training schedules"; the result "outperforms the specialized state of the art across a broad range of
@@ -103,7 +103,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
 - **Bordes F., Garrido Q., Kao J.T., Williams A., Rabbat M., Dupoux E. 2025. IntPhys 2: Benchmarking Intuitive
   Physics Understanding In Complex Synthetic Environments.** arXiv:2506.09849 (preprint).
   https://arxiv.org/abs/2506.09849. Zotero:
-  `/Users/yberreby/Zotero/storage/I39PBJEQ/Bordes et al. - 2025 - IntPhys 2 Benchmarking Intuitive Physics Understanding In Complex Synthetic Environments.pdf`.
+  `Bordes et al. - 2025 - IntPhys 2 Benchmarking Intuitive Physics Understanding In Complex Synthetic Environments.pdf`.
   Same group, harder scenes: models face "significant challenges ... with most models performing at chance levels
   (50%), in stark contrast to human performance, which achieves near-perfect accuracy." Tension with Garrido et al.
 - **Punzo S. et al. 2026. How Do Video Foundation Models Encode Intuitive Physics? Probing Across Pretraining
@@ -113,13 +113,13 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   a statement about the readout as well as the representation.
 - **Assran M. et al. 2025. V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning.**
   arXiv:2506.09985. https://arxiv.org/abs/2506.09985. Zotero:
-  `/Users/yberreby/Zotero/storage/ME6DEP24/Assran et al. - 2025 - V-JEPA 2 Self-Supervised Video Models Enable Understanding, Prediction and Planning.pdf`.
+  `Assran et al. - 2025 - V-JEPA 2 Self-Supervised Video Models Enable Understanding, Prediction and Planning.pdf`.
   Pretrained on over 1 million hours of video; an action-conditioned version post-trained on under 62 hours of
   robot video plans pick-and-place zero-shot in new labs. The "world model" end of the foundation-model story; in
   the CanViT bibliography.
 - **Huh M., Cheung B., Wang T., Isola P. 2024. Position: The Platonic Representation Hypothesis.** ICML 2024, PMLR
   235, arXiv:2405.07987. https://proceedings.mlr.press/v235/huh24a.html. Zotero:
-  `/Users/yberreby/Zotero/storage/GBESHML4/Huh et al. - 2024 - Position The Platonic Representation Hypothesis.pdf`.
+  `Huh et al. - 2024 - Position The Platonic Representation Hypothesis.pdf`.
   "Neural networks, trained with different objectives on different data and modalities, are converging to a shared
   statistical model of reality in their representation spaces." Evidence: vision models' mutual-nearest-neighbour
   alignment rises with the number of VTAB tasks they solve (Fig. 2); vision–language alignment rises with language
@@ -135,7 +135,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
 
 - **Yamins D.L.K. et al. 2014. Performance-optimized hierarchical models predict neural responses in higher visual
   cortex.** PNAS 111(23):8619–8624, doi:10.1073/pnas.1403112111. https://www.pnas.org/doi/10.1073/pnas.1403112111.
-  Zotero: `/Users/yberreby/Zotero/storage/E2I8JPLR/Yamins et al. - 2014 - Performance-optimized hierarchical models predict .pdf`.
+  Zotero: `Yamins et al. - 2014 - Performance-optimized hierarchical models predict .pdf`.
   "Within a class of biologically plausible hierarchical neural network models, there is a strong correlation
   between a model's categorization performance and its ability to predict individual IT neural unit response
   data"; the top layer of the performance-optimized model predicts IT, its middle layers V4. Slide figure: Fig. 1
@@ -144,13 +144,13 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   model class, 2014-era performance levels.
 - **Schrimpf M. et al. 2018. Brain-Score: Which Artificial Neural Network for Object Recognition is most
   Brain-Like?** bioRxiv 407007, doi:10.1101/407007. https://www.biorxiv.org/content/10.1101/407007v1. Zotero:
-  `/Users/yberreby/Zotero/storage/L9VMUD5B/Schrimpf et al. - 2018 - Brain-Score Which Artificial Neural Network for O.pdf`.
+  `Schrimpf et al. - 2018 - Brain-Score Which Artificial Neural Network for O.pdf`.
   "Gains in ANN ImageNet performance led to gains on Brain-Score. However, correlation weakened at ≥ 70% top-1
   ImageNet performance"; smaller ANNs were more brain-like "than many of the best-performing ImageNet models".
   Slide figure: Fig. 1 (ImageNet top-1 against Brain-Score; the relation flattens for the newest models).
 - **Schrimpf M. et al. 2020. Integrative Benchmarking to Advance Neurally Mechanistic Models of Human
   Intelligence.** Neuron 108:413–423 (first page read; last page UNVERIFIED), doi:10.1016/j.neuron.2020.07.040.
-  Zotero: `/Users/yberreby/Zotero/storage/92QMDYQ3/Schrimpf et al. - 2020 - Integrative Benchmarking to Advance Neurally Mechanistic Models of Human Intelligence.pdf`.
+  Zotero: `Schrimpf et al. - 2020 - Integrative Benchmarking to Advance Neurally Mechanistic Models of Human Intelligence.pdf`.
   The programme: suites of neural and behavioural benchmarks that any model must answer. Fig. 3 draws the analogy:
   a shared evaluation on ImageNet "helped incentivize computer vision out of toy problems", and Brain-Score is
   meant to do the same for neuroscience.
@@ -159,7 +159,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   tops Brain-Score; "recurrence is the main predictive factor of both Brain-Score and ImageNet top-1 performance".
 - **Zhuang C. et al. 2021. Unsupervised neural network models of the ventral visual stream.** PNAS 118(3):e2014196118.
   https://www.pnas.org/doi/10.1073/pnas.2014196118. Zotero:
-  `/Users/yberreby/Zotero/storage/77FNAF2V/Zhuang et al. - 2021 - Unsupervised neural network models of the ventral .pdf`.
+  `Zhuang et al. - 2021 - Unsupervised neural network models of the ventral .pdf`.
   Contrastive self-supervised models "achieve neural prediction accuracy in multiple ventral visual cortical areas
   that equals or exceeds that of models derived using today's best supervised methods", even when trained on
   child head-camera video. Labels are not what makes a model brain-like.
@@ -197,7 +197,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
 - **Conwell C., Prince J.S., Kay K.N., Alvarez G.A., Konkle T. 2024. A large-scale examination of inductive biases
   shaping high-level visual representation in brains and machines.** Nature Communications 15:9383,
   doi:10.1038/s41467-024-53147-y. https://www.nature.com/articles/s41467-024-53147-y. Zotero:
-  `/Users/yberreby/Zotero/storage/EBJTZP6J/Conwell et al. - 2024 - A large-scale examination of inductive biases shaping high-level visual representation in brains and.pdf`.
+  `Conwell et al. - 2024 - A large-scale examination of inductive biases shaping high-level visual representation in brains and.pdf`.
   224 models against human occipitotemporal fMRI (Natural Scenes Dataset), over 1.8 billion regressions:
   architectures (CNN versus Transformer) and objectives (contrastive versus vision–language) "achieve near
   equivalent brain predictivity, when other factors are held constant"; "variation across visual training diets
@@ -207,7 +207,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   brains may be too flexible". Slide figure: Fig. 5C (top-1 accuracy against brain predictivity: a flat cloud).
 - **Conwell C., Bonner M.F. 2025. Model manifold analysis suggests the human visual brain is less like an optimal
   classifier and more like a feature bank.** NeurIPS 2025 workshop (DBM). https://openreview.net/forum?id=7ESqeV4vsV.
-  Zotero: `/Users/yberreby/Zotero/storage/CB8CHJY8/Conwell and Bonner - 2025 - Model manifold analysis suggests the human visual brain is less like an optimal classifier and more.pdf`.
+  Zotero: `Conwell and Bonner - 2025 - Model manifold analysis suggests the human visual brain is less like an optimal classifier and more.pdf`.
   Across 117 models, manifold signal-to-noise ratio predicts occipitotemporal alignment better than top-k
   recognition accuracy; the ventral stream looks like "a basis set (or feature vocabulary) for object recognition
   rather than ... the actual locus of recognition per se." Fits the foundation-model framing: a general feature
@@ -216,8 +216,8 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   Factors of Convergence between Brains and DINOv3.** ICLR 2026; arXiv:2508.18226 (2025) under the title
   "Disentangling the Factors of Convergence between Brains and Computer Vision Models".
   https://openreview.net/forum?id=i99ccgfad8, https://arxiv.org/abs/2508.18226. Zotero (ICLR version, read in
-  full): `/Users/yberreby/Zotero/storage/56KRKV5P/Raugel et al. - 2025 - Disentangling the Factors of Convergence between Brains and DINOv3.pdf`;
-  arXiv version: `/Users/yberreby/Zotero/storage/WETBWVXC/Raugel et al. - 2025 - Disentangling the Factors of Convergence between Brains and Computer Vision Models.pdf`.
+  full): `Raugel et al. - 2025 - Disentangling the Factors of Convergence between Brains and DINOv3.pdf`;
+  arXiv version: `Raugel et al. - 2025 - Disentangling the Factors of Convergence between Brains and Computer Vision Models.pdf`.
   What they did: trained DINOv3 models from scratch varying size (Small 21M to Giant 1.1B on 1.7B images, plus the
   7B model's training checkpoints) and image type (Large models on 10M human-centric, satellite or cell-microscopy
   images), and compared them by linear ridge encoding with 7T fMRI (Natural Scenes Dataset, 8 subjects) and MEG
@@ -242,7 +242,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   cortical properties).
 - **Raugel J. et al. 2026. Misalignment Between Backpropagation and the Hierarchy of Brain Responses to Images.**
   arXiv:2605.28693 (preprint). https://arxiv.org/abs/2605.28693. Zotero:
-  `/Users/yberreby/Zotero/storage/4K54G367/Raugel et al. - 2026 - Misalignment Between Backpropagation and the Hierarchy of Brain Responses to Images.pdf`.
+  `Raugel et al. - 2026 - Misalignment Between Backpropagation and the Hierarchy of Brain Responses to Images.pdf`.
   Backpropagated gradients of DINOv3 (and eight other models) predict fMRI and MEG in higher visual cortex and at
   later latencies, but their order and spatial layout diverge from the brain's hierarchy: "although deep networks
   and the brain may share similar representational content, they likely rely on fundamentally different
@@ -265,13 +265,13 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   human-aligned model on behaviour.
 - **Doerig A. et al. 2025. High-level visual representations in the human brain are aligned with large language
   models.** Nature Machine Intelligence 7:1220–1234, doi:10.1038/s42256-025-01072-0 (abstract via OpenAlex).
-  Zotero (preprint version): `/Users/yberreby/Zotero/storage/CK2EVG93/Doerig et al. - Visual representations in the human brain are alig.pdf`.
+  Zotero (preprint version): `Doerig et al. - Visual representations in the human brain are alig.pdf`.
   Networks trained to map images to LLM caption embeddings are "better aligned with brain representations than a
   large number of state-of-the-art alternative models, despite being trained on orders-of-magnitude less data."
   In this comparison the training objective, with far less data, produced the better brain model.
 - **Mahner F.P., Muttenthaler L., Güçlü U., Hebart M.N. 2025. Dimensions underlying the representational alignment
   of deep neural networks with humans.** Nature Machine Intelligence 7:848–859, doi:10.1038/s42256-025-01041-7.
-  Zotero: `/Users/yberreby/Zotero/storage/YF2VTKM4/Mahner et al. - 2025 - Dimensions underlying the representational alignment of deep neural networks with humans.pdf`.
+  Zotero: `Mahner et al. - 2025 - Dimensions underlying the representational alignment of deep neural networks with humans.pdf`.
   On odd-one-out judgements, a VGG-16 shows "a clear dominance of visual over semantic properties", unlike humans.
   An older network; useful for method, weaker for claims about foundation models.
 - **Bowers J.S. et al. 2023. Deep problems with neural network models of human vision.** Behavioral and Brain
@@ -304,7 +304,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   behaviour"; distinguishes statistical tools from computational models.
 - **Recht B., Roelofs R., Schmidt L., Shankar V. 2019. Do ImageNet Classifiers Generalize to ImageNet?** ICML 2019,
   arXiv:1902.10811. https://arxiv.org/abs/1902.10811. Zotero:
-  `/Users/yberreby/Zotero/storage/8ND6M75C/Recht et al. - 2019 - Do ImageNet Classifiers Generalize to ImageNet.pdf`.
+  `Recht et al. - 2019 - Do ImageNet Classifiers Generalize to ImageNet.pdf`.
   A re-collected test set costs 11–14 points of accuracy, yet "accuracy gains on the original test sets translate
   to larger gains on the new test sets" (slope 1.1 on ImageNet, Fig. 1). Evidence that benchmark progress was not
   overfitting to the test set. Slide figure: Fig. 1.
@@ -347,7 +347,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
 - **Rothkopf C.A., Bremmer F., Fiehler K., Dobs K., Triesch J. 2023. Models of vision need some action.** Behavioral
   and Brain Sciences 46:e405, doi:10.1017/S0140525X23001577 (commentary on Bowers et al.).
   https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/models-of-vision-need-some-action/5171353472045298D87828F4EE62C4F5.
-  Zotero (PsyArXiv version): `/Users/yberreby/Zotero/storage/6IUYHKIP/Rothkopf et al. - 2023 - Models of vision need some action.pdf`.
+  Zotero (PsyArXiv version): `Rothkopf et al. - 2023 - Models of vision need some action.pdf`.
   Bowers et al. "overlook a much more fundamental limitation of this literature: disregarding the importance of
   action and interaction for perception." Models should learn self-supervised from input structured by the
   observer's own actions; object recognition from shuffled photographs is "as if the whole goal of human vision
@@ -355,7 +355,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   the PsyArXiv version; the abstract matches the published record). In the CanViT bibliography.
 - **Killick G., Henderson P., Siebert P., Aragon-Camarasa G. 2023. Foveation in the Era of Deep Learning.** BMVC
   2023, arXiv:2312.01450. https://arxiv.org/abs/2312.01450. Zotero:
-  `/Users/yberreby/Zotero/storage/SEQ49YQS/Killick et al. - 2023 - Foveation in the Era of Deep Learning.pdf`.
+  `Killick et al. - 2023 - Foveation in the Era of Deep Learning.pdf`.
   A method paper despite the title. Its introduction states the two obstacles: foveated sensors "are not naturally
   amenable to standard convolution operators", and reinforcement learning for the attention policy brings "the
   difficulty of training systems with this method from scratch".
@@ -368,7 +368,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   pretrained passive network.
 - **Blauch N.M., Alvarez G.A., Konkle T. 2026. FOVI: A biologically-inspired foveated interface for deep vision
   models.** ICML 2026, arXiv:2602.03766. https://arxiv.org/abs/2602.03766. Zotero:
-  `/Users/yberreby/Zotero/storage/BQ3CXNZI/Blauch et al. - 2026 - FOVI A biologically-inspired foveated interface for deep vision models.pdf`.
+  `Blauch et al. - 2026 - FOVI A biologically-inspired foveated interface for deep vision models.pdf`.
   A retina- and V1-inspired sensor manifold; one use case is "a foveated adaptation of the DINOv3 ViT foundation
   model, leveraging low-rank adaptation", competitive "with a fraction of the pixels and computational cost".
   A foveated foundation model obtained by adapting DINOv3's own weights; CanViT instead distills DINOv3's features
@@ -376,7 +376,7 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
 - **Thorat S., Doerig A., Kroner A., Amme C., Kietzmann T.C. 2025. Predicting upcoming visual features during eye
   movements yields scene representations aligned with human visual cortex.** arXiv:2511.12715 (preprint).
   https://arxiv.org/abs/2511.12715. Zotero:
-  `/Users/yberreby/Zotero/storage/X3NTRHKJ/Thorat et al. - 2025 - Predicting upcoming visual features during eye movements yields scene representations aligned with h.pdf`.
+  `Thorat et al. - 2025 - Predicting upcoming visual features during eye movements yields scene representations aligned with h.pdf`.
   Glimpse Prediction Networks predict the embedding of the next glimpse, taken from a pretrained network
   (SimCLR ResNet-50; DINOv2 also tested), along human-like scanpaths over COCO. Recurrent variants integrate
   glimpses into a scene representation that aligns with 7T fMRI in mid and high-level visual cortex better than
@@ -390,19 +390,19 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   classification.
 - **Wang Y. et al. 2025. Emulating human-like adaptive vision for efficient and flexible machine visual perception
   (AdaptiveNN).** Nature Machine Intelligence 7:1804–1822, doi:10.1038/s42256-025-01130-7, arXiv:2509.15333.
-  Zotero: `/Users/yberreby/Zotero/storage/GC6BMI9C/Wang et al. - 2025 - Emulating Human-like Adaptive Vision for Efficient and Flexible Machine Visual Perception.pdf`.
+  Zotero: `Wang et al. - 2025 - Emulating Human-like Adaptive Vision for Efficient and Flexible Machine Visual Perception.pdf`.
   Coarse-to-fine fixations trained with self-rewarding reinforcement learning; "up to 28 times inference cost
   reduction without sacrificing accuracy" across 17 benchmarks. Already in the talk's citations.
 - **Kolner O., Ortner T., Woźniak S., Pantazi A. 2025. Mind the GAP: Glimpse-based Active Perception improves
   generalization and sample efficiency of visual reasoning.** ICLR 2025, arXiv:2409.20213. Zotero:
-  `/Users/yberreby/Zotero/storage/3CPNTKCN/Kolner et al. - 2025 - Mind the GAP Glimpse-based Active Perception improves generalization and sample efficiency of visua.pdf`.
+  `Kolner et al. - 2025 - Mind the GAP Glimpse-based Active Perception improves generalization and sample efficiency of visua.pdf`.
   Glimpse locations as a "where" signal improve relational reasoning and out-of-distribution generalization.
   Follow-up: **Kolner et al. 2026. Task-driven Processing with Coarse-to-Fine Glimpse-based Active Perception**,
-  arXiv:2609.09025 (preprint), Zotero `/Users/yberreby/Zotero/storage/GKP6HJQE/Kolner et al. - 2026 - Task-driven Processing with Coarse-to-Fine Glimpse-based Active Perception.pdf`:
+  arXiv:2609.09025 (preprint), Zotero `Kolner et al. - 2026 - Task-driven Processing with Coarse-to-Fine Glimpse-based Active Perception.pdf`:
   a glimpse front-end for existing detectors, up to 20% AP gain on high-resolution instance detection.
 - **Ebouky B. et al. 2026. GazeVLM: Active Vision via Internal Attention Control for Multimodal Reasoning.**
   arXiv:2605.07817 (preprint). Zotero:
-  `/Users/yberreby/Zotero/storage/Z668L7HR/Ebouky et al. - 2026 - GazeVLM Active Vision via Internal Attention Control for Multimodal Reasoning.pdf`.
+  `Ebouky et al. - 2026 - GazeVLM Active Vision via Internal Attention Control for Multimodal Reasoning.pdf`.
   A 4B vision–language model emits gaze tokens that bias its own attention toward a region; active vision inside a
   foundation model, trained with GRPO.
 - **Caccavella C. et al. 2026. Efficient Semantic Understanding from Digital Foveation.** ECCV 2026 workshop
@@ -410,14 +410,14 @@ against a primary source. Quotes are verbatim; numbers are the papers' own.
   foveated observation achieves 95.9% of the baseline Top-1 accuracy ... while requiring only 4.7% of the
   computational cost."
 - **Foveated tokenization for segmentation, both CVPR 2025 and in the CanViT bibliography**: Schmidt T., Newcombe
-  R. Segment This Thing (Zotero `/Users/yberreby/Zotero/storage/2FEC72JX/Schmidt and Newcombe - 2025 - Segment This Thing Foveated Tokenization for Efficient Point-Prompted Segmentation.pdf`):
+  R. Segment This Thing (Zotero `Schmidt and Newcombe - 2025 - Segment This Thing Foveated Tokenization for Efficient Point-Prompted Segmentation.pdf`):
   patches grow with distance from a point prompt, cutting tokens without shrinking the model. Zeng H. et al.
-  Foveated Instance Segmentation (Zotero `/Users/yberreby/Zotero/storage/7U69SSES/Zeng et al. - 2025 - Foveated Instance Segmentation.pdf`):
+  Foveated Instance Segmentation (Zotero `Zeng et al. - 2025 - Foveated Instance Segmentation.pdf`):
   segmentation restricted to the instance at the user's gaze, for AR/VR. Single-fixation and gaze-driven, not
   sequential models with memory.
 - **Pourrahimi M., Bashivan P. 2025. Emergent brain-like representations in a goal-directed neural network model of
   visual search.** bioRxiv, doi:10.1101/2025.06.06.658387. Zotero:
-  `/Users/yberreby/Zotero/storage/KKE2RR6D/Pourrahimi and Bashivan - 2025 - Emergent brain-like representations in a goal-directed neural network model of visual search.pdf`.
+  `Pourrahimi and Bashivan - 2025 - Emergent brain-like representations in a goal-directed neural network model of visual search.pdf`.
   A visual-search agent built on an ImageNet-pretrained CNN develops a retinocentric cue-similarity map and
   prospective fixation signals resembling fronto-parietal activity. In the CanViT bibliography (as "Neural
   signatures of associational cortex emerge in a goal-directed model of visual search").

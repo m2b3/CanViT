@@ -47,7 +47,7 @@ Notes on the selection:
 ## How this was assembled
 
 1. Read the CanViT paper's Introduction and Related work
-   (`/Users/yberreby/code/CanViT-Toward-AVFMs/latex/CanViT_Toward_AVFMs.tex`) and the `references.bib` entries it
+   (`paper/latex/CanViT_Toward_AVFMs.tex`) and the `references.bib` entries it
    cites for active vision; read `sota-history.md`, `citations.md` and `foundation-models.md` in this directory.
 2. Located PDFs in a copy of the Zotero database. RAM, DRAM, Saccader, GFNet, AdaGlimpse, AdaptiveNN, Bajcsy,
    Aloimonos et al., Rangrej & Clark 2021, GAE, TNet, DRAW and STN came from `~/Zotero/storage/`; STAM, AME,

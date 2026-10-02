@@ -1,5 +1,5 @@
 // <pretraining-rollout src="rollouts.json" scene="NAME" policy="random|full_then_random" [period] [hold]>: a scene
-// and the viewpoints the pretraining sampler drew for it (throwaway/pretraining/export.py), the boxes appearing one
+// and the viewpoints the pretraining sampler drew for it (experiments/pretraining/export.py), the boxes appearing one
 // by one in the policy's color from the paper's figures, the earlier ones fading, then starting over. play(), pause()
 // and restart() for data-play (deck.js).
 

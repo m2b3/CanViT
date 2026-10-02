@@ -300,7 +300,7 @@ stronger evidence for the knowledge claim than the table.
 
 ## 3. Figures
 
-Extracted to `/Users/yberreby/code/CanViT/site/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/assets/figures/`
+Extracted to `site/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/assets/figures/`
 (provenance rows in `PROVENANCE.md` there):
 
 - `intraub-richardson-1989-boundary-extension.png` (442×885 px): close-up photograph, a participant's drawing from

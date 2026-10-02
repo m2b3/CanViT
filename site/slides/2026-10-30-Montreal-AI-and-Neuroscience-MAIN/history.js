@@ -7,9 +7,10 @@
 // CanViT-B's from the paper's macros. The passive lines are the best base-size model trained end to end (a step line)
 // and the best base-size frozen self-supervised features (dashed); the active models are those of the timeline slide, each at its
 // paper's best number. A bracket marks the gap between the best active model and the frozen line. With data-canvit,
-// CanViT-B's points are added.
+// CanViT-B's points are added, and on a benchmark whose spec names a compared result, an arrow from the best active
+// model's level up to it (the paper: "up from 27.6%"), labeled with the gain.
 // Drawn into the light DOM so that a slide's CSS can build it: its groups carry the classes passive, frozen, active,
-// gap and canvit.
+// gap, canvit and gain.
 
 const SVG = "http://www.w3.org/2000/svg";
 const WIDTH = 1120, HEIGHT = 540, M = { left: 56, right: 250, top: 40, bottom: 40 };
@@ -21,7 +22,7 @@ const BENCHMARKS = {
               canvit: [{ macro: "inkFinetunedBest", label: "fine-tuned", filled: true },
                        { macro: "inkFrozenBest", label: "frozen", filled: false }] },
   ade20k: { key: "ade20k_miou", unit: "ADE20K mIoU (%)", years: [2016, END], range: [10, 70], step: 10,
-            canvit: [{ macro: "adeBestMiou", label: "frozen", filled: false }] },
+            canvit: [{ macro: "adeBestMiou", label: "frozen", filled: false, compared: true }] },
 };
 
 // Entries sota-history.md flags as unreproduced or as two-model systems; the frontier is drawn without them.
@@ -31,7 +32,7 @@ const ACTIVE = [
   { model: /^Saccader/, name: "Saccader", dx: -16, dy: 8, anchor: "end" },
   { model: /^GFNet/, name: "GFNet", dx: -16, dy: 8, anchor: "end" },
   { model: /^AdaGlimpse/, name: "AdaGlimpse", dx: 0, dy: 34, anchor: "middle" },
-  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: -16, dy: 8, anchor: "end" },
+  { model: /^AdaptiveNN/, name: "AdaptiveNN", dx: -10, dy: 30, anchor: "end" },
   { model: /^AME/, name: "AME", dx: 0, dy: 34, anchor: "middle" },
 ];
 
@@ -106,7 +107,8 @@ function draw(container, data, macros) {
     el("circle", { cx: x(yearOf(point)), cy: y(point.value), r: 9 }, activeGroup);
     text(name, { x: x(yearOf(point)) + dx, y: y(point.value) + dy, "text-anchor": anchor, class: "label" }, activeGroup);
   }
-  const bestActive = Math.max(...shown.map((a) => a.point.value));
+  const best = shown.reduce((a, b) => (b.point.value > a.point.value ? b : a)).point;
+  const bestActive = best.value;
   // "Active models" under the lowest name, centered under the points.
   const xs = shown.map((a) => x(yearOf(a.point))), lowest = Math.max(...shown.map((a) => y(a.point.value) + Math.max(a.dy, 8)));
   text("Active models", { x: (Math.min(...xs) + Math.max(...xs)) / 2, y: lowest + 40, "text-anchor": "middle", class: "label head" }, activeGroup);
@@ -136,6 +138,17 @@ function draw(container, data, macros) {
       el("path", { d: `M${px + 14},${py}L${labelX - 8},${ly - 7}`, class: "leader" }, canvit);
       el("circle", { cx: px, cy: py, r: 12, class: filled ? "filled" : "hollow" }, canvit);
       text(`${label} ${value}`, { x: labelX, y: ly, class: "label" }, canvit);
+    }
+    const compared = values.filter((v) => v.compared);
+    if (compared.length > 1) throw new Error(`history chart: ${spec.key} names ${compared.length} compared results`);
+    for (const { value } of compared) {
+      if (value <= bestActive) throw new Error(`history chart: CanViT-B's ${value} is not above ${bestActive}`);
+      const gain = el("g", { class: "gain" }, svg);
+      const [px, from, to] = [x(CANVIT_YEAR), y(bestActive), y(value) + 16];
+      el("path", { d: `M${x(yearOf(best)) + 12},${from}H${px + 12}`, class: "level" }, gain);
+      el("path", { d: `M${px},${from}V${to}M${px - 8},${to + 10}L${px},${to}L${px + 8},${to + 10}`, class: "arrow" }, gain);
+      text(`+${(value - bestActive).toFixed(1)}`, { x: px - 14, y: (from + to) / 2 + 9, "text-anchor": "end",
+                                                    class: "gain-label" }, gain);
     }
   }
   container.replaceChildren(svg);

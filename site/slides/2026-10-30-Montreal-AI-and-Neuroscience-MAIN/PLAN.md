@@ -154,6 +154,15 @@ understand before you try to COMMUNICATE." Questions to anticipate and the key i
 - [Yohaï, 2026-10-01] Reuse the well-received primitives of the September deck, ported (never imported): see
   "Components and deck primitives".
 - [Yohaï, 2026-10-01] Keep every TODO, known issue and request in this file.
+- [Yohaï, 2026-10-01] "the speaker notes you wrote are [...] so please nuke them and replace with bullet points at
+  most without hallucinating logical links, and only if genuinely helpful." In progress.
+- [Yohaï, 2026-10-01] On the deck's data coming from gitignored `throwaway/` scripts: "time for you to read all the
+  throwaway scripts etc and begin with the easy version of having scripts committed alongside the website. for
+  refactoring, that affects the core package so we will see. also, beware of polluting the core-package API with
+  adhoc [stuff] - if something is justified and would genuinely make the package better, we can do it, but
+  otherwise..."; on the name `record_talk.sh`: "why [...] is this called 'record' anyway" (the scripts run
+  experiments; bundles are recordings). In progress: the experiments committed in this talk's `experiments/`, one
+  module per experiment, writing `../../data/talk/`; the core package untouched.
 
 ## Next
 

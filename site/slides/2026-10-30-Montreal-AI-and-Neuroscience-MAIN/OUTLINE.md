@@ -2,7 +2,7 @@
 
 The talk slide by slide (`../AGENTS.md`, "Workflow"). The story, Yohaï's wording and the scoped claims are in
 `AGENTS.md`; the open work in `PLAN.md`. Each slide (by its title; its id in `index.html` where cited): where the title's wording comes from, what the screen shows
-and how it builds, what is said (notes, in Yohaï's voice), and its status: **ready**, **build** (the visual must be
+and how it builds, what is said, and its status: **ready**, **build** (the visual must be
 made from data we have), **data** (an export or experiment is missing), **decide** (the authors' call). **Must**
 lists what the slide has to show, say or carry across; **Could** what would be interesting or good to show as well
 (`../AGENTS.md`, "Workflow"); entries not yet split are being converted.

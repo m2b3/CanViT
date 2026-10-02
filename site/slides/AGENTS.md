@@ -200,8 +200,9 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   is the title, the labels a visual cannot be read without, and the citation of another paper's figure. A caption
   that restates the visual, a takeaway line, a conditions line, and a citation of the authors' own paper go to the
   notes.
-- The takeaway is said, not written: speaker notes (`<aside class="notes">`) hold the spoken text, in full
-  sentences, and say only what the paper or a cited source supports.
+- Speaker notes (`<aside class="notes">`) are bullet points at most, without invented logical links, and only where
+  they help [Yohaï, 2026-10-01: "the speaker notes you wrote are [...] so please nuke them and replace with bullet
+  points at most without hallucinating logical links, and only if genuinely helpful"].
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../css/canvit.css`).
 - A figure from another paper is cited on the slide (`.cite`: authors, year, venue).
 - Animations play while their slide is shown and pause when it is left (`data-play`); a slide that builds

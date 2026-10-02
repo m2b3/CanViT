@@ -32,7 +32,7 @@ These follow the rebuttal's `training_flops.py`, whose accounting the talk carri
 - Per-forward costs come from `canvit_paper_exporter.flops.primitives` (`vit_block`, `linear`, `patch_embed`, `conv2d`). These count matmul and conv FLOPs only; LayerNorm, softmax, GELU, interpolation and `grid_sample` are excluded.
 - Validation forwards and hyperparameter search are excluded and reported separately where computable.
 
-Code anchors: AdaptiveNN at `~/code/AdaptiveNN @ ba508e6`. For AdaGlimpse, the upstream state is `e5f37fd` (Adam Pardyl, 2024-07-30). `~/code/AdaGlimpse` is the m2b3 fork, whose later commits change only import paths, timing hooks and eval exploration mode; files were read from `git show e5f37fd:<path>`. Paper anchors: AdaptiveNN `~/code/AdaptiveNN/2509.15333v1.txt:<line>`. AdaGlimpse arXiv e-print extracted to `/Users/yberreby/.claude/jobs/2e07edf0/tmp/adaglimpse_src/` (`main.tex:<line>`, `tables_sup/hyperparams.tex:<line>`).
+Code anchors: AdaptiveNN's repository at `ba508e6`. For AdaGlimpse, the upstream state is `e5f37fd` (Adam Pardyl, 2024-07-30). The m2b3 fork of AdaGlimpse, whose later commits change only import paths, timing hooks and eval exploration mode; files were read from `git show e5f37fd:<path>`. Paper anchors: AdaptiveNN, lines of the text of arXiv:2509.15333v1. AdaGlimpse, its arXiv e-print's sources, extracted to a session scratchpad (not kept) (`main.tex:<line>`, `tables_sup/hyperparams.tex:<line>`).
 
 ---
 
@@ -119,7 +119,7 @@ The paper (`main.tex:326`) says: "In segmentation experiments we fine-tune a mod
 - **B.** Reconstruction RL training on ImageNet-1k (the paper trains reconstruction on ImageNet-1k only, `main.tex:361`).
 - **C.** Segmentation fine-tuning on ADE20K.
 
-No segmentation checkpoint is released. The Hugging Face repo `apardyl/AdaGlimpse` holds two reconstruction checkpoints and one classification checkpoint. I read their pickled headers (training arguments and loop state) by HTTP range request, without downloading the weights; the script is `/Users/yberreby/.claude/jobs/2e07edf0/tmp/read_remote_ckpt_header.py` and the outputs are the `hdr_*.log` and `loops_*.log` files in that directory.
+No segmentation checkpoint is released. The Hugging Face repo `apardyl/AdaGlimpse` holds two reconstruction checkpoints and one classification checkpoint. I read their pickled headers (training arguments and loop state) by HTTP range request, without downloading the weights; the script and its outputs were in a session scratchpad (not kept).
 
 ### Glimpse size and patches per glimpse
 

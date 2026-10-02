@@ -303,7 +303,7 @@ The paper [read 2026-10-01]:
 - Figure exports: `../../../paper/exports/` (figures and their JSON data); `../../copy_paper_figures.sh` copies the
   diagrams the site shows into `../../assets/paper/`; the JSON is linked.
 
-The rebuttal (`~/code/CanViT-Toward-AVFMs/rebuttal/DOSSIER.md`; results promised for the camera-ready, not yet in
+The rebuttal (`rebuttal/DOSSIER.md` in the paper's previous, private repository; results promised for the camera-ready, not yet in
 the paper's macros) [read 2026-10-01]:
 - "THE DINOv3-DISTILLED PAIR": CanViT and an AdaGlimpse-derived design, both pretrained 26,875 steps on the same
   precomputed DINOv3 ViT-B features, data, glimpse budget, optimizer and schedule, then probed alike (ADE20K, EG-C2F,
@@ -319,7 +319,7 @@ the paper's macros) [read 2026-10-01]:
 
 The posted responses and the decision (`rebuttal/response_drafts_2026-07-26/response_*.md`,
 `follow_up_drafts_2026_07_31/response_DjZB.md`, `ac_comment_2026-08-03/response_AC.md`,
-`../camera_ready/decision_2026-09-24.md`, all under `~/code/CanViT-Toward-AVFMs/`) [read 2026-10-01]; what reviewers
+`../camera_ready/decision_2026-09-24.md`, all in the paper's previous, private repository) [read 2026-10-01]; what reviewers
 received, so the talk may say it:
 - The reviewers' and the AC's central concerns: attribution (architecture against the DINOv3 teacher against the
   pretraining scale) and one-time offline cost (the 19 TiB feature cache, ImageNet-21k pretraining) against
@@ -418,7 +418,7 @@ The code (`canvit-pytorch/`, by module and symbol) [read 2026-10-01]:
   `SmoothPath`).
 - URLs (paper, code, Hub, page): `canvit_pytorch.project`; `../../make_qr_codes.py` reads them.
 
-The machine [checked 2026-10-01]: `ADE20K_ROOT=/Users/yberreby/datasets/ADEChallengeData2016` is not set in the
+The machine [checked 2026-10-01]: `ADE20K_ROOT` (the ADEChallengeData2016 directory) is not set in the
 shell, pass it; the Hugging Face cache holds every released checkpoint and probe and DINOv3 ViT-S/B; MPS inference
 matches CPU (relative L2 5e-6, identical argmax; `throwaway/bench_episode.log`); the disk is nearly full (under
 1 GB free on 2026-10-01).

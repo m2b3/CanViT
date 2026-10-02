@@ -8,9 +8,9 @@ working tree for both). Slide: site/slides/2026-10-30-Montreal-AI-and-Neuroscien
 Provenance tags used below:
 - [me] I read it this session in the primary source (paper PDF text, arXiv abs page, or official README).
 - [A], [B], [C], [E], [F] a verification agent read it this session in the primary source and saved quotes; its
-  report is /Users/yberreby/.claude/jobs/2e07edf0/tmp/verify-<letter>-*.md. Where I re-read the agent's number in the
+  report was in a session scratchpad (not kept). Where I re-read the agent's number in the
   paper text myself, the tag is [me+X].
-- All downloaded PDFs and their pdftotext extractions: /Users/yberreby/.claude/jobs/2e07edf0/tmp/papers/.
+- All downloaded PDFs and their pdftotext extractions: a session scratchpad (not kept).
 
 ## Short answer
 
@@ -58,7 +58,7 @@ Provenance tags used below:
 
 ## 1. What the chart draws
 
-Logic of history.js, replicated in /Users/yberreby/.claude/jobs/2e07edf0/tmp/frontier.mjs [me]:
+Logic of history.js, replicated in a script in a session scratchpad (not kept) [me]:
 - **Points:** the data comes from sources/sota-history.json.
 - **Solid line:** the running maximum (a new step only when a point beats every earlier one) over
   `kind == "passive" && size_class == "base" && series != "frozen_ssl"`, minus the three FLAGGED entries. The
@@ -113,7 +113,7 @@ the ImageNet-1k bracket (2.8 points) on #history.
 | Point | Value | Date | Params / size class | Resolution | Data, init, teacher | Verdict |
 |---|---|---|---|---|---|---|
 | Saccader-NASNet | 75.03 ± 0.08: arXiv 1908.07644v1, section before the Conclusion: "with 6 glimpses, the top-1 ... accuracy were 75.03 ± 0.08% ... processing only 29.47 ± 0.26% of the image with the NASNet" | v1 2019-08-20 | Table Supp.1 (v1): "Saccader-NASNet 124,537,764". **Large** (above 110M) | Locations chosen on the image downsized to 224 px; NASNet classifies 113 px patches cut from 331 px images (Table Supp.3 note) | NASNet trained by the authors (Tables Supp.2-3), fine-tuned on patches; no extra data mentioned (ImageNet-1k only is inferred) | verified; it is large but drawn against a base-size line |
-| GFNet (EfficientNet backbones, T=4) | 79.8 is a figure reading. From the vector data of Fig. 4(c) of arXiv 2010.05300v1 (/Users/yberreby/.claude/jobs/2e07edf0/tmp/papers/gf_fig*.txt), I get the top GFNet vertex at y = 87.6 pt against gridlines 80 at 85.76 and 79 at 95.56, i.e. **79.81**, at x = 0.753 G multiply-adds. In the same panel, the supervised "EfficientNets" baseline's highest marker is 79.80 at 1.0 G multiply-adds | v1 2020-10-11 (only version) | Not stated in the paper. 37.41M is the earlier agent's count from the official code, not re-run. Base is inferred: two EfficientNet-B2/B3 encoders, App. Table 2 | Not stated for the EfficientNet GFNets (JSON null, correct) | App. A.3: EfficientNets "train[ed] from scratch following all the details mentioned in their papers ... to match the reported performance": ImageNet-1k, supervised | value verified to about ±0.05; params unverifiable from the paper |
+| GFNet (EfficientNet backbones, T=4) | 79.8 is a figure reading. From the vector data of Fig. 4(c) of arXiv 2010.05300v1 (its extraction in a session scratchpad (not kept)), I get the top GFNet vertex at y = 87.6 pt against gridlines 80 at 85.76 and 79 at 95.56, i.e. **79.81**, at x = 0.753 G multiply-adds. In the same panel, the supervised "EfficientNets" baseline's highest marker is 79.80 at 1.0 G multiply-adds | v1 2020-10-11 (only version) | Not stated in the paper. 37.41M is the earlier agent's count from the official code, not re-run. Base is inferred: two EfficientNet-B2/B3 encoders, App. Table 2 | Not stated for the EfficientNet GFNets (JSON null, correct) | App. A.3: EfficientNets "train[ed] from scratch following all the details mentioned in their papers ... to match the reported performance": ImageNet-1k, supervised | value verified to about ±0.05; params unverifiable from the paper |
 | AdaGlimpse (ImageNet-1k) | 77.54: arXiv 2404.03482v1 Tab. 2, "Ours 77.54 14 × 32² adaptive 28.57" | v1 2024-04-04 | Sec. 4: encoder "of the same size as standard ViT-B". 86.88M is a code count, not re-run. Base | 224 px | Teacher: "a pre-trained ViT from [43]" (DeiT III). The official README names `deit_3_base_224_21k.pth`, read in github.com/apardyl/AdaGlimpse README on master. That is DeiT III ViT-B trained on ImageNet-21k, which scores 85.7 on ImageNet-1k at 224 (DeiT III v1, arXiv 2204.07118, Table 8; checkpoint-to-row mapping inferred). Backbone pre-trained 600 epochs on random glimpses (Sec. 4) | verified; it used ImageNet-21k through the teacher |
 | AdaGlimpse (ADE20K) | 25.7: v1 Tab. 3, "Ours 70.0 32.8 25.7 224 × 224 8 × 48² adaptive 36.73" (PA, mPA, IoU) | 2024-04-04 | as above (ViT-B encoder; decoder excluded) | 224 × 224 scenes | Teacher: DeepLabV3 ResNet-101 (Sec. 3.2). "In segmentation experiments we fine-tune a model trained for reconstruction" | verified |
 | AdaptiveNN-DeiT-S | 82.2: arXiv 2509.15333v1, Supplementary Data Tab. 2, "3.15 4.85 82.2 ± 0.11" and "3.40 5.25 82.2 ± 0.12". The same table's own DeiT-S baselines, same recipe: 79.9 at 224, 80.9 at 288, 81.6 at 384 | v1 2025-09-18 | Not stated in the paper. 89.41M is a code count, not re-run. Base | 288 px image, 112 px glance and fixations (Supp. Tab. 1) | ImageNet-1K, 300 epochs, DeiT pipeline (Supp. Tab. 1); no teacher named | verified; params unverifiable from the paper |

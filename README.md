@@ -228,6 +228,9 @@ We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/
 
 [`site/`](site) is the [project page](https://m2b3.github.io/CanViT/).
 
+[`paper/`](paper) holds the NeurIPS 2026 paper: its LaTeX sources, and the pipeline that turns evaluation
+results into its tables and figures.
+
 Pretraining, probe training and evaluation lived in separate repositories (CanViT-pretrain, CanViT-specialize, CanViT-eval), now archived; their histories are merged here.
 
 Related repositories:

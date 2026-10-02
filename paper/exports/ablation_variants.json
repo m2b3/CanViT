@@ -1,0 +1,166 @@
+{
+  "_meta": {
+    "baseline_slug": "baseline",
+    "order": [
+      "baseline",
+      "dcan256",
+      "qkvo-dcan256",
+      "qkvo-dcan384",
+      "no-reads",
+      "rw-stride6",
+      "no-dense",
+      "no-fiid-1riid",
+      "no-fiid-2riid",
+      "no-bptt",
+      "vit-s",
+      "no-vpe"
+    ],
+    "n_steps": 214640
+  },
+  "variants": {
+    "baseline": {
+      "slug": "baseline",
+      "label": "Baseline",
+      "delta": "(none)",
+      "color": "#000000",
+      "params": 95157248,
+      "params_str": "95.2M",
+      "params_pct": 0.0,
+      "gflops_per_glimpse": 15.7914,
+      "gflops_str": "15.8",
+      "gflops_pct": 0.0
+    },
+    "dcan256": {
+      "slug": "dcan256",
+      "label": "$D_{\\mathrm{can}}=256$ (asym.)",
+      "delta": "D_can 1024>256",
+      "color": "#2ca02c",
+      "params": 88050176,
+      "params_str": "88.1M",
+      "params_pct": -0.0747,
+      "gflops_per_glimpse": 13.1894,
+      "gflops_str": "13.2",
+      "gflops_pct": -0.1648
+    },
+    "qkvo-dcan256": {
+      "slug": "qkvo-dcan256",
+      "label": "+ QKVO, $D_{\\mathrm{can}}=256$",
+      "delta": "canvas_proj_mode asymmetric>full, D_can 1024>256",
+      "color": "#1f77b4",
+      "params": 88839680,
+      "params_str": "88.8M",
+      "params_pct": -0.0664,
+      "gflops_per_glimpse": 14.8252,
+      "gflops_str": "14.8",
+      "gflops_pct": -0.0612
+    },
+    "qkvo-dcan384": {
+      "slug": "qkvo-dcan384",
+      "label": "+ QKVO, $D_{\\mathrm{can}}=384$",
+      "delta": "canvas_proj_mode asymmetric>full, D_can 1024>384",
+      "color": "#17becf",
+      "params": 91008768,
+      "params_str": "91.0M",
+      "params_pct": -0.0436,
+      "gflops_per_glimpse": 17.3036,
+      "gflops_str": "17.3",
+      "gflops_pct": 0.0958
+    },
+    "no-reads": {
+      "slug": "no-reads",
+      "label": "No canvas reads",
+      "delta": "enable_reads true>false",
+      "color": "#d62728",
+      "params": 90422528,
+      "params_str": "90.4M",
+      "params_pct": -0.0498,
+      "gflops_per_glimpse": 14.214,
+      "gflops_str": "14.2",
+      "gflops_pct": -0.0999
+    },
+    "rw-stride6": {
+      "slug": "rw-stride6",
+      "label": "RW stride 6",
+      "delta": "rw_stride 2>6 (3R+3W to 1R+1W at depth 12)",
+      "color": "#ff7f0e",
+      "params": 88843776,
+      "params_str": "88.8M",
+      "params_pct": -0.0663,
+      "gflops_per_glimpse": 13.6882,
+      "gflops_str": "13.7",
+      "gflops_pct": -0.1332
+    },
+    "no-dense": {
+      "slug": "no-dense",
+      "label": "No dense loss",
+      "delta": "enable_scene_patches_loss true>false",
+      "color": "#8c564b",
+      "params": 95157248,
+      "params_str": "95.2M",
+      "params_pct": 0.0,
+      "gflops_per_glimpse": 15.7914,
+      "gflops_str": "15.8",
+      "gflops_pct": 0.0
+    },
+    "no-fiid-1riid": {
+      "slug": "no-fiid-1riid",
+      "label": "No F-IID (1\u00d7R)",
+      "delta": "n_full_start_branches 1>0",
+      "color": "#e377c2",
+      "params": 95157248,
+      "params_str": "95.2M",
+      "params_pct": 0.0,
+      "gflops_per_glimpse": 15.7914,
+      "gflops_str": "15.8",
+      "gflops_pct": 0.0
+    },
+    "no-fiid-2riid": {
+      "slug": "no-fiid-2riid",
+      "label": "No F-IID (2\u00d7R)",
+      "delta": "n_full_start_branches 1>0, n_random_start_branches 1>2",
+      "color": "#c2185b",
+      "params": 95157248,
+      "params_str": "95.2M",
+      "params_pct": 0.0,
+      "gflops_per_glimpse": 15.7914,
+      "gflops_str": "15.8",
+      "gflops_pct": 0.0
+    },
+    "no-bptt": {
+      "slug": "no-bptt",
+      "label": "No BPTT ($K{=}1$)",
+      "delta": "chunk_size 2>1, continue_prob 0.5>0.75",
+      "color": "#bcbd22",
+      "params": 95157248,
+      "params_str": "95.2M",
+      "params_pct": 0.0,
+      "gflops_per_glimpse": 15.7914,
+      "gflops_str": "15.8",
+      "gflops_pct": 0.0
+    },
+    "vit-s": {
+      "slug": "vit-s",
+      "label": "ViT-S backbone",
+      "delta": "backbone_dim 768>384",
+      "color": "#7f7f7f",
+      "params": 26364416,
+      "params_str": "26.4M",
+      "params_pct": -0.7229,
+      "gflops_per_glimpse": 5.9452,
+      "gflops_str": "5.9",
+      "gflops_pct": -0.6235
+    },
+    "no-vpe": {
+      "slug": "no-vpe",
+      "label": "No VPE",
+      "delta": "enable_vpe true>false",
+      "color": "#9467bd",
+      "params": 95155712,
+      "params_str": "95.2M",
+      "params_pct": -0.0,
+      "gflops_per_glimpse": 15.5719,
+      "gflops_str": "15.6",
+      "gflops_pct": -0.0139
+    }
+  }
+}

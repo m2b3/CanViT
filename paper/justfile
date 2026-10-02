@@ -1,0 +1,109 @@
+# The paper: LaTeX sources in latex/, the figures and data they read in exports/, and the pipeline that
+# writes exports/ from evaluation results in exporter/. Builds need tectonic; `exports` needs the results.
+
+default: build-camera-ready
+
+# Regenerate latex/data.tex, latex/data_macros.json and the table row files from exports/*.json.
+data:
+    cd {{justfile_directory()}} && uv run --no-project python latex/generate_data.py
+
+# Fail if a generated file is stale.
+check-data:
+    cd {{justfile_directory()}} && uv run --no-project python latex/generate_data.py --check
+
+# Run the exporter (the paper's datasets and figures) into exports/, then regenerate the data.
+exports: && data
+    cd {{justfile_directory()}}/exporter && uv run python -m canvit_paper_exporter.run
+
+# Build modes, set through the NeurIPS .sty's package options:
+#   build               no option: double-blind, checklist on, acks hidden
+#   build-preprint      [preprint]: authors and acks shown, checklist omitted
+#   build-camera-ready  [final,main]: authors, acks and checklist shown
+# Each regenerates the data first, so no PDF renders stale rows, and then checks
+# for Type 3 fonts. --reruns 3: minitoc/parttoc need three passes, and tectonic's
+# rerun detection misses .ptc1 changes.
+
+# Anonymous submission PDF: latex/CanViT_Toward_AVFMs.pdf
+build: data && (check-fonts "CanViT_Toward_AVFMs.pdf")
+    cd {{justfile_directory()}}/latex && tectonic --reruns 3 CanViT_Toward_AVFMs.tex
+
+# arXiv PDF: latex/preprint_wrapper.pdf
+build-preprint: data && (check-fonts "preprint_wrapper.pdf")
+    cd {{justfile_directory()}}/latex && tectonic --reruns 3 preprint_wrapper.tex
+
+# Camera-ready PDF: latex/camera_ready_wrapper.pdf
+build-camera-ready: data && (check-fonts "camera_ready_wrapper.pdf")
+    cd {{justfile_directory()}}/latex && tectonic --reruns 3 camera_ready_wrapper.tex
+
+# The NeurIPS template: "Your PDF file must only contain Type 1 or Embedded
+# TrueType fonts." matplotlib's PDF backend defaults to Type 3; the exporter sets
+# uplt.rc["pdf.fonttype"] = 42 in exporter/src/canvit_paper_exporter/style.py. Needs
+# pdffonts (poppler); warns and skips without it.
+# Fail if latex/FILE contains a Type 3 font.
+check-fonts FILE="CanViT_Toward_AVFMs.pdf":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! command -v pdffonts >/dev/null; then
+      echo "WARNING: pdffonts not found — skipping Type 3 font check."
+      echo "         Install poppler ('brew install poppler' or 'apt install poppler-utils') to enable."
+      exit 0
+    fi
+    pdf="{{justfile_directory()}}/latex/{{FILE}}"
+    n=$(pdffonts "$pdf" | awk 'NR>2 && $3=="Type" && $4=="3" {n++} END {print n+0}')
+    if [ "$n" -ne 0 ]; then
+      echo "ERROR: $n Type 3 font(s) in {{FILE}} — NeurIPS forbids these."
+      echo "NeurIPS: 'Your PDF file must only contain Type 1 or Embedded TrueType fonts.'"
+      echo "Fix lives in exporter/src/canvit_paper_exporter/style.py:"
+      echo "  uplt.rc['pdf.fonttype'] = 42  (ultraplot resets mpl.rcParams; must use uplt.rc)"
+      pdffonts "$pdf" | awk 'NR<=2 || ($3=="Type" && $4=="3")'
+      exit 1
+    fi
+    echo "✓ {{FILE}}: 0 Type 3 fonts (NeurIPS-compliant)."
+
+# Writes latex/arxiv_bundle/ and latex/arxiv_bundle.tar.gz, replacing earlier ones, and
+# recompiles inside the bundle so a missing file fails here instead of at arXiv.
+# Build the preprint and package its source for arXiv.
+build-arxiv: build-preprint
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{justfile_directory()}}/latex"
+    rm -rf arxiv_bundle arxiv_bundle.tar.gz
+    mkdir -p arxiv_bundle/figures/exported
+
+    # Sources arXiv compiles (wrapper is the main; sty is byte-identical to official template).
+    cp preprint_wrapper.tex CanViT_Toward_AVFMs.tex neurips_2026.sty data.tex arxiv_bundle/
+
+    # Every generated row file, by glob, so a new one needs no list update.
+    cp ./*_rows.tex ./dinov3_probe_*.tex arxiv_bundle/
+
+    cp references.bib arxiv_bundle/
+
+    # Copy the referenced figures as files: arXiv does not follow symlinks, and it
+    # rejects unreferenced ("extraneous") files, which exports/ also holds.
+    grep -oE '\\includegraphics(\[[^]]*\])?\{figures/exported/[^}]+\}' CanViT_Toward_AVFMs.tex \
+      | grep -oE 'figures/exported/[^}]+' | sort -u | while read -r fig; do
+        cp "$fig" "arxiv_bundle/$fig"
+      done
+
+    # Compile the bundle on its own: a missing input fails here.
+    cd arxiv_bundle
+    tectonic --reruns 3 preprint_wrapper.tex
+
+    # arXiv rejects build outputs in a source bundle, and runs bibtex itself.
+    rm -f ./*.pdf ./*.aux ./*.log ./*.toc ./*.lof ./*.lot ./*.bbl ./*.blg ./*.out ./*.maf ./*.ptc* ./*.synctex.gz ./*.snm ./*.nav
+
+    cd ..
+
+    # --no-mac-metadata: macOS xattrs would otherwise arrive at arXiv as ._* files.
+    tar --no-mac-metadata -czf arxiv_bundle.tar.gz -C arxiv_bundle .
+    echo ""
+    echo "✓ arXiv bundle: $(pwd)/arxiv_bundle/"
+    echo "✓ tarball:      $(pwd)/arxiv_bundle.tar.gz ($(du -h arxiv_bundle.tar.gz | cut -f1))"
+    echo ""
+    echo "Bundle contents ($(tar tzf arxiv_bundle.tar.gz | wc -l | tr -d ' ') entries):"
+    tar tzf arxiv_bundle.tar.gz | sort
+
+# Remove build outputs (exports/ is never cleaned here).
+clean:
+    cd {{justfile_directory()}}/latex && rm -f CanViT_Toward_AVFMs.{pdf,aux,bbl,blg,log,out} preprint_wrapper.pdf camera_ready_wrapper.pdf arxiv_bundle.tar.gz
+    rm -rf {{justfile_directory()}}/latex/arxiv_bundle

@@ -1,0 +1,21 @@
+{
+  "_source": "HuggingFace config.json from canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06",
+  "repo": "canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06",
+  "base_checkpoint": "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02",
+  "optimizer": "AdamW",
+  "lr": 2.5e-05,
+  "weight_decay": 0.0001,
+  "grad_clip": 1.0,
+  "label_smoothing": 0.1,
+  "warmup_steps": 25000,
+  "epochs": 20,
+  "total_steps": 100080,
+  "batch_size": 256,
+  "n_glimpses": 4,
+  "chunk_size": 4,
+  "full_bptt": true,
+  "glimpse_size": 128,
+  "min_viewpoint_scale": 0.05,
+  "amp_enabled": false,
+  "n_params": 97309160
+}

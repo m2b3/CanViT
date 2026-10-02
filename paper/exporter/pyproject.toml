@@ -1,0 +1,49 @@
+[project]
+name = "canvit-paper-exporter"
+version = "0.1.0"
+description = "Python pipeline producing the CanViT paper's figures and table/prose data."
+readme = "README.md"
+authors = [
+    { name = "Yohaï-Eliel Berreby", email = "me@yberreby.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "canvit-pytorch[evaluate]>=0.2.0",  # model, FLOP counts, policies, Hub names, PCA protocol
+    "huggingface_hub>=0.20",            # released configs (hf.py)
+    "matplotlib>=3.10",
+    "numpy>=2.0",
+    "pillow>=10",
+    "polars>=1.0",                      # mask-IoU tables (ade20k_iou_vs_obj)
+    "scipy>=1.13",                      # bootstrap CIs
+    "statsmodels>=0.14",                # LOWESS (ade20k_iou_vs_obj)
+    "torch>=2.0",                       # evaluation outputs (.pt)
+    "torchvision>=0.22.0",
+    "transformers>=4.50.0",             # DINOv3 configs for FLOP counts
+    "tyro>=0.8",                        # diagram CLIs
+    "ultraplot>=1.0",                   # figure layout; bundles the figures' font
+]
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.13.0"]
+build-backend = "uv_build"
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+# The package of this repository, so the paper builds against the code of the same commit.
+canvit-pytorch = { path = "../../canvit-pytorch", editable = true }
+# CUDA 12.8 wheels on Linux, as canvit-pytorch takes; PyPI wheels on macOS.
+torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "UP", "B"]
+ignore = [
+    "E501",  # line too long — enforced by line-length only; don't block on trailing comments
+    "E701",  # multi-statement on one line — sometimes clean for short guard clauses
+]

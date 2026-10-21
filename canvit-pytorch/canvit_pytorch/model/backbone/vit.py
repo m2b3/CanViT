@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from canvit_core.backbone import ViTSpec
 from torch import Tensor, nn
 
+from canvit_pytorch.model.multihead import from_multihead
 from canvit_pytorch.model.rope import RoPE, apply_2d_rope
 
 
@@ -56,12 +57,12 @@ class SelfAttention(nn.Module):
         self.proj = nn.Linear(dim, dim)
 
     def forward(self, x: Tensor, rope: RoPE) -> Tensor:
-        B, N, D = x.shape
+        B, N, _ = x.shape
         assert self.qkv.bias is not None
         qkv = F.linear(x, self.qkv.weight, self.qkv.bias * self._bias_mask).reshape(B, N, 3, self.num_heads, self.head_dim)
         q, k, v = [qkv[:, :, i].transpose(1, 2) for i in range(3)]  # [B, heads, N, head_dim]
         out = F.scaled_dot_product_attention(apply_2d_rope(q, rope), apply_2d_rope(k, rope), v, scale=self.head_dim**-0.5)
-        return self.proj(out.transpose(1, 2).reshape(B, N, D))
+        return self.proj(from_multihead(out))
 
 
 class ViTBlock(nn.Module):

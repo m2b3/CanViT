@@ -1,19 +1,8 @@
 from torch import Tensor, nn
 from torch.nn import functional as F
 
+from canvit_pytorch.model.multihead import from_multihead, to_multihead
 from canvit_pytorch.model.rope import RoPE, apply_2d_rope
-
-
-def to_multihead(x: Tensor, num_heads: int) -> Tensor:
-    """[B, N, D] -> [B, heads, N, D / heads]."""
-    B, N, D = x.shape
-    return x.view(B, N, num_heads, D // num_heads).transpose(1, 2)
-
-
-def from_multihead(x: Tensor) -> Tensor:
-    """[B, heads, N, head_dim] -> [B, N, heads * head_dim]."""
-    B, H, N, head_dim = x.shape
-    return x.transpose(1, 2).reshape(B, N, H * head_dim)
 
 
 class CanvasAttention(nn.Module):

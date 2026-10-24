@@ -1,0 +1,75 @@
+{
+ "_about": "Does the uncertainty read out from the canvas predict where the segmentation is wrong? Over ADE20K validation, with\nCanViT-B and its ADE20K probe on the 64 x 64 canvas (the talk's model): per canvas cell, the entropy of the decoded\nclass distribution and whether the decoded class is right (the annotation at the cell's center pixel, unlabeled cells\nleft out), after the full-scene glimpse and after C2F's first five glimpses (the scene, then its quadrants).\n\nWrites, per glimpse count: the AUROC of entropy for telling wrong cells from right ones (the probability that a wrong\ncell has the higher entropy), the mean entropy of right and wrong cells in bits, and the accuracy in each entropy\ndecile.",
+ "images": 2000,
+ "canvas_grid": 64,
+ "by_glimpses": {
+  "1": {
+   "cells": 7525441,
+   "accuracy": 0.7787485145388822,
+   "auroc_entropy_for_errors": 0.8362536623869488,
+   "mean_entropy_bits": {
+    "right": 0.7938841754950274,
+    "wrong": 1.958494286133845
+   },
+   "accuracy_by_entropy_decile": [
+    0.9910304247990815,
+    0.9832594506101969,
+    0.9714688158183231,
+    0.9455486264572257,
+    0.8960472743121997,
+    0.8070783901007782,
+    0.6889151996428116,
+    0.6104121486584173,
+    0.5226113024620487,
+    0.3711140197596157
+   ],
+   "entropy_decile_edges_bits": [
+    0.0012759927761800524,
+    0.11298496474263482,
+    0.2001337721731885,
+    0.312844915450493,
+    0.4830313496891726,
+    0.7386895698849307,
+    1.0609373907092736,
+    1.3969962143315173,
+    1.8581412355975837,
+    2.5071311812934685,
+    5.527940116507942
+   ]
+  },
+  "5": {
+   "cells": 7525441,
+   "accuracy": 0.8007076263038937,
+   "auroc_entropy_for_errors": 0.8411970222194125,
+   "mean_entropy_bits": {
+    "right": 0.6851056583389432,
+    "wrong": 1.770195615355489
+   },
+   "accuracy_by_entropy_decile": [
+    0.9892684015818344,
+    0.9846401007781604,
+    0.9803108119780213,
+    0.9602959565101263,
+    0.9187343198537229,
+    0.8503371891381911,
+    0.7334667474592848,
+    0.635777623338467,
+    0.5458537972530509,
+    0.4083915247593167
+   ],
+   "entropy_decile_edges_bits": [
+    0.0008499270847247025,
+    0.08443974329126021,
+    0.15130270156987463,
+    0.23720225703269063,
+    0.37034636863178383,
+    0.5818814445709025,
+    0.8780964865293749,
+    1.2008704938262722,
+    1.616249144966086,
+    2.22414613016546,
+    5.385484330281726
+   ]
+  }
+ }
+}

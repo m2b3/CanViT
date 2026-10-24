@@ -1,0 +1,658 @@
+{
+ "schema": "canvit-web-bundle-70766501-fb7f-4856-8a88-bb16253c34c5",
+ "title": "A street, EG-C2F",
+ "scene": {
+  "image": "scene.png",
+  "px": 512,
+  "source": "ADE20K validation set, ADE_val_00001780",
+  "attribution": "ADE20K (MIT CSAIL)",
+  "license": "ADE20K terms of use",
+  "annotation_source": "ADE_val_00001780.png",
+  "truth": "truth.png"
+ },
+ "model": {
+  "repo": "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02",
+  "revision": "13da0ca2725f569bf486e1efdcaaac32f0549bf9",
+  "backbone": "vitb16",
+  "num_blocks": 12,
+  "patch_px": 16,
+  "canvas_dim": 1024,
+  "read_after_blocks": [
+   1,
+   5,
+   9
+  ],
+  "write_after_blocks": [
+   3,
+   7,
+   11
+  ]
+ },
+ "readout": {
+  "kind": "ade20k-segmentation",
+  "repo": "canvit/probe-ade20k-40k-s512-c64-in21k",
+  "revision": "b28ba9b866d3763cbea60035ef8b7b02eba5b01d",
+  "num_classes": 150,
+  "class_names": [
+   "wall",
+   "building",
+   "sky",
+   "floor",
+   "tree",
+   "ceiling",
+   "road",
+   "bed",
+   "windowpane",
+   "grass",
+   "cabinet",
+   "sidewalk",
+   "person",
+   "earth",
+   "door",
+   "table",
+   "mountain",
+   "plant",
+   "curtain",
+   "chair",
+   "car",
+   "water",
+   "painting",
+   "sofa",
+   "shelf",
+   "house",
+   "sea",
+   "mirror",
+   "rug",
+   "field",
+   "armchair",
+   "seat",
+   "fence",
+   "desk",
+   "rock",
+   "wardrobe",
+   "lamp",
+   "bathtub",
+   "railing",
+   "cushion",
+   "base",
+   "box",
+   "column",
+   "signboard",
+   "chest of drawers",
+   "counter",
+   "sand",
+   "sink",
+   "skyscraper",
+   "fireplace",
+   "refrigerator",
+   "grandstand",
+   "path",
+   "stairs",
+   "runway",
+   "case",
+   "pool table",
+   "pillow",
+   "screen door",
+   "stairway",
+   "river",
+   "bridge",
+   "bookcase",
+   "blind",
+   "coffee table",
+   "toilet",
+   "flower",
+   "book",
+   "hill",
+   "bench",
+   "countertop",
+   "stove",
+   "palm",
+   "kitchen island",
+   "computer",
+   "swivel chair",
+   "boat",
+   "bar",
+   "arcade machine",
+   "hovel",
+   "bus",
+   "towel",
+   "light",
+   "truck",
+   "tower",
+   "chandelier",
+   "awning",
+   "streetlight",
+   "booth",
+   "television",
+   "airplane",
+   "dirt track",
+   "apparel",
+   "pole",
+   "land",
+   "bannister",
+   "escalator",
+   "ottoman",
+   "bottle",
+   "buffet",
+   "poster",
+   "stage",
+   "van",
+   "ship",
+   "fountain",
+   "conveyer belt",
+   "canopy",
+   "washer",
+   "plaything",
+   "swimming pool",
+   "stool",
+   "barrel",
+   "basket",
+   "waterfall",
+   "tent",
+   "bag",
+   "minibike",
+   "cradle",
+   "oven",
+   "ball",
+   "food",
+   "step",
+   "tank",
+   "trade name",
+   "microwave",
+   "pot",
+   "animal",
+   "bicycle",
+   "lake",
+   "dishwasher",
+   "screen",
+   "blanket",
+   "sculpture",
+   "hood",
+   "sconce",
+   "vase",
+   "traffic light",
+   "tray",
+   "ashcan",
+   "fan",
+   "pier",
+   "crt screen",
+   "plate",
+   "monitor",
+   "bulletin board",
+   "shower",
+   "radiator",
+   "glass",
+   "clock",
+   "flag"
+  ]
+ },
+ "policy": {
+  "name": "entropy_coarse_to_fine",
+  "paper_name": "EG-C2F",
+  "description": "C2F's levels, each visiting next the tile where the segmentation decoded from the canvas is least certain.",
+  "deterministic": true,
+  "seed": 0
+ },
+ "canvas_grid": 64,
+ "glimpse_px": 128,
+ "pca": {
+  "protocol": "fixed-limits",
+  "basis": "last-glimpse"
+ },
+ "glimpses": [
+  {
+   "t": 0,
+   "viewpoint": {
+    "row": 0.0,
+    "col": 0.0,
+    "scale": 1.0
+   },
+   "box": {
+    "top": 0.0,
+    "left": 0.0,
+    "size": 1.0
+   },
+   "layers": {
+    "crop": "t00/crop.png",
+    "canvas": "t00/canvas.png",
+    "labels": "t00/labels.png",
+    "entropy": "t00/entropy.png",
+    "change": "t00/change.png"
+   },
+   "pixel_accuracy": 0.8666166664713534
+  },
+  {
+   "t": 1,
+   "viewpoint": {
+    "row": 0.5,
+    "col": 0.5,
+    "scale": 0.5
+   },
+   "box": {
+    "top": 0.5,
+    "left": 0.5,
+    "size": 0.5
+   },
+   "layers": {
+    "crop": "t01/crop.png",
+    "canvas": "t01/canvas.png",
+    "labels": "t01/labels.png",
+    "entropy": "t01/entropy.png",
+    "change": "t01/change.png"
+   },
+   "pixel_accuracy": 0.872487783155403
+  },
+  {
+   "t": 2,
+   "viewpoint": {
+    "row": 0.5,
+    "col": -0.5,
+    "scale": 0.5
+   },
+   "box": {
+    "top": 0.5,
+    "left": 0.0,
+    "size": 0.5
+   },
+   "layers": {
+    "crop": "t02/crop.png",
+    "canvas": "t02/canvas.png",
+    "labels": "t02/labels.png",
+    "entropy": "t02/entropy.png",
+    "change": "t02/change.png"
+   },
+   "pixel_accuracy": 0.8806753151379497
+  },
+  {
+   "t": 3,
+   "viewpoint": {
+    "row": -0.5,
+    "col": 0.5,
+    "scale": 0.5
+   },
+   "box": {
+    "top": 0.0,
+    "left": 0.5,
+    "size": 0.5
+   },
+   "layers": {
+    "crop": "t03/crop.png",
+    "canvas": "t03/canvas.png",
+    "labels": "t03/labels.png",
+    "entropy": "t03/entropy.png",
+    "change": "t03/change.png"
+   },
+   "pixel_accuracy": 0.8799370310040273
+  },
+  {
+   "t": 4,
+   "viewpoint": {
+    "row": -0.5,
+    "col": -0.5,
+    "scale": 0.5
+   },
+   "box": {
+    "top": 0.0,
+    "left": 0.0,
+    "size": 0.5
+   },
+   "layers": {
+    "crop": "t04/crop.png",
+    "canvas": "t04/canvas.png",
+    "labels": "t04/labels.png",
+    "entropy": "t04/entropy.png",
+    "change": "t04/change.png"
+   },
+   "pixel_accuracy": 0.8789292145672444
+  },
+  {
+   "t": 5,
+   "viewpoint": {
+    "row": 0.25,
+    "col": -0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.5,
+    "left": 0.0,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t05/crop.png",
+    "canvas": "t05/canvas.png",
+    "labels": "t05/labels.png",
+    "entropy": "t05/entropy.png",
+    "change": "t05/change.png"
+   },
+   "pixel_accuracy": 0.8832065750256837
+  },
+  {
+   "t": 6,
+   "viewpoint": {
+    "row": 0.25,
+    "col": 0.25,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.5,
+    "left": 0.5,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t06/crop.png",
+    "canvas": "t06/canvas.png",
+    "labels": "t06/labels.png",
+    "entropy": "t06/entropy.png",
+    "change": "t06/change.png"
+   },
+   "pixel_accuracy": 0.8830386056195532
+  },
+  {
+   "t": 7,
+   "viewpoint": {
+    "row": 0.25,
+    "col": 0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.5,
+    "left": 0.75,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t07/crop.png",
+    "canvas": "t07/canvas.png",
+    "labels": "t07/labels.png",
+    "entropy": "t07/entropy.png",
+    "change": "t07/change.png"
+   },
+   "pixel_accuracy": 0.8830776682721417
+  },
+  {
+   "t": 8,
+   "viewpoint": {
+    "row": -0.25,
+    "col": -0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.25,
+    "left": 0.0,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t08/crop.png",
+    "canvas": "t08/canvas.png",
+    "labels": "t08/labels.png",
+    "entropy": "t08/entropy.png",
+    "change": "t08/change.png"
+   },
+   "pixel_accuracy": 0.8820464142438056
+  },
+  {
+   "t": 9,
+   "viewpoint": {
+    "row": 0.25,
+    "col": -0.25,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.5,
+    "left": 0.25,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t09/crop.png",
+    "canvas": "t09/canvas.png",
+    "labels": "t09/labels.png",
+    "entropy": "t09/entropy.png",
+    "change": "t09/change.png"
+   },
+   "pixel_accuracy": 0.8838979839764999
+  },
+  {
+   "t": 10,
+   "viewpoint": {
+    "row": -0.75,
+    "col": 0.25,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.0,
+    "left": 0.5,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t10/crop.png",
+    "canvas": "t10/canvas.png",
+    "labels": "t10/labels.png",
+    "entropy": "t10/entropy.png",
+    "change": "t10/change.png"
+   },
+   "pixel_accuracy": 0.884358923277044
+  },
+  {
+   "t": 11,
+   "viewpoint": {
+    "row": -0.25,
+    "col": -0.25,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.25,
+    "left": 0.25,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t11/crop.png",
+    "canvas": "t11/canvas.png",
+    "labels": "t11/labels.png",
+    "entropy": "t11/entropy.png",
+    "change": "t11/change.png"
+   },
+   "pixel_accuracy": 0.8844917362958449
+  },
+  {
+   "t": 12,
+   "viewpoint": {
+    "row": -0.25,
+    "col": 0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.25,
+    "left": 0.75,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t12/crop.png",
+    "canvas": "t12/canvas.png",
+    "labels": "t12/labels.png",
+    "entropy": "t12/entropy.png",
+    "change": "t12/change.png"
+   },
+   "pixel_accuracy": 0.8848472064344002
+  },
+  {
+   "t": 13,
+   "viewpoint": {
+    "row": 0.75,
+    "col": -0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.75,
+    "left": 0.0,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t13/crop.png",
+    "canvas": "t13/canvas.png",
+    "labels": "t13/labels.png",
+    "entropy": "t13/entropy.png",
+    "change": "t13/change.png"
+   },
+   "pixel_accuracy": 0.8849722069226833
+  },
+  {
+   "t": 14,
+   "viewpoint": {
+    "row": -0.25,
+    "col": 0.25,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.25,
+    "left": 0.5,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t14/crop.png",
+    "canvas": "t14/canvas.png",
+    "labels": "t14/labels.png",
+    "entropy": "t14/entropy.png",
+    "change": "t14/change.png"
+   },
+   "pixel_accuracy": 0.8848667377606944
+  },
+  {
+   "t": 15,
+   "viewpoint": {
+    "row": 0.75,
+    "col": -0.25,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.75,
+    "left": 0.25,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t15/crop.png",
+    "canvas": "t15/canvas.png",
+    "labels": "t15/labels.png",
+    "entropy": "t15/entropy.png",
+    "change": "t15/change.png"
+   },
+   "pixel_accuracy": 0.8852534580213204
+  },
+  {
+   "t": 16,
+   "viewpoint": {
+    "row": -0.75,
+    "col": 0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.0,
+    "left": 0.75,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t16/crop.png",
+    "canvas": "t16/canvas.png",
+    "labels": "t16/labels.png",
+    "entropy": "t16/entropy.png",
+    "change": "t16/change.png"
+   },
+   "pixel_accuracy": 0.8852456454908026
+  },
+  {
+   "t": 17,
+   "viewpoint": {
+    "row": -0.75,
+    "col": -0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.0,
+    "left": 0.0,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t17/crop.png",
+    "canvas": "t17/canvas.png",
+    "labels": "t17/labels.png",
+    "entropy": "t17/entropy.png",
+    "change": "t17/change.png"
+   },
+   "pixel_accuracy": 0.8847807999249997
+  },
+  {
+   "t": 18,
+   "viewpoint": {
+    "row": 0.75,
+    "col": 0.25,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.75,
+    "left": 0.5,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t18/crop.png",
+    "canvas": "t18/canvas.png",
+    "labels": "t18/labels.png",
+    "entropy": "t18/entropy.png",
+    "change": "t18/change.png"
+   },
+   "pixel_accuracy": 0.8847339247418935
+  },
+  {
+   "t": 19,
+   "viewpoint": {
+    "row": 0.75,
+    "col": 0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.75,
+    "left": 0.75,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t19/crop.png",
+    "canvas": "t19/canvas.png",
+    "labels": "t19/labels.png",
+    "entropy": "t19/entropy.png",
+    "change": "t19/change.png"
+   },
+   "pixel_accuracy": 0.8846714244977519
+  },
+  {
+   "t": 20,
+   "viewpoint": {
+    "row": -0.75,
+    "col": -0.25,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.0,
+    "left": 0.25,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t20/crop.png",
+    "canvas": "t20/canvas.png",
+    "labels": "t20/labels.png",
+    "entropy": "t20/entropy.png",
+    "change": "t20/change.png"
+   },
+   "pixel_accuracy": 0.8844917362958449
+  }
+ ],
+ "provenance": {
+  "created": "2026-09-26T23:46:07+00:00",
+  "git_commit": "7e713ef835afe68bfe2fd80d28beef0a2ccee55f",
+  "git_dirty": false,
+  "python": "3.12.11",
+  "torch": "2.14.0",
+  "device": "cpu",
+  "cuda_device": null,
+  "command": "/Users/yberreby/code/CanViT/canvit-pytorch/canvit_pytorch/viz/__main__.py rollout --scene.image /Users/yberreby/datasets/ADEChallengeData2016/images/validation/ADE_val_00001780.jpg --scene.annotation /Users/yberreby/datasets/ADEChallengeData2016/annotations/validation/ADE_val_00001780.png --scene.source ADE20K validation set, ADE_val_00001780 --scene.attribution ADE20K (MIT CSAIL) --scene.license ADE20K terms of use --scene.out /Users/yberreby/code/CanViT/site/data/street-egc2f --scene.title A street, EG-C2F",
+  "slurm_job": null,
+  "slurm_array_task": null,
+  "precision": "float32"
+ }
+}

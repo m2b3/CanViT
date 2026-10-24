@@ -1,0 +1,168 @@
+{
+ "image_id": "ADE_val_00001780",
+ "entropy_unit": "nats",
+ "max_entropy_nats": 5.0106352940962555,
+ "after": [
+  {
+   "after_glimpse": 0,
+   "quadrants": [
+    {
+     "row": -0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.232
+    },
+    {
+     "row": -0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.2325
+    },
+    {
+     "row": 0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.3941
+    },
+    {
+     "row": 0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.4706
+    }
+   ],
+   "next": {
+    "row": 0.5,
+    "col": 0.5
+   }
+  },
+  {
+   "after_glimpse": 1,
+   "quadrants": [
+    {
+     "row": -0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.2176
+    },
+    {
+     "row": -0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.2332
+    },
+    {
+     "row": 0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.4124
+    },
+    {
+     "row": 0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.3653
+    }
+   ],
+   "next": {
+    "row": 0.5,
+    "col": -0.5
+   }
+  },
+  {
+   "after_glimpse": 2,
+   "quadrants": [
+    {
+     "row": -0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.2186
+    },
+    {
+     "row": -0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.2311
+    },
+    {
+     "row": 0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.3305
+    },
+    {
+     "row": 0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.3293
+    }
+   ],
+   "next": {
+    "row": -0.5,
+    "col": 0.5
+   }
+  },
+  {
+   "after_glimpse": 3,
+   "quadrants": [
+    {
+     "row": -0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.222
+    },
+    {
+     "row": -0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.1752
+    },
+    {
+     "row": 0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.3197
+    },
+    {
+     "row": 0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.3103
+    }
+   ],
+   "next": {
+    "row": -0.5,
+    "col": -0.5
+   }
+  },
+  {
+   "after_glimpse": 4,
+   "quadrants": [
+    {
+     "row": -0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.2338
+    },
+    {
+     "row": -0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.173
+    },
+    {
+     "row": 0.5,
+     "col": -0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.3188
+    },
+    {
+     "row": 0.5,
+     "col": 0.5,
+     "scale": 0.5,
+     "mean_entropy_nats": 0.3087
+    }
+   ]
+  }
+ ]
+}

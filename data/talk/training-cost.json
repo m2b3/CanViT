@@ -1,0 +1,80 @@
+{
+ "_about": "Training FLOPs come from the rebuttal's accounting (accounting.py beside this file) and, for\nAdaptiveNN and AdaGlimpse's ADE20K pipeline, from baselines.py beside this file (its derivation:\nsources/baseline-training-compute.md in the talk), under one convention: each system's own training; pretrained weights and teachers it starts\nfrom are counted on no side (DINOv3 for CanViT-B, DeiT III for AdaGlimpse, MAE or SETR for AME). CanViT-B's adaptation\n(ImageNet-1k fine-tuning, the ADE20K probe) is counted with canvit_pytorch.flops from the paper's settings.\nAccuracies: the paper's macros for CanViT-B, the talk's sota-history.json (each read in its paper) for the others.",
+ "unit": "EFLOPs (1e18 floating-point operations, 1 multiply-add = 2)",
+ "imagenet": [
+  {
+   "model": "CanViT-B",
+   "readout": "frozen, linear probe",
+   "eflops": [
+    55.33,
+    55.33
+   ],
+   "accuracy": 81.1
+  },
+  {
+   "model": "CanViT-B",
+   "readout": "fine-tuned",
+   "eflops": [
+    60.09,
+    60.09
+   ],
+   "accuracy": 84.5
+  },
+  {
+   "model": "AdaGlimpse",
+   "readout": "trained end to end",
+   "eflops": [
+    62.89,
+    144.57
+   ],
+   "accuracy": 77.54,
+   "range": "600 epochs of reconstruction pretraining with 49 to 196 glimpses per image (its code against its paper), then 100 of classification"
+  },
+  {
+   "model": "AdaptiveNN",
+   "readout": "trained end to end",
+   "eflops": [
+    22.58,
+    22.58
+   ],
+   "accuracy": 82.2
+  }
+ ],
+ "ade20k": [
+  {
+   "model": "CanViT-B",
+   "readout": "frozen, linear probe",
+   "eflops": [
+    55.49,
+    55.49
+   ],
+   "accuracy": 45.9
+  },
+  {
+   "model": "AME",
+   "readout": "from SETR weights, already trained on ADE20K",
+   "eflops": [
+    1.42,
+    1.82
+   ],
+   "accuracy": 27.6,
+   "not_counted": "the ViT-L weights it starts from"
+  },
+  {
+   "model": "AdaGlimpse",
+   "readout": "trained end to end",
+   "eflops": [
+    83.67,
+    166.65
+   ],
+   "accuracy": 25.7,
+   "range": "pretraining, reconstruction, then segmentation training; 49 to 196 pretraining patches, 8 to 12 segmentation glimpses"
+  }
+ ],
+ "canvit_parts": {
+  "pretraining": 52.5,
+  "teacher_features": 2.84,
+  "imagenet_fine_tuning": 4.76,
+  "ade20k_probe": 0.16
+ }
+}

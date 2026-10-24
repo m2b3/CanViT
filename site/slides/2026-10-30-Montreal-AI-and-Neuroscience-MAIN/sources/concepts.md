@@ -115,7 +115,7 @@ CtF/FtC result), "the model's own uncertainty about what's where" (EG-C2F; "meta
   Function: memory contributes to "bridging the gap in input so that visual processing does not have to start anew"
   (Aagten-Murphy & Bays 2019, abstract).
 - **CanViT, analogous:** the canvas carries what each glimpse brought into the processing of the next and accumulates
-  it over the rollout. It stores features ("what you saw and what you understood",), the kind of
+  it over the rollout. It stores features, the kind of
   abstract code Irwin found, not fused pixels. Reads condition the next glimpse's processing on what was seen, as a
   presaccadic preview conditions postsaccadic processing (next entry). The memory-reset measurement (`sources/checked-facts.md`, memory reset is the model's version of "does not have to start anew".
 - **CanViT, differs:** a glimpse is a crop at a chosen zoom, with no periphery and no eye; each glimpse's position and

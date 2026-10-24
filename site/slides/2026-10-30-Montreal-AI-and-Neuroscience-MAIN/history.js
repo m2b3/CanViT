@@ -86,7 +86,7 @@ function draw(container, data, macros) {
   text(spec.unit, { x: M.left, y: M.top - 14, class: "unit" }, axes);
 
   // Passive lines at the active models' size: base-size backbones only (size_class, sota-history.json) [Yohaï,
-  // 2026-10-01: "comparing to nonsensically large models is indeed stupid and counterproductive"].
+  // 2026-10-01: never compare against far larger models].
   const base = (p) => p.kind === "passive" && p.size_class === "base";
   const passive = frontier(points.filter((p) => base(p) && p.series !== "frozen_ssl" && !FLAGGED.has(p.model)));
   const frozen = frontier(points.filter((p) => base(p) && p.series === "frozen_ssl" && p.protocol !== "linear probe + ms"));

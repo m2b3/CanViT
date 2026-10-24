@@ -185,6 +185,14 @@ spelling.
 - Record a rule in a guide as it was given, with no examples or extensions
   of your own; a guide records what is true, no more specific than it has
   to be [Yohaï, 2026-10-01].
+- This repository is public, and what is pushed stays in its history. Guides,
+  plans and notes state rules and decisions in clean words, never as pasted
+  quotes of the authors' messages, and carry nothing from private sources
+  [Yohaï, 2026-10-23].
+- `AGENTS.md` files hold rules that stay true for anyone working here.
+  Anything personal, specific to one event or person, likely to change or go
+  stale, or unfit as a general rule stays out of them, in an agent's private
+  memory [Yohaï, 2026-10-23].
 - Test interfaces as a user meets them: a fresh process, the installed
   package outside this checkout, released checkpoints from the Hub.
 - Usage examples load pretrained checkpoints from Hugging Face.
@@ -222,7 +230,8 @@ spelling.
   own their facts; a card is never edited by hand on the Hub. The main pages
   (website, READMEs, pyproject) say that CanViT means Canvas Vision
   Transformer.
-- CanViT and its probes are published separately [Yohaï, 2026-10-01].
+- CanViT and its probes are published separately, never fused in one graph
+  [Yohaï, 2026-10-01].
 - Judge everything by leverage per line, tests included. A test earns its place by catching a plausible defect that
   nothing else would: a paper invariant, a numerical equivalence, a released
   checkpoint that must keep loading. Vacuous tests (restating the code) and

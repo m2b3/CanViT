@@ -16,8 +16,7 @@ then added to them by hand.
 ## What the data supports
 
 The CanViT paper's wording is that active vision models "have struggled to match" passive ones; the numbers
-below scope that claim. The author asked that the chart compare models of the same size [Yohaï, 2026-10-01:
-"comparing to nonsensically large models is indeed stupid and counterproductive"], so the base-size comparison comes
+below scope that claim. The author asked that the chart compare models of the same size [Yohaï, 2026-10-01], so the base-size comparison comes
 first. Base size means at most about 100M parameters (`size_class`; up to 110M is counted as base, and entries above
 100M say so).
 

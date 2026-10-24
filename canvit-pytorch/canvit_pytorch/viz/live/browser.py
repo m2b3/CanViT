@@ -223,8 +223,7 @@ class CheckBrowser:
         box = await frame.bounding_box()
         assert box is not None
         at = lambda x, y: (box["x"] + x * box["width"], box["y"] + y * box["height"])  # noqa: E731
-        scale_now = lambda: page.evaluate(  # noqa: E731
-            "Number(document.querySelector('canvit-live').shadowRoot.querySelector('.size output').textContent.split(/\\s+/)[1])")
+        scale_now = lambda: page.evaluate("document.querySelector('canvit-live').scale")  # noqa: E731
         checks: list[dict[str, Any]] = []
         count = 0
 

@@ -75,7 +75,6 @@ const styles = sheet(`
 `);
 
 const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
-const signed = (value) => (value < 0 ? "−" : "+") + Math.abs(value).toFixed(2);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const percent = (fraction) => (fraction < 0.005 ? "<1%" : `${(100 * fraction).toFixed(0)}%`);
 
@@ -147,6 +146,9 @@ class CanvitLive extends HTMLElement {
 
   get backend() { return this.#model?.backendName ?? null; }
 
+  /** The scale the next click takes a glimpse at. */
+  get scale() { return this.#scale; }
+
   /** Viewpoints {row, col, scale} since the last reset, in order. */
   get history() { return this.#history.map((v) => ({ ...v })); }
 
@@ -204,11 +206,11 @@ class CanvitLive extends HTMLElement {
           if (stage === "fetch") {
             progress.max = total;
             progress.value = received;
-            const source = bytes ? "Downloading CanViT-B and its probe" : "Reading CanViT-B and its probe from this browser's cache";
+            const source = bytes ? "Downloading" : "Loading from cache";
             this.#setStatus(`${source}: <b>${megabytes(received)}</b> / ${megabytes(total)} MB`);
           } else {
             progress.removeAttribute("value");
-            this.#setStatus("Checked the files; starting ONNX Runtime Web…");
+            this.#setStatus("Starting…");
           }
         },
       });
@@ -334,21 +336,21 @@ class CanvitLive extends HTMLElement {
     const m = this.#manifest;
     const grid = m.canvas_grid;
     const pointer = `<div class="pointer" hidden></div>`;
-    const empty = `<div class="empty" data-empty>No glimpse yet</div>`;
-    const mapFigure = (key, title, note) => `<figure><figcaption>${title}<small>${note}</small></figcaption>
+    const empty = `<div class="empty" data-empty></div>`;
+    const mapFigure = (key, title) => `<figure><figcaption>${title}</figcaption>
       <div class="frame" data-aligned><canvas class="pixels" data-${key} width="${grid}" height="${grid}"></canvas>${empty}${pointer}</div></figure>`;
     const policy = this.#probe.policy;
     this.shadowRoot.innerHTML = `
       <div class="panels">
-        <figure class="scene"><figcaption>Scene<small>click to look · scroll or drag to size the glimpse</small></figcaption>
+        <figure class="scene"><figcaption>Scene<small>click to look · scroll to resize</small></figcaption>
           <div class="frame waiting" data-aligned data-scene-frame tabindex="0"
                aria-label="Scene. Click to take a glimpse. Keyboard: arrow keys move the glimpse box, + and − resize it, Enter takes the glimpse.">
             <canvas data-scene width="${m.scene_px}" height="${m.scene_px}"></canvas>${pointer}</div>
         </figure>
-        ${mapFigure("labels", "Segmentation", `ADE20K classes decoded from the canvas`)}
-        ${mapFigure("entropy", "Uncertainty", `entropy of the decoded classes`)}
+        ${mapFigure("labels", "Segmentation")}
+        ${mapFigure("entropy", "Uncertainty")}
         <div class="under">
-          <figure><figcaption>Glimpse: the model's input<small>${m.glimpse_px} × ${m.glimpse_px} px</small></figcaption>
+          <figure><figcaption>Glimpse<small>${m.glimpse_px} px</small></figcaption>
             <div class="frame"><canvas data-glimpse width="${m.glimpse_px}" height="${m.glimpse_px}"></canvas>${empty}</div></figure>
           <div class="size"><label for="scale">Glimpse size</label>
             <input id="scale" type="range" min="0" max="${SLIDER_STEPS}" step="1">
@@ -357,12 +359,12 @@ class CanvitLive extends HTMLElement {
         <div class="readouts"><div class="legend"></div><div class="status" aria-live="polite"></div></div>
       </div>
       <div class="controls">
-        <button type="button" class="primary" data-load>Run CanViT-B here (${this.#downloadBytes ? `${megabytes(this.#downloadBytes)} MB download` : "cached in this browser"})</button>
+        <button type="button" class="primary" data-load>Run CanViT-B${this.#downloadBytes ? ` (${megabytes(this.#downloadBytes)} MB)` : ""}</button>
         <progress hidden></progress>
-        <button type="button" data-reset data-needs-model hidden>Reset canvas</button>
-        <button type="button" data-policy-step data-needs-model hidden title="${policy.description}">${policy.paper_name}: next glimpse</button>
-        <button type="button" data-policy-run data-needs-model hidden title="${policy.description}">${policy.paper_name}: ${policy.num_glimpses} glimpses from a fresh canvas</button>
-        <button type="button" data-photo>Use your own photo</button>
+        <button type="button" data-reset data-needs-model hidden>Reset</button>
+        <button type="button" data-policy-step data-needs-model hidden title="${policy.description}">${policy.paper_name}: next</button>
+        <button type="button" data-policy-run data-needs-model hidden title="${policy.description}">${policy.paper_name}: ${policy.num_glimpses} glimpses</button>
+        <button type="button" data-photo>Your photo</button>
         <input type="file" accept="image/*" hidden>
       </div>`;
     const root = this.shadowRoot;
@@ -395,8 +397,6 @@ class CanvitLive extends HTMLElement {
     };
     this.#setScale(this.#scale);
     this.#legend();
-    const cost = this.#downloadBytes ? `${megabytes(this.#downloadBytes)} MB to download` : "cached in this browser";
-    this.#setStatus(`CanViT-B and its ADE20K probe, fp32: ${cost}. Runs on WebGPU where the browser has it, on WebAssembly (slower) otherwise.`);
   }
 
   // ---- pointer, wheel and keyboard on the scene ----
@@ -522,9 +522,7 @@ class CanvitLive extends HTMLElement {
 
   #describeScale(scale) {
     const output = this.shadowRoot.querySelector(".size output");
-    const scenePx = scale * this.#manifest.scene_px;
-    output.textContent = `scale ${scale.toFixed(3)} · ${(100 * scale * scale).toFixed(1)}% of the scene\n` +
-      `${scenePx.toFixed(0)} scene px → ${this.#manifest.glimpse_px} px`;
+    output.textContent = `${(100 * scale * scale).toFixed(1)}% of the scene`;
   }
 
   // ---- drawing ----
@@ -603,9 +601,8 @@ class CanvitLive extends HTMLElement {
       classes = [...counts.keys()].sort((a, b) => counts.get(b) - counts.get(a)).slice(0, LEGEND_CLASSES)
         .map((c) => `<span class="class"><i style="background:rgb(${paletteRgb(c).join(" ")})"></i>${this.#probe.readout.class_names[c]} ${percent(counts.get(c) / total)}</span>`).join("");
     }
-    legend.innerHTML = `Linear probe on the layer-normalized canvas, decoded after every glimpse, including regions not yet seen. Hover a map to name any cell.
-      ${classes ? `<div class="classes">${classes}</div>` : ""}
-      <p>Uncertainty: 0 <span class="bar" style="background:linear-gradient(90deg,${stops.join(",")})"></span> log ${this.#probe.readout.num_classes}, its maximum; the same scale at every glimpse.</p>`;
+    legend.innerHTML = this.#shown ? `<div class="classes">${classes}</div>
+      <p>Uncertainty: low <span class="bar" style="background:linear-gradient(90deg,${stops.join(",")})"></span> high</p>` : "";
   }
 
   #showPointer() {
@@ -632,19 +629,18 @@ class CanvitLive extends HTMLElement {
     const current = this.#history.at(-1);
     let line;
     if (!current) {
-      line = `${backend} · ready · click anywhere on the scene to take a glimpse`;
+      line = `${backend} · click the scene`;
     } else {
       const s = this.#shown;
-      const by = s.chosenBy === "EG-C2F" ? ` · chosen by EG-C2F (${this.#policy.t}/${this.#policy.length})` : "";
-      line = `${backend} · glimpse <b>${this.#history.length}</b> · row ${signed(current.row)} · col ${signed(current.col)} · ` +
-        `scale ${current.scale.toFixed(3)}${by} · ${s.stepMs.toFixed(0)} ms`;
+      const by = s.chosenBy === "EG-C2F" ? ` · EG-C2F ${this.#policy.t}/${this.#policy.length}` : "";
+      line = `${backend} · glimpse <b>${this.#history.length}</b>${by} · ${s.stepMs.toFixed(0)} ms`;
     }
     if (this.#pointer && this.#shown) {
       const grid = this.#manifest.canvas_grid;
       const i = Math.min(grid - 1, Math.floor(this.#pointer.y * grid)) * grid + Math.min(grid - 1, Math.floor(this.#pointer.x * grid));
       const entropy = this.#shown.entropy[i];
-      line += `<br>here: <b>${this.#probe.readout.class_names[this.#shown.labels[i]]}</b> · ` +
-        `uncertainty ${(entropy / Math.log(this.#probe.readout.num_classes)).toFixed(2)} (${entropy.toFixed(2)} nats)`;
+      line += `<br><b>${this.#probe.readout.class_names[this.#shown.labels[i]]}</b> · ` +
+        `uncertainty ${(entropy / Math.log(this.#probe.readout.num_classes)).toFixed(2)}`;
     }
     status.innerHTML = line;
   }

@@ -108,13 +108,12 @@ methods `play()` and `pause()`; event `canvit-load` `{manifest}`.
 as exported, apart, by `canvit_pytorch.viz.live` (`model` and `probe`, their
 directories, by default the exports published on the Hub, `PUBLISHED_CANVIT`
 and `PUBLISHED_PROBE` in `js/canvit/live-model.js`; `scene`, an image URL,
-center-cropped to a square, or a photo the visitor picks with "Use your own
-photo"). A click takes a glimpse centered there; the wheel, a drag (a box
+center-cropped to a square, or a photo the visitor picks with "Your photo"). A click takes a glimpse centered there; the wheel, a drag (a box
 centered where it starts) or the slider set its size, from the whole scene
 down to pretraining's smallest scale; arrow keys, `+`/`−` and Enter do the
-same from the keyboard. The canvas carries over until "Reset canvas"; EG-C2F
+same from the keyboard. The canvas carries over until "Reset"; EG-C2F
 can choose the next glimpse or run a whole episode. Maps: the ADE20K classes
-and their entropy (fixed scale, 0 to log₂(150) bits), decoded from the canvas after
+and their entropy (on a fixed scale, from 0 to its maximum, ln 150), decoded from the canvas after
 every glimpse, beside the model's input. Loading starts from a button stating
 the download size (a few hundred MB), or as soon as `autoload` is present
 (also when added later, as a deck does near the slide); WebGPU when the

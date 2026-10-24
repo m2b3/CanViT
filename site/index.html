@@ -95,12 +95,10 @@
 
     <section class="wide" id="live">
       <h2>Try it in your browser</h2>
-      <p class="lead">Click anywhere on the scene: CanViT&#8209;B takes a <span class="term-glimpse">glimpse</span> there and writes it into its <span class="term-canvas">canvas</span>. Scroll or drag over the scene to set the glimpse's size. After every glimpse, a linear probe decodes ADE20K classes for the whole scene from the canvas, including the parts not yet seen.</p>
+      <p class="lead">Click the scene: CanViT&#8209;B takes a <span class="term-glimpse">glimpse</span> there and updates its <span class="term-canvas">canvas</span>, decoded into a segmentation of the whole scene. It runs in your browser.</p>
       <div class="stage">
-        <p class="hint">Everything runs in this browser: nothing below was recorded in advance.</p>
         <canvit-live scene="data/street-path/scene.png"></canvit-live>
       </div>
-      <p class="stage-caption"><b>The released CanViT&#8209;B</b> (pretrained on ImageNet&#8209;21k) and its ADE20K linear probe, exported apart to ONNX and run by ONNX Runtime Web. <span class="term-policy">EG&#8209;C2F</span> glimpses where the segmentation decoded from the canvas is least certain.</p>
     </section>
 
     <section class="wide" id="results">

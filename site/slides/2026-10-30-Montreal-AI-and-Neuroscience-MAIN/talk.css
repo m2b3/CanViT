@@ -624,14 +624,8 @@ table.compare .some { color: #b45309; font-weight: 700; }
 table.compare .na { color: var(--ink); }
 table.compare .goal, table.compare .ours { background: color-mix(in srgb, var(--policy) 9%, transparent); }
 table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
-/* The goal table, a row per click, then the goal column. */
-#compare tbody tr, #compare td.goal, #compare th.goal { opacity: 0; transition: opacity .5s ease; }
-#compare.shows-row-1 tr.row-1,
-#compare.shows-row-2 tr.row-2,
-#compare.shows-row-3 tr.row-3,
-#compare.shows-row-4 tr.row-4,
-#compare.shows-row-5 tr.row-5,
-#compare.shows-row-6 tr.row-6,
+/* Passive and prior active models side by side, then the goal column. */
+#compare td.goal, #compare th.goal { opacity: 0; transition: opacity .5s ease; }
 #compare.shows-goal td.goal, #compare.shows-goal th.goal { opacity: 1; }
 #compare table.compare thead th { white-space: nowrap; max-width: none; }
 

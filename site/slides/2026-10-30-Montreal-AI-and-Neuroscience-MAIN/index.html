@@ -271,49 +271,33 @@
 
 <section id="compare" data-status="draft">
   <h2>Toward Active-Vision Foundation Models</h2>
-  <!-- A requirement per click, each one a callback to the slide that motivated it; then the goal column. Every cell:
-       sources/checked-facts.md and sources/literature.md. Prior active models: the seven of #timeline; -->
+  <!-- Passive foundation models and prior active models side by side, then the goal column (Y, 2026-10-25: no row by
+       row). Every cell: sources/checked-facts.md and sources/literature.md. Prior active models: those of #timeline. -->
   <div class="compare-wrap">
     <table class="compare"><thead><tr><th></th><th>Passive<br>foundation models</th><th>Prior<br>active models</th><th class="goal">Active-Vision<br>Foundation Models</th></tr></thead><tbody>
-    <tr class="row-1"><th>Looks through glimpses</th><td><span class="no">✗</span></td><td><span class="yes">✓</span></td><td class="goal"><span class="yes">✓</span></td></tr>
-    <tr class="row-2"><th>Memory across glimpses</th><td><span class="no">✗</span></td><td><span class="yes">✓</span></td><td class="goal"><span class="yes">✓</span></td></tr>
-    <tr class="row-3"><th>Dense outputs (segmentation)</th><td><span class="yes">✓</span></td><td><span class="some">few</span></td><td class="goal"><span class="yes">✓</span></td></tr>
-    <tr class="row-4"><th>Task-agnostic</th><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
-    <tr class="row-5"><th>Policy-agnostic</th><td><span class="na">—</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
-    <tr class="row-6"><th>Rich world knowledge</th><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
+    <tr><th>Looks through glimpses</th><td><span class="no">✗</span></td><td><span class="yes">✓</span></td><td class="goal"><span class="yes">✓</span></td></tr>
+    <tr><th>Memory across glimpses</th><td><span class="no">✗</span></td><td><span class="yes">✓</span></td><td class="goal"><span class="yes">✓</span></td></tr>
+    <tr><th>Dense outputs (segmentation)</th><td><span class="yes">✓</span></td><td><span class="some">few</span></td><td class="goal"><span class="yes">✓</span></td></tr>
+    <tr><th>Task-agnostic</th><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
+    <tr><th>Policy-agnostic</th><td><span class="na">—</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
+    <tr><th>Rich world knowledge</th><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
     </tbody></table>
   </div>
-  <span class="fragment step-marker" data-shows="row-1"></span>
-  <span class="fragment step-marker" data-shows="row-2"></span>
-  <span class="fragment step-marker" data-shows="row-3"></span>
-  <span class="fragment step-marker" data-shows="row-4"></span>
-  <span class="fragment step-marker" data-shows="row-5"></span>
-  <span class="fragment step-marker" data-shows="row-6"></span>
   <span class="fragment step-marker" data-shows="goal"></span>
   <aside class="notes"><ul>
     <li>[Timing: planned 1:00–1:15]</li>
     <li>[AI draft: not the authors' text]</li>
-    <li>So what would it take to bring these two worlds together?</li>
-    <li>On one side, passive foundation models like DINOv3; on the other, prior active models.</li>
+    <li>Putting it all together:</li>
+    <li>passive foundation models like DINOv3 have rich representations that serve many tasks,</li>
+    <li>but they take in an image in a single look, with no glimpses and no memory.</li>
+    <li>Prior active models do look through glimpses, and remember what they saw,</li>
+    <li>but each is built for its own task and its own policy,</li>
+    <li>few support dense prediction, and they lack rich world knowledge.</li>
     <li>[CLICK]</li>
-    <li>First, the model should look through glimpses, rather than take in the whole image in a single look.</li>
-    <li>[CLICK]</li>
-    <li>It needs a memory, to integrate what it sees across glimpses.</li>
-    <li>[CLICK]</li>
-    <li>It should support dense outputs like segmentation, which only a few active models do.</li>
-    <li>[CLICK]</li>
-    <li>Like DINOv3, it should be task-agnostic: pretrained once, then used across many tasks.</li>
-    <li>[CLICK]</li>
-    <li>It should be policy-agnostic.</li>
-    <li>As Yarbus showed, the right viewing policy depends on the task, so a task-agnostic model can't commit to one.</li>
-    <li>It needs a general-purpose observer, compatible with any policy.</li>
-    <li>Prior active models are each trained with their own policy; passive models don't choose where to look at all.</li>
-    <li>[CLICK]</li>
-    <li>And it should have rich world knowledge, which passive foundation models get from pretraining at scale, and prior active models lack.</li>
-    <li>[CLICK]</li>
-    <li>That's what we call an Active-Vision Foundation Model.</li>
-    <li>Neither column has all of these.</li>
-    <li>Transition: Yohaï will now show you how we built one.</li>
+    <li>What we set out to build is an Active-Vision Foundation Model:</li>
+    <li>a vision model that understands the spatial and semantic structure of scenes across arbitrary sequences of glimpses,</li>
+    <li>with rich representations that transfer across tasks and viewing policies.</li>
+    <li>Transition: how we built one.</li>
   </ul></aside>
 </section>
 

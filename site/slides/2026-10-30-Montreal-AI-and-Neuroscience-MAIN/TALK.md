@@ -408,8 +408,8 @@ about 16, 1 of slack).
    this slide a first answer.
 9b. C "Where people look depends on their goal" · 1:00 (a click goes from the painting straight to all seven records, Sabrina, 2026-10-25) (moved 2026-10-25, Y: before the requirements of an
    AVFM). Yarbus: a model for any task must handle any sequence of fixations.
-10. C "Toward Active-Vision Foundation Models" · 1:15 · exists. The requirements, a row per click, then the goal
-    column.
+10. C "Toward Active-Vision Foundation Models" · 1:15 · exists. Passive foundation models and prior active
+    models side by side, then the goal column on the only click (Y, 2026-10-25: no row by row).
 
 ### Part II (Yohaï): how, and what it does
 

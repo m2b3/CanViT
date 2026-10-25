@@ -585,6 +585,10 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 /* The gap: the segmentation task, then the bars (gap.js). */
 #gap .gap-layout { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: center; margin-top: 10px; }
 #gap .examples { display: grid; gap: 14px; }
+/* The example alone, large and centered over the slide, until the bars come in: then it shrinks into its column.
+   406 px moves the column's center (170 px) to the content area's (576 px). */
+#gap .examples { transform: translateX(406px) scale(1.38); transform-origin: center top; transition: transform .9s ease; }
+#gap.shows-bars .examples { transform: none; }
 #gap .example .tag { position: absolute; left: 10px; bottom: 10px; padding: 4px 12px; border-radius: 8px; background: var(--ink);
                      color: #fff; font-size: 17px; font-weight: 700; opacity: 0; transition: opacity .5s ease; }
 #gap.shows-label .example .tag { opacity: 1; }

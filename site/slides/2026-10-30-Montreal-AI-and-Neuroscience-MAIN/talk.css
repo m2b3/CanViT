@@ -730,7 +730,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 .reveal section.signpost .statement small { display: block; margin-top: 18px; font-size: 30px; font-weight: 600; color: var(--ink); letter-spacing: 0; }
 
 /* Why DINOv3's scale matters: Raugel et al.'s Fig. 5E, as large as the slide allows. */
-#dinov3-and-the-brain .scaling { width: 980px; margin: 0 auto; text-align: center; }
+#dinov3-and-the-brain .scaling { width: 940px; top: 116px; margin: 0 auto; text-align: center; }
 #dinov3-and-the-brain .scaling img { width: 100%; height: auto; }
 #dinov3-and-the-brain .scaling figcaption { margin-top: 10px; }
 
@@ -947,3 +947,10 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #active-vision-model .axes { margin-top: 40px; }
 #active-vision-model .bottom { margin-top: 60px; }
 #active-vision-model .claim { font-size: 34px; }
+
+/* DINOv3 and the brain: the study's design first, then (shows-scaling) Fig. 5E in its place. */
+#dinov3-and-the-brain figure { position: absolute; left: 0; right: 0; top: 130px; opacity: 0; transition: opacity .6s ease; }
+#dinov3-and-the-brain .method { width: 1100px; margin: 0 auto; text-align: center; opacity: 1; }
+#dinov3-and-the-brain .method img { width: 100%; height: auto; }
+#dinov3-and-the-brain.shows-scaling .method { opacity: 0; }
+#dinov3-and-the-brain.shows-scaling .scaling { opacity: 1; }

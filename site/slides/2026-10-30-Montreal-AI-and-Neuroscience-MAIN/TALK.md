@@ -493,6 +493,22 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
 
 ## Open work
 
+- Yohaï's feedback on Sabrina's run-through of Part I (2026-10-25), not yet applied (to be worked through with her):
+  - Title: the contrast with passive computer vision models is said too loosely.
+  - `#tradition`: "a new class of models" is questionable (new?); spell out IT; say where the better categorization
+    performance predicts neural responses (which recordings).
+  - Self-supervision is a relaxation of constraints, not "more biologically plausible constraints".
+  - `#foundation`: spell out principal components, three at a time, before "PCs"; say who "we" is.
+  - Scale is not a reason to care about DINOv3 in itself: it is the means to the semantic representation, which
+    requires it.
+  - `#dinov3-and-the-brain`: too quick; say what Raugel et al. did and what the paper is about.
+  - "What's missing?" and `#human-vision`: the non-uniform front end (foveation, eccentricity-dependent acuity) was
+    glossed over.
+  - `#timeline`: the neuro-AI active models are passed over too quickly.
+  - `#gap`: introduce ADE20K segmentation first: what the task is, why it is interesting (harder than classification,
+    both spatial and semantic).
+  - `#active-vision-model`: too much text, partly redundant; remove the descriptions under each component.
+  - "No policy can make up for a poor observer" needs its reasoning said, not just asserted.
 - `#rollout`'s scene and R-IID seed chosen so that its mIoU never drops (Y), by `experiments/rollout_demo`, if
   `#rollout` returns from Backup (parked 2026-10-25, Y).
 - The meter on `#rollout` shows a scene's mIoU (A, 2026-10-25): about 18 to 30% on the street, against the benchmark's

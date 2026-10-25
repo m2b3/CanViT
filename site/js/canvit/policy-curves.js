@@ -14,7 +14,8 @@
 // in the shadow part "added" so that a slide can reveal it. baselines lists prior models of src's baselines,
 // comma-separated by name ("AME (SETR), AdaGlimpse"); each one's best result is a marker at the glimpse count it was
 // measured at, named beside it, drawn when inside the axes. The chart's height is its width times
-// --canvit-chart-aspect (default 0.78).
+// --canvit-chart-aspect (default 0.78); --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text
+// sizes (14, 15 and 16 px by default).
 
 import { POLICIES } from "./policies.js";
 
@@ -42,11 +43,11 @@ template.innerHTML = `
   svg { display: block; width: 100%; overflow: visible; }
   .grid line { stroke: #e2e8f0; }
   .axis-line { stroke: var(--canvit-ink, #0f172a); stroke-width: 1.5; }
-  .axis text { fill: var(--canvit-muted, #475569); font-size: 14px; font-variant-numeric: tabular-nums; }
-  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 650; }
+  .axis text { fill: var(--canvit-muted, #475569); font-size: var(--canvit-chart-tick, 14px); font-variant-numeric: tabular-nums; }
+  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-title, 15px); font-weight: 650; }
   .curve { fill: none; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
   .curve.dashed { stroke-width: 2.6; stroke-dasharray: 7 5; }
-  .legend text { fill: var(--canvit-muted, #475569); font-size: 14px; font-weight: 600; }
+  .legend text { fill: var(--canvit-muted, #475569); font-size: var(--canvit-chart-tick, 14px); font-weight: 600; }
   .legend line { stroke: var(--canvit-muted, #475569); stroke-width: 2.6; }
   .legend .dashed { stroke-dasharray: 7 5; }
   .head { stroke: var(--canvit-surface, #fff); stroke-width: 2; }
@@ -54,7 +55,7 @@ template.innerHTML = `
   .added .curve { stroke: var(--canvit-policy, #0d9488); stroke-width: 5.5; }
   .added .band { fill: var(--canvit-policy, #0d9488); opacity: .2; }
   .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 700; paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 4px; }
-  .label { font-size: 16px; font-weight: 800; paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 5px; }
+  .label { font-size: var(--canvit-chart-label, 16px); font-weight: 800; paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 5px; }
 </style>
 <svg role="img"></svg>`;
 
@@ -160,7 +161,7 @@ class CanvitPolicyCurves extends HTMLElement {
     const shown = Math.min(steps, this.hasAttribute("t") ? Number(this.getAttribute("t")) + 1 : steps);
     const aspect = Number(getComputedStyle(this).getPropertyValue("--canvit-chart-aspect") || 0.78);
     const height = Math.round(width * aspect);
-    const plot = { left: 50, right: width - 78, top: 10, bottom: height - 46 };
+    const plot = { left: 72, right: width - 90, top: 10, bottom: height - 52 };
     // Glimpse n (t = n - 1) on a linear or a log axis from glimpse 1 to the last.
     const position = this.#xScale === "log" ? (t) => Math.log(t + 1) / Math.log(steps) : (t) => t / (steps - 1);
     const x = (t) => plot.left + position(t) * (plot.right - plot.left);

@@ -426,6 +426,9 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 /* Accuracy by viewing policy: ImageNet-1k, then ADE20K beside it. */
 #policy-accuracy .charts { display: grid; grid-template-columns: repeat(2, 540px); gap: 48px; justify-content: center; }
 #policy-accuracy figure { margin: 0; transition: opacity .6s ease; }
+/* Charts sized for the room: taller, larger text (policy-curves.js reads these). */
+canvit-policy-curves { --canvit-chart-tick: 17px; --canvit-chart-title: 18px; --canvit-chart-label: 19px; }
+#policy-accuracy canvit-policy-curves { --canvit-chart-aspect: .9; }
 #policy-accuracy figcaption { margin-bottom: 6px; font-size: 22px; font-weight: 750; }
 #policy-accuracy .ade20k { opacity: 0; }
 

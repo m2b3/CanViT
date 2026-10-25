@@ -458,6 +458,8 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
 
 ## Open work
 
+- "Open-source and easy to use" (was "Quickstart", Y 2026-10-25): its example is not interesting enough (Y); choose
+  the scene and the glimpse sequence by inspecting candidates, for what the second glimpse visibly adds.
 - `#rollout`'s scene and R-IID seed chosen so that its mIoU never drops (Y), by `experiments/rollout_demo`, if
   `#rollout` returns from Backup (parked 2026-10-25, Y).
 - The meter on `#rollout` shows a scene's mIoU (A, 2026-10-25): about 18 to 30% on the street, against the benchmark's

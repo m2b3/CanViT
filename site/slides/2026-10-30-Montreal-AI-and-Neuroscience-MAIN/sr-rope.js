@@ -18,6 +18,12 @@ export async function drawSrRope(section, src) {
     for (const key of ["top", "left", "size"]) section.style.setProperty(`--${prefix}-${key}`, boxes[name][key]);
   }
   section.style.setProperty("--grid", grid);
+  // Each glimpse's viewpoint as the paper writes it, (x, y, s): its center, x across and y down, in [-1, 1], and its scale.
+  const signed = (v) => v.toFixed(2).replace("-", "−");
+  for (const [name, cls] of [["vit", "first"], ["zoom", "zoom"]]) {
+    const { top, left, size } = boxes[name];
+    find(`.viewpoint .${cls}`).textContent = `(x, y, s) = (${signed(2 * (left + size / 2) - 1)}, ${signed(2 * (top + size / 2) - 1)}, ${size.toFixed(2)})`;
+  }
   find(".scene img").src = `${src}/scene.png`;
   find(".glimpse img.first").src = `${src}/glimpse-vit.png`;
   find(".glimpse img.zoom").src = `${src}/glimpse-zoom.png`;

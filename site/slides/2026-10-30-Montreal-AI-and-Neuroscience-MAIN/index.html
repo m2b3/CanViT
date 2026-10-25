@@ -158,7 +158,7 @@
         <figcaption>ADE20K semantic segmentation<small>pixel-level</small></figcaption>
       </figure>
     </div>
-    <div class="gap-chart"><p class="axis-title">ADE20K mean intersection over union (mIoU, %)</p><div class="bars"></div></div>
+    <div class="bar-chart"><p class="axis-title">ADE20K mean intersection over union (mIoU, %)</p><div class="bars"></div></div>
   </div>
   <span class="fragment step-marker" data-shows="map"></span>
   <span class="fragment step-marker" data-shows="bars"></span>
@@ -405,7 +405,7 @@
        receives them, and where SR-RoPE places them in the scene; the canvas's 32 x 32 patches
        (RELEASED_CANVAS_GRID_SIZE) at fixed scene positions. Paper §4, "Scene-Relative Rotary Position Embeddings". -->
   <div class="rope-layout">
-    <figure class="glimpse"><div class="frame"><div class="crop"><img class="pixels first" alt="The glimpse on the cat's head, 128 px"><img class="pixels zoom" alt="The glimpse on the cat's eye, 128 px"></div><div class="grid patch-cells"></div><div class="dots"></div></div><figcaption>Glimpse</figcaption></figure>
+    <figure class="glimpse"><div class="frame"><div class="crop"><img class="pixels first" alt="The glimpse on the cat's head, 128 px"><img class="pixels zoom" alt="The glimpse on the cat's eye, 128 px"></div><div class="grid patch-cells"></div><div class="dots"></div></div><figcaption>Glimpse</figcaption><p class="viewpoint"><span class="first"></span><span class="zoom"></span></p></figure>
     <span class="arrow"></span>
     <figure class="scene"><div class="frame"><img alt="A ginger cat"><div class="canvas-cells patch-cells"></div><span class="box"><span class="grid patch-cells"></span></span><div class="dots"></div></div><figcaption>Scene</figcaption></figure>
     <p class="legend"><span class="glimpse-key">Glimpse patches</span><span class="canvas-key">Canvas patches</span></p>
@@ -625,7 +625,7 @@
     <li>[AI draft: not the authors' text]</li>
     <li>ImageNet first. Dashed is the frozen model with a linear readout; solid is the same model fine-tuned on ImageNet. After the first glimpse, frozen C2F is at 76.8 top-1 and F2C, which starts with its smallest tile, at 32.2; by 21 glimpses they're within 1.3 points. Fine-tuned, C2F reaches <span data-macro="inkFinetunedBest">84.5</span>.</li>
     <li>ADE20K: dashed is the 32 by 32 canvas it was pretrained with; solid, a 64 by 64 canvas it never saw in training, chosen at inference, and it does better: zero-shot generalization to a higher resolution.</li>
-    <li>At 64 by 64, C2F reaches <span data-macro="adeCTFCSixFourTTwenty">45.9</span>; the same viewpoints in the opposite order, F2C, <span data-macro="adeFTCCSixFourTTwenty">42.9</span>. Order matters. The observer works under every policy we tested, including ones it never saw. And even F2C, in a worse-than-random order, beats every prior active model by its fifth glimpse, fewer than their eight: in this task, perception, not viewpoint selection, was the bottleneck, which is what we suspected at the start.</li>
+    <li>At 64 by 64, C2F reaches <span data-macro="adeCTFCSixFourTTwenty">45.9</span>; the same viewpoints in the opposite order, F2C, <span data-macro="adeFTCCSixFourTTwenty">42.9</span>. Order matters. The observer works under every policy we tested, including ones it never saw. And even F2C, in a worse-than-random order, ends far above every prior active model, as we'll see: in this task, perception, not viewpoint selection, was the bottleneck.</li>
   </ul></aside>
 </section>
 
@@ -656,8 +656,30 @@
   </ul></aside>
 </section>
 
+<section id="state-of-the-art" data-status="draft">
+  <h2>A new active-vision state of the art</h2>
+  <!-- In turn: the paper's Table 1 as dot plots, ADE20K then ImageNet-1k (state-of-the-art.js), each prior active
+       model's best result, CanViT-B's and the passive DINOv3 ViT-B's; then ADE20K accuracy against inference compute,
+       the paper's Figure 3A (canvit-frontier). Glimpse counts are not compared: prior models' glimpses differ in size and
+       their images in resolution. -->
+  <div class="panels">
+    <figure class="ade20k"><figcaption>ADE20K segmentation <small>mIoU (%)</small></figcaption><div class="bar-chart"><div class="bars"></div></div></figure>
+    <figure class="in1k"><figcaption>ImageNet-1k classification <small>top-1 (%)</small></figcaption><div class="bar-chart"><div class="bars"></div></div></figure>
+    <figure class="efficiency"><figcaption>ADE20K segmentation against inference compute</figcaption><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="prior egc2f-32 egc2f-64 f2c-32 f2c-64" height="470"></canvit-frontier></figure>
+  </div>
+  <span class="fragment step-marker" data-shows="in1k"></span>
+  <span class="fragment step-marker" data-shows="efficiency"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Putting it together against prior active models, at their best and ours. ADE20K: the best prior active model reached <span data-macro="adeBestPriorMiou">27.6</span>; CanViT-B, frozen with a linear readout, <span data-macro="adeBestMiou">45.9</span>.</li>
+    <li>ImageNet-1k: AdaptiveNN reached 82.2; CanViT-B gets <span data-macro="inkFrozenBest">81.1</span> frozen and <span data-macro="inkFinetunedBest">84.5</span> fine-tuned.</li>
+    <li>And the passive model whose features it learned from, DINOv3 ViT-B, read out the same way: 47.2 on ADE20K, 85.0 on ImageNet-1k. The gap between active and passive vision is much narrower.</li>
+    <li>Efficiency on ADE20K, against inference compute: one low-resolution glimpse of the whole scene gives <span data-macro="adeSingleGlimpseMiou">38.5</span>, with <span data-macro="adeCheapestBeatFlopRatio">20</span>&times; fewer FLOPs than AME needs for its <span data-macro="adeBestPriorMiou">27.6</span>. Even F2C, a worse-than-random order, is above the prior models at lower cost.</li>
+  </ul></aside>
+</section>
+
 <section id="quickstart" data-status="draft">
-  <h2>Quickstart</h2>
+  <h2>Open-source and easy to use</h2>
   <p class="install"><code>uv add canvit-pytorch</code></p>
   <!-- quickstart.py runs as shown: experiments/quickstart/export.py executes it on the street (ADE_val_00001780, the 512 px
        scene of the recorded bundles) and saves what each model call returned; plot.py draws the boxes, the maps and
@@ -1031,6 +1053,7 @@
   import { drawCanvasConcept } from "./canvas-concept.js";
   import { placeTableAnswers } from "./table.js";
   import { drawGap } from "./gap.js";
+  import { drawStateOfTheArt } from "./state-of-the-art.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   import { startDeck } from "../deck.js";
   // The published deck has no Backup slides (site/deploy.sh cuts them): a Backup slide is drawn only when present.
@@ -1059,7 +1082,10 @@
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
   await drawIfPresent("#cost", (slide) => drawTrainingCost(slide, "../../data/talk/training-cost.json"));
-  await drawGap(document.querySelector("#gap .gap-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
+  await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
+  await drawStateOfTheArt(document.querySelector("#state-of-the-art"), {
+    paper: "../../assets/paper/ade20k_seg.json", macros: "../../assets/paper/data_macros.json",
+    in1kReferences: "sources/in1k-active-references.json", dinov3Probes: "../../assets/paper/dinov3_probe_data.json" });
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const egc2f = document.querySelector("#eg-c2f");
   await drawUncertainty(egc2f, "../../data/talk/metacognition/street");

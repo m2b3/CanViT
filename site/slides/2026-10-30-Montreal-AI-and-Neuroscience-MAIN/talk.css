@@ -586,18 +586,18 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #gap .example figcaption { margin-top: 6px; text-align: center; font-size: 18px; font-weight: 700; }
 #gap .wipe { clip-path: inset(0 100% 0 0); transition: clip-path 1.2s ease; }
 #gap.shows-map .wipe { clip-path: inset(0); }
-#gap .gap-chart { opacity: 0; transition: opacity .6s ease; }
-#gap.shows-bars .gap-chart { opacity: 1; }
-.gap-chart .axis-title { margin: 0 0 4px 30%; font-size: 17px; font-weight: 700; }
-.gap-chart svg { display: block; width: 100%; height: auto; font-family: var(--sans); }
-.gap-chart .grid { stroke: var(--rule); }
-.gap-chart .tick { font-size: 18px; fill: var(--muted); }
-.gap-chart .name { font-size: 26px; font-weight: 800; fill: var(--ink); }
-.gap-chart .note { font-size: 17px; fill: var(--muted); }
-.gap-chart .value { font-size: 26px; font-weight: 800; fill: var(--ink); }
-.gap-chart .passive .bar { fill: var(--ink); }
-.gap-chart .active .bar { fill: #d97706; }
-.gap-chart .canvit .bar { fill: var(--canvas); }
+#gap .bar-chart { opacity: 0; transition: opacity .6s ease; }
+#gap.shows-bars .bar-chart { opacity: 1; }
+.bar-chart .axis-title { margin: 0 0 4px 30%; font-size: 17px; font-weight: 700; }
+.bar-chart svg { display: block; width: 100%; height: auto; font-family: var(--sans); }
+.bar-chart .grid { stroke: var(--rule); }
+.bar-chart .tick { font-size: 18px; fill: var(--muted); }
+.bar-chart .name { font-size: 26px; font-weight: 800; fill: var(--ink); }
+.bar-chart .note { font-size: 17px; fill: var(--muted); }
+.bar-chart .value { font-size: 26px; font-weight: 800; fill: var(--ink); }
+.bar-chart .passive .bar { fill: var(--ink); }
+.bar-chart .active .bar { fill: #d97706; }
+.bar-chart .canvit .bar { fill: var(--canvas); }
 
 /* Yes/no comparison: the families of models against what an active-vision foundation model needs. */
 .compare-wrap { display: flex; justify-content: center; margin-top: 26px; }
@@ -760,17 +760,17 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #timeline .pioneer-ring { fill: none; stroke: var(--ink); stroke-width: 3; }
 
 /* The gap chart's rows (gap.js): the core rows bunched at first, then every row at its place in the full chart. */
-.gap-chart .row { transform: translateY(var(--y-core)); transition: transform .8s ease, opacity .6s ease; }
+#gap .bar-chart .row { transform: translateY(var(--y-core)); transition: transform .8s ease, opacity .6s ease; }
 /* The zoomed axis (gap.js): bars stretched from the origin, values and ticks shifted with them, ticks beyond hidden. */
-.gap-chart :is(.bar, .value, .tick-group) { transform: var(--zoom); transition: transform .9s ease, opacity .6s ease; }
-.gap-chart .bar { transform-box: fill-box; transform-origin: left center; }
-.gap-chart .tick-group.beyond { opacity: 0; }
-#gap.shows-more .gap-chart :is(.bar, .value, .tick-group) { transform: none; opacity: 1; }
-.gap-chart .row:not(.core) { opacity: 0; }
-#gap.shows-more .gap-chart .row { transform: translateY(var(--y-all)); opacity: 1; }
-#gap .gap-chart .name { font-size: 21px; }
-#gap .gap-chart .note { font-size: 14px; }
-#gap .gap-chart .value { font-size: 20px; }
+#gap .bar-chart :is(.bar, .value, .tick-group) { transform: var(--zoom); transition: transform .9s ease, opacity .6s ease; }
+#gap .bar-chart .bar { transform-box: fill-box; transform-origin: left center; }
+#gap .bar-chart .tick-group.beyond { opacity: 0; }
+#gap.shows-more .bar-chart :is(.bar, .value, .tick-group) { transform: none; opacity: 1; }
+#gap .bar-chart .row:not(.core) { opacity: 0; }
+#gap.shows-more .bar-chart .row { transform: translateY(var(--y-all)); opacity: 1; }
+#gap .bar-chart .name { font-size: 21px; }
+#gap .bar-chart .note { font-size: 14px; }
+#gap .bar-chart .value { font-size: 20px; }
 
 
 
@@ -865,3 +865,31 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .canvas-key { color: var(--canvas); opacity: 0; transition: opacity .6s ease; }
 #sr-rope .canvas-key::before { background: var(--canvas); }
 #sr-rope.shows-canvas .canvas-key { opacity: 1; }
+
+/* A new active-vision state of the art: a panel per step, full width, one at a time: ADE20K, ImageNet-1k on "in1k",
+   the efficiency frontier on "efficiency". Dot plots (bar-rows.js): prior active models amber, CanViT-B large and in
+   canvas red, the passive DINOv3 ViT-B in ink. */
+#state-of-the-art .panels { position: relative; height: 560px; margin-top: 14px; }
+#state-of-the-art figure { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity .6s ease; }
+#state-of-the-art:not(.shows-in1k) .ade20k, #state-of-the-art.shows-in1k:not(.shows-efficiency) .in1k,
+#state-of-the-art.shows-efficiency .efficiency { opacity: 1; }
+#state-of-the-art figcaption { font-size: 26px; font-weight: 750; margin-bottom: 14px; }
+#state-of-the-art figcaption small { font-size: 18px; font-weight: 500; color: var(--muted); }
+#state-of-the-art .bar-chart { width: 1000px; margin: 0 auto; }
+#state-of-the-art .bar-chart .row { transform: translateY(var(--y-all)); }
+#state-of-the-art .bar-chart .guide { stroke: var(--rule); stroke-width: 2; }
+#state-of-the-art .bar-chart .dot { fill: var(--bg); stroke-width: 4; }
+#state-of-the-art .bar-chart .active .dot { stroke: #d97706; fill: #d97706; }
+#state-of-the-art .bar-chart .passive .dot { stroke: var(--ink); fill: var(--bg); }
+#state-of-the-art .bar-chart .canvit .dot { stroke: var(--canvas); fill: var(--canvas); r: 15; }
+#state-of-the-art .bar-chart .canvit :is(.name, .value) { fill: var(--canvas); }
+#state-of-the-art .bar-chart :is(.active, .passive) .name { font-weight: 650; }
+#state-of-the-art .bar-chart .name { font-size: 28px; }
+#state-of-the-art .bar-chart .note { font-size: 17px; }
+#state-of-the-art .bar-chart .value { font-size: 26px; }
+#state-of-the-art .bar-chart .tick { font-size: 20px; }
+#sr-rope .viewpoint { position: relative; height: 26px; width: 300px; margin: 4px 0 0; font-size: 20px; font-weight: 650;
+                      font-variant-numeric: tabular-nums; color: var(--glimpse); text-align: center; white-space: nowrap; }
+#sr-rope .viewpoint span { position: absolute; inset: 0; transition: opacity .9s ease; }
+#sr-rope .viewpoint .zoom, #sr-rope.shows-zoom .viewpoint .first { opacity: 0; }
+#sr-rope.shows-zoom .viewpoint .zoom { opacity: 1; }

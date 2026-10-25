@@ -558,6 +558,9 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #learned-policy .budget .pretraining .bar { width: 100%; background: var(--canvas); }
 #learned-policy .budget .policy .bar { width: max(4px, calc(100% * 640e3 / 1e9)); background: var(--policy); }
 #learned-policy .budget .n { margin: 4px 0 0; font-size: 19px; font-weight: 700; }
+#learned-policy .budget .who .llm { display: block; margin-top: 2px; font-size: 17px; font-weight: 600; color: var(--muted);
+                                    opacity: 0; transition: opacity .5s ease; }
+#learned-policy.shows-llm .budget .who .llm { opacity: 1; }
 
 /* Next: two directions, each in its own panel. */
 

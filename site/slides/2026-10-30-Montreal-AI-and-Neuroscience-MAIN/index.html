@@ -681,16 +681,19 @@
        policy 640k glimpse forwards per run, about 80 minutes per seed on one RTX 4090
        (the authors' unpublished experiments). -->
   <div class="budget">
-    <div class="budget-row pretraining"><p class="who">Pretraining</p><div class="track"><span class="bar"></span></div><p class="n">1 billion glimpses</p></div>
-    <div class="budget-row policy"><p class="who">Policy</p><div class="track"><span class="bar"></span></div><p class="n">640 thousand glimpses</p></div>
+    <div class="budget-row pretraining"><p class="who">Pretraining<small class="llm">no RL, as in LLM pretraining</small></p><div class="track"><span class="bar"></span></div><p class="n">1 billion glimpses</p></div>
+    <div class="budget-row policy"><p class="who">Policy<small class="llm">RL, as in LLM post-training</small></p><div class="track"><span class="bar"></span></div><p class="n">640 thousand glimpses</p></div>
   </div>
   <span class="fragment step-marker" data-shows="learned"></span>
   <span class="fragment step-marker" data-shows="budget"></span>
+  <!-- The parallel with LLMs (Y, 2026-10-24 and 2026-10-25): pretraining without RL, RL after. -->
+  <span class="fragment step-marker" data-shows="llm"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>We pretrained the observer without RL. With the observer frozen, we then trained a policy for ADE20K segmentation, with RL. These results are unpublished. CanViT-B and its segmentation readout stay frozen; only the policy learns, choosing each next glimpse among 512 viewpoints, rewarded by how much a glimpse reduces the segmentation error.</li>
     <li>Both start with the full scene; after that, the learned policy beats EG-C2F at every glimpse: 42.65 against 42.2 after the second, 44.97 against 44.65 after the fifth, against a heuristic that is already strong.</li>
     <li>And the training cost: pretraining the observer took about a billion glimpses. Training the policy took 640 thousand, about 80 minutes on a single RTX 4090.</li>
+    <li>It's the same split as for LLMs: pretraining without RL, then RL as post-training.</li>
   </ul></aside>
 </section>
 

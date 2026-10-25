@@ -818,14 +818,14 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
    dots glide when the glimpse changes to the smaller one (shows-zoom); dots scale with the cells. */
 #sr-rope { --top: var(--first-top); --left: var(--first-left); --size: var(--first-size); }
 #sr-rope.shows-zoom { --top: var(--zoom-top); --left: var(--zoom-left); --size: var(--zoom-size); }
-#sr-rope .rope-layout { display: grid; grid-template-columns: 300px 70px 470px; grid-template-rows: auto auto;
-                        justify-content: center; align-items: center; column-gap: 28px; margin-top: 26px; }
+#sr-rope .rope-layout { display: grid; grid-template-columns: 300px 70px 440px; grid-template-rows: auto auto;
+                        justify-content: center; align-items: center; column-gap: 28px; margin-top: 48px; }
 #sr-rope figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
 #sr-rope figcaption { margin-top: 10px; font-size: 22px; font-weight: 750; }
 #sr-rope .glimpse figcaption { color: var(--glimpse); }
 #sr-rope .frame { position: relative; }
 #sr-rope .glimpse .frame { --cell: calc(300px / var(--grid)); width: 300px; height: 300px; }
-#sr-rope .scene .frame { --cell: calc(470px * var(--size) / var(--grid)); width: 470px; height: 470px; }
+#sr-rope .scene .frame { --cell: calc(440px * var(--size) / var(--grid)); width: 440px; height: 440px; }
 #sr-rope .scene img { display: block; width: 100%; height: 100%; border-radius: 8px; }
 #sr-rope .crop { position: absolute; inset: 0; border-radius: 6px; box-shadow: 0 0 0 3px var(--glimpse); overflow: hidden; }
 #sr-rope .crop img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .9s ease; }
@@ -883,11 +883,16 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #state-of-the-art .bar-chart .note { font-size: 17px; }
 #state-of-the-art .bar-chart .value { font-size: 26px; }
 #state-of-the-art .bar-chart .tick { font-size: 20px; }
-#sr-rope .viewpoint { position: relative; height: 26px; width: 300px; margin: 4px 0 0; font-size: 20px; font-weight: 650;
-                      font-variant-numeric: tabular-nums; color: var(--glimpse); text-align: center; white-space: nowrap; }
-#sr-rope .viewpoint span { position: absolute; inset: 0; transition: opacity .9s ease; }
-#sr-rope .viewpoint .zoom, #sr-rope.shows-zoom .viewpoint .first { opacity: 0; }
-#sr-rope.shows-zoom .viewpoint .zoom { opacity: 1; }
+#sr-rope .box .tag { position: absolute; left: 0; bottom: 100%; margin-bottom: 4px; padding: 2px 7px; border-radius: 4px;
+                    background: var(--glimpse); color: #fff; font-size: 15px; font-weight: 650; white-space: nowrap;
+                    font-variant-numeric: tabular-nums; }
+#sr-rope .box .tag span { transition: opacity .9s ease; }
+#sr-rope .box .tag .zoom { position: absolute; left: 7px; top: 2px; }
+#sr-rope .box .tag .zoom, #sr-rope.shows-zoom .box .tag .first { opacity: 0; }
+#sr-rope.shows-zoom .box .tag .zoom { opacity: 1; }
+#sr-rope .axes { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+#sr-rope .axes path { fill: none; stroke: var(--ink); stroke-width: 2; }
+#sr-rope .axes text { fill: var(--ink); font-size: 17px; font-weight: 600; }
 
 /* The table again, after pretraining (#table-callback): the table slide's last state, then CanViT's p(table) after
    both glimpses fading in over the passive answers, and the question mark gone. */

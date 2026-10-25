@@ -409,7 +409,8 @@ about 16, 1 of slack).
 9b. C "Where people look depends on their goal" · 1:00 (a click goes from the painting straight to all seven records, Sabrina, 2026-10-25) (moved 2026-10-25, Y: before the requirements of an
    AVFM). Yarbus: a model for any task must handle any sequence of fixations.
 10. C "Toward Active-Vision Foundation Models" · 1:15 · exists. Passive foundation models and prior active
-    models side by side, then the goal column on the only click (Y, 2026-10-25: no row by row).
+    models side by side, then the goal column on the only click (Y, 2026-10-25: no row by row). The row "Rich world knowledge"
+    is now "Visuospatial intelligence" (Y, 2026-10-25).
 
 ### Part II (Yohaï): how, and what it does
 

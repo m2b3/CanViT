@@ -280,21 +280,19 @@
     <tr><th>Dense outputs (segmentation)</th><td><span class="yes">✓</span></td><td><span class="some">few</span></td><td class="goal"><span class="yes">✓</span></td></tr>
     <tr><th>Task-agnostic</th><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
     <tr><th>Policy-agnostic</th><td><span class="na">—</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
-    <tr><th>Rich world knowledge</th><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
+    <tr><th>Visuospatial intelligence</th><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td class="goal"><span class="yes">✓</span></td></tr>
     </tbody></table>
   </div>
   <span class="fragment step-marker" data-shows="goal"></span>
   <aside class="notes"><ul>
     <li>[Timing: planned 1:00–1:15]</li>
-    <li>[AI draft: not the authors' text]</li>
     <li>Putting it all together:</li>
-    <li>passive foundation models like DINOv3 have rich representations that serve many tasks,</li>
-    <li>but they take in an image in a single look, with no glimpses and no memory.</li>
-    <li>Prior active models do look through glimpses, and remember what they saw,</li>
-    <li>but each is built for its own task and its own policy,</li>
-    <li>few support dense prediction, and they lack rich world knowledge.</li>
+    <li>passive foundation models like DINOv3 have rich <b>general-purpose</b> representations, which can be used for many tasks,</li>
+    <li>but they see in a single look, without localized glimpses or memory.</li>
+    <li>Conversely, prior active vision models struggled to match the <b>visuospatial intelligence</b> of their passive counterparts, and are lacking in generality.</li>
+    <li>[AI draft: not the authors' text]</li>
     <li>Neither has all of this.</li>
-    <li>What's missing is a vision model that understands the spatial and semantic structure of scenes across arbitrary sequences of glimpses,</li>
+    <li>What's missing is a model with both: a vision model that understands the spatial and semantic structure of scenes across arbitrary sequences of glimpses,</li>
     <li>with rich representations that transfer across tasks and viewing policies.</li>
     <li>[CLICK]</li>
     <li>We call such a model an Active-Vision Foundation Model.</li>

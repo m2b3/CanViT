@@ -292,6 +292,7 @@
     <div class="name">
       <p class="expansion"><span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span></p>
       <img class="wordmark" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+      <p class="title">Toward Active-Vision Foundation Models</p>
     </div>
     <div class="body">
       <div class="team">
@@ -394,7 +395,7 @@
 <!-- ============================================================== Part II (Yohaï): how CanViT is built and trained, what it does, policies on top -->
 
 <section id="architecture" data-status="draft">
-  <h2><span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span> architecture</h2>
+  <h2>The <span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span> architecture</h2>
   <!-- The paper's Figure 2 (assets/paper/arch_overview.svg, exported with the paper), revealed left to right by a mask
        (talk.css): the first glimpse's backbone and canvas, read and written across depth; the second glimpse, the
        CLS token and the canvas carried over; the third. #vit-on-a-glimpse already showed the backbone alone. -->
@@ -467,24 +468,6 @@
   </ul></aside>
 </section>
 
-<section id="pretraining-desiderata" data-status="draft">
-  <h2>Pretraining desiderata</h2>
-  <!-- The pretraining's two problems and their answers (Y, 2026-10-25); the answers on a click, then the slide that
-       puts them together, #distillation. -->
-  <div class="desiderata">
-    <p class="want">Robust to any viewing policy</p><span class="to"></span><p class="answer">Policy-agnostic</p>
-    <p class="want">Rich knowledge of the visual world, without enormous compute</p><span class="to"></span><p class="answer">Dense latent distillation</p>
-  </div>
-  <span class="fragment step-marker" data-shows="answers"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>We have the architecture. How do we pretrain it into a foundation model? We treat it as representation learning, not as an RL problem. Two things we want.</li>
-    <li>First, the model has to work with any viewing policy. Where people look depends on the goal, as Yarbus showed, and a foundation model serves many goals. Pretrain the observer on one policy's glimpses and it co-adapts with that policy, even with a stop-gradient; with another policy, there's no guarantee. And if the policy is learned with RL jointly with the observer, its gradients make training unstable.</li>
-    <li>Second, it has to understand the visual world. Learning that from scratch takes the kind of compute that went into DINOv3. But DINOv3 already has that knowledge, for a scene seen whole; our model has to learn to build it from glimpses. And no labels anywhere: DINOv3 learned from images alone, and our model learns from DINOv3's features.</li>
-    <li>Our answers: policy-agnostic pretraining, and dense latent distillation.</li>
-  </ul></aside>
-</section>
-
 <section id="distillation" data-status="draft">
   <h2>Policy-agnostic dense latent distillation</h2>
   <!-- A training step unrolled in time, one column per glimpse [Yohaï, 2026-10-01: timesteps unrolled
@@ -545,6 +528,7 @@
   <span class="fragment step-marker" data-shows="last"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
+    <li>We have the architecture; now, how do we pretrain it into a foundation model? We want a model that understands the visual world and works with any viewing policy. Not an RL problem: representation learning. So, policy-agnostic: no policy in pretraining, random glimpses. And dense latent distillation: after every glimpse, predict what DINOv3 sees in the whole scene.</li>
     <li>And what does it learn from? A teacher: DINOv3, the foundation model from the start of the talk, frozen, seeing the whole scene at 512 pixels. The student is CanViT, which only ever gets glimpses.</li>
     <li>After every glimpse, CanViT predicts from its canvas the teacher's features for the whole scene, including what it hasn't seen yet, and we score that with mean squared error against the teacher. No labels.</li>
     <li>Here it is with the released model on a bedroom, with random glimpses. Training rollouts are four glimpses on average, but it keeps improving well beyond that: the error goes from 0.87 after the first glimpse to 0.31 after the 21st; predicting the average target everywhere would give 1.05.</li>
@@ -837,6 +821,24 @@
 
 <section id="backup" data-status="ready">
   <p class="divider">Backup</p>
+</section>
+
+<section id="pretraining-desiderata" data-status="draft">
+  <h2>Pretraining desiderata</h2>
+  <!-- The pretraining's two problems and their answers (Y, 2026-10-25); the answers on a click, then the slide that
+       puts them together, #distillation. -->
+  <div class="desiderata">
+    <p class="want">Robust to any viewing policy</p><span class="to"></span><p class="answer">Policy-agnostic</p>
+    <p class="want">Rich knowledge of the visual world, without enormous compute</p><span class="to"></span><p class="answer">Dense latent distillation</p>
+  </div>
+  <span class="fragment step-marker" data-shows="answers"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>We have the architecture. How do we pretrain it into a foundation model? We treat it as representation learning, not as an RL problem. Two things we want.</li>
+    <li>First, the model has to work with any viewing policy. Where people look depends on the goal, as Yarbus showed, and a foundation model serves many goals. Pretrain the observer on one policy's glimpses and it co-adapts with that policy, even with a stop-gradient; with another policy, there's no guarantee. And if the policy is learned with RL jointly with the observer, its gradients make training unstable.</li>
+    <li>Second, it has to understand the visual world. Learning that from scratch takes the kind of compute that went into DINOv3. But DINOv3 already has that knowledge, for a scene seen whole; our model has to learn to build it from glimpses. And no labels anywhere: DINOv3 learned from images alone, and our model learns from DINOv3's features.</li>
+    <li>Our answers: policy-agnostic pretraining, and dense latent distillation.</li>
+  </ul></aside>
 </section>
 
 <section id="how-to-see-first" class="signpost" data-status="draft">

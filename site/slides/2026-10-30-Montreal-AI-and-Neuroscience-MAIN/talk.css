@@ -911,11 +911,11 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
                                    border: 3px solid var(--glimpse); box-shadow: 0 0 0 2px #fff; opacity: 0; transition: opacity .5s ease; }
 
 /* Pretraining compute: the run as three stats, then its compute beside DINOv3 7B's, to scale, each value at its bar's end. */
-#pretraining .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin: 90px 60px 0; text-align: center; }
+#pretraining .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin: 60px 60px 0; text-align: center; }
 #pretraining .stats p { margin: 0; font-size: 26px; color: var(--ink); }
 #pretraining .stats b { display: block; font-size: 60px; font-weight: 800; line-height: 1.1; }
 #pretraining .hours { display: grid; grid-template-columns: 200px 1fr; column-gap: 28px; row-gap: 34px; align-items: center;
-                      margin: 120px 60px 0; }
+                      margin: 80px 60px 0; }
 #pretraining .who { margin: 0; font-size: 30px; font-weight: 750; color: var(--ink); text-align: right; }
 #pretraining .track { display: flex; align-items: center; gap: 16px; height: 50px; }
 #pretraining .bar { height: 100%; border-radius: 6px; }

@@ -314,7 +314,7 @@ authors to confirm.
     cells and their scene positions, the canvas's 32 x 32 cells, a smaller glimpse whose cells pack together), and a
     click on `#architecture` ringing the recurrent CLS token where it leaves one glimpse and enters the next.
   - The pretraining: why not pretrain the observer with its own policy is not argued on screen; the notes of
-    `#pretraining-desiderata` carry it (AI draft). Rebuilt 2026-10-25 after Yohaï's review: `#pretraining-desiderata`
+    `#pretraining-desiderata` carry it (AI draft). Rebuilt 2026-10-25 after Yohaï's review, then `#pretraining-desiderata` moved to Backup (Y: it says little; said aloud instead, a model that understands the world and works with any policy): was `#pretraining-desiderata`
     (robust to any viewing policy; rich knowledge of the visual world without enormous compute; the answers on a click),
     then `#distillation` ("Policy-agnostic dense latent distillation"), `#pretraining-policies`, `#pretraining`, the
     table callback. `#how-to-see-first` is in Backup; where it belongs is open. The problem signposts and

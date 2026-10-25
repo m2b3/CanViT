@@ -3,6 +3,8 @@ upsampled with nearest neighbor so its patches stay visible:
   photo.png           the scene as DINOv3 saw it
   pca.png             patch features, LayerNormed, projected on the principal components COMPONENTS, each clipped to
                       its CLIP percentiles: chosen among variants (variants.py) for how distinct the objects look
+  pca-<first>.png     the same for CYCLE triplets of consecutive components from COMPONENTS on (2-4, 5-7, ...), which
+                      the slide shows one after another: a few views of features with far more dimensions
   prob-<class>.png    the ADE20K linear probe's probability of the class per patch, inferno from 0 to 1
   maps.json           what each image is"""
 
@@ -27,6 +29,7 @@ log = logging.getLogger(__name__)
 
 COMPONENTS = (1, 2, 3)  # the second to fourth principal components
 CLIP = (2.0, 98.0)
+CYCLE = 8  # triplets shown in turn on the slide, from COMPONENTS on
 
 
 @dataclass(frozen=True)
@@ -50,8 +53,15 @@ def main(cfg: Config) -> None:
     out = cfg.out / cfg.image_id
     out.mkdir(parents=True, exist_ok=True)
     photo.save(out / "photo.png")
-    rgb = colors(components(data["features"].astype(np.float64), max(COMPONENTS) + 1)[:, list(COMPONENTS)], *CLIP)
-    nearest((rgb.reshape(grid_h, grid_w, 3) * 255).astype(np.uint8), photo.size).save(out / "pca.png")
+    features = data["features"].astype(np.float64)
+    triplets = [tuple(c + 3 * k for c in COMPONENTS) for k in range(CYCLE)]
+    projection = components(features, max(triplets[-1]) + 1)
+    for triplet in triplets:
+        rgb = colors(projection[:, list(triplet)], *CLIP)
+        image = nearest((rgb.reshape(grid_h, grid_w, 3) * 255).astype(np.uint8), photo.size)
+        image.save(out / f"pca-{triplet[0] + 1}.png")
+        if triplet == COMPONENTS:
+            image.save(out / "pca.png")
     inferno = colormaps["inferno"]
     for name in cfg.classes:
         p = probs[CLASS_NAMES.index(name)]
@@ -59,6 +69,8 @@ def main(cfg: Config) -> None:
     (out / "maps.json").write_text(json.dumps({
         "image_id": cfg.image_id, "input_px": list(photo.size), "patch_grid": [grid_h, grid_w],
         "pca": {"components": [c + 1 for c in COMPONENTS], "clip_percentiles": list(CLIP)},
+        "feature_dim": int(features.shape[1]),
+        "pca_cycle": [{"components": [c + 1 for c in t], "image": f"pca-{t[0] + 1}.png"} for t in triplets],
         "probe": released_dinov3_ade20k_probe("dv3b", input_size_px=PROBE_INPUT_PX),
         "classes": list(cfg.classes), "colormap": "inferno, p from 0 to 1"}, indent=1))
     log.info("wrote %s: %s", out, ", ".join(sorted(p.name for p in out.iterdir())))

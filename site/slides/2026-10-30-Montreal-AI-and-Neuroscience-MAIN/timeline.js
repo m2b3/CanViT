@@ -1,7 +1,9 @@
 // The deep active vision timeline: each model of sources/active-vision-timeline.json at its release date on a year
 // axis, its label (name, citation) above or below on a dashed leader, in the style of Yohaï's typst
 // timeline (github.com/yberreby/typst-snippets, timeline.typ). Every label is a fragment, so the models arrive one per
-// click in date order. Markers of models that learn where to look by reinforcement learning carry the class rl.
+// click in date order.
+// The file's neuro_ai models (built to compare with brain or behavioral data) are drawn the same way, in the group
+// class neuro, which the slide reveals on its own step.
 // The axis keeps its width: it first ends late in 2025; when the slide shows canvit, the years squeeze to make room
 // for 2026, every mark slides to its place on the new scale (class slides, by --dx), and the 2026 tick (class
 // after-only) and CanViT's entry (class canvit, the file's `canvit`) appear.
@@ -10,7 +12,7 @@ const SVG = "http://www.w3.org/2000/svg";
 const WIDTH = 1152, HEIGHT = 556, AXIS_Y = 280, LEFT = 40, RIGHT = 1112;
 const START = 2013.5;
 const ENDS = { before: 2025.95, after: 2026.4 }; // the year at the axis's end, before and after CanViT arrives
-const ROW_OFFSET = { "-2": -150, "-1": -60, 1: 60, 2: 150 };
+const ROW_OFFSET = { "-3": -235, "-2": -150, "-1": -60, 1: 60, 2: 150 };
 const LINE = 25;
 
 function el(name, attributes, parent) {
@@ -41,7 +43,7 @@ function sliding(year, parent) {
 export async function drawTimeline(container, { src = "sources/active-vision-timeline.json" } = {}) {
   const response = await fetch(src);
   if (!response.ok) throw new Error(`timeline: ${src} answered ${response.status}`);
-  const { models, canvit } = await response.json();
+  const { models, neuro_ai: neuroAi, canvit } = await response.json();
   const svg = el("svg", { viewBox: `0 0 ${WIDTH} ${HEIGHT}`, role: "img", "aria-label": "Deep active vision models from 2014 to 2025" });
 
   const end = RIGHT + 18;
@@ -58,7 +60,7 @@ export async function drawTimeline(container, { src = "sources/active-vision-tim
   const brand = el("linearGradient", { id: "timeline-brand" }, el("defs", {}, svg));
   el("stop", { offset: "0", "stop-color": "var(--canvas)" }, brand);
   el("stop", { offset: "1", "stop-color": "var(--glimpse)" }, brand);
-  for (const model of [...models, { ...canvit, ours: true }]) {
+  for (const model of [...models, ...neuroAi.map((m) => ({ ...m, neuro: true })), { ...canvit, ours: true }]) {
     if (!(String(model.row) in ROW_OFFSET)) throw new Error(`timeline: ${model.name} has row ${model.row}`);
     const year = yearOf(model.date);
     const mx = model.ours ? after(year) : before(year), above = model.row < 0, ly = AXIS_Y + ROW_OFFSET[model.row];
@@ -66,12 +68,15 @@ export async function drawTimeline(container, { src = "sources/active-vision-tim
     const anchor = mx < 200 ? "start" : mx > WIDTH - 200 ? "end" : "middle";
     const tx = { start: mx - 12, end: mx + 12, middle: mx }[anchor];
     const top = above ? ly - LINE - 12 : ly + 22; // the name's baseline
-    const entry = model.ours ? el("g", { class: "entry canvit" }, svg) : sliding(year, el("g", { class: "fragment entry" }, svg));
+    const entry = model.ours ? el("g", { class: "entry canvit" }, svg)
+      : model.neuro ? sliding(year, el("g", { class: "entry neuro" }, svg))
+      : sliding(year, el("g", { class: model.pioneer ? "fragment entry pioneer" : "fragment entry" }, svg));
     el("line", { x1: mx, x2: mx, y1: AXIS_Y + (above ? -10 : 10), y2: above ? ly + 4 : ly, class: "leader" }, entry);
     [[model.name, "name"], [model.cite, "cite"]]
       .forEach(([content, kind], i) => text(content, { x: tx, y: top + i * LINE, "text-anchor": anchor, class: kind }, entry));
+    if (model.pioneer) el("circle", { cx: mx, cy: AXIS_Y, r: 20, class: "pioneer-ring" }, entry);
     el("circle", { cx: mx, cy: AXIS_Y, r: model.ours ? 14 : 9,
-                   class: model.ours ? "marker ours" : model.policy === "rl" ? "marker rl" : "marker" }, entry);
+                   class: model.ours ? "marker ours" : model.neuro ? "marker neuro" : "marker" }, entry);
   }
   for (const [year, tx, shownBefore] of years) {
     const parent = shownBefore ? sliding(year, svg) : el("g", { class: "after-only" }, svg);

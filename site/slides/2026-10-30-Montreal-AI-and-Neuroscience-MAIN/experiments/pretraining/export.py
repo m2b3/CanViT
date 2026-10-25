@@ -1,4 +1,4 @@
-"""Pretraining rollouts for #policy-agnosticism, drawn by the package's own pretraining sampler: for each scene, a
+"""Pretraining rollouts for #pretraining-policies, drawn by the package's own pretraining sampler: for each scene, a
 rollout length (canvit_pytorch.pretrain.step.sample_rollout_length with the pretraining config's chunk size and stop
 probability), then that many viewpoints under each pretraining policy (config.rollout_policies: F-IID and R-IID, via
 canvit_pytorch.policies.make_policy). Scenes are ImageNet photographs (Imagenette's ImageNet-1k validation images;

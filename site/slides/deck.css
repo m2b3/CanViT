@@ -53,8 +53,10 @@ html, body { background: var(--bg); }
 
 /* An SVG path that draws itself when its fragment (or its own .fragment class) becomes visible. pathLength="1" on the
    path makes the dash independent of its measured length. */
-.reveal .draw { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .9s ease; }
-.reveal .fragment.visible .draw, .reveal .draw.fragment.visible { stroke-dashoffset: 0; }
+/* An arrow draws itself in .9 s and, when the deck steps back, undraws in .2 s: a transition is taken from the state
+   being entered, so the drawn states carry the slow duration. A talk's own drawn states add transition-duration: .9s. */
+.reveal .draw { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .2s ease; }
+.reveal .fragment.visible .draw, .reveal .draw.fragment.visible { stroke-dashoffset: 0; transition-duration: .9s; }
 
 /* Maps and model inputs drawn on a grid (feature maps, probability maps, glimpses) keep their cells crisp when the
    deck scales them: hard nearest neighbor, never the browser's smoothing. Photographs stay smooth. */
@@ -121,3 +123,10 @@ html, body { background: var(--bg); }
 
 /* Speaker notes never show on the slide. */
 .reveal aside.notes { display: none; }
+
+/* Material a slide needs that does not exist yet: what is missing and why the slide needs it, in a box nobody can
+   miss, shown in every view (?present included) until the material replaces it. */
+.reveal .missing { border: 4px dashed #dc2626; border-radius: 14px; background: #fef2f2; color: #7f1d1d;
+                   padding: 16px 22px; font-size: 21px; line-height: 1.35; text-align: left; }
+.reveal .missing > b:first-child { display: block; margin-bottom: 6px; color: #dc2626; font-size: 15px;
+                                   letter-spacing: .08em; text-transform: uppercase; }

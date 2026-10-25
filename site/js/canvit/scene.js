@@ -3,6 +3,7 @@
 // default), and the region outside the glimpse dimmed.
 
 import { CanvitView, define, frameCss, place, sheet } from "./view.js";
+import { glimpseLabel } from "./glimpse-label.js";
 
 const TRAILS = ["past", "none"];
 
@@ -66,7 +67,7 @@ class CanvitScene extends CanvitView {
     this.pastBoxes.forEach((el, i) => el.classList.toggle("seen", trail && i < t));
     place(this.current, box);
     this.current.classList.toggle("top", box.top < 0.06);
-    this.tag.textContent = `t = ${t}`;
+    this.tag.textContent = glimpseLabel(t);
     const p = this.pointer;
     this.marker.hidden = !p;
     if (p) Object.assign(this.marker.style, { left: `${100 * p.x}%`, top: `${100 * p.y}%` });

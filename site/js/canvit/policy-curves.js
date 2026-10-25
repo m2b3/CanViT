@@ -1,11 +1,13 @@
-// <canvit-policy-curves src task="ade20k|in1k" canvas-grid y-range="LO HI" [x-scale="linear|log"] [policies] [t]>:
+// <canvit-policy-curves src task="ade20k|in1k" canvas-grid y-range="LO HI" [x-scale="linear|log"] [policies] [baselines] [t]>:
 // CanViT-B's accuracy under the paper's viewing policies (all those the task evaluates, or the ids listed in
 // policies), glimpse by glimpse, over a whole validation set (mean over runs), from the paper's exports: ADE20K mIoU
 // (ade20k_seg.json, policy_curves) or frozen ImageNet-1k top-1 (in1k_clf_frozen.json, configs). y-range fixes the
 // vertical axis in percent, so charts of the two tasks can share a span of points; lines are clipped to it, so a narrow
 // range shows the end of the rollouts with the low starts entering from below. Lines are drawn up to glimpse t (all
 // without t), each in its policy's color from the paper's figures and named at its head; a slide drives t to grow them
-// in step with recorded rollouts.
+// in step with recorded rollouts. baselines lists prior models of the export's baselines, comma-separated by name
+// ("AME (SETR), AdaGlimpse"); each one's best result is a dashed line across the plot, named at its right end (where
+// rising curves have passed it), drawn when inside y-range.
 
 import { POLICIES } from "./policies.js";
 
@@ -14,9 +16,12 @@ const LABEL_GAP = 17;
 // The exports by task: where their curves are, the axis title, and the policies each evaluates (EG-C2F needs the
 // segmentation's per-position entropy, so ImageNet-1k has none).
 const TASKS = {
-  ade20k: { curves: (data) => data.policy_curves, title: "ADE20K mIoU (%)", policies: Object.keys(POLICIES) },
+  ade20k: {
+    curves: (data) => data.policy_curves, baselines: (data) => data.baselines.map((b) => ({ name: b.name, value: b.miou_pct })),
+    title: "ADE20K mIoU (%)", policies: Object.keys(POLICIES),
+  },
   in1k: {
-    curves: (data) => data.configs, title: "ImageNet-1k top-1 (%)",
+    curves: (data) => data.configs, baselines: () => [], title: "ImageNet-1k top-1 (%)",
     policies: Object.keys(POLICIES).filter((policy) => policy !== "entropy_coarse_to_fine"),
   },
 };
@@ -32,6 +37,8 @@ template.innerHTML = `
   .axis .title { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 650; }
   .curve { fill: none; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
   .head { stroke: var(--canvit-surface, #fff); stroke-width: 2; }
+  .baseline { stroke: var(--canvit-ink, #0f172a); stroke-width: 2; stroke-dasharray: 7 5; }
+  .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 700; paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 4px; }
   .label { font-size: 16px; font-weight: 800; paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 5px; }
 </style>
 <svg role="img"></svg>`;
@@ -51,8 +58,9 @@ function required(element, name) {
 }
 
 class CanvitPolicyCurves extends HTMLElement {
-  static observedAttributes = ["src", "task", "canvas-grid", "policies", "y-range", "x-scale", "t"];
+  static observedAttributes = ["src", "task", "canvas-grid", "policies", "baselines", "y-range", "x-scale", "t"];
   #curves = null;
+  #baselines = [];
   #loadVersion = 0;
 
   constructor() {
@@ -99,6 +107,12 @@ class CanvitPolicyCurves extends HTMLElement {
     if (found !== [...wanted].sort().join(" ")) {
       throw new Error(`<canvit-policy-curves>: ${src} at a ${grid}² canvas has policies "${found}", expected "${wanted.join(" ")}"`);
     }
+    const known = task.baselines(data);
+    this.#baselines = (this.getAttribute("baselines")?.split(",").map((name) => name.trim()).filter(Boolean) ?? []).map((name) => {
+      const runs = known.filter((b) => b.name === name);
+      if (!runs.length) throw new Error(`<canvit-policy-curves>: no baseline "${name}" in ${src}`);
+      return runs.reduce((a, b) => (b.value > a.value ? b : a));
+    });
     this.#curves = curves;
     this.#render();
   }
@@ -137,6 +151,10 @@ class CanvitPolicyCurves extends HTMLElement {
 
     const clip = el("clipPath", { id: "plot" }, el("defs", {}, svg));
     el("rect", { x: plot.left, y: plot.top - 6, width: plot.right - plot.left + 8, height: plot.bottom - plot.top + 6 }, clip);
+    for (const { name, value } of this.#baselines.filter(({ value }) => value >= low && value <= high)) {
+      el("line", { class: "baseline", x1: plot.left, x2: plot.right, y1: y(value), y2: y(value) }, svg);
+      el("text", { class: "baseline-label", x: plot.right - 6, y: y(value) - 8, "text-anchor": "end" }, svg).textContent = `${name} ${value.toFixed(1)}`;
+    }
     const lines = el("g", { "clip-path": "url(#plot)" }, svg);
     // Policies rank by their end value (to 0.1 point; a tie goes to the higher mean over the glimpses shown). The
     // higher-ranked curve and head are drawn over the others, and heads are labeled in rank order, each label at least

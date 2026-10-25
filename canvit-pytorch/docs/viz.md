@@ -72,13 +72,14 @@ uses the same scene options and adds `--keypoints`, a sequence of
   patch before and after the glimpse, divided by 2 for storage in `[0, 1]`.
 - `truth.png` stores the annotation class at the center pixel of each canvas
   cell. Its value is 255 for an ignored or unlabeled cell. A glimpse's
-  `pixel_accuracy` is computed over annotated scene pixels after bilinear
-  upsampling of the logits to the scene resolution.
+  `miou` is the intersection over union of each class on the annotated scene
+  pixels, after bilinear upsampling of the logits to the scene resolution,
+  averaged over the classes annotated or predicted there.
 
 ## Web bundle
 
 The web-bundle schema is
-`canvit-web-bundle-70766501-fb7f-4856-8a88-bb16253c34c5`. A reader must reject
+`canvit-web-bundle-cdc839e2-d28e-4422-b635-d16b24797584`. A reader must reject
 a different schema. The generated directory contains `scene.png`,
 `initial_canvas.png`, `manifest.json` and a `tNN/` directory per glimpse.
 
@@ -94,7 +95,7 @@ The manifest records:
 - `pca`: either `paper` or `fixed-limits`, with a basis fitted on the last
   glimpse's canvas;
 - `initial_canvas` and `glimpses`, where each glimpse has `t`, `viewpoint`,
-  `box`, its layer paths and optional `pixel_accuracy`; and
+  `box`, its layer paths and optional `miou`; and
 - `provenance`, including the code revision and runtime that produced it.
 
 Each glimpse always has `crop.png`, `canvas.png`, `labels.png`, `entropy.png`

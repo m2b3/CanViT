@@ -1,4 +1,4 @@
-"""Rank the sweeps' rows by the properties OUTLINE.md asks of each example (#history, "Examples").
+"""Rank the sweeps' rows by the properties the outline asked of each example (#history; OUTLINE.md, git history).
 
 classification: ImageNet-1k validation photos first (held out from the probe's training; added to the requested
 criteria), then correct top-1, then short side >= MIN_SHORT_SIDE_PX, then the probability of the true class.

@@ -45,8 +45,8 @@ viz rollout "${args[@]}" --policy random
 scene ADE_val_00001780 street-egc2f "A street, EG-C2F"
 viz rollout "${args[@]}"
 
-# The street under every other viewing policy of the paper, 21 glimpses, seed 0 (the talks' policy slide).
-for policy in full_then_random:fiid coarse_to_fine:c2f fine_to_coarse:f2c repeated_full_scene:rfs; do
+# The street coarse to fine and fine to coarse, 21 glimpses (the MAIN 2026 talk's C2F and F2C slide).
+for policy in coarse_to_fine:c2f fine_to_coarse:f2c; do
   scene ADE_val_00001780 "street-${policy#*:}" "A street"
   viz rollout "${args[@]}" --policy "${policy%%:*}"
 done

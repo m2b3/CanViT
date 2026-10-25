@@ -1,12 +1,14 @@
 import json
 
 import numpy as np
+import pytest
 import torch
 from PIL import Image
 
+from canvit_pytorch.benchmarks.ade20k import IGNORE_LABEL
 from canvit_pytorch.viewpoint import Viewpoint
 from canvit_pytorch.viz.record import GlimpseRecord, Rollout
-from canvit_pytorch.viz.web import SCHEMA, entropy_fraction, glimpse_box, write_bundle
+from canvit_pytorch.viz.web import SCHEMA, entropy_fraction, glimpse_box, mean_iou, write_bundle
 
 G, D, C, PX = 4, 8, 5, 16
 
@@ -50,6 +52,14 @@ def test_entropy_fraction_bounds():
     assert entropy_fraction(peaked).max() < 1e-6
 
 
+def test_mean_iou_counts_predicted_only_classes_and_skips_ignored_pixels():
+    annotation = np.array([[0, 0], [1, IGNORE_LABEL]])
+    predicted = np.array([[0, 2], [1, 3]])
+    logits = np.stack([(predicted == c).astype(np.float32) for c in range(4)])
+    # Class 0: 1/2, class 1: 1/1, class 2 (predicted only): 0/1; class 3 is predicted only on the ignored pixel.
+    assert mean_iou(logits, annotation) == pytest.approx(0.5)
+
+
 def test_bundle_is_self_describing_and_lossless(tmp_path):
     rollout = _rollout(capture_writes=True)
     path = write_bundle(
@@ -72,4 +82,4 @@ def test_bundle_is_self_describing_and_lossless(tmp_path):
     np.testing.assert_allclose(entropy / 65535, entropy_fraction(rollout.glimpses[0].logits), atol=1 / 65535)
     assert np.asarray(Image.open(tmp_path / first["layers"]["canvas"])).shape == (G, G, 3)
     assert np.asarray(Image.open(tmp_path / manifest["scene"]["truth"])).shape == (G, G)
-    assert 0 <= first["pixel_accuracy"] <= 1
+    assert 0 <= first["miou"] <= 1

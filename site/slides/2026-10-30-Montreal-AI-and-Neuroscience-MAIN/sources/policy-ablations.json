@@ -1,5 +1,5 @@
 {
- "_about": "Prior active models' own ablations of where to look: the model with its viewpoints chosen at random against the same model with its learned (or rule-based) choice, everything else equal. Each value read in the paper's table on 2026-10-01 (the arXiv PDF's text, by a Claude Code session). random: accuracy with random viewpoints; chosen: with the paper's own choice of viewpoints; both in %.",
+ "_about": "Prior active models' own ablations of where to look: the model with its viewpoints chosen at random against the same model with its learned (or rule-based) choice, everything else equal. Each value read in the paper's table on 2026-10-01 (the arXiv PDF's text, by a Claude Code session). random: accuracy with random viewpoints; chosen: with the paper's own choice of viewpoints; both in %. scope: the conditions shown under each row on the slide, short for setting.",
  "ablations": [
   {
    "model": "GFNet",
@@ -10,7 +10,8 @@
    "chosen_by": "a policy learned by reinforcement learning",
    "citation": "Wang et al., NeurIPS 2020",
    "url": "https://arxiv.org/abs/2010.05300",
-   "where": "Table 1, t = 5 (Random Policy + Glance Step; GFNet)"
+   "where": "Table 1, t = 5 (Random Policy + Glance Step; GFNet)",
+   "scope": "after a whole-image glance"
   },
   {
    "model": "AME",
@@ -21,7 +22,8 @@
    "chosen_by": "the entropy of its decoder's attention",
    "citation": "Pardyl et al., IJCAI 2023",
    "url": "https://arxiv.org/abs/2303.06457",
-   "where": "Table 5, SUN360, train all (Random; Attention)"
+   "where": "Table 5, SUN360, train all (Random; Attention)",
+   "scope": "8 glimpses"
   }
  ]
 }

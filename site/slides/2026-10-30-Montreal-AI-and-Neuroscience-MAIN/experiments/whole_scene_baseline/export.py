@@ -2,8 +2,8 @@
 #rollout's contrast with CanViT's canvas. Per bundle, into <out>/<bundle name>/:
   labels.png   the decoded class of each DINOv3 patch (grid x grid, uint8, value i is the probe's class i); upsample
                nearest only to display
-  meta.json    the image, the models, the grid, and the pixel accuracy measured as the bundle's own
-               (canvit_pytorch.viz.web.pixel_accuracy: logits upsampled bilinearly to the annotation)"""
+  meta.json    the image, the models, the grid, and the scene's mIoU measured as the bundle's own
+               (canvit_pytorch.viz.web.mean_iou: logits upsampled bilinearly to the annotation)"""
 
 import json
 import logging
@@ -14,7 +14,7 @@ import numpy as np
 import torch
 import tyro
 from canvit_pytorch.teacher import TEACHER_REPO
-from canvit_pytorch.viz.web import cell_center_labels, pixel_accuracy
+from canvit_pytorch.viz.web import cell_center_labels, mean_iou
 from PIL import Image
 
 from experiments import logs
@@ -55,12 +55,12 @@ def main(cfg: Config) -> None:
         out = cfg.out / name
         out.mkdir(parents=True, exist_ok=True)
         Image.fromarray(logits.argmax(0).astype(np.uint8)).save(out / "labels.png")
-        accuracy = pixel_accuracy(logits, annotation)
+        miou = mean_iou(logits, annotation)
         (out / "meta.json").write_text(json.dumps({
             "image_id": image_id, "bundle": name, "input_px": GLIMPSE_PX, "grid": dinov3.grid, "teacher": TEACHER_REPO,
-            "probe": dinov3.probe_repo, "pixel_accuracy": accuracy}, indent=1) + "\n")
-        log.info("%s (%s): DINOv3 at %d px, pixel accuracy %.3f; CanViT after the last glimpse %.3f", name, image_id,
-                 GLIMPSE_PX, accuracy, manifest["glimpses"][-1]["pixel_accuracy"])
+            "probe": dinov3.probe_repo, "miou": miou}, indent=1) + "\n")
+        log.info("%s (%s): DINOv3 at %d px, mIoU %.3f; CanViT after the last glimpse %.3f", name, image_id,
+                 GLIMPSE_PX, miou, manifest["glimpses"][-1]["miou"])
 
 
 if __name__ == "__main__":

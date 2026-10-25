@@ -20,7 +20,7 @@ import torch
 import torch.nn.functional as F
 import tyro
 from canvit_pytorch.benchmarks.ade20k import CLASS_NAMES, IGNORE_LABEL
-from canvit_pytorch.specialize.ade20k.figures import LABEL_COLORS, colorize
+from canvit_pytorch.specialize.ade20k.figures import LABEL_COLORS
 from PIL import Image, ImageDraw
 
 from experiments import logs
@@ -68,8 +68,15 @@ def upsampled(logits: np.ndarray, size: int | tuple[int, int], cfg: Config) -> t
                          **UPSAMPLING[cfg.logits_upsampling])[0]
 
 
+# The glimpse boxes are blue, and so are ADE20K's floor and ceiling in LABEL_COLORS; here those two take a brown and a
+# pale yellow, so that neither reads as a glimpse box or as the other.
+CLASS_COLORS = LABEL_COLORS.copy()
+CLASS_COLORS[list(CLASS_NAMES).index("floor")] = (139, 94, 60)
+CLASS_COLORS[list(CLASS_NAMES).index("ceiling")] = (232, 212, 138)
+
+
 def segmentation(labels: np.ndarray, blank: tuple[int, int, int]) -> np.ndarray:
-    rgb = colorize(np.where(labels == IGNORE_LABEL, 0, labels)[None])[0]
+    rgb = CLASS_COLORS[np.where(labels == IGNORE_LABEL, 0, labels)]
     rgb[labels == IGNORE_LABEL] = blank
     return rgb
 
@@ -128,7 +135,7 @@ def panels(data: dict, meta: dict, cfg: Config) -> dict[str, np.ndarray]:
 def legend(data: dict, meta: dict, cfg: Config) -> list[dict[str, str]]:
     maps = [upsampled(data[f"canvit_{cond}"], meta["scene_px"], cfg).argmax(0).numpy() for cond in ("a", "b", "ab")]
     share = {int(k): max(float((m == k).mean()) for m in maps) for k in np.unique(np.concatenate([m.ravel() for m in maps]))}
-    return [{"class": CLASS_NAMES[k], "color": "#" + bytes(LABEL_COLORS[k].tolist()).hex()}
+    return [{"class": CLASS_NAMES[k], "color": "#" + bytes(CLASS_COLORS[k].tolist()).hex()}
             for k in sorted(share, key=lambda k: -share[k])]
 
 

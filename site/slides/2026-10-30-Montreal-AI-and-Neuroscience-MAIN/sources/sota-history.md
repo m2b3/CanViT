@@ -995,6 +995,27 @@ code or the stated architecture, as the last column says.
     training images as seeds (DINOv2 Table 15); this applies to every DINOv2 ADE20K number and to models initialised
     from DINOv2 (LookWhere, LookThere). DINOv3's data includes ImageNet-1k and ImageNet-21k.
 
+## Review of the chart against these data (2026-10-01)
+
+A subagent review with five verification subagents checked every drawn number against its paper (full report: git
+history, `sources/history-review.md`, removed 2026-10-24). Findings:
+- No value is wrong. The faults were in the comparisons the chart drew.
+- GFNet (79.8) and Saccader (75.03) sat above the dashed line because it held only self-supervised backbones read out
+  frozen, while both are supervised and trained end to end. A frozen supervised ResNet-50 v2 with a linear probe
+  scored 75.8 on 2019-01-25 (Kolesnikov et al. 2019, Table 2). No active model is above the end-to-end line on
+  either chart.
+- Like-for-like passive references (base size, ImageNet-1k only, near the active model's resolution) at each active
+  model's date: Saccader 75.03 against 82.9 (PNASNet-5, 331 px) or 81.6 (Oct-ResNet-152+SE, 224 px); GFNet 79.8
+  against 82.0 (TResNet-XL, 224 px), and GFNet's own supervised EfficientNet curve gives 79.80 at 1.0 G
+  multiply-adds against GFNet's 79.81 at 0.75 G (Fig. 4(c)); AdaGlimpse 77.54 against 85.5 (CAFormer-B36, 224 px,
+  1k only) or its own teacher DeiT III ViT-B 21k at 85.7; AdaptiveNN 82.2 against DeiT III ViT-B 83.8 at 224 px.
+  On ADE20K every like-for-like line sits more than 10 points above AME and AdaGlimpse.
+- The chart's ImageNet-1k end-to-end line mixes in JFT, ImageNet-21k and large teachers from 2019-11 on; Saccader-NASNet
+  (124.5M) and AME (a ViT-L from SETR weights trained on ADE20K) are larger than the base-size lines they are drawn
+  against.
+- The ADE20K "24.2 points" bracket subtracted AME (2023) from DINOv3 ViT-B (2025) under DINOv3's protocol (51.8); under
+  the CanViT paper's protocol the same model scores 47.19, and at AME's own date the frozen line stood at 38.3.
+
 ## Notes for the paper's bibliography
 
 - The DINOv3 TMLR PDF (Zotero copy, 2026) reads "Published in Transactions on Machine Learning Research

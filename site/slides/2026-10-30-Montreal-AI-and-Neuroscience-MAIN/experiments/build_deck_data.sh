@@ -27,6 +27,11 @@ table_corners() {
   run table_corners.plot "${export[@]}" --separate "$data/table-clean" --panels scene --box none
 }
 
+vit_glimpse() {
+  run vit_glimpse.export
+  run vit_glimpse.plot
+}
+
 looking_closer() {
   ade20k
   run looking_closer.sweep
@@ -69,6 +74,16 @@ metacognition() {
 pretraining() {
   imagenette
   run pretraining.export --imagenette "$IMAGENETTE"
+  run pretraining.crops
+}
+
+# The title slide's teaser: a screen of 120 validation scenes with small glimpses (about an hour), then the scenes
+# chosen by eye from it (TALK.md), recorded along their viewpoints.
+title_teaser() {
+  ade20k
+  run title_teaser.sweep --sample 120 --scales 0.25 0.35 --step 0.25 --out "$work/title_teaser/screen.jsonl"
+  run title_teaser.export --sweep "$work/title_teaser/screen.jsonl" \
+    --scenes ADE_val_00000419 ADE_val_00001882 ADE_val_00000203 ADE_val_00001860
 }
 
 quickstart() {
@@ -111,8 +126,8 @@ architecture() {
     --policy random --capture-writes
 }
 
-all=(table_corners looking_closer memory distillation foundation metacognition pretraining quickstart
-     whole_scene_baseline history_examples training_cost architecture)
+all=(table_corners vit_glimpse looking_closer memory distillation foundation metacognition pretraining quickstart
+     whole_scene_baseline history_examples training_cost architecture title_teaser)
 chosen=("$@")
 [[ $# -gt 0 ]] || chosen=("${all[@]}")
 for experiment in "${chosen[@]}"; do

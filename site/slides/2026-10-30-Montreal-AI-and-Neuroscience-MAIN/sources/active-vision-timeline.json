@@ -1,5 +1,5 @@
 {
- "_about": "The deep active vision models of the timeline slide, each read in its paper (evidence, quotes and figure pages in active-vision-timeline.md). date: first public release (arXiv v1). name: the model's name. cite: authors, venue and venue year. policy: how it chooses where to look: 'rl' when the choice is learned by reinforcement learning (named in method), else what it uses. row: where the label sits, -2 and -1 above the axis, 1 and 2 below, chosen so that labels do not overlap. Selection [Yohaï, 2026-10-01]: each entry precise and distinctive; STAM (CVPR 2022) was dropped: the CanViT paper does not cite it and never seeing the whole image is not what sets it apart (RAM's glimpses do not cover it either). canvit: CanViT itself, drawn on the slide's last click as the axis extends into 2026; date: arXiv v1 of arXiv:2603.22570, submitted 23 March 2026 (read on its arXiv page, 2026-10-01).",
+ "_about": "The deep active vision models of the timeline slide, each read in its paper (evidence, quotes and figure pages in literature.md, section Prior active vision). date: first public release (arXiv v1). name: the model's name. cite: authors, venue and venue year. policy: how it chooses where to look: 'rl' when the choice is learned by reinforcement learning (named in method), else what it uses. row: where the label sits, -3, -2 and -1 above the axis, 1 and 2 below, chosen so that labels do not overlap. Selection [Yohaï, 2026-10-01]: each entry precise and distinctive; STAM (CVPR 2022) was dropped: the CanViT paper does not cite it and never seeing the whole image is not what sets it apart (RAM's glimpses do not cover it either). canvit: CanViT itself, drawn on the slide's last click as the axis extends into 2026; date: arXiv v1 of arXiv:2603.22570, submitted 23 March 2026 (read on its arXiv page, 2026-10-01). neuro_ai: active-vision models built to compare with brain or behavioral data, drawn on their own click [2026-10-23]; read on their abstract pages (2026-10-23): GVSM, bioRxiv 10.1101/2025.06.06.658387, posted 2025-06-10: visual search from pixels in natural scenes, compared with human scanpaths and primate fronto-parietal activity; GPN, arXiv:2511.12715 v1 2025-11-16: predicts the next glimpse's embedding along human-like scanpaths, compared with human fMRI. How each obtains its viewpoints is not stated in the abstracts and is not claimed here. neuro_ai entries are drawn like the models, name and citation on a leader, at their row. pioneer: true for the model the field traces back to (the paper's Related work: \"This line of research traces back to the Recurrent Attention Model\"), highlighted on the slide.",
  "models": [
   {
    "date": "2014-06-24",
@@ -7,7 +7,8 @@
    "cite": "Mnih et al., NeurIPS 2014",
    "policy": "rl",
    "method": "REINFORCE",
-   "row": -2
+   "row": -2,
+   "pioneer": true
   },
   {
    "date": "2014-12-24",
@@ -63,5 +64,19 @@
   "name": "CanViT",
   "cite": "Berreby et al., NeurIPS 2026",
   "row": -2
- }
+ },
+ "neuro_ai": [
+  {
+   "date": "2025-06-10",
+   "name": "GVSM",
+   "cite": "Pourrahimi & Bashivan, bioRxiv 2025",
+   "row": -2
+  },
+  {
+   "date": "2025-11-16",
+   "name": "GPN",
+   "cite": "Thorat et al., arXiv 2025",
+   "row": -3
+  }
+ ]
 }

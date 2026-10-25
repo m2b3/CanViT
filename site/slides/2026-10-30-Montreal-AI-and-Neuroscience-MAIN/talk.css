@@ -2,47 +2,96 @@
    1152 × 628 px under a one-line title; nothing goes below the footer band (676 px). */
 
 .reveal figure { margin: 0; }
+/* Talk-wide colors beyond the page's glimpse, canvas and policy: neuro-AI models (#timeline). */
+.reveal { --neuro-ai: #c026d3; }
 .reveal figure img { display: block; }
 /* A slide's closing statement: centered, bold, one line where it can. */
 .reveal .claim { margin-top: 26px; font-size: 32px; font-weight: 750; letter-spacing: -.015em; text-align: center; }
-/* Token grids (32 × 32 PCA images) stay square blocks when scaled. */
-
-#title .layout { display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; height: 100%;
-                 text-align: center; }
-#title .wordmark { display: block; width: 340px; height: auto; margin: 0 auto; }
-#title h1 { margin-top: 20px; font-size: 60px; }
-#title .authors { display: grid; grid-template-columns: repeat(4, 250px); }
-#title .authors figure { display: flex; flex-direction: column; align-items: center; }
-#title .authors img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; }
-#title .authors figcaption { margin-top: 16px; font-size: 22px; font-weight: 650; white-space: nowrap; }
-#title .logos { display: flex; align-items: center; gap: 40px; font-size: 21px; }
-#title .logos img { height: 40px; width: auto; }
-#title .logos img.neurips { height: 46px; margin-right: -24px; }
-#title .logos .rule { width: 1px; height: 40px; background: var(--rule); }
+/* The title (the speakers) and the paper (its authors, NeurIPS, a QR code to arXiv) share portraits and logos. */
+/* The title slide sits on the brand's colors, blue at the top to red at the bottom, darkening to black across the
+   right, where the teaser plays: the section's data-background-gradient, which reveal.js paints over the whole window,
+   so no page white shows around the slide at any window shape. The colors are --glimpse and --canvas, written out
+   because the attribute is applied outside the slide. Text and affiliations are white on it. */
+#title .layout { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 440px; grid-template-rows: 100%; color: #fff; }
+#title .name { display: flex; flex-direction: column; justify-content: center; gap: 44px; padding: 0 48px 0 var(--slide-pad-x); }
+#title h1 { font-size: 60px; color: #fff; text-shadow: 0 2px 28px rgb(3 6 14 / .35); }
+#title .name .authors, #title .name .logos { justify-content: start; }
+/* The affiliations in their own colors, on the gradient, under a hairline. */
+#title .logos { width: max-content; gap: 40px; padding-top: 30px; border-top: 1px solid rgb(255 255 255 / .25); }
+/* Each portrait framed by the brand's blue and red at full saturation, brighter than the brand's own: blue at the top,
+   red at the bottom, as the background runs. */
+#title .authors img { padding: 6px; background: linear-gradient(to bottom, hsl(212 100% 69%), hsl(2 100% 69%)); }
+#title .authors figcaption { color: rgb(255 255 255 / .92); text-shadow: 0 1px 14px rgb(3 6 14 / .35); }
+#title .logos .wordlogo { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 800; letter-spacing: -.02em; color: #fff; white-space: nowrap; }
+#title .logos .wordlogo img { height: 42px; width: 42px; }
+/* Lamarck Labs' name as its site sets it: Open Sans Bold, uppercase, tracked (assets/fonts). */
+@font-face { font-family: "Open Sans"; font-weight: 700; font-display: block; src: url("assets/fonts/open-sans-700-latin.woff2") format("woff2"); }
+#title .logos .wordlogo.lamarck { font-family: "Open Sans", var(--sans); font-size: 22px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+#title .teaser-panel { display: grid; place-items: center; }
+/* The teaser (title-teaser.js): the scene with the viewpoint gliding and each glimpse taken with a flash, the canvas
+   below crossfading to its state after each glimpse. */
+#title title-teaser { display: grid; gap: 16px; transition: opacity .6s ease; }
+#title title-teaser.faded { opacity: 0; }
+#title title-teaser figure { position: relative; width: 300px; height: 300px; margin: 0; border-radius: 10px; overflow: hidden; }
+#title title-teaser .scene img { display: block; width: 100%; height: 100%; }
+#title title-teaser :is(.box, .trace) { position: absolute; box-sizing: border-box; }
+#title title-teaser .trace { border: 1.5px solid rgb(255 255 255 / .55); }
+#title title-teaser .box { border: 3px solid var(--glimpse); box-shadow: 0 0 0 1px rgb(255 255 255 / .6); transition: opacity .4s ease; }
+#title title-teaser .box.gliding { transition: top 1.1s ease-in-out, left 1.1s ease-in-out, width 1.1s ease-in-out, height 1.1s ease-in-out, opacity .4s ease; }
+#title title-teaser .box.hidden { opacity: 0; }
+#title title-teaser .box.taken { animation: teaser-take .5s ease-out; }
+#title title-teaser .flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+#title title-teaser .box.taken .flash { animation: teaser-flash .5s ease-out; }
+@keyframes teaser-take { 0% { border-width: 3px; } 30% { border-width: 7px; } 100% { border-width: 3px; } }
+@keyframes teaser-flash { 0% { opacity: .75; } 100% { opacity: 0; } }
+#title title-teaser .canvas { background: rgb(255 255 255 / .06); box-shadow: 0 0 0 3px var(--canvas); }
+#title title-teaser .canvas canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+#title title-teaser .canvas .front { opacity: 0; }
+#title title-teaser .canvas .front.shown { animation: teaser-write .6s ease forwards; }
+@keyframes teaser-write { to { opacity: 1; } }
+:is(#title, #paper) .authors { display: grid; grid-auto-flow: column; grid-auto-columns: 250px; }
+:is(#title, #paper) .authors figure { display: flex; flex-direction: column; align-items: center; }
+:is(#title, #paper) .authors img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; }
+:is(#title, #paper) .authors figcaption { margin-top: 16px; font-size: 22px; font-weight: 650; white-space: nowrap; }
+:is(#title, #paper) .logos { display: flex; align-items: center; justify-content: center; gap: 40px; font-size: 21px; }
+:is(#title, #paper) .logos img { height: 40px; width: auto; }
+:is(#title, #paper) .logos img.neurips { height: 46px; margin-right: -24px; }
+:is(#title, #paper) .logos .rule { width: 1px; height: 40px; background: var(--rule); }
+#paper .layout { display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; }
+#paper .name { text-align: center; }
+#paper .wordmark { display: block; width: 340px; height: auto; margin: 0 auto; }
+#paper .expansion { margin-top: 10px; font-size: 30px; font-weight: 700; color: var(--ink); }
+#paper .title { margin-top: 18px; font-size: 24px; color: var(--muted); }
+#paper .body { display: flex; justify-content: center; align-items: center; gap: 56px; }
+#paper .team { display: grid; gap: 40px; }
+#paper .authors { grid-auto-columns: 200px; }
+#paper .authors img { width: 130px; height: 130px; }
+#paper .authors figcaption { font-size: 20px; }
+#paper .qr { display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--muted); font-size: 17px;
+             text-decoration: none; }
+#paper .qr img { width: 230px; height: 230px; padding: 10px; border-radius: 12px; background: #fff; }
 /* The title slide names the talk itself. */
 .reveal:has(#title.present) .footer { display: none; }
 
-#tradition .lineage { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px 26px; align-items: end; }
-#tradition .lineage figure { grid-column: span 2; display: flex; flex-direction: column; align-items: center; }
-#tradition .lineage figure.wide { grid-column: span 3; }
-#tradition .lineage img { height: 210px; width: auto; max-width: 100%; object-fit: contain; }
-/* The panel's crop leaves out its x-axis title, shared with panel B in the paper; restated under it, the panel shrunk
-   by the line's height so the row stays level. */
-#tradition .lineage .yamins img { height: 190px; }
-#tradition .lineage .axis { font-size: 14px; line-height: 20px; color: var(--muted); }
-#tradition figcaption { margin-top: 8px; text-align: center; font-size: 18px; line-height: 1.3; }
+/* Two figures side by side: Yamins et al. 2014's panel, then Raugel et al.'s. The Yamins crop leaves out its x-axis
+   title, shared with panel B in the paper; it is restated under the panel. */
+#tradition .two-figures { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: end; margin-top: 30px; }
+#tradition .two-figures img { display: block; height: 400px; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain; }
+#tradition .two-figures .yamins img { height: 376px; }
+#tradition .two-figures .zhuang img { height: 330px; margin: 0 0 46px; }
+/* Zhuang's y-axis title, shared with another panel in the paper, restated beside the cropped panel. */
+#tradition .zhuang .plot { display: flex; align-items: center; justify-content: center; gap: 6px; }
+#tradition .zhuang .axis.y { writing-mode: vertical-rl; transform: rotate(180deg); margin-bottom: 46px; }
+#tradition .axis { margin: 0; font-size: 15px; line-height: 24px; color: var(--muted); text-align: center; }
+#tradition figcaption { margin-top: 12px; text-align: center; font-size: 21px; line-height: 1.3; }
 #tradition figcaption b, #tradition figcaption .cite { display: block; }
+/* The training regime, the slide's distinction, large under each figure. */
+#tradition figcaption .regime { font-size: 34px; font-weight: 800; white-space: nowrap; color: var(--ink); letter-spacing: -.01em; }
 
-/* First a foveated street (foveate.js), then Yarbus's records in its place. */
+/* The foveated street (foveate.js), alone and centered. */
 #human-vision .views { position: relative; }
-#human-vision .foveation { position: absolute; left: 50%; top: 0; width: 516px; transform: translateX(-50%);
-  transition: opacity .6s ease; }
-#human-vision.shows-yarbus .foveation { opacity: 0; }
-#human-vision .yarbus, #human-vision .cite { opacity: 0; transition: opacity .6s ease .3s; }
-#human-vision.shows-yarbus .yarbus, #human-vision.shows-yarbus .cite { opacity: 1; }
-#human-vision .yarbus { display: flex; justify-content: center; align-items: flex-end; gap: 64px; }
-#human-vision .yarbus img { height: 516px; width: auto; }
-#human-vision .cite { margin-top: 10px; text-align: center; }
+/* The animation alone, as large as the slide allows. */
+#human-vision .foveation { position: absolute; left: 50%; top: 10px; width: 620px; transform: translateX(-50%); }
 
 foveated-scene { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: 10px;
   container-type: inline-size; transition: --fx 70ms ease-in-out, --fy 70ms ease-in-out; }
@@ -57,31 +106,30 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 
 /* Each glimpse's answer is the map clipped to its box (--top, --left, --size from table.js); it appears over its glimpse
    on the photograph, one figure width and gap to the left, then flies to its place in the map. */
-#table .table-demo { --side: 420px; --gap: 44px; display: flex; justify-content: center; gap: var(--gap); }
-#table figure { position: relative; width: var(--side); }
-#table figure > img, #table .blank { display: block; width: var(--side); height: var(--side); border-radius: 10px; }
-#table .photo .over { position: absolute; inset: 0; opacity: 0; transition: opacity .4s ease; }
-#table.shows-glimpses .photo .over { opacity: 1; }
-#table .blank { background: #ebebf0; opacity: 0; transition: opacity .5s ease .5s; }
-#table .map > img.answer { position: absolute; left: 0; top: 0;
+#integrating-information-across-viewpoints .table-demo { --side: 420px; --gap: 44px; display: flex; justify-content: center; gap: var(--gap); }
+#integrating-information-across-viewpoints figure { position: relative; width: var(--side); }
+#integrating-information-across-viewpoints figure > img, #integrating-information-across-viewpoints .blank { display: block; width: var(--side); height: var(--side); border-radius: 10px; }
+#integrating-information-across-viewpoints .photo .over { position: absolute; inset: 0; opacity: 0; transition: opacity .4s ease; }
+#integrating-information-across-viewpoints.shows-glimpses .photo .over { opacity: 1; }
+#integrating-information-across-viewpoints .blank { background: #ebebf0; opacity: 0; transition: opacity .5s ease .5s; }
+#integrating-information-across-viewpoints .map > img.answer { position: absolute; left: 0; top: 0;
   clip-path: inset(calc(var(--top) * 100%) calc((1 - var(--left) - var(--size)) * 100%)
                    calc((1 - var(--top) - var(--size)) * 100%) calc(var(--left) * 100%));
   opacity: 0; transform: translateX(calc(-1 * (var(--side) + var(--gap))));
   transition: opacity .35s ease, transform 1s cubic-bezier(.45, 0, .2, 1) .55s; }
-#table.shows-answer-far .answer:nth-of-type(1), #table.shows-answer-near .answer:nth-of-type(2) { opacity: 1; transform: none; }
-#table.shows-answer-far .blank { opacity: 1; }
-#table .map figcaption, #table .map .scale { opacity: 0; transition: opacity .5s ease .5s; }
-#table.shows-answer-far .map figcaption, #table.shows-answer-far .map .scale { opacity: 1; }
-#table figcaption { margin-top: 10px; font-size: 19px; color: var(--muted); }
-#table .marks { height: var(--side); opacity: 0; transition: opacity .5s ease; }
-#table.shows-gap .marks { opacity: 1; }
-#table .marks .ring { stroke: var(--ink); }
-#table .marks .halo { stroke: var(--bg); }
-#table .marks .query { fill: var(--ink); font-size: 44px; font-weight: 800; }
-#table .scale { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 17px; color: var(--muted); }
-#table .scale i { width: 160px; height: 12px; border-radius: 3px;
+#integrating-information-across-viewpoints.shows-answer-far .answer:nth-of-type(1), #integrating-information-across-viewpoints.shows-answer-near .answer:nth-of-type(2) { opacity: 1; transform: none; }
+#integrating-information-across-viewpoints.shows-answer-far .blank { opacity: 1; }
+#integrating-information-across-viewpoints .map .scale { opacity: 0; transition: opacity .5s ease .5s; }
+#integrating-information-across-viewpoints.shows-answer-far .map .scale { opacity: 1; }
+#integrating-information-across-viewpoints .marks { height: var(--side); opacity: 0; transition: opacity .5s ease; }
+#integrating-information-across-viewpoints.shows-gap .marks { opacity: 1; }
+#integrating-information-across-viewpoints .marks .ring { stroke: var(--ink); }
+#integrating-information-across-viewpoints .marks .halo { stroke: var(--bg); }
+#integrating-information-across-viewpoints .marks .query { fill: var(--ink); font-size: 44px; font-weight: 800; }
+#integrating-information-across-viewpoints .scale { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 17px; color: var(--muted); }
+#integrating-information-across-viewpoints .scale i { width: 160px; height: 12px; border-radius: 3px;
   background: linear-gradient(90deg, #000004, #420a68, #932667, #dd513a, #fca50a, #fcffa4); }
-#table .scale b { margin-left: 8px; font-weight: 650; color: var(--text); }
+#integrating-information-across-viewpoints .scale b { margin-left: 8px; font-weight: 650; color: var(--text); }
 
 /* DINOv3 feature maps: the photo; then the feature map beside it; then the feature map small, with arrows to the
    linear probe's probability maps. Positions per state, so the images glide between them. */
@@ -95,10 +143,10 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #foundation.shows-decode .photo { opacity: 0; }
 #foundation.shows-decode .features { left: 0; top: 126px; width: 456px; }
 #foundation .arrows { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
-#foundation .arrows path { stroke: var(--ink); stroke-width: 3; transition-delay: .7s; }
-#foundation .arrows text { font: 700 22px var(--sans); fill: var(--ink); opacity: 0; transition: opacity .4s ease 1.2s; }
-#foundation.shows-decode .arrows .draw { stroke-dashoffset: 0; }
-#foundation.shows-decode .arrows text { opacity: 1; }
+#foundation .arrows path { stroke: var(--ink); stroke-width: 3; }
+#foundation .arrows text { font: 700 22px var(--sans); fill: var(--ink); opacity: 0; transition: opacity .2s ease; }
+#foundation.shows-decode .arrows .draw { stroke-dashoffset: 0; transition-duration: .9s; transition-delay: .7s; }
+#foundation.shows-decode .arrows text { opacity: 1; transition: opacity .4s ease 1.2s; }
 #foundation .prob { position: absolute; left: 788px; top: calc(var(--row) * 188px); width: 270px; margin: 0;
                     display: grid; grid-template-columns: 270px auto; gap: 14px; align-items: center;
                     opacity: 0; transition: opacity .5s ease calc(1.1s + var(--row) * .25s); }
@@ -106,12 +154,6 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #foundation .prob figcaption { grid-column: 2; grid-row: 1; font-size: 22px; font-weight: 750; white-space: nowrap; }
 #foundation.shows-decode .prob { opacity: 1; }
 #foundation > .cite { position: absolute; left: var(--slide-pad-x); bottom: 50px; }
-/* How much went into DINOv3: three facts under the feature map, on the last click. */
-#foundation .scale-facts { position: absolute; left: 0; top: 446px; width: 600px; margin: 0; display: grid;
-  grid-template-columns: repeat(3, 1fr); gap: 18px; opacity: 0; transition: opacity .6s ease; }
-#foundation.shows-scale .scale-facts { opacity: 1; }
-#foundation .scale-facts dt { font-size: 30px; font-weight: 800; color: var(--ink); line-height: 1.1; }
-#foundation .scale-facts dd { margin: 4px 0 0; font-size: 15px; line-height: 1.3; color: var(--muted); }
 
 /* The history charts (history.js), one benchmark at a time on a stage: passive (ink), frozen features (dashed slate),
    active models (amber), the gap (amber bracket), CanViT-B (canvas red; hollow when frozen). */
@@ -193,17 +235,20 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #active-vision-model .group.policy { border: 2px dashed #cbd5e1; }
 #active-vision-model .does { margin-bottom: 12px; font-size: 22px; font-weight: 700; color: var(--muted); text-align: center; }
 #active-vision-model .jobs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 14px; }
-#active-vision-model .job { padding: 26px 18px; border: 1px solid var(--rule); border-top: 5px solid var(--accent); border-radius: 14px; background: var(--bg); }
+#active-vision-model .job { padding: 16px 18px; border: 1px solid var(--rule); border-top: 5px solid var(--accent); border-radius: 14px; background: var(--bg); }
 #active-vision-model .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
 #active-vision-model .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
 #active-vision-model .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
 #active-vision-model .focus { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap;
                               padding: 4px 14px; border-radius: 999px; background: var(--policy); color: #fff; font-size: 18px; font-weight: 700; }
-/* Below the diagram, the prior models' ablations, then the claim in their place. */
-#active-vision-model .bottom { display: grid; margin-top: 58px; }
-#active-vision-model .bottom > * { grid-area: 1 / 1; opacity: 0; transition: opacity .6s ease; }
-#active-vision-model.shows-ablations:not(.shows-claim) .ablations, #active-vision-model.shows-claim .claim { opacity: 1; }
-#active-vision-model .claim { align-self: center; }
+/* Below the diagram, the claim, then the prior models' ablations under it. */
+#active-vision-model .bottom { display: grid; gap: 6px; margin-top: 30px; }
+#active-vision-model .bottom > * { opacity: 0; transition: opacity .6s ease; }
+#active-vision-model.shows-claim .claim, #active-vision-model.shows-ablations .ablations { opacity: 1; }
+#active-vision-model .claim { margin-top: 18px; font-size: 27px; }
+/* Once the claim is the subject, the diagram keeps only its names. */
+#active-vision-model :is(.does, .job p) { max-height: 3em; overflow: hidden; transition: max-height .6s ease, opacity .4s ease, margin .6s ease; }
+#active-vision-model.shows-claim :is(.does, .job p) { max-height: 0; opacity: 0; margin: 0; }
 #active-vision-model .claim span { display: block; }
 #active-vision-model .ablations svg { display: block; width: 100%; height: auto; overflow: visible; }
 #active-vision-model .ablations .value { font: 600 15px var(--sans); fill: var(--muted); }
@@ -250,56 +295,18 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 
 #architecture-paper img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
 
-/* Canvas Vision Transformer architecture, drawn by architecture.js, depth left to right: the glimpse through the
-   blocks; then the canvas before it; then the glimpse runs through the network, its reads and writes in depth order
-   (--depth): a read's arrow, or a write's glimpse tokens, its arrow and the canvas it leaves; then the next glimpse,
-   the same again. */
-#architecture .arch-build { position: relative; margin: 8px auto 0; }
-#architecture .arch-build > img { position: absolute; z-index: 1; border-radius: 8px; transition: opacity .5s ease; }
-#architecture .wires { position: absolute; inset: 0; z-index: 2; overflow: visible; pointer-events: none; }
-#architecture .wires.under { z-index: 0; }
-#architecture .wires :is(rect, text) { transition: opacity .5s ease; }
-#architecture .block { fill: #d0a8e0; stroke: #b48ac9; stroke-width: 1.5; }
-#architecture .patches line { stroke: rgba(255, 255, 255, .6); stroke-width: 1; }
-#architecture .glimpse-stream { stroke: var(--glimpse); stroke-width: 5; }
-#architecture .canvas-stream { stroke: var(--canvas); stroke-width: 5; transition: opacity .5s ease; }
-#architecture .glimpse-tokens { outline: 3px solid var(--glimpse); outline-offset: -3px; border-radius: 6px; }
-#architecture .box { fill: none; stroke: var(--glimpse); stroke-width: 3; }
-#architecture .wire .line { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 1; stroke-dashoffset: 1;
-                            transition: stroke-dashoffset .45s ease var(--start, 0s); }
-#architecture .wire .head { fill: var(--ink); opacity: 0; transition: opacity .15s ease calc(var(--start, 0s) + .4s); }
-#architecture .feed .line { stroke: var(--glimpse); stroke-width: 3; stroke-dashoffset: 0; }
-#architecture .feed .head { fill: var(--glimpse); opacity: 1; }
-#architecture .exchange-label { font: 700 18px var(--sans); fill: var(--muted); }
-#architecture .label { position: absolute; margin: 0; translate: -50% 0; text-align: center; line-height: 1.25;
-                       white-space: nowrap; transition: opacity .5s ease; }
-#architecture .label span { display: block; }
-#architecture .caption span { font-size: 20px; font-weight: 700; color: var(--muted); }
-#architecture :is(.scene-label, .glimpse-label, .tower-label, .canvas-label) span:first-child { font-size: 22px; font-weight: 750; }
-#architecture .scene-label span { color: var(--ink); }
-#architecture .tower-label span { color: #7e4fa0; }
-#architecture .glimpse-label span:first-child { color: var(--glimpse); }
-#architecture .canvas-label span { color: var(--canvas); }
-#architecture .glimpse-label span + span { font: 500 15px var(--mono); color: var(--text); }
-
-/* An exchange's moment in the run: a read at once, a write's arrow after its tokens appear, its canvas after the arrow. */
-#architecture .exchange { --start: calc(var(--depth) * .9s); }
-#architecture .exchange.write { --start: calc(var(--depth) * .9s + .3s); }
-#architecture :is(.canvas, .canvas-stream, .canvas-label, .snapshot-label, .source, .exchange-label, .next) { opacity: 0; }
-#architecture.shows-canvas :is(.before.now, .canvas-stream, .canvas-label) { opacity: 1; }
-#architecture.shows-run .exchange .line { stroke-dashoffset: 0; }
-#architecture.shows-run :is(.exchange .head, .exchange-label) { opacity: 1; }
-#architecture.shows-run .source.now { opacity: 1; transition-delay: calc(var(--depth) * .9s); }
-#architecture.shows-run :is(.snapshot.now, .snapshot-label) { opacity: 1; transition-delay: calc(var(--depth) * .9s + .8s); }
-
-@keyframes architecture-redraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes architecture-appear { from { opacity: 0; } to { opacity: 1; } }
-#architecture.shows-next :is(.box.now, .glimpse.now, .glimpse-label.now, .before.now, .snapshot.now, .source.now) { opacity: 0; transition-delay: 0s; }
-#architecture.shows-next :is(.box.next, .glimpse.next, .glimpse-label.next, .before.next) { opacity: 1; }
-#architecture.shows-next .source.next { opacity: 1; transition-delay: calc(.8s + var(--depth) * .9s); }
-#architecture.shows-next .snapshot.next { opacity: 1; transition-delay: calc(1.6s + var(--depth) * .9s); }
-#architecture.shows-next .exchange .line { animation: architecture-redraw .45s ease both calc(.8s + var(--start)); }
-#architecture.shows-next .exchange .head { animation: architecture-appear .15s ease both calc(1.2s + var(--start)); }
+/* The paper's architecture figure, revealed left to right by a mask over what is not yet shown, in fractions of the
+   figure's width: the first glimpse's backbone and canvas end at .275; the second glimpse's at .66; the third fills the
+   rest, with the legend. What is shown stays centered: the figure glides left as each part is revealed. */
+#architecture .arch-reveal { position: relative; width: 530px; margin: 0 auto; transition: transform .8s ease;
+                             transform: translateX(calc(530px * .36)); }
+#architecture .arch-reveal img { display: block; width: 100%; height: auto; }
+#architecture .arch-reveal .mask { position: absolute; top: 0; right: -2px; bottom: 0; left: 27.5%; background: var(--bg);
+                                   transition: left .8s ease; }
+#architecture.shows-next .arch-reveal { transform: translateX(calc(530px * .17)); }
+#architecture.shows-next .arch-reveal .mask { left: 66%; }
+#architecture.shows-more .arch-reveal { transform: none; }
+#architecture.shows-more .arch-reveal .mask { left: 101%; }
 
 #canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden; }
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
@@ -357,39 +364,12 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #distillation :is(.out, .prediction) { --delay: .7s; } #distillation :is(.score, .target) { --delay: 1.05s; }
 #distillation:is(.shows-second, .shows-third, .shows-last) .unrolled > :not(.t0, .row-label) { transition-delay: var(--delay); }
 
-/* Policy agnosticism: R-IID rollouts, then F-IID below them, drawn from the pretraining sampler. */
-#policy-agnosticism .rollout-grid { display: grid; grid-template-columns: 90px repeat(4, 248px); gap: 18px 16px;
-                                    align-items: center; justify-content: center; margin-top: 10px; }
-#policy-agnosticism .row-label { font-size: 26px; font-weight: 800; }
-#policy-agnosticism pretraining-rollout { position: relative; display: block; width: 248px; height: 248px; }
-#policy-agnosticism pretraining-rollout img, #policy-agnosticism pretraining-rollout svg {
-  position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 6px; }
-/* The full-scene glimpse's box coincides with the photo's edge: let its stroke show outside it. */
-#policy-agnosticism pretraining-rollout svg { overflow: visible; }
-#policy-agnosticism pretraining-rollout rect { fill: none; stroke: var(--policy-color); stroke-width: .022;
-                                               transition: opacity .3s ease; }
-#policy-agnosticism pretraining-rollout rect.hidden { opacity: 0; }
-#policy-agnosticism pretraining-rollout rect.past { opacity: .45; stroke-width: .014; }
-#policy-agnosticism pretraining-rollout rect.current { stroke: #fff; stroke-width: .03;
-                                                       filter: drop-shadow(0 0 .02px var(--policy-color)); }
-#policy-agnosticism .fiid { opacity: 0; transition: opacity .6s ease; }
-#policy-agnosticism.shows-fiid .fiid { opacity: 1; }
 
 #rollout .episode { width: 1060px; margin: 0 auto; padding: 14px 20px; transform-origin: 0 50%;
   transition: transform .8s ease; }
 #rollout canvit-episode { font-size: 15px; }
-/* The passive contrast: the episode shrinks to the left and DINOv3's whole-scene map takes the right, about the size
-   of the shrunk canvas. */
-#rollout.shows-passive .episode { transform: translateX(-46px) scale(.76); }
-#rollout .whole-scene { position: absolute; right: 40px; top: 176px; width: 310px; margin: 0; text-align: center;
-  opacity: 0; transition: opacity .6s ease; }
-#rollout.shows-passive .whole-scene { opacity: 1; transition-delay: .5s; }
-#rollout .whole-scene figcaption { margin-bottom: 10px; font-size: 19px; font-weight: 750; color: var(--ink);
-  white-space: nowrap; }
-#rollout .whole-scene canvas { display: block; width: 220px; aspect-ratio: 1; margin: 0 auto; border-radius: 8px;
-  image-rendering: pixelated; box-shadow: 0 0 0 3px var(--ink); }
-#rollout .whole-scene p { margin: 14px 0 0; font-size: 18px; color: var(--muted); }
-#rollout .whole-scene b { margin-left: 6px; font-size: 22px; color: var(--ink); }
+/* The component's own controls (scene tabs, readout choices, play) are for the project page, not the slide. */
+#rollout canvit-episode::part(controls) { display: none; }
 
 #extrapolation .extrapolation { display: grid; grid-template-columns: 110px repeat(4, 235px); gap: 10px 14px;
                                 align-items: center; justify-content: center; }
@@ -402,27 +382,8 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 .reveal .class-legend span::before { content: ""; display: inline-block; width: .8em; height: .8em; margin-right: .4em;
                                      border-radius: 3px; background: var(--chip); vertical-align: -.05em; }
 
-:is(#frontier, #teacher) .chart { width: 1040px; margin: 0 auto; padding: 14px 20px 10px; font-size: 14px; }
+#frontier .chart { width: 1040px; margin: 0 auto; padding: 14px 20px 10px; font-size: 14px; }
 
-#live .live-stage { width: 1100px; margin: 0 auto; font-size: 15px; zoom: .8; }
-
-/* Three questions, each over the demonstration in this talk that shows it can be asked of CanViT; accents of the
-   three parts of an active-vision model. */
-#neuro-ai .asks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 30px; }
-#neuro-ai .ask { display: flex; flex-direction: column; padding: 20px 14px 24px; border: 1px solid var(--rule);
-                 border-top: 6px solid var(--accent); border-radius: 16px; }
-#neuro-ai .ask h3 { color: var(--accent); font-size: 28px; text-align: center; white-space: nowrap; }
-#neuro-ai .visual { display: grid; align-content: center; height: 300px; margin: 14px 0 18px; }
-#neuro-ai .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
-#neuro-ai .pair figure { margin: 0; }
-#neuro-ai .pair img, #neuro-ai .pair canvit-rollout { display: block; width: 100%; aspect-ratio: 1; border-radius: 8px; }
-#neuro-ai .pair .scanpath { object-fit: cover; object-position: 50% 100%; }
-#neuro-ai .pair figcaption { margin-top: 6px; font-size: 17px; font-weight: 700; text-align: center; color: var(--muted); }
-#neuro-ai .pair figcaption span { display: none; }
-#neuro-ai .pair figcaption b { color: var(--canvit-glimpse); }
-#neuro-ai .ask p { margin-top: auto; font-size: 24px; font-weight: 650; line-height: 1.3; text-align: center; text-wrap: balance; }
-#neuro-ai .pair .class-legend { grid-column: 1 / -1; display: flex; justify-content: center; gap: 14px; margin-top: 2px;
-                                font-size: 15px; font-weight: 650; color: var(--text); }
 
 #links .layout { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding-top: 4px; }
 #links .qr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
@@ -435,27 +396,25 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #links .homepage a { color: var(--glimpse); text-decoration: none; }
 #links .start { display: flex; justify-content: center; align-items: center; gap: 18px; font-size: 26px; }
 #links .start code { padding: 10px 24px; border-radius: 12px; background: var(--ink); color: #fff; font-size: 26px; }
-#links .funders { display: flex; justify-content: space-between; align-items: center; padding-top: 18px;
+#links .funders { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding-top: 18px;
                   border-top: 1px solid var(--rule); }
-#links .funders img { height: 44px; width: auto; max-width: 150px; object-fit: contain; }
+#links .funders img { height: 40px; width: auto; max-width: 128px; object-fit: contain; }
 #links .funders img.tall { height: 64px; }
 
-/* The policies: each still at its fifth glimpse with its full name, then playing, then smaller beside the race. Each
-   card sits at (--col, --row) of a grid whose pitch and panel scale change with the state, so the cards glide. */
-/* Viewing policies, one at a time: the street's rollout under the current policy, left; the policies so far, right,
-   the current one in its color, the earlier ones dimmed. */
-#policies .policy-stage { display: grid; grid-template-columns: 480px 1fr; gap: 64px; align-items: center; margin-top: 6px; }
-#policies figure { margin: 0; }
-#policies canvit-rollout { display: block; width: 480px; }
-#policies .policy-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
-#policies .policy-list li { display: flex; align-items: baseline; gap: 14px; opacity: 0; transition: opacity .5s ease; }
-#policies .policy-list b { min-width: 92px; color: var(--policy-color); font-size: 28px; font-weight: 800; }
-#policies .policy-list span { color: var(--text); font-size: 22px; }
-#policies li.riid, #policies.shows-fiid li.fiid, #policies.shows-c2f li.c2f, #policies.shows-f2c li.f2c,
-#policies.shows-egc2f li.egc2f, #policies.shows-rfs li.rfs { opacity: .35; }
-#policies:not(.shows-fiid) li.riid, #policies.shows-fiid:not(.shows-c2f) li.fiid, #policies.shows-c2f:not(.shows-f2c) li.c2f,
-#policies.shows-f2c:not(.shows-egc2f) li.f2c, #policies.shows-egc2f:not(.shows-rfs) li.egc2f,
-#policies.shows-rfs li.rfs { opacity: 1; }
+/* C2F and F2C side by side, playing together, each labeled in its color. */
+#c2f-and-f2c .stages { display: grid; gap: 30px; margin-top: 22px; }
+#c2f-and-f2c .stage-row { display: grid; grid-template-columns: 110px repeat(2, 220px 60px) 220px; align-items: center; justify-content: center; }
+#c2f-and-f2c .label { margin: 0; font-size: 34px; font-weight: 800; color: var(--policy-color); }
+#c2f-and-f2c figure { margin: 0; display: grid; gap: 6px; justify-items: center; }
+#c2f-and-f2c .frame { position: relative; width: 220px; height: 220px; }
+#c2f-and-f2c .frame img, #c2f-and-f2c .frame svg { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 8px; }
+#c2f-and-f2c .frame svg { overflow: visible; }
+#c2f-and-f2c rect { fill: none; vector-effect: non-scaling-stroke; }
+#c2f-and-f2c rect.halo { stroke: #fff; stroke-width: calc((var(--stroke) + 2.5) * 1px); }
+#c2f-and-f2c rect.box { stroke: var(--policy-color); stroke-width: calc(var(--stroke) * 1px); }
+#c2f-and-f2c figcaption { font-size: 18px; font-weight: 700; color: var(--policy-color); }
+#c2f-and-f2c .arrow { justify-self: center; width: 34px; height: 4px; margin-bottom: 30px; background: var(--muted); position: relative; }
+#c2f-and-f2c .arrow::after { content: ""; position: absolute; right: -4px; top: -7px; border: 9px solid transparent; border-left: 12px solid var(--muted); border-right: 0; }
 
 /* Accuracy by viewing policy: ImageNet-1k, then ADE20K beside it. */
 #policy-accuracy .charts { display: grid; grid-template-columns: repeat(2, 540px); gap: 48px; justify-content: center; }
@@ -521,14 +480,7 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #timeline .tick { stroke: var(--ink); stroke-width: 1.5; }
 #timeline .year { font: 600 18px var(--sans); fill: var(--muted); paint-order: stroke; stroke: var(--bg); stroke-width: 8px; }
 #timeline .marker { fill: #d97706; stroke: var(--bg); stroke-width: 2.5; transition: fill .5s ease, r .5s ease; }
-#timeline.shows-rl .marker.rl { fill: var(--policy); r: 13; }
-#timeline .legend { position: absolute; right: var(--slide-pad-x); top: 112px; display: grid; gap: 6px;
-                    font-size: 20px; font-weight: 650; color: var(--policy); }
-#timeline .legend p { display: flex; align-items: center; gap: 10px; }
-#timeline .legend .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--policy); }
 /* AME: chosen by a rule, its marker kept in the active models' amber. */
-#timeline .legend .by-rule { color: #b45309; }
-#timeline .legend .by-rule .dot { width: 16px; height: 16px; margin: 0 3px; background: #d97706; }
 #timeline .leader { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 5; }
 #timeline .name { font: 800 24px var(--sans); fill: var(--ink); }
 #timeline .cite { font: italic 400 15px var(--sans); fill: var(--muted); }
@@ -537,67 +489,346 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #timeline.shows-canvit .slides { transform: translateX(var(--dx)); }
 #timeline .after-only { opacity: 0; transition: opacity .5s ease; }
 #timeline.shows-canvit .after-only { opacity: 1; transition-delay: .7s; }
+#timeline .neuro { opacity: 0; transition: opacity .6s ease; }
+#timeline.shows-neuro .neuro { opacity: 1; }
+#timeline .marker.neuro { fill: var(--neuro-ai); }
+#timeline .neuro .name { fill: var(--neuro-ai); }
 #timeline .canvit { opacity: 0; transition: opacity .6s ease; }
 #timeline.shows-canvit .canvit { opacity: 1; transition-delay: .8s; }
 #timeline .canvit .name { font-size: 30px; fill: url(#timeline-brand); }
 #timeline .canvit .cite { font-style: normal; font-weight: 650; fill: var(--ink); }
 #timeline .marker.ours { fill: url(#timeline-brand); }
 
-/* A persistent, evolving understanding of the scene: glimpses, the composite with the canvas kept, then with it reset;
-   each glimpse a named state (second, third), the reset column last. */
-#memory .memory-demo { display: grid; grid-template-columns: repeat(3, 360px); justify-content: center; gap: 30px; }
-#memory .memory-demo figure { margin: 0; }
-#memory .memory-demo figcaption { margin-bottom: 8px; font-size: 26px; font-weight: 800; }
-#memory .stack { display: grid; }
-#memory .stack img { grid-area: 1 / 1; display: block; width: 360px; height: 360px; border-radius: 8px; opacity: 0;
-                     transition: opacity .5s ease; }
-#memory .stack .t0 { opacity: 1; }
-#memory.shows-second .stack .t1, #memory.shows-third .stack .t2 { opacity: 1; }
-#memory .reset { opacity: 0; transition: opacity .6s ease; }
-#memory.shows-reset .reset, #memory .reset .t2 { opacity: 1; }
-#memory .class-legend { display: flex; justify-content: center; gap: 28px; margin-top: 18px; font-size: 22px; font-weight: 700; }
-
 /* The model's own uncertainty: the scene with two rings, the class probabilities at each as bars, then the
    uncertainty map, its quadrants, and the one EG-C2F visits next. */
-#uncertainty .layout { display: grid; grid-template-columns: 400px 300px 400px; gap: 26px; justify-content: center;
+#eg-c2f .layout { display: grid; grid-template-columns: 400px 300px 400px; gap: 26px; justify-content: center;
                        align-items: start; margin-top: 10px; }
-#uncertainty figure { position: relative; margin: 0; }
-#uncertainty canvit-scene, #uncertainty canvit-map { display: block; width: 400px; }
-#uncertainty .rings text { font-size: 4.2px; paint-order: stroke; stroke: rgb(15 23 42 / .75); stroke-width: .9px; stroke-linejoin: round; }
-#uncertainty .rings .halo { stroke-width: 1.4; }
-#uncertainty .rings .ring { stroke-width: .7; }
-#uncertainty .ring-certain, #uncertainty .ring-uncertain { opacity: 0; transition: opacity .4s ease; }
-#uncertainty.shows-certain .ring-certain, #uncertainty.shows-uncertain .ring-uncertain { opacity: 1; }
-#uncertainty .bars { opacity: 0; transition: opacity .5s ease; margin-bottom: 26px; }
-#uncertainty.shows-certain .bars.certain, #uncertainty.shows-uncertain .bars.uncertain { opacity: 1; }
-#uncertainty .bars .head { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
-#uncertainty .bars .row { display: grid; grid-template-columns: 96px 150px 46px; align-items: center; gap: 8px; font-size: 17px; }
-#uncertainty .bars .name { text-align: right; color: var(--text); }
-#uncertainty .bars .bar { height: 16px; width: calc(var(--p) * 150px); border-radius: 3px; background: var(--ink); }
-#uncertainty .bars .p { color: var(--muted); font-variant-numeric: tabular-nums; }
-#uncertainty .bars .entropy { margin-top: 6px; font-size: 18px; font-weight: 700; color: var(--text); opacity: 0;
+#eg-c2f figure { position: relative; margin: 0; }
+#eg-c2f canvit-scene, #eg-c2f canvit-map { display: block; width: 400px; }
+#eg-c2f .rings .halo { stroke-width: 1.4; }
+#eg-c2f .rings .ring { stroke-width: .7; }
+#eg-c2f .ring-certain, #eg-c2f .ring-uncertain { opacity: 0; transition: opacity .4s ease; }
+#eg-c2f.shows-certain .ring-certain, #eg-c2f.shows-uncertain .ring-uncertain { opacity: 1; }
+#eg-c2f .bars { opacity: 0; transition: opacity .5s ease; margin-bottom: 26px; }
+#eg-c2f.shows-certain .bars.certain, #eg-c2f.shows-uncertain .bars.uncertain { opacity: 1; }
+#eg-c2f .bars .head { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+/* The sure cell's ring is solid, the unsure one's dashed, on the scene and in each panel's heading. */
+#eg-c2f .rings .ring-uncertain .ring { stroke-dasharray: 2.2 1.6; }
+#eg-c2f .bars .glyph { width: 26px; height: 26px; flex: none; }
+#eg-c2f .bars .glyph circle { fill: none; stroke: var(--ink); stroke-width: 2.6; }
+#eg-c2f .bars .glyph.ring-uncertain circle { stroke-dasharray: 4.4 3.2; }
+#eg-c2f .bars .glyph.ring-certain, #eg-c2f .bars .glyph.ring-uncertain { opacity: 1; }
+#eg-c2f .bars .row { display: grid; grid-template-columns: 96px 150px 46px; align-items: center; gap: 8px; font-size: 17px; }
+#eg-c2f .bars .name { text-align: right; color: var(--text); }
+#eg-c2f .bars .bar { height: 16px; width: calc(var(--p) * 150px); border-radius: 3px; background: var(--ink); }
+#eg-c2f .bars .p { color: var(--muted); font-variant-numeric: tabular-nums; }
+#eg-c2f .bars .entropy { margin-top: 6px; font-size: 18px; font-weight: 700; color: var(--text); opacity: 0;
                               transition: opacity .4s ease; }
-#uncertainty.shows-map .bars .entropy { opacity: 1; }
-#uncertainty .map { opacity: 0; transition: opacity .6s ease; }
-#uncertainty.shows-map .map { opacity: 1; }
-#uncertainty .quadrants { position: absolute; left: 0; top: 0; width: 400px; height: 400px; pointer-events: none; }
-#uncertainty .quadrants span { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+#eg-c2f.shows-map .bars .entropy { opacity: 1; }
+#eg-c2f .map { opacity: 0; transition: opacity .6s ease; }
+#eg-c2f.shows-map .map { opacity: 1; }
+#eg-c2f .quadrants { position: absolute; left: 0; top: 0; width: 400px; height: 400px; pointer-events: none; }
+#eg-c2f .quadrants span { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
                                border: 2px dashed rgba(255, 255, 255, .85); color: #fff; font-size: 26px; font-weight: 800;
                                text-shadow: 0 0 4px #000; opacity: 0; transition: opacity .4s ease, border .4s ease; }
-#uncertainty .quadrants small { margin-left: 6px; font-size: 18px; font-weight: 650; }
-#uncertainty.shows-quadrants .quadrants span { opacity: 1; }
-#uncertainty.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }
+#eg-c2f .quadrants small { margin-left: 6px; font-size: 18px; font-weight: 650; }
+#eg-c2f.shows-quadrants .quadrants span { opacity: 1; }
+#eg-c2f.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }
 
 
 /* The divider before the Backup slides. */
 #backup .divider { display: grid; place-items: center; height: 100%; margin: 0; font-size: 96px; font-weight: 800;
                    letter-spacing: -.03em; color: var(--muted); }
 
-/* Accuracy by uncertainty (uncertainty-calibration.js): the full-scene glimpse in gray, five C2F glimpses in C2F's
-   color. */
-#calibration .calibration svg { display: block; width: 100%; height: auto; margin-top: 6px; overflow: visible; }
-#calibration .grid { stroke: var(--rule); }
-#calibration .tick { font: 500 17px var(--sans); fill: var(--muted); }
-#calibration .title { font: 650 18px var(--sans); fill: var(--text); }
-#calibration .series-0 { fill: #94a3b8; }
-#calibration .series-1 { fill: #1f77b4; }
+/* The chart, then the budget below it: the chart shrinks and the glimpses of pretraining and of learning where to
+   look appear to scale. */
+#learned-policy .learned-layout { width: 900px; margin: 18px auto 0; transition: width .7s ease; }
+#learned-policy.shows-budget .learned-layout { width: 600px; margin-top: 0; }
+#learned-policy .budget { display: grid; gap: 14px; margin-top: 14px; opacity: 0; transition: opacity .6s ease .4s; }
+#learned-policy.shows-budget .budget { opacity: 1; }
+#learned-policy .budget-row { display: grid; grid-template-columns: 300px 1fr; grid-template-rows: auto auto; column-gap: 20px; align-items: center; }
+#learned-policy .budget .who { grid-row: 1 / 3; margin: 0; font-size: 22px; font-weight: 750; text-align: right; }
+#learned-policy .budget .track { height: 28px; }
+#learned-policy .budget .bar { display: block; height: 100%; border-radius: 6px; }
+#learned-policy .budget .pretraining .bar { width: 100%; background: var(--canvas); }
+#learned-policy .budget .policy .bar { width: max(4px, calc(100% * 640e3 / 1e9)); background: var(--policy); }
+#learned-policy .budget .n { margin: 4px 0 0; font-size: 19px; font-weight: 700; }
+#learned-policy svg { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--sans); }
+#learned-policy .grid { stroke: var(--rule); }
+#learned-policy .tick { font-size: 16px; fill: var(--muted); }
+#learned-policy .axis-title { font-size: 17px; font-weight: 700; fill: var(--ink); }
+#learned-policy .curve { fill: none; stroke-width: 3.5; stroke-linejoin: round; }
+#learned-policy .curve.ours { stroke: var(--policy); stroke-width: 6; }
+#learned-policy .band { fill: var(--policy); opacity: .2; }
+#learned-policy .end-label { font-size: 19px; font-weight: 800; }
+#learned-policy .end-label.ours { font-size: 23px; }
+#learned-policy .learned { opacity: 0; transition: opacity .6s ease; }
+#learned-policy.shows-learned .learned { opacity: 1; }
+
+/* Next: two directions, each in its own panel. */
+
+/* Free-viewing datasets: the two papers' figures, large. */
+#free-viewing .papers { display: grid; grid-template-columns: 1.25fr 1fr; gap: 36px; align-items: center; height: 600px; margin: 0 -40px; }
+#free-viewing figure img { width: 100%; height: auto; }
+#free-viewing figcaption { margin-top: 10px; text-align: center; }
+
+#links .funders .wordlogo { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 800; letter-spacing: -.01em; color: var(--ink); white-space: nowrap; }
+#links .funders .wordlogo img { height: 34px; width: 34px; }
+
+/* The gap: the segmentation task, then the bars (gap.js). */
+#gap .gap-layout { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: center; margin-top: 10px; }
+#gap .examples { display: grid; gap: 14px; }
+#gap .example .tag { position: absolute; left: 10px; bottom: 10px; padding: 4px 12px; border-radius: 8px; background: var(--ink);
+                     color: #fff; font-size: 17px; font-weight: 700; opacity: 0; transition: opacity .5s ease; }
+#gap.shows-label .example .tag { opacity: 1; }
+#gap .example figcaption small { display: block; font-size: 15px; font-weight: 500; color: var(--muted); }
+#gap .example .frame { position: relative; height: 340px; border-radius: 12px; overflow: hidden; }
+#gap .example .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+#gap .example figcaption { margin-top: 6px; text-align: center; font-size: 18px; font-weight: 700; }
+#gap .wipe { clip-path: inset(0 100% 0 0); transition: clip-path 1.2s ease; }
+#gap.shows-map .wipe { clip-path: inset(0); }
+#gap .gap-chart { opacity: 0; transition: opacity .6s ease; }
+#gap.shows-bars .gap-chart { opacity: 1; }
+.gap-chart .axis-title { margin: 0 0 4px 30%; font-size: 17px; font-weight: 700; }
+.gap-chart svg { display: block; width: 100%; height: auto; font-family: var(--sans); }
+.gap-chart .grid { stroke: var(--rule); }
+.gap-chart .tick { font-size: 18px; fill: var(--muted); }
+.gap-chart .name { font-size: 26px; font-weight: 800; fill: var(--ink); }
+.gap-chart .note { font-size: 17px; fill: var(--muted); }
+.gap-chart .value { font-size: 26px; font-weight: 800; fill: var(--ink); }
+.gap-chart .passive .bar { fill: var(--ink); }
+.gap-chart .active .bar { fill: #d97706; }
+.gap-chart .canvit .bar { fill: var(--canvas); }
+
+/* Yes/no comparison: the families of models against what an active-vision foundation model needs. */
+.compare-wrap { display: flex; justify-content: center; margin-top: 26px; }
+table.compare { border-collapse: separate; border-spacing: 0; font-size: 22px; }
+table.compare th, table.compare td { padding: 12px 22px; text-align: center; border-bottom: 1px solid var(--rule); }
+table.compare thead th { font-size: 19px; font-weight: 750; color: var(--muted); vertical-align: bottom; max-width: 210px; line-height: 1.25; }
+table.compare tbody th { text-align: left; font-weight: 650; color: var(--ink); white-space: nowrap; }
+table.compare .yes { color: #15803d; font-weight: 800; font-size: 28px; }
+table.compare .no { color: #b91c1c; font-weight: 800; font-size: 28px; }
+table.compare .some { color: #b45309; font-weight: 700; }
+table.compare .na { color: var(--muted); }
+table.compare .goal, table.compare .ours { background: color-mix(in srgb, var(--policy) 9%, transparent); }
+table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
+/* The goal table, a row per click, then the goal column. */
+#compare tbody tr, #compare td.goal, #compare th.goal { opacity: 0; transition: opacity .5s ease; }
+#compare.shows-row-1 tr.row-1,
+#compare.shows-row-2 tr.row-2,
+#compare.shows-row-3 tr.row-3,
+#compare.shows-row-4 tr.row-4,
+#compare.shows-row-5 tr.row-5,
+#compare.shows-row-6 tr.row-6,
+#compare.shows-goal td.goal, #compare.shows-goal th.goal { opacity: 1; }
+#compare table.compare thead th { white-space: nowrap; max-width: none; }
+
+
+/* Hours: DINOv3's teacher against CanViT-B, to scale. */
+#pretraining .hours { display: grid; gap: 56px; margin-top: 150px; }
+#pretraining .hour-row { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: auto auto; column-gap: 24px; align-items: center; }
+#pretraining .who { grid-row: 1 / 3; margin: 0; font-size: 24px; font-weight: 750; text-align: right; }
+#pretraining .who small { display: block; font-size: 17px; font-weight: 500; color: var(--muted); }
+#pretraining .track { height: 40px; }
+#pretraining .bar { display: block; height: 100%; border-radius: 6px; background: var(--ink); }
+#pretraining .dinov3 .bar { width: 100%; background: #94a3b8; }
+#pretraining .canvit .bar { width: max(4px, calc(100% * 174 / 61440)); background: var(--canvas); }
+#pretraining .n { margin: 6px 0 0; font-size: 22px; font-weight: 700; }
+
+#adaglimpse-policies figure { margin: 30px auto 0; width: 1152px; }
+#adaglimpse-policies figure img { width: 100%; height: auto; }
+#adaglimpse-policies figcaption { margin-top: 14px; text-align: right; }
+
+/* Yarbus's records: the painting, then free examination, then the six tasks; each record in a cell of its own. */
+#task-dependent-scanpaths .yarbus { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 18px; margin-top: 8px; }
+#task-dependent-scanpaths figure { display: flex; flex-direction: column; align-items: center; }
+#task-dependent-scanpaths figure img { width: 100%; height: 170px; object-fit: contain; border-radius: 6px; }
+#task-dependent-scanpaths figcaption { margin-top: 8px; font-size: 18px; font-weight: 650; line-height: 1.25; text-align: center; text-wrap: balance; }
+#task-dependent-scanpaths figure:not(.painting) { opacity: 0; transition: opacity .5s ease; }
+/* The painting opens large in the middle of the slide, then moves into its cell when free examination arrives. */
+#task-dependent-scanpaths figure.painting { transform: translate(430px, 150px) scale(2.1); transition: transform .8s ease; }
+#task-dependent-scanpaths.shows-free figure.painting { transform: none; }
+#task-dependent-scanpaths.shows-free .record-1, #task-dependent-scanpaths.shows-tasks figure { opacity: 1; }
+#task-dependent-scanpaths figcaption .cite { display: block; margin-top: 2px; font-weight: 400; }
+
+/* What a glimpse teaches, areas to scale: a reward's single number against the 787,200 numbers of the teacher's
+   features; both in frames of the same size, the reward a dot under a ring so that it can be found. */
+#information-per-glimpse .information { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 20px; }
+#information-per-glimpse figure { display: flex; flex-direction: column; align-items: center; }
+#information-per-glimpse .area { position: relative; width: 400px; height: 400px; border: 1px dashed var(--rule); border-radius: 8px; }
+#information-per-glimpse .dot { position: absolute; left: 50%; top: 50%; width: calc(400px / 887.2); height: calc(400px / 887.2);
+                                background: var(--policy); transform: translate(-50%, -50%); }
+#information-per-glimpse .ring { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; border: 3px solid var(--policy);
+                                 border-radius: 50%; transform: translate(-50%, -50%); }
+/* The teacher's features in DINOv3's slate, as on #pretraining; red stays the canvas's. */
+#information-per-glimpse .block { position: absolute; inset: 0; background: #94a3b8; border-radius: 6px; }
+#information-per-glimpse .target { opacity: 0; transition: opacity .6s ease; }
+#information-per-glimpse.shows-target .target { opacity: 1; }
+#information-per-glimpse figcaption { margin-top: 14px; font-size: 24px; font-weight: 750; text-align: center; }
+#information-per-glimpse figcaption small { display: block; margin-top: 4px; font-size: 18px; font-weight: 500; color: var(--muted); }
+
+/* A Vision Transformer on a glimpse: scene, glimpse, backbone, tokens, left to right, each on its own click. */
+#vit-on-a-glimpse .vit-flow { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 70px; }
+#vit-on-a-glimpse figure { display: flex; flex-direction: column; align-items: center; }
+#vit-on-a-glimpse figcaption { margin-top: 12px; font-size: 22px; font-weight: 750; }
+#vit-on-a-glimpse .scene .frame { position: relative; width: 340px; height: 340px; }
+#vit-on-a-glimpse .scene img { display: block; width: 100%; height: 100%; border-radius: 10px; }
+#vit-on-a-glimpse .box { position: absolute; border: 3px solid var(--glimpse); border-radius: 3px; opacity: 0; transition: opacity .4s ease; }
+#vit-on-a-glimpse .glimpse img, #vit-on-a-glimpse .tokens img { width: 210px; height: 210px; border-radius: 8px; }
+#vit-on-a-glimpse .glimpse img { box-shadow: 0 0 0 3px var(--glimpse); }
+#vit-on-a-glimpse .glimpse figcaption { color: var(--glimpse); }
+#vit-on-a-glimpse .vit { display: grid; place-items: center; width: 150px; height: 210px; border-radius: 14px;
+                         background: #d8b4e2; border: 2px solid #a879b8; color: #5b2a73; font-size: 20px; font-weight: 800; text-align: center; }
+#vit-on-a-glimpse .arrow { width: 36px; height: 3px; background: var(--muted); position: relative; }
+#vit-on-a-glimpse .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }
+#vit-on-a-glimpse :is(.to-glimpse, .glimpse, .to-vit, .vit, .to-tokens, .tokens) { opacity: 0; transition: opacity .5s ease; }
+#vit-on-a-glimpse.shows-glimpse :is(.box, .to-glimpse, .glimpse) { opacity: 1; }
+#vit-on-a-glimpse.shows-vit :is(.to-vit, .vit) { opacity: 1; }
+#vit-on-a-glimpse.shows-tokens :is(.to-tokens, .tokens) { opacity: 1; }
+
+/* The canvas introduced (canvas-concept.js): scene and canvas at the same size, the glimpse between them. */
+#canvas .concept { display: grid; grid-template-columns: 420px 1fr 420px; gap: 24px; align-items: center; margin-top: 40px; }
+#canvas figure { margin: 0; text-align: center; }
+#canvas figcaption { margin-top: 12px; font-size: 24px; font-weight: 750; }
+#canvas .scene figcaption { color: var(--ink); }
+#canvas .canvas figcaption { color: var(--canvas); }
+#canvas .frame { position: relative; width: 420px; height: 420px; }
+#canvas .frame img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 8px; }
+#canvas .canvas .frame { box-shadow: 0 0 0 3px var(--canvas); border-radius: 8px; }
+/* The canvas's true 64 x 64 grid of latent vectors. */
+#canvas .canvas .grid { position: absolute; inset: 0; border-radius: 8px; opacity: .25;
+  background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px);
+  background-size: calc(100% / 64) calc(100% / 64); }
+#canvas .box, #canvas .footprint { position: absolute; border: 3px solid var(--glimpse); border-radius: 3px; opacity: 0; transition: opacity .4s ease; }
+#canvas .footprint { border-style: dashed; }
+#canvas .glimpse { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+#canvas .crops { position: relative; width: 180px; height: 180px; }
+#canvas .crops img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 6px; box-shadow: 0 0 0 3px var(--glimpse); opacity: 0; transition: opacity .4s ease; }
+#canvas .count { margin: 0; font-size: 20px; font-weight: 750; color: var(--glimpse); }
+#canvas .flow { display: grid; gap: 8px; width: 100%; }
+#canvas .flow span { display: block; padding: 4px 0; font-size: 19px; font-weight: 750; color: var(--canvas); text-align: center; opacity: 0; transition: opacity .4s ease; }
+#canvas .flow .write::after { content: " →"; }
+#canvas .flow .read::before { content: "← "; }
+#canvas .canvas img:not(.initial) { opacity: 0; transition: opacity .6s ease; }
+/* Glimpse 1: its box, crop, write, footprint, and the canvas after it. */
+#canvas.shows-first:not(.shows-second) :is(.box.g0, .crops .g0, .footprint.g0, .flow .write) { opacity: 1; }
+#canvas.shows-first:not(.shows-second) .count::before { content: "glimpse 1"; }
+#canvas.shows-first .canvas img.g0 { opacity: 1; transition-delay: .5s; }
+/* Glimpse 2: glimpse 1's box stays, faint; the read comes first, then the write. */
+#canvas.shows-second:not(.shows-more) .box.g0 { opacity: .35; }
+#canvas.shows-second:not(.shows-more) :is(.box.g1, .crops .g1, .footprint.g1, .flow .read) { opacity: 1; }
+#canvas.shows-second:not(.shows-more) .flow .write { opacity: 1; transition-delay: .9s; }
+#canvas.shows-second:not(.shows-more) .count::before { content: "glimpse 2"; }
+#canvas.shows-second .canvas img.g1 { opacity: 1; transition-delay: 1.3s; }
+/* The rest, played. */
+#canvas.shows-more :is(.box.now, .crops .now, .footprint.now, .canvas img.now, .flow span) { opacity: 1; transition-delay: 0s; }
+#canvas .count:empty::before { display: inline; }
+#canvas:not(.shows-more) .count { font-size: 0; }
+#canvas:not(.shows-more) .count::before { font-size: 20px; }
+
+/* Signposting slides: a statement alone, large and centered, or the two contributions with the current one highlighted. */
+.reveal section.signpost .statement { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 560px; margin: 0; font-size: 56px; font-weight: 800;
+                                      letter-spacing: -.02em; line-height: 1.2; text-align: center; color: var(--ink); text-wrap: balance; }
+.reveal section.signpost .contributions { display: flex; justify-content: center; align-items: center; gap: 80px; height: 560px; }
+.reveal section.signpost .contributions p { margin: 0; padding: 28px 44px; border-radius: 22px; font-size: 54px; font-weight: 800;
+                                            color: var(--ink); background: var(--soft); transition: opacity .5s ease, box-shadow .5s ease; }
+#contributions.shows-architecture .pretraining, #contributions-pretraining .architecture { opacity: .25; }
+#contributions.shows-architecture .architecture, #contributions-pretraining .pretraining { box-shadow: inset 0 0 0 4px var(--ink); }
+
+/* Classification beside segmentation: a label for the whole image, a class for every pixel. */
+#classification-and-segmentation .tasks { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 30px; }
+#classification-and-segmentation figure { display: flex; flex-direction: column; align-items: center; }
+#classification-and-segmentation .frame { position: relative; width: 480px; height: 400px; border-radius: 12px; overflow: hidden; }
+#classification-and-segmentation .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+#classification-and-segmentation .tag { position: absolute; left: 14px; bottom: 14px; padding: 6px 16px; border-radius: 10px;
+                                        background: var(--ink); color: #fff; font-size: 22px; font-weight: 700; }
+#classification-and-segmentation figcaption { margin-top: 12px; font-size: 26px; font-weight: 750; text-align: center; }
+#classification-and-segmentation figcaption small { display: block; font-size: 19px; font-weight: 500; color: var(--muted); }
+.reveal section.signpost .statement small { display: block; margin-top: 18px; font-size: 30px; font-weight: 600; color: var(--muted); letter-spacing: 0; }
+
+/* Why DINOv3's scale matters: Raugel et al.'s Fig. 5E takes the slide on the last click. */
+#foundation .scaling { position: absolute; left: 50%; top: 104px; width: 860px; transform: translateX(-50%); margin: 0; text-align: center;
+                       opacity: 0; transition: opacity .6s ease; }
+#foundation .scaling img { width: 100%; height: auto; }
+#foundation .scaling figcaption { margin-top: 10px; }
+#foundation.shows-scaling .scaling { opacity: 1; }
+#foundation .stage, #foundation > .cite { transition: opacity .6s ease; }
+#foundation.shows-scaling .stage, #foundation.shows-scaling > .cite { opacity: 0; }
+
+/* The label of the feature view shown (pca-cycle.js), under the feature map, following it when it moves aside. */
+#foundation .pca-label { position: absolute; left: 600px; top: 418px; width: 552px; margin: 0; text-align: center;
+                         font-size: 20px; font-weight: 700; color: var(--ink); opacity: 0;
+                         transition: left .8s ease, top .8s ease, width .8s ease, opacity .6s ease; }
+#foundation.shows-features .pca-label { opacity: 1; transition-delay: 0s, 0s, 0s, 1s; }
+#foundation.shows-decode .pca-label { left: 0; top: 440px; width: 456px; font-size: 17px; }
+
+/* "Where to look" in the policy's color, "how to see" in CanViT's gradient, underlined in it, on every signpost. */
+.reveal section.signpost .look { color: var(--policy); }
+.reveal section.signpost .see { background: var(--brand); -webkit-background-clip: text; background-clip: text; color: transparent;
+                                box-shadow: none; position: relative; }
+.reveal section.signpost .see::after { content: ""; position: absolute; left: 0; right: 0; bottom: -.06em; height: .09em;
+                                       border-radius: .05em; background: var(--brand); }
+#vit-on-a-glimpse .credit { position: absolute; left: var(--slide-pad-x); bottom: 50px; margin: 0; font-size: 15px; color: var(--muted); }
+
+/* RAM, which the field traces back to: a larger name and a ring around its marker. */
+#timeline .pioneer .name { font-size: 40px; }
+#timeline .pioneer-ring { fill: none; stroke: var(--ink); stroke-width: 3; }
+
+/* The gap chart's rows (gap.js): the core rows bunched at first, then every row at its place in the full chart. */
+.gap-chart .row { transform: translateY(var(--y-core)); transition: transform .8s ease, opacity .6s ease; }
+/* The zoomed axis (gap.js): bars stretched from the origin, values and ticks shifted with them, ticks beyond hidden. */
+.gap-chart :is(.bar, .value, .tick-group) { transform: var(--zoom); transition: transform .9s ease, opacity .6s ease; }
+.gap-chart .bar { transform-box: fill-box; transform-origin: left center; }
+.gap-chart .tick-group.beyond { opacity: 0; }
+#gap.shows-more .gap-chart :is(.bar, .value, .tick-group) { transform: none; opacity: 1; }
+.gap-chart .row:not(.core) { opacity: 0; }
+#gap.shows-more .gap-chart .row { transform: translateY(var(--y-all)); opacity: 1; }
+#gap .gap-chart .name { font-size: 21px; }
+#gap .gap-chart .note { font-size: 14px; }
+#gap .gap-chart .value { font-size: 20px; }
+
+
+
+/* Toward CanViT 2: CanViT's column centered, then it shifts left, the arrow draws and CanViT 2's column appears. CanViT's
+   limits in red, CanViT 2's in green. */
+#next .versions { position: relative; height: 470px; margin-top: 40px; }
+#next .version { position: absolute; top: 50%; width: 450px; padding: 34px 30px 38px; border-radius: 22px; background: var(--soft);
+                 text-align: center; transition: left .8s ease, transform .8s ease, opacity .6s ease; }
+#next .version p { margin: 0; }
+#next .name { margin-bottom: 26px !important; font-size: 44px; font-weight: 800; color: var(--ink); }
+#next .item { margin-top: 16px !important; padding: 12px 14px; border-radius: 12px; font-size: 27px; font-weight: 750; }
+#next .now .item { color: #b91c1c; background: color-mix(in srgb, #dc2626 10%, white); }
+#next .next .item { color: #15803d; background: color-mix(in srgb, #16a34a 11%, white); }
+#next .now { left: 50%; transform: translate(-50%, -50%); }
+#next.shows-next .now { left: 0; transform: translate(0, -50%); }
+#next .next { right: 0; transform: translate(40px, -50%); opacity: 0; }
+#next.shows-next .next { transform: translate(0, -50%); opacity: 1; transition-delay: .9s; }
+#next .next-arrow { position: absolute; left: 50%; top: 50%; width: 120px; transform: translate(-50%, -50%); overflow: visible; }
+#next .next-arrow path { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+#next.shows-next .next-arrow .draw { stroke-dashoffset: 0; transition-duration: .9s; transition-delay: .6s; }
+
+/* The gap slide's annotation names its classes as the map wipes in (labeled-map.js), as #history does. */
+#gap .names { position: absolute; inset: 0; }
+#gap .names span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; color: #fff; font-size: 13px;
+                   font-weight: 750; padding: 0 5px; border-radius: 4px; background: rgba(15, 23, 42, .72); opacity: 0;
+                   transition: opacity .4s ease; }
+#gap.shows-map .names span { opacity: 1; transition-delay: calc(.9s + var(--i) * 70ms); }
+#foundation .scaling .takeaway { margin: 0 0 14px; font-size: 32px; font-weight: 800; color: var(--ink); }
+
+/* Pretraining policies, static: a row per policy, the scene with numbered boxes, then the glimpses numbered. */
+#pretraining-policies .pretraining-grid { display: grid; gap: 34px; margin-top: 36px; }
+#pretraining-policies .grid-row { display: grid; grid-template-columns: 180px 230px 1fr; gap: 26px; align-items: center; }
+#pretraining-policies .label { margin: 0; display: grid; gap: 2px; text-align: right; }
+#pretraining-policies .label b { font-size: 34px; font-weight: 800; color: var(--policy-color); }
+#pretraining-policies .label span { font-size: 18px; color: var(--muted); white-space: nowrap; }
+#pretraining-policies .label em { font-style: normal; font-size: 22px; font-weight: 800; color: var(--policy-color); }
+#pretraining-policies .scene { position: relative; width: 230px; height: 230px; }
+#pretraining-policies .scene img, #pretraining-policies .scene svg { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 8px; }
+#pretraining-policies .scene svg { overflow: visible; }
+#pretraining-policies .scene rect { fill: none; stroke: var(--policy-color); stroke-width: .02; }
+#pretraining-policies .scene rect.halo { stroke: #fff; stroke-width: .045; }
+#pretraining-policies .scene text { font: 800 .13px var(--sans); fill: var(--policy-color); paint-order: stroke; stroke: #fff; stroke-width: .04; }
+#pretraining-policies .glimpses { display: flex; gap: 14px; }
+#pretraining-policies .glimpses figure { margin: 0; display: grid; gap: 6px; justify-items: center; }
+#pretraining-policies .glimpses img { width: 102px; height: 102px; border-radius: 6px; box-shadow: 0 0 0 3px var(--policy-color); }
+#pretraining-policies .glimpses figcaption { font-size: 18px; font-weight: 800; color: var(--policy-color); }

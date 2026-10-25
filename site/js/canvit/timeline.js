@@ -95,7 +95,7 @@ class CanvitTimeline extends CanvitView {
 
   render(t) {
     const { glimpses } = this.bundle;
-    const { viewpoint, box, pixelAccuracy } = glimpses[t];
+    const { viewpoint, box, miou } = glimpses[t];
     const playing = this.rollout.hasAttribute("playing");
     if (this.shown === `${t}|${playing}`) return; // pointer moves need no redraw
     this.shown = `${t}|${playing}`;
@@ -110,7 +110,7 @@ class CanvitTimeline extends CanvitView {
     this.strip.setAttribute("aria-valuetext", text);
     this.readout.innerHTML = `<span><b>t = ${t}</b> · glimpse ${t + 1}/${glimpses.length}</span>` +
       `<span>scale s = ${viewpoint.scale} · covers ${coverage(box)} of the scene` +
-      (pixelAccuracy === null ? "" : ` · annotated pixels labeled correctly: ${(100 * pixelAccuracy).toFixed(1)}%`) + `</span>`;
+      (miou === null ? "" : ` · mIoU on this scene: ${(100 * miou).toFixed(1)}%`) + `</span>`;
   }
 }
 

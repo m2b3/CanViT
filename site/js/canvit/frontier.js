@@ -346,7 +346,7 @@ class CanvitFrontier extends HTMLElement {
       }
       // A curve drawing itself in is solid while it draws (its dash pattern would fight the draw), dashed once drawn.
       const line = el("polyline", { class: `curve${enter ? " enter" : ""}`, points: pts.map((p) => `${x(p.cum_gflops)},${y(100 * p.mean)}`).join(" "),
-                                    stroke: color, "stroke-dasharray": enter ? "" : canvas.dash, pathLength: enter ? 1 : "" }, drawn);
+                                    stroke: color, "stroke-dasharray": enter ? "" : canvas.dash, ...(enter ? { pathLength: 1 } : {}) }, drawn);
       if (enter) line.addEventListener("animationend", () => {
         line.classList.remove("enter");
         line.removeAttribute("pathLength");

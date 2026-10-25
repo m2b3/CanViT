@@ -214,6 +214,9 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   as `#history` (Backup) does [Yohaï, 2026-10-01]. `.wipe` (`../deck.css`) reveals
   an overlay across its image. Overlays can confuse: also try side by side and one after the other.
 - DINOv3 feature maps and probability maps are drawn with hard nearest-neighbor upsampling [Yohaï, 2026-10-01].
+- A glimpse shown on a slide is what the model receives: 128 × 128 px, sampled from the 512 px scene with
+  `sample_at_viewpoint` (bilinear, no antialiasing), never a crop of the scene at its own resolution
+  [Yohaï, 2026-10-25].
 - Choose every example image because, out of the whole validation set, it illustrates the point best, found by a
   sweep that measures the point, and checked by eye; never because it is convenient or already in use
   [Yohaï, 2026-10-01]. Before the sweep, the slide's entry in `TALK.md` states the properties a good example must

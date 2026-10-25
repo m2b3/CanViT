@@ -834,9 +834,10 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .glimpse .frame { --cell: calc(300px / var(--grid)); width: 300px; height: 300px; }
 #sr-rope .scene .frame { --cell: calc(470px * var(--size) / var(--grid)); width: 470px; height: 470px; }
 #sr-rope .scene img { display: block; width: 100%; height: 100%; border-radius: 8px; }
-#sr-rope .crop { position: absolute; inset: 0; border-radius: 6px; box-shadow: 0 0 0 3px var(--glimpse);
-                 background-size: calc(100% / var(--size)); transition: background-size .9s ease, background-position .9s ease;
-                 background-position: calc(100% * var(--left) / (1 - var(--size))) calc(100% * var(--top) / (1 - var(--size))); }
+#sr-rope .crop { position: absolute; inset: 0; border-radius: 6px; box-shadow: 0 0 0 3px var(--glimpse); overflow: hidden; }
+#sr-rope .crop img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .9s ease; }
+#sr-rope .crop .zoom, #sr-rope.shows-zoom .crop .first { opacity: 0; }
+#sr-rope.shows-zoom .crop .zoom { opacity: 1; }
 /* A grid of n x n cells over an element: a line at the left and top of each cell; the element's border closes it. */
 #sr-rope .patch-cells { background: linear-gradient(to right, var(--line) 1.5px, transparent 1.5px) 0 0 / calc(100% / var(--n)) 100%,
                                     linear-gradient(to bottom, var(--line) 1.5px, transparent 1.5px) 0 0 / 100% calc(100% / var(--n)); }

@@ -392,13 +392,14 @@
   </ul></aside>
 </section>
 
-<section id="sr-rope" data-status="draft" style="--zoom-top: .34; --zoom-left: .33; --zoom-size: .2">
+<section id="sr-rope" data-status="draft">
   <h2>Scene-Relative Rotary Position Embeddings (SR-RoPE)</h2>
-  <!-- The glimpse of #vit-on-a-glimpse, then a smaller one on the cat's eye (set by hand to show the zoom): its 8 x 8
-       patches as the backbone receives them, and where SR-RoPE places them in the scene; the canvas's 32 x 32 patches
+  <!-- The glimpse of #vit-on-a-glimpse, then a smaller one on the cat's eye (set by eye to show the zoom), both
+       128 px glimpses sampled as the model samples them (experiments/vit_glimpse): its 8 x 8 patches as the backbone
+       receives them, and where SR-RoPE places them in the scene; the canvas's 32 x 32 patches
        (RELEASED_CANVAS_GRID_SIZE) at fixed scene positions. Paper §4, "Scene-Relative Rotary Position Embeddings". -->
   <div class="rope-layout">
-    <figure class="glimpse"><div class="frame"><div class="crop"></div><div class="grid patch-cells"></div><div class="dots"></div></div><figcaption>Glimpse</figcaption></figure>
+    <figure class="glimpse"><div class="frame"><div class="crop"><img class="pixels first" alt="The glimpse on the cat's head, 128 px"><img class="pixels zoom" alt="The glimpse on the cat's eye, 128 px"></div><div class="grid patch-cells"></div><div class="dots"></div></div><figcaption>Glimpse</figcaption></figure>
     <span class="arrow"></span>
     <figure class="scene"><div class="frame"><img alt="A ginger cat"><div class="canvas-cells patch-cells"></div><span class="box"><span class="grid patch-cells"></span></span><div class="dots"></div></div><figcaption>Scene</figcaption></figure>
     <p class="legend"><span class="glimpse-key">Glimpse patches</span><span class="canvas-key">Canvas patches</span></p>

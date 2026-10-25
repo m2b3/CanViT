@@ -1,8 +1,8 @@
 // The DINOv3 slide's feature map as several views of the same features: the plot step's projections on consecutive
 // triplets of principal components (maps.json's pca_cycle), shown one after another with a label naming the
 // components and the features' dimension. The player has the deck's data-play contract (play, pause, restart): it
-// cycles for as long as the slide shows the features, through the later clicks too, and starts over from the first
-// view whenever the features are shown anew.
+// cycles for as long as the slide is shown, through its clicks, and starts over from the first view whenever the
+// slide is entered anew.
 
 const STEP_MS = 1400;
 

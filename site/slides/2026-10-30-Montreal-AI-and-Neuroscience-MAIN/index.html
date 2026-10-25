@@ -46,7 +46,6 @@
   </div>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:15–0:25; rehearsed 0:45 (2026-10-25, more than the notes say)]</li>
-    <li>[Yohaï's text, 2026-10-25]</li>
     <li>Hi, we're super excited to be here.</li>
     <li>We're going to tell you about a new class of foundation models, which we call Active-Vision Foundation Models, or AVFMs.</li>
     <li>In Part I of this talk, I'm going to go over our motivation for defining this class of models.</li>
@@ -64,7 +63,6 @@
   </div>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:50–1:10; rehearsed 0:50 (2026-10-25)]</li>
-    <li>[Yohaï's text, 2026-10-25; bold is his emphasis]</li>
     <li>Deep artificial neural networks have a long history as models of the ventral visual stream.</li>
     <li>This was <b>originally</b> explored in the context of <b>supervised</b> learning.</li>
     <li>In 2014, a <b>landmark study</b> by Yamins and colleagues found that the brain predictivity of convolutional neural networks trained to classify objects tracked their performance on this task.</li>
@@ -98,7 +96,6 @@
   <span class="fragment step-marker" data-shows="decode"></span>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:50–1:10; rehearsed 0:45 (2026-10-25)]</li>
-    <li>[Yohaï's text, 2026-10-25; bold is his emphasis]</li>
     <li>A <b>notable example</b> of a self-supervised vision foundation model is DINOv3, which came out last summer.</li>
     <li>Given an <b>image</b>, it produces a <b>feature map</b>, which is a <b>grid of high-dimensional vectors</b>, called <b>patches</b>.</li>
     <li>To <b>visualize</b> them, <b>as we do here</b> on the right, we can do principal component analysis <b>across the patches in a given image</b>, and <b>map groups of three principal components</b> to RGB channels.</li>
@@ -117,7 +114,6 @@
   <figure class="scaling"><p class="takeaway">Late alignment with higher-order cortical areas</p><img src="assets/figures/raugel-2025-fig5e-half-time-vs-distance.png" alt="For 15 cortical regions, the training steps DINOv3 needs to reach half its final encoding score, against the region's distance from V1: early visual areas are matched first, frontal areas only after about twice as much training"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (Fig. 5E of arXiv:2508.18226v1)</figcaption></figure>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:50–1:10; rehearsed 0:35 (2026-10-25)]</li>
-    <li>[Yohaï's text, 2026-10-25]</li>
     <li>DINOv3 was at the center of a recent study by Raugel and colleagues that used 7-Tesla fMRI and MEG imaging to disentangle the factors of convergence between brains and the model.</li>
     <li>[CLICK]</li>
     <li>A striking finding was that representational alignment between the model and higher visual brain areas took more training to emerge than for lower areas.</li>
@@ -129,7 +125,6 @@
   <p class="statement">What's missing?</p>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:05–0:15; rehearsed 0:10 (2026-10-25)]</li>
-    <li>[Yohaï's text, 2026-10-25]</li>
     <li>These models are great NeuroAI tools, but they're missing something fundamental. Can you guess?</li>
   </ul></aside>
 </section>
@@ -144,7 +139,6 @@
   <span class="fragment step-marker" data-shows="full-scene"></span>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:20–0:35; rehearsed 0:15 (2026-10-25)]</li>
-    <li>[Yohaï's text, 2026-10-25]</li>
     <li>Our vision is inherently <b>active</b>: we constantly shift our gaze to bring our high acuity fovea to regions of interest.</li>
     <li>[CLICK]</li>
     <li>In contrast, <b>standard</b> computer vision models process images in a single, uniform-resolution look.</li>
@@ -166,7 +160,6 @@
   <span class="fragment step-marker" data-shows="neuro"></span>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:45–1:00; rehearsed 0:35 (2026-10-25)]</li>
-    <li>[Yohaï's text, 2026-10-25]</li>
     <li>Drawing inspiration from human vision, so-called deep active vision models, which incorporate virtual eye movements, have been developed.</li>
     <li>This line of work traces back to Mnih et al's Recurrent Attention Model, in 2014, which was originally applied to very simple tasks such as digit recognition.</li>
     <li>[CLICK]</li>
@@ -196,7 +189,6 @@
   <aside class="notes"><ul>
     <li>[Timing: planned 1:00–1:20]</li>
     <li>[Transition: But why have they lagged behind?]</li>
-    <li>[Yohaï's text, 2026-10-25]</li>
     <li>Although active-vision models are structurally and conceptually compelling, they have struggled to match the visual intelligence of their passive counterparts.</li>
     <li>This gap is especially striking in so-called dense prediction tasks, such as semantic segmentation.</li>
     <li>[CLICK]</li>

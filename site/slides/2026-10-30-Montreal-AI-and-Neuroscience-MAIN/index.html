@@ -608,16 +608,17 @@
 </section>
 
 <section id="pretraining" data-status="draft">
-  <h2>Pretrained in 166 hours on a single H100</h2>
-  <!-- Hours: the paper (§6, App. pretraining) and DINOv3 (Siméoni et al. 2025, Table 20); sources/checked-facts.md. -->
-  <!-- The pretraining run (paper §6 and App. pretraining): its data, its glimpses, its hardware. -->
-  <div class="facts">
-    <p><b>13.2 million</b> ImageNet-21k scenes</p>
-    <p><b>1 billion</b> glimpses</p>
+  <h2>Pretraining CanViT-B</h2>
+  <!-- The run (paper §6, App. pretraining), then its compute beside DINOv3 7B's (Siméoni et al. 2025, Table 20), to scale;
+       sources/checked-facts.md. -->
+  <div class="stats">
+    <p><b>13.2 million</b>ImageNet-21k scenes</p>
+    <p><b>1 billion</b>glimpses</p>
+    <p><b>1</b>H100</p>
   </div>
   <div class="hours">
-    <div class="hour-row dinov3"><p class="who">DINOv3 7B</p><div class="track"><span class="bar"></span></div><p class="n">61,440 H100-hours</p></div>
-    <div class="hour-row canvit"><p class="who">CanViT-B</p><div class="track"><span class="bar"></span></div><p class="n">166 H100-hours + 8 for the teacher's features</p></div>
+    <p class="who">DINOv3 7B</p><div class="track"><span class="bar dinov3"></span><span class="n">61,440 H100-hours</span></div>
+    <p class="who">CanViT-B</p><div class="track"><span class="bar canvit"></span><span class="n">166 + 8 H100-hours</span></div>
   </div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>

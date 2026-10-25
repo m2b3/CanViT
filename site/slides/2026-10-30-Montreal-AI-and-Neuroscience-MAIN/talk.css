@@ -934,9 +934,10 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 
 /* Pretraining CanViT-B: the run as three stats, then its compute beside DINOv3 7B's, to scale, centered on the slide. */
 #pretraining .run { display: flex; flex-direction: column; justify-content: center; gap: 80px; height: 560px; }
-#pretraining .stats { display: flex; justify-content: center; gap: 64px; }
-#pretraining .stats p { margin: 0; font-size: 36px; font-weight: 500; color: var(--ink); white-space: nowrap; }
-#pretraining .stats b { font-weight: 750; margin-right: .25em; }
+#pretraining .stats { display: grid; grid-template-columns: repeat(3, 280px); justify-content: center; gap: 32px; }
+#pretraining .stats p { margin: 0; padding: 22px 16px; border-radius: 16px; background: var(--soft); text-align: center;
+                       font-size: 24px; font-weight: 500; color: var(--ink); }
+#pretraining .stats b { display: block; margin-bottom: 4px; font-size: 44px; font-weight: 750; line-height: 1.1; }
 #pretraining .hours { display: grid; grid-template-columns: 190px 1fr; column-gap: 24px; row-gap: 30px; align-items: center; margin: 0 40px; }
 #pretraining .who { margin: 0; font-size: 30px; font-weight: 750; color: var(--ink); text-align: right; }
 #pretraining .track { display: flex; align-items: center; gap: 16px; height: 52px; }

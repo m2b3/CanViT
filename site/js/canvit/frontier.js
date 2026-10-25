@@ -9,7 +9,8 @@
 // teacher over input resolutions, as in show="prior"); each curve is then
 // labeled at its end (the legend and the best-prior reference line are then left out), the cost axis fits what is shown, and a change of series first
 // glides the axis to its new range, then draws the new curves in. height (px) fixes the chart's height.
-// x-scale="log" spaces the cost axis logarithmically, so the low budgets get room; y-range="LO HI" (mIoU, %) narrows
+// --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text sizes (13.5, 14.5 and 13.5 px by
+// default). x-scale="log" spaces the cost axis logarithmically, so the low budgets get room; y-range="LO HI" (mIoU, %) narrows
 // the vertical axis, curves clipped to it.
 
 import { POLICIES as PAPER_POLICIES } from "./policies.js";
@@ -45,8 +46,8 @@ template.innerHTML = `
   .legend svg.marker { width: 12px; height: 12px; }
   .halo { paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 5px; stroke-linejoin: round; }
   .reference { stroke: #64748b; stroke-width: 1.4; stroke-dasharray: 5 5; }
-  .reference-label { fill: #475569; font-size: 13.5px; font-weight: 600; }
-  .end-label { font-size: 13.5px; font-weight: 700; }
+  .reference-label { fill: #475569; font-size: var(--canvit-chart-tick, 13.5px); font-weight: 600; }
+  .end-label { font-size: var(--canvit-chart-label, 13.5px); font-weight: 700; }
   .takeaway { fill: var(--canvit-ink, #0f172a); font-size: 14px; font-weight: 650; }
   .arrow { fill: none; stroke: var(--canvit-ink, #0f172a); stroke-width: 1.4; stroke-linecap: round; }
   .arrow-halo { fill: none; stroke: var(--canvit-surface, #fff); stroke-width: 6; stroke-linecap: round; }
@@ -55,11 +56,11 @@ template.innerHTML = `
   .frame { position: relative; }
   .chart { display: block; width: 100%; overflow: visible; }
   .grid line { stroke: #e2e8f0; }
-  .axis text { fill: var(--canvit-muted, #475569); font-size: 13.5px; font-variant-numeric: tabular-nums; }
-  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: 14.5px; font-weight: 650; }
+  .axis text { fill: var(--canvit-muted, #475569); font-size: var(--canvit-chart-tick, 13.5px); font-variant-numeric: tabular-nums; }
+  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-title, 14.5px); font-weight: 650; }
   .curve { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
   .band { opacity: .15; }
-  .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: 13.5px; }
+  .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-tick, 13.5px); }
   .baseline-label tspan { fill: var(--canvit-muted, #475569); }
   .callout { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 750; }
   .focus circle { fill: #fff; stroke-width: 2.5; }
@@ -307,6 +308,7 @@ class CanvitFrontier extends HTMLElement {
       el("text", { x: x(value), y: plot.bottom + 20, "text-anchor": "middle" }, axis).textContent = String(value);
     }
     el("line", { x1: plot.left, x2: plot.right, y1: plot.bottom, y2: plot.bottom, stroke: "#94a3b8" }, svg);
+    el("line", { x1: plot.left, x2: plot.left, y1: plot.top, y2: plot.bottom, stroke: "#94a3b8" }, svg);
     el("text", { class: "title", x: (plot.left + plot.right) / 2, y: height - 10, "text-anchor": "middle" }, axis)
       .textContent = "Cumulative inference GFLOPs";
     el("text", { class: "title", x: -(plot.top + plot.bottom) / 2, y: 14, transform: "rotate(-90)", "text-anchor": "middle" }, axis)

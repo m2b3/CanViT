@@ -48,6 +48,10 @@ class FoveatedScene extends HTMLElement {
     this.pause();
   }
 
+  get playing() {
+    return this.#timer !== null;
+  }
+
   play() {
     if (this.#timer !== null) return;
     this.classList.add("playing");

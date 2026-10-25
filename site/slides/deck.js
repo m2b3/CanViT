@@ -6,6 +6,7 @@
 // Slide markup conventions, all handled here:
 //   data-play on an element      play() when its slide is shown (restart() when it has one), pause() when it is left;
 //     data-play="NAME"           only while its slide shows the named state (data-shows below)
+//     data-play="!NAME"          only while its slide does not show the named state
 //   data-canvit-target="SEL"     on a fragment: while it is the last shown one for SEL, set each of its data-canvit-NAME
 //     data-canvit-NAME="V"       attributes as NAME="V" on the slide's elements matching SEL (t on a rollout, series on
 //                                a frontier); with none shown, a target keeps the values of its markup
@@ -48,7 +49,9 @@ async function syncPlayback(deck) {
   const current = deck.getCurrentSlide();
   for (const element of elements) {
     const state = element.dataset.play;
-    const shown = !printing && !!current?.contains(element) && (!state || current.classList.contains(`shows-${state}`));
+    const shows = (name) => current.classList.contains(`shows-${name}`);
+    const inState = !state || (state.startsWith("!") ? !shows(state.slice(1)) : shows(state));
+    const shown = !printing && !!current?.contains(element) && inState;
     if (shown && !started.has(element)) {
       started.add(element);
       (element.restart ?? element.play).call(element);

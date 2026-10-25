@@ -395,8 +395,9 @@ about 16, 1 of slack).
    DINOv3), and Fig. 5E follows on a click.
 4. S "What's missing?" · 0:10. The implicit answer is eye movements, answered by Yarbus next (Y, 2026-10-25: the
    answer is not that passive models see the whole image, which feeding them a crop would disprove).
-4b. C `#human-vision`, no title · 0:20 (from Backup, Y 2026-10-25): (Y, 2026-10-25) opens on the street at full resolution
-   with a white fixation cross at its center, then a click starts the foveated glimpses; the foveation animation on the street,
+4b. C `#human-vision`, no title · 0:20 (from Backup, Y 2026-10-25): (Y, 2026-10-25) opens on the foveated glimpses, a white
+   fixation cross jumping between fixations, then a click stops on the street at full resolution, the cross at its
+   center, as the models see it; the foveation animation on the street,
    the answer to "What's missing?".
 6. C "A brief history of deep active computer vision" · 1:00 · exists. Opens on RAM alone on a short axis, beside its Fig. 1A (glimpse sensor) and a Fig. 3 glimpse path; a click fades them, grows the axis and brings the later models in turn, without further clicks; then the neuro-AI models (Sabrina, 2026-10-25). Models since 2014; how each chose where to
    look (mostly RL); neuro-AI active models, each built for a task or a way of looking.

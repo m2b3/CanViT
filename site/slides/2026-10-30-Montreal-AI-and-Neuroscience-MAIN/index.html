@@ -401,7 +401,7 @@
        CLS token and the canvas carried over; the third. #vit-on-a-glimpse already showed the backbone alone. -->
   <figure class="arch-reveal"><img src="../../assets/paper/arch_overview.svg" alt="CanViT's architecture over three glimpses: for each, a ViT backbone (purple blocks) processes the glimpse (blue) beside the canvas (red), reading from it and writing to it between blocks; the canvas and a recurrent CLS token (green) carry over to the next glimpse."><!-- The figure's timestep labels count glimpses from 0 (t = 0, and v with subscript t); the talk counts from 1. White
        patches over them (positions located in the paper's PDF rendered at 2000 px wide) carry "Glimpse n" and the bare
-       viewpoint (x, y, s). --><svg class="relabel" viewBox="0 0 2000 1825" preserveAspectRatio="none" aria-hidden="true"><rect x="7" y="1600" width="289" height="44"/><text class="viewpoint" x="152" y="1634">(−0.7, −0.7, 0.2)</text><rect x="739" y="1600" width="248" height="44"/><text class="viewpoint" x="863" y="1634">(0.3, 0.3, 0.5)</text><rect x="1488" y="1600" width="294" height="44"/><text class="viewpoint" x="1635" y="1634">(0.25, −0.8, 0.15)</text><rect x="206" y="1651" width="147" height="51"/><text class="glimpse-count" x="280" y="1694">Glimpse 1</text><rect x="955" y="1651" width="145" height="51"/><text class="glimpse-count" x="1028" y="1694">Glimpse 2</text><rect x="1691" y="1651" width="146" height="51"/><text class="glimpse-count" x="1764" y="1694">Glimpse 3</text></svg><!-- The recurrent CLS token where it leaves the first glimpse and where it enters the second (fractions of the
+       viewpoint (x, y, s). --><svg class="relabel" viewBox="0 0 2000 1825" preserveAspectRatio="none" aria-hidden="true"><rect x="7" y="1600" width="289" height="44"/><text class="viewpoint" x="152" y="1634">x=−0.7, y=−0.7, s=0.2</text><rect x="739" y="1600" width="248" height="44"/><text class="viewpoint" x="863" y="1634">x=0.3, y=0.3, s=0.5</text><rect x="1488" y="1600" width="294" height="44"/><text class="viewpoint" x="1635" y="1634">x=0.25, y=−0.8, s=0.15</text><rect x="206" y="1651" width="147" height="51"/><text class="glimpse-count" x="280" y="1694">Glimpse 1</text><rect x="955" y="1651" width="145" height="51"/><text class="glimpse-count" x="1028" y="1694">Glimpse 2</text><rect x="1691" y="1651" width="146" height="51"/><text class="glimpse-count" x="1764" y="1694">Glimpse 3</text></svg><!-- The recurrent CLS token where it leaves the first glimpse and where it enters the second (fractions of the
        figure, located by color in the paper's PDF). --><svg class="marks cls" viewBox="0 0 2000 1825" preserveAspectRatio="none"><ellipse class="halo" cx="152" cy="62" rx="52" ry="40"/><ellipse class="ring" cx="152" cy="62" rx="52" ry="40"/><ellipse class="halo" cx="815" cy="1373" rx="52" ry="40"/><ellipse class="ring" cx="815" cy="1373" rx="52" ry="40"/></svg><span class="mask"></span></figure>
   <span class="fragment step-marker" data-shows="next"></span>
   <span class="fragment step-marker" data-shows="cls"></span>
@@ -510,33 +510,33 @@
 
 <section id="dense-latent-distillation" data-status="draft">
   <h2>Dense latent distillation</h2>
-  <!-- The target and what predicts it, on the bedroom of #distillation and its second glimpse (riid-s124-n21): the
-       teacher, DINOv3 ViT-B frozen, sees the whole 512 px scene and gives features for every patch (teacher.png, PCA);
-       the student, CanViT, gets one 128 px glimpse (glimpse-1.png) and predicts those features for the whole scene
-       (prediction-1.png, same PCA basis). -->
+  <!-- The target and what predicts it, on the bedroom of #distillation (riid-s124-n21): the teacher, DINOv3 ViT-B
+       frozen, sees the whole 512 px scene and gives features for every patch (teacher.png, PCA); the student, CanViT,
+       gets its first two 128 px glimpses (glimpse-0.png, glimpse-1.png) and predicts those features for the whole
+       scene (prediction-1.png, after the second glimpse, same PCA basis). Boxes: steps.json's first two viewpoints,
+       (x, y, s) = (-0.52, -0.47, 0.14) and (0.33, 0.13, 0.33). -->
   <div class="pipes">
-    <figure class="scene"><div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/scene.png" alt="A bedroom"><span class="seen"></span></div><figcaption>Scene</figcaption></figure>
+    <figure class="scene"><div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/scene.png" alt="A bedroom"><span class="seen a"></span><span class="seen b"></span></div><figcaption>Scene</figcaption></figure>
     <span class="to teacher-to"></span>
     <p class="model teacher">DINOv3<small>frozen</small></p>
     <span class="to teacher-to"></span>
-    <figure class="target"><div class="frame"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3's features of the whole scene as colors"><span class="seen"></span></div><figcaption>Target<small>every patch</small></figcaption></figure>
-    <figure class="glimpse"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-1.png" alt="A glimpse of the bedroom, 128 px"><figcaption>Glimpse</figcaption></figure>
+    <figure class="target"><div class="frame"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3's features of the whole scene as colors"><span class="seen a"></span><span class="seen b"></span></div><figcaption>Target<small>every patch</small></figcaption></figure>
+    <figure class="glimpse"><div class="pair"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-0.png" alt="The first glimpse: a patch of wall, 128 px"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-1.png" alt="The second glimpse: the window, 128 px"></div><figcaption>Glimpses 1 and 2</figcaption></figure>
     <span class="to student-to"></span>
     <img class="model student" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
     <span class="to student-to"></span>
-    <figure class="prediction"><div class="frame"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-1.png" alt="CanViT's prediction of DINOv3's features for the whole scene"><span class="seen"></span></div><figcaption>Prediction</figcaption></figure>
+    <figure class="prediction"><div class="frame"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-1.png" alt="CanViT's prediction of DINOv3's features for the whole scene"><span class="seen a"></span><span class="seen b"></span></div><figcaption>Prediction<small>after glimpse 2</small></figcaption></figure>
     <p class="match"><span class="link"></span>match</p>
   </div>
   <span class="fragment step-marker" data-shows="student"></span>
   <span class="fragment step-marker" data-shows="match"></span>
-  <!-- Where the glimpse was taken, on the scene, the target and the prediction: (x, y, s) = (0.33, 0.13, 0.33), from
-       steps.json's second viewpoint. -->
+  <!-- Where the two glimpses were taken, on the scene, the target and the prediction. -->
   <span class="fragment step-marker" data-shows="seen"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>What it learns from: a teacher, DINOv3, frozen. It sees the whole scene and gives features for every patch. That's the target.</li>
-    <li>The student, CanViT, gets a glimpse, and predicts those features for the whole scene, including everything it hasn't seen.</li>
-    <li>Here's what the glimpse actually saw: this box. The target is the whole scene. So to match it, the model has to fill in everything outside the box from what it has seen and what it knows about scenes: integration, and extrapolation.</li>
+    <li>The student, CanViT, gets glimpses, here two, and after each predicts those features for the whole scene, including everything it hasn't seen.</li>
+    <li>Here's what the two glimpses actually saw: these boxes. The target is the whole scene. So to match it, the model has to fill in everything outside them from what it has seen and what it knows about scenes: integration, and extrapolation.</li>
     <li>And we train it to match them. Dense in space: every patch of the scene is a target. A reward would only say how good a choice of glimpse was; these features say what is there, everywhere. And latent: the semantics DINOv3 learned at scale come with them, which pixels would not give.</li>
   </ul></aside>
 </section>
@@ -550,7 +550,7 @@
        target in one PCA basis; viewpoints and losses from experiments/distillation/training_step.py's steps.json,
        filled in by distillation.js. -->
   <div class="unrolled">
-    <p class="row-label of-input">Glimpse<br>(x, y, scale)</p>
+    <p class="row-label of-input">Glimpse<br>(x, y, s)</p>
     <p class="row-label of-prediction">Prediction</p>
     <p class="row-label of-score">MSE</p>
     <p class="row-label of-target">Target<small>DINOv3, whole scene</small></p>

@@ -308,7 +308,7 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #architecture .relabel { position: absolute; inset: 0; width: 100%; height: 100%; }
 #architecture .relabel rect { fill: #fff; }
 #architecture .relabel text { text-anchor: middle; fill: var(--ink); font-family: var(--sans, Inter, sans-serif); }
-#architecture .relabel .viewpoint { font-size: 30px; font-variant-numeric: tabular-nums; }
+#architecture .relabel .viewpoint { font-size: 25px; font-variant-numeric: tabular-nums; }
 #architecture .relabel .glimpse-count { font-size: 42px; font-weight: 700; }
 #architecture .marks.cls { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s ease; }
 #architecture .marks.cls .ring { fill: none; stroke: var(--ink); stroke-width: 7; }
@@ -915,7 +915,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
                                     grid-template-rows: auto auto auto; row-gap: 8px; align-items: center; justify-content: center;
                                     margin-top: 20px; }
 #dense-latent-distillation figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
-#dense-latent-distillation figure img { width: 200px; height: 200px; border-radius: 8px; }
+#dense-latent-distillation figure img { width: 180px; height: 180px; border-radius: 8px; }
 #dense-latent-distillation .glimpse img { width: 140px; height: 140px; box-shadow: 0 0 0 3px var(--glimpse); }
 #dense-latent-distillation .glimpse figcaption { color: var(--glimpse); }
 #dense-latent-distillation figcaption { margin-top: 8px; font-size: 20px; font-weight: 750; text-align: center; }
@@ -936,7 +936,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #dense-latent-distillation.shows-match .match { opacity: 1; }
 #dense-latent-distillation :is(.glimpse, .student, .student-to, .prediction) { grid-row: 3; }
 #dense-latent-distillation .frame { position: relative; }
-#dense-latent-distillation .seen { position: absolute; box-sizing: border-box; left: 50.2%; top: 39.9%; width: 33.1%; height: 33.1%;
+#dense-latent-distillation .seen { position: absolute; box-sizing: border-box;
                                    border: 3px solid var(--glimpse); box-shadow: 0 0 0 2px #fff; opacity: 0; transition: opacity .5s ease; }
 #dense-latent-distillation.shows-seen .seen { opacity: 1; }
 
@@ -952,3 +952,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #pretraining .bar.dinov3 { width: 70%; background: #94a3b8; }
 #pretraining .bar.canvit { width: max(4px, calc(70% * 174 / 61440)); background: var(--canvas); }
 #pretraining .n { font-size: 28px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+#dense-latent-distillation .seen.a { left: 16.9%; top: 19.3%; width: 14.0%; height: 14.0%; }
+#dense-latent-distillation .seen.b { left: 50.2%; top: 39.9%; width: 33.1%; height: 33.1%; }
+#dense-latent-distillation .glimpse .pair { display: flex; gap: 10px; }
+#dense-latent-distillation .glimpse .pair img { width: 100px; height: 100px; }

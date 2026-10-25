@@ -202,9 +202,11 @@ class CanvitPolicyCurves extends HTMLElement {
     }
     const lines = el("g", { "clip-path": "url(#plot)" }, svg);
     // Dashed curves are unnamed beside the solid ones; the legend says which is which.
-    if (this.#legend && !dashedOnly) {
+    // The legend names the sets drawn: both, or the dashed set alone, then drawn solid.
+    if (this.#legend) {
       const legend = el("g", { class: "legend" }, svg);
-      [["solid", this.#legend[0]], ["dashed", this.#legend[1]]].forEach(([style, text], i) => {
+      const entries = dashedOnly ? [["solid", this.#legend[1]]] : [["solid", this.#legend[0]], ["dashed", this.#legend[1]]];
+      entries.forEach(([style, text], i) => {
         const ly = plot.top + 12 + 22 * i;
         el("line", { class: style, x1: plot.left + 14, x2: plot.left + 44, y1: ly, y2: ly }, legend);
         el("text", { x: plot.left + 52, y: ly + 5 }, legend).textContent = text;

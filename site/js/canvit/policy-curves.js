@@ -1,16 +1,17 @@
-// <canvit-policy-curves src task="ade20k|in1k" canvas-grid y-range="LO HI" [finetuned-src] [x-scale="linear|log"] [policies]
-// [baselines] [t]>:
+// <canvit-policy-curves src task="ade20k|in1k" canvas-grid y-range="LO HI" [dashed-src] [dashed-canvas-grid] [legend]
+// [x-scale="linear|log"] [policies] [baselines] [t]>:
 // CanViT-B's accuracy under the paper's viewing policies (all those the task evaluates, or the ids listed in
 // policies), glimpse by glimpse, over a whole validation set (mean over runs), from the paper's exports: ADE20K mIoU
-// (ade20k_seg.json, policy_curves) or frozen ImageNet-1k top-1 (in1k_clf_frozen.json, configs). finetuned-src adds the
-// same policies after fine-tuning (ImageNet-1k: in1k_clf_finetuned.json), drawn solid and named, with the frozen curves
-// dashed beside them, as in the paper's Figure 3C. y-range fixes the
+// (ade20k_seg.json, policy_curves) or ImageNet-1k top-1 (in1k_clf_frozen.json or in1k_clf_finetuned.json, configs).
+// src at canvas-grid gives the solid curves, named at their heads. dashed-src or dashed-canvas-grid (each defaulting to
+// its solid counterpart) adds the same policies dashed beside them, as the paper's Figure 3 does for a 32² canvas
+// beside a 64² one and for frozen weights beside fine-tuned ones; legend names the two, "solid|dashed". y-range fixes the
 // vertical axis in percent, so charts of the two tasks can share a span of points; lines are clipped to it, so a narrow
 // range shows the end of the rollouts with the low starts entering from below. Lines are drawn up to glimpse t (all
-// without t), each in its policy's color from the paper's figures and named at its head; a slide drives t to grow them
-// in step with recorded rollouts. baselines lists prior models of the export's baselines, comma-separated by name
-// ("AME (SETR), AdaGlimpse"); each one's best result is a dashed line across the plot, named at its right end (where
-// rising curves have passed it), drawn when inside y-range.
+// without t), each in its policy's color from the paper's figures; a slide drives t to grow them in step with recorded
+// rollouts. baselines lists prior models of src's baselines, comma-separated by name ("AME (SETR), AdaGlimpse"); each
+// one's best result is a dashed line across the plot, named at its right end (where rising curves have passed it),
+// drawn when inside y-range.
 
 import { POLICIES } from "./policies.js";
 
@@ -39,10 +40,10 @@ template.innerHTML = `
   .axis text { fill: var(--canvit-muted, #475569); font-size: 14px; font-variant-numeric: tabular-nums; }
   .axis .title { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 650; }
   .curve { fill: none; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
-  .curve.frozen.beside-finetuned { stroke-width: 2.6; stroke-dasharray: 7 5; }
+  .curve.dashed { stroke-width: 2.6; stroke-dasharray: 7 5; }
   .legend text { fill: var(--canvit-muted, #475569); font-size: 14px; font-weight: 600; }
   .legend line { stroke: var(--canvit-muted, #475569); stroke-width: 2.6; }
-  .legend .frozen { stroke-dasharray: 7 5; }
+  .legend .dashed { stroke-dasharray: 7 5; }
   .head { stroke: var(--canvit-surface, #fff); stroke-width: 2; }
   .baseline { stroke: var(--canvit-ink, #0f172a); stroke-width: 2; stroke-dasharray: 7 5; }
   .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 700; paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 4px; }
@@ -65,9 +66,10 @@ function required(element, name) {
 }
 
 class CanvitPolicyCurves extends HTMLElement {
-  static observedAttributes = ["src", "finetuned-src", "task", "canvas-grid", "policies", "baselines", "y-range", "x-scale", "t"];
+  static observedAttributes = ["src", "dashed-src", "task", "canvas-grid", "dashed-canvas-grid", "legend", "policies", "baselines", "y-range", "x-scale", "t"];
   #curves = null;
   #baselines = [];
+  #legend = null;
   #loadVersion = 0;
 
   constructor() {
@@ -102,8 +104,12 @@ class CanvitPolicyCurves extends HTMLElement {
     if (!src || !this.hasAttribute("task") || !this.hasAttribute("canvas-grid")) return;
     const task = this.#task;
     const grid = Number(this.getAttribute("canvas-grid"));
-    const finetunedSrc = this.getAttribute("finetuned-src");
-    const [data, finetunedData] = await Promise.all([src, finetunedSrc].map(async (url) => {
+    const withDashed = this.hasAttribute("dashed-src") || this.hasAttribute("dashed-canvas-grid");
+    const dashedSrc = this.getAttribute("dashed-src") ?? src;
+    const dashedGrid = Number(this.getAttribute("dashed-canvas-grid") ?? grid);
+    const legend = withDashed ? this.getAttribute("legend")?.split("|").map((label) => label.trim()) : null;
+    if (withDashed && legend?.length !== 2) throw new Error(`<canvit-policy-curves>: dashed curves need legend="solid|dashed"`);
+    const [data, dashedData] = await Promise.all([src, withDashed ? dashedSrc : null].map(async (url) => {
       if (url === null) return null;
       const response = await fetch(new URL(url, document.baseURI));
       if (!response.ok) throw new Error(`<canvit-policy-curves>: could not fetch ${url}: HTTP ${response.status}`);
@@ -113,15 +119,16 @@ class CanvitPolicyCurves extends HTMLElement {
     const wanted = this.getAttribute("policies")?.trim().split(/\s+/) ?? task.policies;
     const unknown = wanted.filter((policy) => !task.policies.includes(policy));
     if (unknown.length) throw new Error(`<canvit-policy-curves>: policies "${unknown.join(" ")}" not evaluated on ${this.getAttribute("task")}`);
-    const select = (exported, url, readout) => {
-      const curves = task.curves(exported).filter((c) => c.scene_size === SCENE_SIZE && c.canvas_grid === grid && wanted.includes(c.policy));
+    const select = (exported, url, canvasGrid, style) => {
+      const curves = task.curves(exported).filter((c) => c.scene_size === SCENE_SIZE && c.canvas_grid === canvasGrid && wanted.includes(c.policy));
       const found = curves.map((c) => c.policy).sort().join(" ");
       if (found !== [...wanted].sort().join(" ")) {
-        throw new Error(`<canvit-policy-curves>: ${url} at a ${grid}² canvas has policies "${found}", expected "${wanted.join(" ")}"`);
+        throw new Error(`<canvit-policy-curves>: ${url} at a ${canvasGrid}² canvas has policies "${found}", expected "${wanted.join(" ")}"`);
       }
-      return curves.map((curve) => ({ ...curve, readout }));
+      return curves.map((curve) => ({ ...curve, style }));
     };
-    const curves = [...select(data, src, "frozen"), ...(finetunedData ? select(finetunedData, finetunedSrc, "finetuned") : [])];
+    const curves = [...select(data, src, grid, "solid"), ...(withDashed ? select(dashedData, dashedSrc, dashedGrid, "dashed") : [])];
+    this.#legend = legend;
     const known = task.baselines(data);
     this.#baselines = (this.getAttribute("baselines")?.split(",").map((name) => name.trim()).filter(Boolean) ?? []).map((name) => {
       const runs = known.filter((b) => b.name === name);
@@ -171,14 +178,12 @@ class CanvitPolicyCurves extends HTMLElement {
       el("text", { class: "baseline-label", x: plot.right - 6, y: y(value) - 8, "text-anchor": "end" }, svg).textContent = `${name} ${value.toFixed(1)}`;
     }
     const lines = el("g", { "clip-path": "url(#plot)" }, svg);
-    // With fine-tuned curves, the frozen ones are dashed and unnamed beside them; the legend says which is which.
-    const withFinetuned = this.#curves.some((curve) => curve.readout === "finetuned");
-    const named = withFinetuned ? "finetuned" : "frozen";
-    if (withFinetuned) {
+    // Dashed curves are unnamed beside the solid ones; the legend says which is which.
+    if (this.#legend) {
       const legend = el("g", { class: "legend" }, svg);
-      [["finetuned", "Fine-tuned"], ["frozen", "Frozen"]].forEach(([readout, text], i) => {
+      [["solid", this.#legend[0]], ["dashed", this.#legend[1]]].forEach(([style, text], i) => {
         const ly = plot.top + 12 + 22 * i;
-        el("line", { class: readout, x1: plot.left + 14, x2: plot.left + 44, y1: ly, y2: ly }, legend);
+        el("line", { class: style, x1: plot.left + 14, x2: plot.left + 44, y1: ly, y2: ly }, legend);
         el("text", { x: plot.left + 52, y: ly + 5 }, legend).textContent = text;
       });
     }
@@ -188,15 +193,14 @@ class CanvitPolicyCurves extends HTMLElement {
     const ranked = this.#curves.map((curve) => {
       const shownPoints = curve.per_timestep.slice(0, shown);
       const means = shownPoints.map((p) => p.mean);
-      return { ...POLICIES[curve.policy], readout: curve.readout, points: shownPoints.map((p) => [x(p.t), y(100 * p.mean)]),
+      return { ...POLICIES[curve.policy], style: curve.style, points: shownPoints.map((p) => [x(p.t), y(100 * p.mean)]),
                end: Math.round(1000 * means.at(-1)), mean: means.reduce((a, b) => a + b) / means.length };
     }).sort((a, b) => b.end - a.end || b.mean - a.mean);
-    for (const { points, color, readout } of [...ranked].reverse()) {
-      const kind = withFinetuned && readout === "frozen" ? "curve frozen beside-finetuned" : "curve";
-      el("polyline", { class: kind, points: points.map((p) => p.join(",")).join(" "), stroke: color }, lines);
+    for (const { points, color, style } of [...ranked].reverse()) {
+      el("polyline", { class: `curve ${style}`, points: points.map((p) => p.join(",")).join(" "), stroke: color }, lines);
     }
     // A head below or above the range is not drawn or named yet.
-    const heads = ranked.filter(({ points, readout }) => readout === named && points.at(-1)[1] <= plot.bottom && points.at(-1)[1] >= plot.top);
+    const heads = ranked.filter(({ points, style }) => style === "solid" && points.at(-1)[1] <= plot.bottom && points.at(-1)[1] >= plot.top);
     for (const { points, color } of [...heads].reverse()) {
       const [hx, hy] = points.at(-1);
       el("circle", { class: "head", cx: hx, cy: hy, r: 5.5, fill: color }, svg);

@@ -257,8 +257,9 @@ authors to confirm.
 - Truncated BPTT over 2-glimpse chunks, random rollout length averaging 4; generalizes to 21 (§5, §6). Said on
   `#distillation`. Yohaï (2026-10-24): the generalization is a nice result; the mechanism may be too technical.
 - 166 H100-hours, 13.2 M scenes, 1 billion glimpses (§6). On screen.
-- Frozen weights with linear probes; fine-tuning only for ImageNet-1k peak (§6). Not on screen. Should be: it is what
-  makes the results a foundation-model claim.
+- Frozen weights with linear probes, "to assess feature decodability"; fine-tuning only for ImageNet-1k peak (§6). Said
+  in the notes; whether it needs a visible moment is open. (An agent's claim that it is what makes the results a
+  foundation-model claim was wrong, Y 2026-10-25.)
 - Peak against prior active models (Table 1: 45.9 against 27.6 mIoU; 84.5 fine-tuned against 82.2 top-1). Missing (Y).
 - One glimpse: 38.5 mIoU, above every prior active model's best, with 20× fewer FLOPs than AME at 27.6; also above its
   input- or FLOP-matched DINOv3 teacher (abstract, §6, Fig. 4). Missing. The abstract's headline; candidate for the
@@ -267,9 +268,7 @@ authors to confirm.
 - F2C still beats prior models: perception, not viewpoint selection, was the bottleneck (§6). On screen (the widening
   click) and said.
 - C2F above F2C on identical viewpoints: the paper reads it as "the importance of contextually informed processing"
-  (§6). On screen as a fact. Its mechanism is not isolated: reads conditioning the backbone on the canvas is one
-  explanation; how later writes overwrite earlier ones (F2C ends on its coarsest glimpse) is another. Say what the
-  paper says, no more.
+  (§6). On screen as a fact; say what the paper says.
 - RFS: recurrence alone improves accuracy, then declines without new viewpoints (§6). Removed from the deck; Q&A.
 - Fig. 4 (canvas resolution, mask size, frontier against DINOv3). Nowhere; Q&A or Backup.
 - Ablations (App.): reads matter, BPTT matters, ViT-S, VPE least. Set aside; the no-reads ablation is the evidence if
@@ -286,6 +285,10 @@ authors to confirm.
     `#architecture`); SR-RoPE and the recurrent CLS token are in the notes only.
   - The pretraining: why not pretrain the observer with its own policy is not argued on screen; the notes of
     `#pretraining-policies` carry one sentence of it.
+  - The results (Y, 2026-10-25): Table 1's numbers side by side, as bars on a dedicated slide, could be interesting;
+    each concept needs a clear home without messy repetition, and covering the same results from different angles is
+    fine when the talk says so. Since 2026-10-25 the ImageNet-1k panel of "Accuracy by viewing policy" shows the
+    fine-tuned curves (solid) beside the frozen ones (dashed), as the paper's Fig. 3C does.
   - The results: peak performance against prior active models is partly there (the ADE20K panel widening to AME and
     AdaGlimpse); the narrowing of the gap with passive models is not. Yohaï is thinking about how to present it.
     Candidates from the paper (A): Fig. 3A (accuracy against cumulative FLOPs, CanViT's curves far above the prior

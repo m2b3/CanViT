@@ -103,6 +103,18 @@ Stated 2026-10-25 evening, reviewing the deck's structure:
 - (Y) `#compare`'s "Rich world knowledge" ✗ for prior active models can be softened to an intermediate mark
   (AdaGlimpse starts from MAE weights); not critical.
 
+Stated 2026-10-25 late, on the open threads:
+- (Y) The pretraining section, so that people understand: the two problems to solve and the two answers; then answer
+  1 in detail, policy-agnostic pretraining; then answer 2, dense latent distillation (where the learning-signal argument
+  belongs); then the two together, the policy-agnostic dense latent distillation slide.
+- (Y) The canvas's own moment may already be the SR-RoPE slide; not sure.
+- (Y) The LLM parallel: possibly a quick animation on "Learning where to look", after the result.
+- (Y) "Extrapolation to unobserved regions" stays in Backup for now (the title slide's teaser shows extrapolation; it
+  may be said aloud); a direct, streamlined callback to the table slide would be good: quick, not several rows and
+  columns.
+- (Y) No softening of "Rich world knowledge" for prior models for now. CanViT's red bars: low priority. AME's two
+  names: does not matter. Segmentation palettes: unify if it can be done meaningfully.
+
 Stated 2026-10-24, in a discussion between the speakers:
 - (Y) Say "observer", never "vision encoder": an encoder covers instantaneous vision only and leaves out memory.
 - (Y) Use the terms policy-specific and policy-agnostic pretraining. Training observer and policy at the same time

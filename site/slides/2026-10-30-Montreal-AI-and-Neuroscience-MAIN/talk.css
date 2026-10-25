@@ -296,15 +296,19 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 /* The paper's architecture figure, revealed left to right by a mask over what is not yet shown, in fractions of the
    figure's width: the first glimpse's backbone and canvas end at .275; the second glimpse's at .66; the third fills the
    rest, with the legend. What is shown stays centered: the figure glides left as each part is revealed. */
-#architecture .arch-reveal { position: relative; width: 530px; margin: 0 auto; transition: transform .8s ease;
-                             transform: translateX(calc(530px * .36)); }
+#architecture .arch-reveal { --w: 600px; position: relative; width: var(--w); margin: -8px auto 0; transition: transform .8s ease;
+                             transform: translateX(calc(var(--w) * .36)); }
 #architecture .arch-reveal img { display: block; width: 100%; height: auto; }
 #architecture .arch-reveal .mask { position: absolute; top: 0; right: -2px; bottom: 0; left: 27.5%; background: var(--bg);
                                    transition: left .8s ease; }
-#architecture.shows-next .arch-reveal { transform: translateX(calc(530px * .17)); }
+#architecture.shows-next .arch-reveal { transform: translateX(calc(var(--w) * .17)); }
 #architecture.shows-next .arch-reveal .mask { left: 66%; }
 #architecture.shows-more .arch-reveal { transform: none; }
 #architecture.shows-more .arch-reveal .mask { left: 101%; }
+#architecture .marks.cls { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s ease; }
+#architecture .marks.cls .ring { fill: none; stroke: var(--ink); stroke-width: 7; }
+#architecture .marks.cls .halo { fill: none; stroke: var(--bg); stroke-width: 15; }
+#architecture.shows-cls .marks.cls { opacity: 1; }
 
 #canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden; }
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
@@ -655,7 +659,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #vit-on-a-glimpse figcaption { margin-top: 12px; font-size: 22px; font-weight: 750; }
 #vit-on-a-glimpse .scene .frame { position: relative; width: 340px; height: 340px; }
 #vit-on-a-glimpse .scene img { display: block; width: 100%; height: 100%; border-radius: 10px; }
-#vit-on-a-glimpse .box { position: absolute; border: 3px solid var(--glimpse); border-radius: 3px; opacity: 0; transition: opacity .4s ease; }
+#vit-on-a-glimpse .box { position: absolute; box-sizing: border-box; border: 3px solid var(--glimpse); border-radius: 3px; opacity: 0; transition: opacity .4s ease; }
 #vit-on-a-glimpse .glimpse img, #vit-on-a-glimpse .tokens img { width: 210px; height: 210px; border-radius: 8px; }
 #vit-on-a-glimpse .glimpse img { box-shadow: 0 0 0 3px var(--glimpse); }
 #vit-on-a-glimpse .glimpse figcaption { color: var(--glimpse); }
@@ -813,3 +817,50 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #pretraining-policies .glimpses figure { margin: 0; display: grid; gap: 6px; justify-items: center; }
 #pretraining-policies .glimpses img { width: 102px; height: 102px; border-radius: 6px; box-shadow: 0 0 0 3px var(--policy-color); }
 #pretraining-policies .glimpses figcaption { font-size: 18px; font-weight: 800; color: var(--policy-color); }
+
+/* SR-RoPE: the glimpse's 8 x 8 patches in its own frame (left) and at their scene positions (right), each patch a cell
+   with a dot at its center, the position RoPE uses; the canvas's 32 x 32 patches on their fixed grid. The cells and
+   dots glide when the glimpse changes to the smaller one (shows-zoom); dots scale with the cells. */
+#sr-rope { --top: var(--first-top); --left: var(--first-left); --size: var(--first-size); }
+#sr-rope.shows-zoom { --top: var(--zoom-top); --left: var(--zoom-left); --size: var(--zoom-size); }
+#sr-rope .rope-layout { display: grid; grid-template-columns: 300px 70px 470px; grid-template-rows: auto auto;
+                        justify-content: center; align-items: center; column-gap: 28px; margin-top: 26px; }
+#sr-rope figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
+#sr-rope figcaption { margin-top: 10px; font-size: 22px; font-weight: 750; }
+#sr-rope .glimpse figcaption { color: var(--glimpse); }
+#sr-rope .frame { position: relative; }
+#sr-rope .glimpse .frame { --cell: calc(300px / var(--grid)); width: 300px; height: 300px; }
+#sr-rope .scene .frame { --cell: calc(470px * var(--size) / var(--grid)); width: 470px; height: 470px; }
+#sr-rope .scene img { display: block; width: 100%; height: 100%; border-radius: 8px; }
+#sr-rope .crop { position: absolute; inset: 0; border-radius: 6px; box-shadow: 0 0 0 3px var(--glimpse);
+                 background-size: calc(100% / var(--size)); transition: background-size .9s ease, background-position .9s ease;
+                 background-position: calc(100% * var(--left) / (1 - var(--size))) calc(100% * var(--top) / (1 - var(--size))); }
+/* A grid of n x n cells over an element: a line at the left and top of each cell; the element's border closes it. */
+#sr-rope .patch-cells { background: linear-gradient(to right, var(--line) 1.5px, transparent 1.5px) 0 0 / calc(100% / var(--n)) 100%,
+                                    linear-gradient(to bottom, var(--line) 1.5px, transparent 1.5px) 0 0 / 100% calc(100% / var(--n)); }
+#sr-rope .glimpse .grid, #sr-rope .scene .box .grid { position: absolute; inset: 0; --n: var(--grid); --line: rgb(255 255 255 / .8); }
+#sr-rope .dots { position: absolute; inset: 0; pointer-events: none; }
+#sr-rope .dots span { --dot: min(9px, calc(var(--cell) * .34)); position: absolute; width: var(--dot); height: var(--dot);
+                      margin: calc(var(--dot) / -2) 0 0 calc(var(--dot) / -2); border-radius: 50%; background: var(--glimpse);
+                      box-shadow: 0 0 0 1.5px #fff; transition: left .9s ease, top .9s ease, width .9s ease, height .9s ease, margin .9s ease; }
+#sr-rope .glimpse .dots span { left: calc(100% * (var(--col) + .5) / var(--grid)); top: calc(100% * (var(--row) + .5) / var(--grid)); }
+#sr-rope .scene .dots span { left: calc(100% * (var(--left) + var(--size) * (var(--col) + .5) / var(--grid)));
+                             top: calc(100% * (var(--top) + var(--size) * (var(--row) + .5) / var(--grid))); }
+#sr-rope .box { position: absolute; box-sizing: border-box; transition: all .9s ease;
+                left: calc(100% * var(--left)); top: calc(100% * var(--top)); width: calc(100% * var(--size)); height: calc(100% * var(--size)); }
+#sr-rope .box::after { content: ""; position: absolute; inset: 0; border: 3px solid var(--glimpse); border-radius: 3px; }
+/* The canvas's 32 x 32 patches: their cells, and a dot at the center of each. */
+#sr-rope .canvas-cells { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease; border-radius: 8px; --n: 32;
+                         --line: rgb(224 72 62 / .25); }
+#sr-rope .canvas-cells::after { content: ""; position: absolute; inset: 0;
+                                background: radial-gradient(circle, var(--canvas) 1.7px, transparent 2.3px) 0 0 / calc(100% / 32) calc(100% / 32); }
+#sr-rope.shows-canvas .canvas-cells { opacity: 1; }
+#sr-rope .arrow { height: 3px; background: var(--muted); position: relative; margin-bottom: 40px; }
+#sr-rope .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }
+#sr-rope .legend { grid-column: 3; display: flex; justify-content: center; gap: 26px; margin: 8px 0 0; font-size: 17px; font-weight: 650; }
+#sr-rope .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; vertical-align: 1px; }
+#sr-rope .glimpse-key { color: var(--glimpse); }
+#sr-rope .glimpse-key::before { background: var(--glimpse); }
+#sr-rope .canvas-key { color: var(--canvas); opacity: 0; transition: opacity .6s ease; }
+#sr-rope .canvas-key::before { background: var(--canvas); }
+#sr-rope.shows-canvas .canvas-key { opacity: 1; }

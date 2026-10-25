@@ -376,14 +376,39 @@
   <!-- The paper's Figure 2 (assets/paper/arch_overview.svg, exported with the paper), revealed left to right by a mask
        (talk.css): the first glimpse's backbone and canvas, read and written across depth; the second glimpse, the
        CLS token and the canvas carried over; the third. #vit-on-a-glimpse already showed the backbone alone. -->
-  <figure class="arch-reveal"><img src="../../assets/paper/arch_overview.svg" alt="CanViT's architecture over three glimpses: for each, a ViT backbone (purple blocks) processes the glimpse (blue) beside the canvas (red), reading from it and writing to it between blocks; the canvas and a recurrent CLS token (green) carry over to the next glimpse."><span class="mask"></span></figure>
+  <figure class="arch-reveal"><img src="../../assets/paper/arch_overview.svg" alt="CanViT's architecture over three glimpses: for each, a ViT backbone (purple blocks) processes the glimpse (blue) beside the canvas (red), reading from it and writing to it between blocks; the canvas and a recurrent CLS token (green) carry over to the next glimpse."><!-- The recurrent CLS token where it leaves the first glimpse and where it enters the second (fractions of the
+       figure, located by color in the paper's PDF). --><svg class="marks cls" viewBox="0 0 2000 1825" preserveAspectRatio="none"><ellipse class="halo" cx="152" cy="62" rx="52" ry="40"/><ellipse class="ring" cx="152" cy="62" rx="52" ry="40"/><ellipse class="halo" cx="815" cy="1373" rx="52" ry="40"/><ellipse class="ring" cx="815" cy="1373" rx="52" ry="40"/></svg><span class="mask"></span></figure>
   <span class="fragment step-marker" data-shows="next"></span>
+  <span class="fragment step-marker" data-shows="cls"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Here's the actual architecture, from the paper. On the left, the Vision Transformer we started from, the backbone, on the first glimpse: patches in at the bottom, twelve blocks, tokens out at the top. Beside it, the canvas. Between blocks, they alternate: the glimpse reads from the canvas, R; two blocks later, the canvas reads from the glimpse, W, a write; three of each per glimpse. The backbone works in the glimpse's coordinates, retinotopic; the canvas in the scene's, spatiotopic; scene-relative positional encodings bind the two. How a read and a write work is next.</li>
-    <li>Next glimpse: the glimpse tokens are thrown away, but the canvas carries over, and so does a recurrent CLS token. So what the first glimpse wrote shapes how the second one is processed.</li>
+    <li>Here's the actual architecture, from the paper. On the left, the Vision Transformer we started from, the backbone, on the first glimpse: patches in at the bottom, twelve blocks, tokens out at the top. Beside it, the canvas. Between blocks, they alternate: the glimpse reads from the canvas, R; two blocks later, the canvas reads from the glimpse, W, a write; three of each per glimpse. The backbone works in the glimpse's coordinates, retinotopic; the canvas in the scene's, spatiotopic; scene-relative positional encodings bind the two, as we'll see next.</li>
+    <li>Next glimpse: the glimpse tokens are thrown away, but the canvas carries over. So what the first glimpse wrote shapes how the second one is processed.</li>
+    <li>A single token carries over too: the recurrent CLS token, a summary of the whole scene so far, which is what we read out for classification.</li>
     <li>And so on, glimpse after glimpse.</li>
+  </ul></aside>
+</section>
+
+<section id="sr-rope" data-status="draft" style="--zoom-top: .34; --zoom-left: .33; --zoom-size: .2">
+  <h2>Scene-Relative Rotary Position Embeddings (SR-RoPE)</h2>
+  <!-- The glimpse of #vit-on-a-glimpse, then a smaller one on the cat's eye (set by hand to show the zoom): its 8 x 8
+       patches as the backbone receives them, and where SR-RoPE places them in the scene; the canvas's 32 x 32 patches
+       (RELEASED_CANVAS_GRID_SIZE) at fixed scene positions. Paper §4, "Scene-Relative Rotary Position Embeddings". -->
+  <div class="rope-layout">
+    <figure class="glimpse"><div class="frame"><div class="crop"></div><div class="grid patch-cells"></div><div class="dots"></div></div><figcaption>Glimpse</figcaption></figure>
+    <span class="arrow"></span>
+    <figure class="scene"><div class="frame"><img alt="A ginger cat"><div class="canvas-cells patch-cells"></div><span class="box"><span class="grid patch-cells"></span></span><div class="dots"></div></div><figcaption>Scene</figcaption></figure>
+    <p class="legend"><span class="glimpse-key">Glimpse patches</span><span class="canvas-key">Canvas patches</span></p>
+  </div>
+  <span class="fragment step-marker" data-shows="canvas"></span>
+  <span class="fragment step-marker" data-shows="zoom"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>How does the model know where things are? The backbone gets the glimpse as an 8 by 8 grid of patches, in the glimpse's own frame. We give each patch its position in the scene: where the viewpoint put it.</li>
+    <li>The canvas patches have positions in the same scene coordinates, on a fixed grid. Glimpse and canvas share one frame of reference, and that's what binds the retinotopic backbone to the spatiotopic canvas.</li>
+    <li>Zoom in: still 8 by 8 patches, now packed into a small part of the scene. The spacing of the positions tells the model the zoom.</li>
+    <li>These positions go into rotary position embeddings, so attention between two tokens can depend on where they are relative to each other in the scene, in the backbone and between glimpse and canvas. RoPE also lets the number of patches change, which is how the canvas resolution can be chosen at inference.</li>
   </ul></aside>
 </section>
 
@@ -978,6 +1003,7 @@
   import { drawTrainingCost } from "./training-cost.js";
   import { drawPolicyAblations } from "./policy-ablations.js";
   import { drawVitOnGlimpse } from "./vit-glimpse.js";
+  import { drawSrRope } from "./sr-rope.js";
   import { drawPcaCycle } from "./pca-cycle.js";
   import { drawPretrainingGrid } from "./pretraining-grid.js";
   import { drawPolicyStages } from "./policy-stages.js";
@@ -1008,6 +1034,7 @@
   await drawPretrainingGrid(document.querySelector("#pretraining-policies .pretraining-grid"), "../../data/talk/pretraining", "truck", ["random", "full_then_random"]);
   await drawPcaCycle(document.querySelector("#foundation"), "../../data/talk/foundation/ADE_val_00001509");
   await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), "../../data/talk/vit-glimpse");
+  await drawSrRope(document.querySelector("#sr-rope"), "../../data/talk/vit-glimpse");
   await drawIfPresent("#canvas", (slide) => drawCanvasConcept(slide, "../../data/talk/architecture/street-riid"));
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");

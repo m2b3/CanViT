@@ -516,24 +516,28 @@
        the student, CanViT, gets one 128 px glimpse (glimpse-1.png) and predicts those features for the whole scene
        (prediction-1.png, same PCA basis). -->
   <div class="pipes">
-    <figure class="scene"><img src="../../data/talk/distillation/ADE_val_00000124/scene.png" alt="A bedroom"><figcaption>Scene</figcaption></figure>
+    <figure class="scene"><div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/scene.png" alt="A bedroom"><span class="seen"></span></div><figcaption>Scene</figcaption></figure>
     <span class="to teacher-to"></span>
     <p class="model teacher">DINOv3<small>frozen</small></p>
     <span class="to teacher-to"></span>
-    <figure class="target"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3's features of the whole scene as colors"><figcaption>Target<small>every patch</small></figcaption></figure>
+    <figure class="target"><div class="frame"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3's features of the whole scene as colors"><span class="seen"></span></div><figcaption>Target<small>every patch</small></figcaption></figure>
     <figure class="glimpse"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-1.png" alt="A glimpse of the bedroom, 128 px"><figcaption>Glimpse</figcaption></figure>
     <span class="to student-to"></span>
     <img class="model student" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
     <span class="to student-to"></span>
-    <figure class="prediction"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-1.png" alt="CanViT's prediction of DINOv3's features for the whole scene"><figcaption>Prediction</figcaption></figure>
+    <figure class="prediction"><div class="frame"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-1.png" alt="CanViT's prediction of DINOv3's features for the whole scene"><span class="seen"></span></div><figcaption>Prediction</figcaption></figure>
     <p class="match"><span class="link"></span>match</p>
   </div>
   <span class="fragment step-marker" data-shows="student"></span>
   <span class="fragment step-marker" data-shows="match"></span>
+  <!-- Where the glimpse was taken, on the scene, the target and the prediction: (x, y, s) = (0.33, 0.13, 0.33), from
+       steps.json's second viewpoint. -->
+  <span class="fragment step-marker" data-shows="seen"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>What it learns from: a teacher, DINOv3, frozen. It sees the whole scene and gives features for every patch. That's the target.</li>
     <li>The student, CanViT, gets a glimpse, and predicts those features for the whole scene, including everything it hasn't seen.</li>
+    <li>Here's what the glimpse actually saw: this box. The target is the whole scene. So to match it, the model has to fill in everything outside the box from what it has seen and what it knows about scenes: integration, and extrapolation.</li>
     <li>And we train it to match them. Dense in space: every patch of the scene is a target. A reward would only say how good a choice of glimpse was; these features say what is there, everywhere. And latent: the semantics DINOv3 learned at scale come with them, which pixels would not give.</li>
   </ul></aside>
 </section>

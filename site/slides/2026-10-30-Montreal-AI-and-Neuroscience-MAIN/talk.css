@@ -935,3 +935,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #dense-latent-distillation :is(.glimpse, .student, .student-to, .prediction) { grid-row: 3; }
 .outline :is(.policy-agnostic, .dense-latent) { white-space: nowrap; }
 :is(#pretraining-answers, #pretraining-answers-policy-agnostic, #pretraining-answers-dense-latent) .outline p { font-size: 40px; }
+#dense-latent-distillation .frame { position: relative; }
+#dense-latent-distillation .seen { position: absolute; box-sizing: border-box; left: 50.2%; top: 39.9%; width: 33.1%; height: 33.1%;
+                                   border: 3px solid var(--glimpse); box-shadow: 0 0 0 2px #fff; opacity: 0; transition: opacity .5s ease; }
+#dense-latent-distillation.shows-seen .seen { opacity: 1; }

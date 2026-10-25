@@ -459,20 +459,21 @@
   </ul></aside>
 </section>
 
-<section id="pretraining-problems" data-status="draft">
-  <h2>Pretraining <span class="brand">CanViT</span></h2>
-  <!-- The pretraining's two problems and their two answers (Y, 2026-10-25: the problems, then each answer in detail,
-       then the two together); the answers on a click. Paper §5: "how can we teach CanViT (1) and (2) in a
-       task-agnostic, spatially aware, label-free manner, while remaining robust to the choice of policy (3)?" -->
-  <div class="problems">
-    <p class="problem">Where to look during pretraining</p><span class="to"></span><p class="answer">Policy-agnostic pretraining<small>random viewpoints</small></p>
-    <p class="problem">What to learn from</p><span class="to"></span><p class="answer">Dense latent distillation<small>a passive model's features of the whole scene</small></p>
-  </div>
-  <span class="fragment step-marker" data-shows="answers"></span>
+<section id="pretraining-answers" class="signpost" data-status="draft">
+  <!-- The pretraining's two answers (Y, 2026-10-25: the two problems and their answers, then each answer, then both);
+       the problems are said. Shown again before each answer with it highlighted. -->
+  <div class="outline"><p class="policy-agnostic">Policy-agnostic pretraining</p><p class="dense-latent">Dense latent distillation</p></div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Pretraining an observer like this raises two problems. Where does it look while it learns, if we don't want to tie it to one policy? And what does it learn from, without labels, if it should serve any task?</li>
-    <li>Two answers: policy-agnostic pretraining, and dense latent distillation. One at a time.</li>
+    <li>Pretraining raises two problems: where the observer looks while it learns, without tying it to one policy; and what it learns from, without labels. Two answers: policy-agnostic pretraining, and dense latent distillation.</li>
+  </ul></aside>
+</section>
+
+<section id="pretraining-answers-policy-agnostic" class="signpost" data-status="draft">
+  <div class="outline on-policy-agnostic"><p class="policy-agnostic">Policy-agnostic pretraining</p><p class="dense-latent">Dense latent distillation</p></div>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>First, policy-agnostic pretraining.</li>
   </ul></aside>
 </section>
 
@@ -497,6 +498,14 @@
     <li>So we disentangle how to see from where to look: the observer is pretrained with no policy to learn, and no reinforcement learning. Where does it look? Randomly: random positions and zooms, small glimpses more likely, a random number of glimpses, four on average. That's R-IID.</li>
     <li>For each scene we also run a second rollout that starts with the full scene and then goes random: F-IID.</li>
     <li>So there's no policy for the observer to co-adapt with. Every other policy we evaluate later, it has never seen. That's 13.2 million ImageNet-21k scenes and about a billion glimpses.</li>
+  </ul></aside>
+</section>
+
+<section id="pretraining-answers-dense-latent" class="signpost" data-status="draft">
+  <div class="outline on-dense-latent"><p class="policy-agnostic">Policy-agnostic pretraining</p><p class="dense-latent">Dense latent distillation</p></div>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Second, dense latent distillation.</li>
   </ul></aside>
 </section>
 

@@ -299,7 +299,7 @@ authors to confirm.
     click on `#architecture` ringing the recurrent CLS token where it leaves one glimpse and enters the next.
   - The pretraining: why not pretrain the observer with its own policy is not argued on screen; the notes of
     `#how-to-see-first` carry it (AI draft). Built 2026-10-25 for review, after Yohaï's structure:
-    `#pretraining-problems` (where to look during pretraining, what to learn from; the two answers on a click), then
+    `#pretraining-answers` (the two answers as a signpost, the problems said; a text slide of problems and answers was rejected, Y 2026-10-25), shown again before each answer, then
     answer 1 (`#how-to-see-first`, `#pretraining-policies`), answer 2 (`#dense-latent-distillation`: the teacher's
     target for every patch, the student's prediction from a glimpse, matched), then the two together (`#distillation`,
     retitled "Policy-agnostic dense latent distillation"). Where "Before knowing where to look..." belongs is still

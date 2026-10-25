@@ -15,15 +15,12 @@ from scipy.ndimage import distance_transform_edt
 
 from experiments import logs
 from experiments.outputs import DECK_DATA, SITE
+from experiments.segmentation_colors import PALETTE
 
 log = logging.getLogger(__name__)
 
 MIN_NAMED_CELLS = 24
 GLIMPSE_BLUE = "#2d6cdf"
-# Muted, distinguishable fills (Tableau 20's lighter half, then its darker half), assigned by decreasing area.
-PALETTE = ["#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d2", "#dbdb8d", "#9edae5",
-           "#c7c7c7", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#bcbd22",
-           "#17becf", "#7f7f7f"]
 
 
 @dataclass(frozen=True)

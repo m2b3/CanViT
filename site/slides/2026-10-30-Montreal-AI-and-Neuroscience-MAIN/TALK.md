@@ -532,8 +532,9 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
   - Her idea (2026-10-25), undecided: before `#tradition`, a short slide on the first deep networks used as models
     (Yamins et al. 2014's) and the images they were tested on.
 - Missing material: a moving-scene clip for `#next`.
-- Known defects: segmentation colors differ between slides (the components use
-  the ADE20K palette, `#extrapolation` canvit-pytorch's `LABEL_COLORS`); amber means every prior model on some
+- Known defects: segmentation colors differ between Backup slides (the components, on `#rollout`, use the ADE20K
+  palette, `#extrapolation` canvit-pytorch's `LABEL_COLORS`); the main deck's maps share experiments/segmentation_colors.py
+  (checked 2026-10-25); amber means every prior model on some
   slides and AME alone on `#timeline`.
 - For the paper's camera-ready (2026-11-06), not the talk: prepared on the local branch `paper-camera-ready-fixes`
   (from `main`, not pushed, paper builds with no Type 3 fonts): AME's authors with their diacritics, AdaGlimpse dated

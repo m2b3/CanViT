@@ -349,7 +349,7 @@
   <span class="fragment step-marker" data-shows="tokens"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Start from what everyone uses today, a Vision Transformer. An active model doesn't see the whole scene at once; it sees a glimpse, a crop at some position and some zoom.</li>
+    <li>This is a Vision Transformer, the architecture behind most vision models today. An active model doesn't see the whole scene at once; it sees a glimpse, a crop at some position and some zoom.</li>
     <li>The glimpse goes through a Vision Transformer, here DINOv3.</li>
     <li>Out come patch tokens, a high-dimensional vector per patch, shown as before with principal components as colors. A good representation of this glimpse, but in the glimpse's own frame: it doesn't know where in the scene the glimpse was.</li>
     <li>Transition: so what happens with a second glimpse, somewhere else?</li>
@@ -717,7 +717,7 @@
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>With the observer frozen, we trained a policy for ADE20K segmentation, with RL: at each step it picks the next glimpse, rewarded by how much that glimpse improves the segmentation. These results are unpublished.</li>
-    <li>Starting from the whole scene, the learned policy beats entropy-guided coarse to fine at every glimpse, a heuristic that's already strong.</li>
+    <li>Both begin with the whole scene; after that, the learned policy beats entropy-guided coarse to fine at every glimpse, a heuristic that's already strong.</li>
     <li>And it was cheap to train: 640 thousand glimpses, about 80 minutes on one GPU, against a billion for pretraining. Like LLMs: pretraining without RL, then RL for a specific skill. Transition: how CanViT compares with prior active models.</li>
   </ul></aside>
 </section>

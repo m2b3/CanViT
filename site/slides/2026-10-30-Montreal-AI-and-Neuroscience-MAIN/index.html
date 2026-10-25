@@ -112,16 +112,16 @@
   <!-- Why the scale matters (Yohaï, 2026-10-25): Raugel et al.'s Fig. 5E (arXiv:2508.18226v1; the ICLR version numbers
        its figures differently), each cortical region's training half time against its distance from V1
        (assets/figures/PROVENANCE.md). -->
-  <figure class="method"><img src="assets/figures/raugel-2025-fig1-method.png" alt="The study's design: images go through DINOv3 and through human brains; DINOv3 models varying in size, amount of training and image type; fMRI and MEG compared with the model by encoding, spatial and temporal scores"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (Fig. 1 of arXiv:2508.18226v1)</figcaption></figure>
+  <figure class="method"><img class="header" src="assets/figures/raugel-2025-openreview-header.png" alt="The paper's OpenReview page: Disentangling the Factors of Convergence between Brains and DINOv3, Raugel et al., ICLR 2026 Poster"><img src="assets/figures/raugel-2025-fig1-method.png" alt="The study's design: images go through DINOv3 and through human brains; DINOv3 models varying in size, amount of training and image type; fMRI and MEG compared with the model by encoding, spatial and temporal scores"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (OpenReview; Fig. 1 of arXiv:2508.18226v1)</figcaption></figure>
   <span class="fragment step-marker" data-shows="scaling"></span>
   <figure class="scaling"><p class="takeaway">Late alignment with higher-order cortical areas</p><img src="assets/figures/raugel-2025-fig5e-half-time-vs-distance.png" alt="For 15 cortical regions, the training steps DINOv3 needs to reach half its final encoding score, against the region's distance from V1: early visual areas are matched first, frontal areas only after about twice as much training"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (Fig. 5E of arXiv:2508.18226v1)</figcaption></figure>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:50–1:10]</li>
     <li>[Main point: Show the need for vision foundation models. Raugel and colleagues show here that modelling high brain regions requires more training.]</li>
-    <li>[AI draft: not the authors' text]</li>
-    <li>DINOv3 was at the center of a recent study by Raugel and colleagues. They trained DINOv3 models of different sizes, for different amounts of training, on different types of images, and compared each one with human brain activity: 7-Tesla fMRI and MEG recorded while people viewed images.</li>
+    <li>[Yohaï's text, 2026-10-25] DINOv3 was at the center of a recent study by Raugel and colleagues, which used 7-Tesla fMRI and MEG imaging to…</li>
+    <li>[AI draft: not the authors' text] …compare DINOv3 models of different sizes, trained for different amounts of time, on different types of images, with human brain activity recorded while people viewed images.</li>
     <li>[CLICK]</li>
-    <li>Why care about scale? Raugel and colleagues followed DINOv3 through its training, 1.7 billion images curated from public Instagram posts. Each dot is a brain region; up is how much training the model needs to predict that region half as well as it eventually will. Early visual cortex comes first; regions further from V1, all the way to frontal cortex, need about twice as much. So if you want to model the higher regions, you need that much training. And only a company like Meta could make this plot: you need every checkpoint of the training run.</li>
+    <li>[AI draft: not the authors' text] Raugel and colleagues followed DINOv3 through its training, 1.7 billion images curated from public Instagram posts. Each dot is a brain region; up is how much training the model needs to predict that region half as well as it eventually will. Early visual cortex comes first; regions further from V1, all the way to frontal cortex, need about twice as much. So if you want to model the higher regions, you need that much training. And only a company like Meta could make this plot: you need every checkpoint of the training run.</li>
   </ul></aside>
 </section>
 

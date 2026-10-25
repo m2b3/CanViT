@@ -950,7 +950,9 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 
 /* DINOv3 and the brain: the study's design first, then (shows-scaling) Fig. 5E in its place. */
 #dinov3-and-the-brain figure { position: absolute; left: 0; right: 0; top: 130px; opacity: 0; transition: opacity .6s ease; }
-#dinov3-and-the-brain .method { width: 1100px; margin: 0 auto; text-align: center; opacity: 1; }
-#dinov3-and-the-brain .method img { width: 100%; height: auto; }
+#dinov3-and-the-brain .method { width: 800px; top: 116px; margin: 0 auto; text-align: center; opacity: 1; }
+#dinov3-and-the-brain .method img { display: block; width: 100%; height: auto; }
+#dinov3-and-the-brain .method .header { margin-bottom: 12px; }
+#dinov3-and-the-brain .method figcaption { margin-top: 8px; }
 #dinov3-and-the-brain.shows-scaling .method { opacity: 0; }
 #dinov3-and-the-brain.shows-scaling .scaling { opacity: 1; }

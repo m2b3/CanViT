@@ -445,6 +445,8 @@
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>The principle behind how we pretrain: before knowing where to look, we should know how to see. Prior active models didn't see well yet, so it makes sense to get the observer right first, before trying to give it a great policy.</li>
+    <li>The usual way is to pretrain the observer on the glimpses its own policy picks. That raises two separate problems. First, specificity: the observer and its policy adapt to each other. The pair may work well together, but nothing tells you how the observer does with another policy: one for another task, a better one found later, or a scanpath recorded from a person or a monkey. Second, instability: when the policy is learned with reinforcement learning and its gradients reach the observer, they are high-variance, and training can become unstable or collapse.</li>
+    <li>And what should the observer learn from? It has to learn about scenes. A reward only says how good a choice of glimpse was; a passive foundation model's features of the whole scene say what is there, everywhere.</li>
   </ul></aside>
 </section>
 

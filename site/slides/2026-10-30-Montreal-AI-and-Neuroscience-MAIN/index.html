@@ -451,6 +451,23 @@
   </ul></aside>
 </section>
 
+<section id="pretraining-problems" data-status="draft">
+  <h2>Pretraining <span class="brand">CanViT</span></h2>
+  <!-- The pretraining's two problems and their two answers (Y, 2026-10-25: the problems, then each answer in detail,
+       then the two together); the answers on a click. Paper §5: "how can we teach CanViT (1) and (2) in a
+       task-agnostic, spatially aware, label-free manner, while remaining robust to the choice of policy (3)?" -->
+  <div class="problems">
+    <p class="problem">Where to look during pretraining</p><span class="to"></span><p class="answer">Policy-agnostic pretraining<small>random viewpoints</small></p>
+    <p class="problem">What to learn from</p><span class="to"></span><p class="answer">Dense latent distillation<small>a passive model's features of the whole scene</small></p>
+  </div>
+  <span class="fragment step-marker" data-shows="answers"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Pretraining an observer like this raises two problems. Where does it look while it learns, if we don't want to tie it to one policy? And what does it learn from, without labels, if it should serve any task?</li>
+    <li>Two answers: policy-agnostic pretraining, and dense latent distillation. One at a time.</li>
+  </ul></aside>
+</section>
+
 <section id="how-to-see-first" class="signpost" data-status="draft">
   <p class="statement"><span>Before knowing <span class="look">where to look</span>,<br>we should know <span class="see">how to see</span>.</span></p>
   <aside class="notes"><ul>
@@ -475,8 +492,37 @@
   </ul></aside>
 </section>
 
+<section id="dense-latent-distillation" data-status="draft">
+  <h2>Dense latent distillation</h2>
+  <!-- The target and what predicts it, on the bedroom of #distillation and its second glimpse (riid-s124-n21): the
+       teacher, DINOv3 ViT-B frozen, sees the whole 512 px scene and gives features for every patch (teacher.png, PCA);
+       the student, CanViT, gets one 128 px glimpse (glimpse-1.png) and predicts those features for the whole scene
+       (prediction-1.png, same PCA basis). -->
+  <div class="pipes">
+    <figure class="scene"><img src="../../data/talk/distillation/ADE_val_00000124/scene.png" alt="A bedroom"><figcaption>Scene</figcaption></figure>
+    <span class="to teacher-to"></span>
+    <p class="model teacher">DINOv3<small>frozen</small></p>
+    <span class="to teacher-to"></span>
+    <figure class="target"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3's features of the whole scene as colors"><figcaption>Target<small>every patch</small></figcaption></figure>
+    <figure class="glimpse"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-1.png" alt="A glimpse of the bedroom, 128 px"><figcaption>Glimpse</figcaption></figure>
+    <span class="to student-to"></span>
+    <img class="model student" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
+    <span class="to student-to"></span>
+    <figure class="prediction"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-1.png" alt="CanViT's prediction of DINOv3's features for the whole scene"><figcaption>Prediction</figcaption></figure>
+    <p class="match"><span class="link"></span>match</p>
+  </div>
+  <span class="fragment step-marker" data-shows="student"></span>
+  <span class="fragment step-marker" data-shows="match"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>What it learns from: a teacher, DINOv3, frozen. It sees the whole scene and gives features for every patch. That's the target.</li>
+    <li>The student, CanViT, gets a glimpse, and predicts those features for the whole scene, including everything it hasn't seen.</li>
+    <li>And we train it to match them. Dense in space: every patch of the scene is a target. A reward would only say how good a choice of glimpse was; these features say what is there, everywhere. And latent: the semantics DINOv3 learned at scale come with them, which pixels would not give.</li>
+  </ul></aside>
+</section>
+
 <section id="distillation" data-status="draft">
-  <h2>Passive-to-active dense latent distillation</h2>
+  <h2>Policy-agnostic dense latent distillation</h2>
   <!-- A training step unrolled in time, one column per glimpse [Yohaï, 2026-10-01: timesteps unrolled
        across time, a whole-scene prediction at each, scored with mean squared error against the teacher features; the
        input shown is the glimpse and its viewpoint, not the full scene; up to glimpse 21]. A bedroom (ADE_val_00000124, chosen by a

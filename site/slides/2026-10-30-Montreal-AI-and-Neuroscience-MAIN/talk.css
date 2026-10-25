@@ -908,3 +908,41 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
                                     opacity: 0; transition: opacity .8s ease; }
 #table-callback.shows-canvit .map > img.canvit { opacity: 1; }
 #table-callback.shows-canvit .marks { opacity: 0; }
+
+/* Pretraining CanViT: the two problems, then their answers (shows-answers). */
+#pretraining-problems .problems { display: grid; grid-template-columns: 500px 90px 520px; row-gap: 46px; align-items: center;
+                                  justify-content: center; margin-top: 110px; }
+#pretraining-problems .problem { margin: 0; font-size: 30px; font-weight: 750; color: var(--ink); text-align: right; }
+#pretraining-problems .answer { margin: 0; padding: 18px 26px; border-radius: 16px; background: var(--soft); font-size: 30px;
+                                font-weight: 800; color: var(--ink); opacity: 0; transition: opacity .6s ease; }
+#pretraining-problems .answer small { display: block; margin-top: 4px; font-size: 20px; font-weight: 600; color: var(--muted); }
+#pretraining-problems .to { height: 3px; margin: 0 18px; background: var(--muted); position: relative; opacity: 0; transition: opacity .6s ease; }
+#pretraining-problems .to::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent;
+                                   border-left: 10px solid var(--muted); border-right: 0; }
+#pretraining-problems.shows-answers :is(.answer, .to) { opacity: 1; }
+
+/* Dense latent distillation: the teacher's row, the student's row (shows-student), the match (shows-match). */
+#dense-latent-distillation .pipes { position: relative; display: grid; grid-template-columns: 220px 60px 200px 60px 220px;
+                                    grid-template-rows: auto auto auto; row-gap: 8px; align-items: center; justify-content: center;
+                                    margin-top: 20px; }
+#dense-latent-distillation figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
+#dense-latent-distillation figure img { width: 200px; height: 200px; border-radius: 8px; }
+#dense-latent-distillation .glimpse img { width: 140px; height: 140px; box-shadow: 0 0 0 3px var(--glimpse); }
+#dense-latent-distillation .glimpse figcaption { color: var(--glimpse); }
+#dense-latent-distillation figcaption { margin-top: 8px; font-size: 20px; font-weight: 750; text-align: center; }
+#dense-latent-distillation figcaption small { display: block; font-size: 16px; font-weight: 600; color: var(--muted); }
+#dense-latent-distillation .model { margin: 0; justify-self: center; }
+#dense-latent-distillation .teacher { padding: 16px 20px; border-radius: 14px; background: #94a3b8; color: #fff; font-size: 26px;
+                                      font-weight: 800; text-align: center; }
+#dense-latent-distillation .teacher small { display: block; font-size: 16px; font-weight: 600; }
+#dense-latent-distillation .student { width: 170px; }
+#dense-latent-distillation .to { height: 3px; margin: 0 8px; background: var(--muted); position: relative; }
+#dense-latent-distillation .to::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent;
+                                        border-left: 10px solid var(--muted); border-right: 0; }
+#dense-latent-distillation :is(.glimpse, .student, .student-to, .prediction) { opacity: 0; transition: opacity .6s ease; }
+#dense-latent-distillation.shows-student :is(.glimpse, .student, .student-to, .prediction) { opacity: 1; }
+#dense-latent-distillation .match { grid-column: 5; grid-row: 2; justify-self: center; display: flex; align-items: center; gap: 10px;
+                                    margin: 0; font-size: 20px; font-weight: 750; color: var(--ink); opacity: 0; transition: opacity .6s ease; }
+#dense-latent-distillation .match .link { width: 3px; height: 34px; background: var(--ink); border-radius: 2px; }
+#dense-latent-distillation.shows-match .match { opacity: 1; }
+#dense-latent-distillation :is(.glimpse, .student, .student-to, .prediction) { grid-row: 3; }

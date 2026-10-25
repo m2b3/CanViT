@@ -298,7 +298,12 @@ authors to confirm.
     cells and their scene positions, the canvas's 32 x 32 cells, a smaller glimpse whose cells pack together), and a
     click on `#architecture` ringing the recurrent CLS token where it leaves one glimpse and enters the next.
   - The pretraining: why not pretrain the observer with its own policy is not argued on screen; the notes of
-    `#pretraining-policies` carry one sentence of it.
+    `#how-to-see-first` carry it (AI draft). Built 2026-10-25 for review, after Yohaï's structure:
+    `#pretraining-problems` (where to look during pretraining, what to learn from; the two answers on a click), then
+    answer 1 (`#how-to-see-first`, `#pretraining-policies`), answer 2 (`#dense-latent-distillation`: the teacher's
+    target for every patch, the student's prediction from a glimpse, matched), then the two together (`#distillation`,
+    retitled "Policy-agnostic dense latent distillation"). Where "Before knowing where to look..." belongs is still
+    open.
   - The results (Y, 2026-10-25): Table 1's numbers side by side, as bars on a dedicated slide, could be interesting;
     each concept needs a clear home without messy repetition, and covering the same results from different angles is
     fine when the talk says so. Since 2026-10-25 the ImageNet-1k panel of "Accuracy by viewing policy" shows the

@@ -332,8 +332,8 @@ sloppy: the demo came before the architecture and pretraining were understood, s
 concepts were smuggled in. Principles: every move of the argument is marked, by a short signposting slide where
 needed (a few words, 5 to 10 seconds); nothing the argument relies on is smuggled; each result appears once; the
 demo comes last, when everything in it has been explained. Kinds: **S** a signposting slide, **C** a content slide.
-Built on 2026-10-25 in this order (slide ids: `#passive-models`, `#how-to-see-first`, `#contributions` with a
-click that highlights the architecture, `#glimpses-do-not-line-up`, `#contributions-pretraining`,
+Built on 2026-10-25 in this order (slide ids: `#passive-models`, `#how-to-see-first`, `#outline-architecture` with a
+click that highlights the architecture, `#glimpses-do-not-line-up`, `#outline-pretraining`,
 `#how-to-see-apart-from-where-to-look`, `#classification-and-segmentation`); the optional signposts 19 and 27 were
 not built, their points said on `#architecture` and in the results' notes; `#gap-canvit` was removed, its numbers
 said on `#cost`. Status words below are those of the proposal. Durations are guesses (Part I about 8 minutes, Part II

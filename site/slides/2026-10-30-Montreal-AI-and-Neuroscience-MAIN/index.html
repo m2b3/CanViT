@@ -101,7 +101,7 @@
   <span class="fragment step-marker" data-shows="decode"></span>
   <span class="fragment step-marker" data-shows="scaling"></span>
   <aside class="notes"><ul>
-    <li>[Main point (to confirm with Yohaï): You give DINOv3 an image, and it outputs a high-dimensional vector for every patch, which you can see with the PCA visualizations that both we and the DINOv3 authors adopt. Each PCA visualization here shows a different view of the same output: three principal components at a time, each a direction that mixes all 768 dimensions; none of them alone is the representation. And these features are directly spatial and semantic: pass them through a linear classifier and you can tell, patch by patch, where the television, the fireplace and the armchair are.]</li>
+    <li>[Main point (to confirm with Yohaï): You give DINOv3 an image, and it outputs a high-dimensional vector for every patch, which you can see with the PCA visualizations that both we and the DINOv3 authors adopt. Each PCA visualization here shows a different view of the same output. It is all these views together which captures the entire output features. And these features are directly spatial and semantic: pass them through a linear classifier and you can tell, patch by patch, where the television, the fireplace and the armchair are.]</li>
     <li>[Transition: not sure yet.]</li>
     <li>[From the AI draft, adopted by Sabrina for now; to confirm with Yohaï:]</li>
     <li>Which brings us to DINOv3, a vision foundation model, and one we'll come back to. You give it an image, and it gives you features: a high-dimensional vector for every patch, 768 numbers.</li>

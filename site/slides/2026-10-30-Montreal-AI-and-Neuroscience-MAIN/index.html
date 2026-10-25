@@ -45,6 +45,7 @@
     </div>
   </div>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:15–0:25; rehearsed 0:45 (2026-10-25, more than the notes say)]</li>
     <li>[Yohaï's text, 2026-10-25]</li>
     <li>Hi, we're super excited to be here.</li>
     <li>We're going to tell you about a new class of foundation models, which we call Active-Vision Foundation Models, or AVFMs.</li>
@@ -62,7 +63,8 @@
     <figure class="zhuang fragment"><div class="plot"><p class="axis y">Noise-corrected IT predictivity</p><img src="assets/figures/zhuang-2021-fig2b-it.png" alt="Noise-corrected IT predictivity of networks trained without labels against a supervised network: several contrastive models, among them SimCLR and Local Aggregation, are not significantly different from the supervised one"></div><figcaption><b class="regime">Unsupervised / self-supervised</b><span class="cite">Zhuang et al. 2021, <i>PNAS</i></span></figcaption></figure>
   </div>
   <aside class="notes"><ul>
-    <li>[Yohaï's text, 2026-10-25; about 50 s spoken, 1:00 to 1:15 with the figures]</li>
+    <li>[Timing: planned 0:50–1:10; rehearsed 0:50 (2026-10-25)]</li>
+    <li>[Yohaï's text, 2026-10-25]</li>
     <li>Deep artificial neural networks have a long history as models of the ventral visual stream.</li>
     <li>This was originally explored in the context of supervised learning.</li>
     <li>In 2014, a landmark study by Yamins and colleagues found that the brain predictivity of convolutional neural networks trained to classify objects tracked their performance on this task.</li>
@@ -95,6 +97,7 @@
   <p class="cite">DINOv3 ViT-B/16, Siméoni et al., <i>TMLR</i> 2026</p>
   <span class="fragment step-marker" data-shows="decode"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:50–1:10]</li>
     <li>[Main point (to confirm with Yohaï): You give DINOv3 an image, and it outputs a high-dimensional vector for every patch, which you can see with the PCA visualizations that both we and the DINOv3 authors adopt. Each PCA visualization here shows a different view of the same output. It is all these views together which captures the entire output features. And these features are directly spatial and semantic: pass them through a linear classifier and you can tell, patch by patch, where the television, the fireplace and the armchair are.]</li>
     <li>[Transition: While we care about DINOv3 because of its spatiosemantically rich and dense output features, we also care about it because of its scale.]</li>
     <li>[From the AI draft, adopted by Sabrina for now; to confirm with Yohaï:]</li>
@@ -111,6 +114,7 @@
        (assets/figures/PROVENANCE.md). -->
   <figure class="scaling"><p class="takeaway">Late alignment with higher-order cortical areas</p><img src="assets/figures/raugel-2025-fig5e-half-time-vs-distance.png" alt="For 15 cortical regions, the training steps DINOv3 needs to reach half its final encoding score, against the region's distance from V1: early visual areas are matched first, frontal areas only after about twice as much training"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (Fig. 5E of arXiv:2508.18226v1)</figcaption></figure>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:50–1:10]</li>
     <li>[Main point: Show the need for vision foundation models. Raugel and colleagues show here that modelling high brain regions requires more training.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Why care about scale? Raugel and colleagues followed DINOv3 through its training, 1.7 billion images curated from public Instagram posts. Each dot is a brain region; up is how much training the model needs to predict that region half as well as it eventually will. Early visual cortex comes first; regions further from V1, all the way to frontal cortex, need about twice as much. So if you want to model the higher regions, you need that much training. And only a company like Meta could make this plot: you need every checkpoint of the training run.</li>
@@ -120,6 +124,7 @@
 <section id="passive-models" class="signpost" data-status="draft">
   <p class="statement">What's missing?</p>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:05–0:15]</li>
     <li>[Main point: We have deep models of vision and foundation models of vision, but what's still missing?]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>These models let us study vision with naturalistic images. But they're still missing something.</li>
@@ -133,6 +138,7 @@
   <div class="foveation"><foveated-scene data-play src="../../data/street-riid/scene.png" alt="A street, sharp only around the point being looked at" fovea="0.1" fixations="0.08 0.57, 0.36 0.63, 0.12 0.41, 0.39 0.19, 0.8 0.62, 0.93 0.66, 0.38 0.49"></foveated-scene></div>
   </div>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:20–0:35]</li>
     <li>[Main point: You and I don't just see the world, we look. We move our eyes towards regions of interest and understand the world through this active sensing.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>We don't take in the world in one uniform-resolution view. We move our eyes, about three times a second, to bring our high-acuity fovea to what we want to see. (This street is an illustration; the fixations are chosen by hand.)</li>
@@ -153,6 +159,7 @@
   <span class="fragment step-marker" data-shows="rest"></span>
   <span class="fragment step-marker" data-shows="neuro"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:45–1:00]</li>
     <li>[Main point: Drawing inspiration from this process, there have been a few deep active computer vision models, tracing back to the Recurrent Attention Model by Mnih et al. in 2014. And more recently, active-vision models have emerged for NeuroAI purposes.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Drawing inspiration from this process, there have been a few deep active computer vision models, tracing back to RAM in 2014.</li>
@@ -179,6 +186,7 @@
   <span class="fragment step-marker" data-shows="bars"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:00–1:20]</li>
     <li>[Main point: Whether these models seek biological relevance or computational efficiency, they have struggled to match the performance and representational richness of their passive counterparts, particularly on dense prediction. To put things in perspective, [the passive models' bars appear], the few active-vision models that support dense prediction tasks like ADE20K semantic segmentation lag dramatically behind passive models.]</li>
     <li>[Transition: But why have they lagged behind?]</li>
     <li>[AI draft: not the authors' text]</li>
@@ -216,6 +224,7 @@
   <span class="fragment step-marker" data-shows="active-focus"></span>
   <span class="fragment step-marker" data-shows="passive-focus"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:50–1:10]</li>
     <li>[Main point: Breaking down the components of an active-vision model helps see why. An active vision model can be considered along three axes: making sense of what it sees at a given moment (instantaneous vision); updating a persistent, evolving understanding of the scene, which may in turn inform further processing (memory); and deciding where and at what zoom level to look next (action selection). The first two axes define an observer's ability to understand, persist, and recall visual inputs, while the last defines its input-selection strategy. They do not play comparable roles: given perfect instantaneous vision and memory, naive policies should reach the same accuracy after enough glimpses of a static scene, but no policy can make up for a poor observer. Yet, prior ACV work has often focused on policy.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>So what's actually in an active-vision model? Three things. Instantaneous vision: making sense of what you see right now. Memory: keeping a persistent, evolving understanding of the scene. And action selection: deciding where, and at what zoom, to look next.</li>
@@ -243,6 +252,7 @@
   </div>
   <span class="fragment step-marker" data-shows="tasks"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:45–1:00]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>And there's one more thing an active model has to deal with. This is Yarbus, 1967: the same painting, the same person looking at it, three minutes each time; the only thing that changes is the question they're asked.</li>
     <li>Free looking first, and the eyes go all over the place. Ask for the ages of the people, and it's all on the faces; the clothes, and the eyes go down the bodies; how long the visitor was away, and it's back and forth between his face and the family.</li>
@@ -272,6 +282,7 @@
   <span class="fragment step-marker" data-shows="row-6"></span>
   <span class="fragment step-marker" data-shows="goal"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:00–1:15]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>So let's put together what we'd want. We want a model that looks through glimpses, which passive models don't do and active models do.</li>
     <li>It needs a memory, to keep what it has seen from one glimpse to the next.</li>
@@ -311,6 +322,7 @@
     </div>
   </div>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:25]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>This is the paper: CanViT, the Canvas Vision Transformer, accepted at NeurIPS this year, with Audrey Durand and Suresh Krishna.</li>
     <li>Transition: I'll take you through how we built it, then what it does.</li>
@@ -322,6 +334,7 @@
   <div class="outline"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <span class="fragment step-marker" data-shows="architecture"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:10]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Two contributions: an architecture, and a way to pretrain it. Then experiments.</li>
     <li>Transition: the architecture first.</li>
@@ -347,6 +360,7 @@
   <span class="fragment step-marker" data-shows="vit"></span>
   <span class="fragment step-marker" data-shows="tokens"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:50]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>This is a Vision Transformer, the architecture behind most vision models today. An active model doesn't see the whole scene at once; it sees a glimpse, a crop at some position and some zoom.</li>
     <li>The glimpse goes through a Vision Transformer, here DINOv3.</li>
@@ -382,6 +396,7 @@
   <span class="fragment step-marker" data-shows="answer-near"></span>
   <span class="fragment step-marker" data-shows="gap"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:00]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Two glimpses, one at each end of this table.</li>
     <li>A Vision Transformer on each glimpse, its answer pasted back where the glimpse was taken: brightness is the probability of table.</li>
@@ -406,6 +421,7 @@
   <span class="fragment step-marker" data-shows="cls"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:15]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Here is our architecture, from the paper. On the left, the Vision Transformer, the backbone, processing the first glimpse. On the right, a new component: the canvas, a memory laid out over the whole scene.</li>
     <li>Between the backbone's blocks, the two exchange information: the glimpse reads from the canvas, then the canvas is written from the glimpse, three times each per glimpse.</li>
@@ -432,6 +448,7 @@
   <span class="fragment step-marker" data-shows="canvas"></span>
   <span class="fragment step-marker" data-shows="zoom"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:00]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>The backbone sees the glimpse as an 8 by 8 grid of patches, in the glimpse's own frame. We give each patch its position in the scene, given by the viewpoint.</li>
     <li>The canvas patches have positions in the same scene coordinates, on a fixed grid. So the backbone, which works in the glimpse's frame, and the canvas, which works in the scene's frame, share one frame of reference.</li>
@@ -455,6 +472,7 @@
   </svg>
   <span class="fragment step-marker" data-shows="payoff"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:15]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>One read and one write up close: Canvas Attention. It's cross-attention between the glimpse's tokens and the canvas's tokens.</li>
     <li>The learned projections are all on the glimpse side.</li>
@@ -467,6 +485,7 @@
 <section id="outline-pretraining" class="signpost" data-status="draft">
   <div class="outline on-pretraining"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:05]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Transition: the second contribution, pretraining.</li>
   </ul></aside>
@@ -531,6 +550,7 @@
   <span class="fragment step-marker" data-shows="third"></span>
   <span class="fragment step-marker" data-shows="last"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:30]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>How do we pretrain this architecture into a foundation model? We want a model that understands the visual world, and that works with any viewing policy.</li>
     <li>We treat this as representation learning, not as a reinforcement learning problem. Pretraining the model on a learned policy's glimpses would make it adapt to that policy; and if the policy's gradients reach the model, RL's noisy gradients can make training unstable.</li>
@@ -547,6 +567,7 @@
        then the glimpses as the model receives them (experiments/pretraining/crops.py). -->
   <div class="pretraining-grid"></div>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:40]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Random positions and zooms, smaller glimpses more likely, and a random number of glimpses. That's R-IID.</li>
     <li>For each scene, a second rollout starts with the whole scene, then goes random: F-IID.</li>
@@ -570,6 +591,7 @@
   </div>
   </div>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:30]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>13.2 million ImageNet-21k scenes, a billion glimpses, one GPU: 166 hours, plus about 8 GPU-hours to compute DINOv3's features once.</li>
     <li>DINOv3's largest model, the source of its knowledge, took 61,440 GPU-hours to pretrain. We don't repeat that; we build on it. Transition: back to the table.</li>
@@ -601,6 +623,7 @@
   </div>
   <span class="fragment step-marker" data-shows="canvit"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:25]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>The two glimpses at the ends of the table, and the middle no one saw.</li>
     <li>CanViT after both glimpses: the table continues through the middle. Transition: now, the experiments.</li>
@@ -610,6 +633,7 @@
 <section id="outline-experiments" class="signpost" data-status="draft">
   <div class="outline on-experiments"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:10]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>We read out the frozen model with a linear layer per task: ImageNet-1k classification and ADE20K segmentation. Transition: first, the viewing policies we test.</li>
   </ul></aside>
@@ -622,6 +646,7 @@
        introduced on #pretraining-policies, EG-C2F on #eg-c2f, every policy before the results (Y, 2026-10-24). -->
   <div class="stages"></div>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:30]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Coarse to fine: the whole scene, then the four quadrants, then sixteen smaller tiles. Fine to coarse: the same viewpoints, smallest first.</li>
     <li>Transition: and a policy that uses the model's own uncertainty.</li>
@@ -655,6 +680,7 @@
   <span class="fragment step-marker" data-shows="quadrants"></span>
   <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:10]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Entropy-guided coarse to fine: within each level, look first where the model is least sure. After the first glimpse, read out the canvas: every canvas patch gets a probability for each class. This patch, on the building: 99.7% building. Low entropy: sure.</li>
     <li>This one, near the cars: car, building, road, all plausible. High entropy: unsure.</li>
@@ -685,6 +711,7 @@
   <span class="fragment step-marker" data-shows="ade20k"></span>
   <span class="fragment step-marker" data-canvit-target=".ade20k canvit-policy-curves" data-canvit-show="both"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:30]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>ImageNet, frozen: every policy ends up close. The model works under all of them, including the ones it never saw during pretraining.</li>
     <li>Fine-tuned, solid: up to <span data-macro="inkFinetunedBest">84.5</span>.</li>
@@ -714,6 +741,7 @@
   <span class="fragment step-marker" data-shows="learned"></span>
   <span class="fragment step-marker" data-shows="budget"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:15]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>With the observer frozen, we trained a policy for ADE20K segmentation, with RL: at each step it picks the next glimpse, rewarded by how much that glimpse improves the segmentation. These results are unpublished.</li>
     <li>Both begin with the whole scene; after that, the learned policy beats entropy-guided coarse to fine at every glimpse, a heuristic that's already strong.</li>
@@ -741,6 +769,7 @@
   </div>
   <span class="fragment step-marker" data-shows="efficiency"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 1:00]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Prior active models, each at its best. ADE20K: <span data-macro="adeBestPriorMiou">27.6</span> at best; CanViT, frozen, <span data-macro="adeBestMiou">45.9</span>. ImageNet: 82.2 at best; CanViT <span data-macro="inkFrozenBest">81.1</span> frozen and <span data-macro="inkFinetunedBest">84.5</span> fine-tuned. Its teacher, DINOv3, reaches 47.2 and 85.0: the gap with passive vision is much narrower.</li>
     <li>And efficiency: a single low-resolution glimpse of the whole scene gives <span data-macro="adeSingleGlimpseMiou">38.5</span>, with <span data-macro="adeCheapestBeatFlopRatio">20</span> times fewer FLOPs than AME needs for its <span data-macro="adeBestPriorMiou">27.6</span>. Transition: and you can use it today.</li>
@@ -771,6 +800,7 @@
   <span class="fragment step-marker" data-shows="first" data-lines="14-17"></span>
   <span class="fragment step-marker" data-shows="second" data-lines="19-22"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:40]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>The code is open source: uv add canvit-pytorch.</li>
     <li>Load the model and a segmentation readout.</li>
@@ -791,6 +821,7 @@
   </div>
   <span class="fragment step-marker" data-shows="next"></span>
   <aside class="notes"><ul>
+    <li>[Timing: planned 0:30]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>CanViT 2, in broad strokes, with the same principles.</li>
     <li>The paper handles static scenes; the world moves.</li>

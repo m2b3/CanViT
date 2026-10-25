@@ -416,14 +416,14 @@
 
 <section id="sr-rope" data-status="draft">
   <h2>Scene-Relative Rotary Position Embeddings (SR-RoPE)</h2>
-  <!-- The glimpse of #vit-on-a-glimpse, then a smaller one on the cat's eye (set by eye to show the zoom), both
-       128 px glimpses sampled as the model samples them (experiments/vit_glimpse): its 8 x 8 patches as the backbone
+  <!-- The glimpse of #vit-on-a-glimpse, then, on "zoom", the glimpses on the way to a smaller one on the cat's eye (set
+       by eye to show the zoom), all 128 px glimpses sampled as the model samples them (experiments/vit_glimpse): its 8 x 8 patches as the backbone
        receives them, and where SR-RoPE places them in the scene; the canvas's 32 x 32 patches
        (RELEASED_CANVAS_GRID_SIZE) at fixed scene positions. Paper §4, "Scene-Relative Rotary Position Embeddings". -->
   <div class="rope-layout">
-    <figure class="glimpse"><div class="frame"><div class="crop"><img class="pixels first" alt="The glimpse on the cat's head, 128 px"><img class="pixels zoom" alt="The glimpse on the cat's eye, 128 px"></div><div class="grid patch-cells"></div><div class="dots"></div></div><figcaption>Glimpse</figcaption></figure>
+    <figure class="glimpse"><div class="frame"><div class="crop"><img class="pixels" alt="The glimpse, 128 px"></div><div class="grid patch-cells"></div><div class="dots"></div></div><figcaption>Glimpse</figcaption></figure>
     <span class="arrow"></span>
-    <figure class="scene"><div class="frame"><img alt="A ginger cat"><div class="canvas-cells patch-cells"></div><span class="box"><span class="grid patch-cells"></span><span class="tag"><span class="first"></span><span class="zoom"></span></span></span>
+    <figure class="scene"><div class="frame"><img alt="A ginger cat"><div class="canvas-cells patch-cells"></div><span class="box"><span class="grid patch-cells"></span><span class="tag"></span></span>
       <!-- The scene's coordinates, as the paper's Figure 1A draws them: x from -1 to 1 across, y from -1 to 1 down. -->
       <svg class="axes" viewBox="0 0 420 420" aria-hidden="true"><path d="M0,-16 H412 M405,-21 L414,-16 L405,-11"/><path d="M-16,0 V412 M-21,405 L-16,414 L-11,405"/><text x="0" y="-24" text-anchor="middle">−1</text><text x="420" y="-24" text-anchor="middle">1</text><text class="name" x="210" y="-24" text-anchor="middle">x</text><text x="-24" y="5" text-anchor="end">−1</text><text x="-24" y="420" text-anchor="end">1</text><text class="name" x="-24" y="215" text-anchor="end">y</text></svg><div class="dots"></div></div><figcaption>Scene</figcaption></figure>
     <p class="legend"><span class="glimpse-key">Glimpse patches</span><span class="canvas-key">Canvas patches</span></p>

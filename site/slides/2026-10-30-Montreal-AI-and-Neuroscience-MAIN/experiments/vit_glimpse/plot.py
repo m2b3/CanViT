@@ -3,7 +3,8 @@
 pixels show), tokens.png (the "vit" glimpse's patch tokens projected on their first three principal components as
 colors, each clipped to its 2nd and 98th percentiles, nearest neighbor; tokens-<first>.png for each triplet of
 components the slide cycles through, 1-3, 4-6, ..., tokens.png being the first) and meta.json (each glimpse's box as
-fractions of the scene, the token grid, the model, the views cycled through)."""
+fractions of the scene, the token grid, the model, the views cycled through), and path/<k>.png with meta.json's "path":
+the glimpses between the two, each with its box, which the SR-RoPE slide plays."""
 
 import json
 from dataclasses import dataclass
@@ -40,6 +41,11 @@ def main(cfg: Config) -> None:
         Image.fromarray(glimpse).resize((SHOWN_PX, SHOWN_PX), Image.Resampling.NEAREST).save(cfg.out / f"glimpse-{name}.png")
         row, col, scale = (float(v) for v in data[f"viewpoint_{name}"])
         boxes[name] = {"top": (row - scale + 1) / 2, "left": (col - scale + 1) / 2, "size": scale}
+    (cfg.out / "path").mkdir(exist_ok=True)
+    path = []
+    for k, (glimpse, (row, col, scale)) in enumerate(zip(data["path_glimpses"], data["path_viewpoints"].astype(float))):
+        Image.fromarray(glimpse).resize((SHOWN_PX, SHOWN_PX), Image.Resampling.NEAREST).save(cfg.out / "path" / f"{k}.png")
+        path.append({"top": (row - scale + 1) / 2, "left": (col - scale + 1) / 2, "size": scale, "image": f"path/{k}.png"})
     cycle = pca_cycle(tokens, CYCLE)
     for k, (triplet, rgb) in enumerate(cycle):
         image = Image.fromarray((rgb.reshape(grid, grid, 3) * 255).astype(np.uint8)).resize((SHOWN_PX, SHOWN_PX), Image.Resampling.NEAREST)
@@ -48,7 +54,7 @@ def main(cfg: Config) -> None:
             image.save(cfg.out / "tokens.png")
     (cfg.out / "meta.json").write_text(json.dumps({
         "scene": "canvit-pytorch/test_data/Cat03.jpg (Fir0002/Flagstaffotos, CC BY-NC 3.0)",
-        "boxes": boxes, "glimpse_px": int(data["glimpse_vit"].shape[0]), "token_grid": grid, "model": str(data["model"]),
+        "boxes": boxes, "path": path, "glimpse_px": int(data["glimpse_vit"].shape[0]), "token_grid": grid, "model": str(data["model"]),
         "clip_percentiles": list(CLIP_PERCENTILES), "feature_dim": int(tokens.shape[1]),
         "pca_cycle": [{"components": list(t), "image": f"tokens-{t[0]}.png"} for t, _ in cycle]}, indent=1))
 

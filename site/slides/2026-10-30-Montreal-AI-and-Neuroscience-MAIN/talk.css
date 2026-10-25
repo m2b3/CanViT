@@ -825,8 +825,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 /* SR-RoPE: the glimpse's 8 x 8 patches in its own frame (left) and at their scene positions (right), each patch a cell
    with a dot at its center, the position RoPE uses; the canvas's 32 x 32 patches on their fixed grid. The cells and
    dots glide when the glimpse changes to the smaller one (shows-zoom); dots scale with the cells. */
-#sr-rope { --top: var(--first-top); --left: var(--first-left); --size: var(--first-size); }
-#sr-rope.shows-zoom { --top: var(--zoom-top); --left: var(--zoom-left); --size: var(--zoom-size); }
 #sr-rope .rope-layout { display: grid; grid-template-columns: 300px 70px 420px; grid-template-rows: auto auto;
                         justify-content: center; align-items: center; column-gap: 40px; margin-top: 56px; }
 #sr-rope figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
@@ -837,9 +835,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .scene .frame { --cell: calc(420px * var(--size) / var(--grid)); width: 420px; height: 420px; }
 #sr-rope .scene img { display: block; width: 100%; height: 100%; border-radius: 8px; }
 #sr-rope .crop { position: absolute; inset: 0; border-radius: 6px; box-shadow: 0 0 0 3px var(--glimpse); overflow: hidden; }
-#sr-rope .crop img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .9s ease; }
-#sr-rope .crop .zoom, #sr-rope.shows-zoom .crop .first { opacity: 0; }
-#sr-rope.shows-zoom .crop .zoom { opacity: 1; }
+#sr-rope .crop img { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* A grid of n x n cells over an element: a line at the left and top of each cell; the element's border closes it. */
 #sr-rope .patch-cells { background: linear-gradient(to right, var(--line) 1.5px, transparent 1.5px) 0 0 / calc(100% / var(--n)) 100%,
                                     linear-gradient(to bottom, var(--line) 1.5px, transparent 1.5px) 0 0 / 100% calc(100% / var(--n)); }
@@ -847,11 +843,11 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .dots { position: absolute; inset: 0; pointer-events: none; }
 #sr-rope .dots span { --dot: min(9px, calc(var(--cell) * .34)); position: absolute; width: var(--dot); height: var(--dot);
                       margin: calc(var(--dot) / -2) 0 0 calc(var(--dot) / -2); border-radius: 50%; background: var(--glimpse);
-                      box-shadow: 0 0 0 1.5px #fff; transition: left .9s ease, top .9s ease, width .9s ease, height .9s ease, margin .9s ease; }
+                      box-shadow: 0 0 0 1.5px #fff; }
 #sr-rope .glimpse .dots span { left: calc(100% * (var(--col) + .5) / var(--grid)); top: calc(100% * (var(--row) + .5) / var(--grid)); }
 #sr-rope .scene .dots span { left: calc(100% * (var(--left) + var(--size) * (var(--col) + .5) / var(--grid)));
                              top: calc(100% * (var(--top) + var(--size) * (var(--row) + .5) / var(--grid))); }
-#sr-rope .box { position: absolute; box-sizing: border-box; transition: all .9s ease;
+#sr-rope .box { position: absolute; box-sizing: border-box;
                 left: calc(100% * var(--left)); top: calc(100% * var(--top)); width: calc(100% * var(--size)); height: calc(100% * var(--size)); }
 #sr-rope .box::after { content: ""; position: absolute; inset: 0; border: 3px solid var(--glimpse); border-radius: 3px; }
 /* The canvas's 32 x 32 patches: their cells, and a dot at the center of each. */
@@ -890,10 +886,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .box .tag { position: absolute; left: 0; top: 100%; margin-top: 3px; padding: 1px 6px; border-radius: 4px;
                     background: var(--glimpse); color: #fff; font-size: 14px; font-weight: 650; white-space: nowrap;
                     font-variant-numeric: tabular-nums; }
-#sr-rope .box .tag span { transition: opacity .9s ease; }
-#sr-rope .box .tag .zoom { position: absolute; left: 6px; top: 1px; }
-#sr-rope .box .tag .zoom, #sr-rope.shows-zoom .box .tag .first { opacity: 0; }
-#sr-rope.shows-zoom .box .tag .zoom { opacity: 1; }
 #sr-rope .axes { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 #sr-rope .axes path { fill: none; stroke: var(--ink); stroke-width: 2; }
 #sr-rope .axes text { fill: var(--ink); font-size: 15px; font-weight: 600; }

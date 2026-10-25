@@ -765,9 +765,11 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #gap.shows-more .bar-chart :is(.bar, .value, .tick-group) { transform: none; opacity: 1; }
 #gap .bar-chart .row:not(.core) { opacity: 0; }
 #gap.shows-more .bar-chart .row { transform: translateY(var(--y-all)); opacity: 1; }
-#gap .bar-chart .name { font-size: 21px; }
-#gap .bar-chart .note { font-size: 14px; }
-#gap .bar-chart .value { font-size: 20px; }
+#gap .bar-chart .name { font-size: 22px; }
+#gap .bar-chart .note { font-size: 17px; }
+#gap .bar-chart .value { font-size: 26px; }
+#gap .bar-chart .tick { font-size: 24px; }
+#gap .bar-chart .axis-title { font-size: 20px; }
 
 
 

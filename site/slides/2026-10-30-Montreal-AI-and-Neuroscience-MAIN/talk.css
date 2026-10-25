@@ -305,6 +305,11 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #architecture.shows-next .arch-reveal .mask { left: 66%; }
 #architecture.shows-more .arch-reveal { transform: none; }
 #architecture.shows-more .arch-reveal .mask { left: 101%; }
+#architecture .relabel { position: absolute; inset: 0; width: 100%; height: 100%; }
+#architecture .relabel rect { fill: #fff; }
+#architecture .relabel text { text-anchor: middle; fill: var(--ink); font-family: var(--sans, Inter, sans-serif); }
+#architecture .relabel .viewpoint { font-size: 30px; font-variant-numeric: tabular-nums; }
+#architecture .relabel .glimpse-count { font-size: 42px; font-weight: 700; }
 #architecture .marks.cls { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s ease; }
 #architecture .marks.cls .ring { fill: none; stroke: var(--ink); stroke-width: 7; }
 #architecture .marks.cls .halo { fill: none; stroke: var(--bg); stroke-width: 15; }

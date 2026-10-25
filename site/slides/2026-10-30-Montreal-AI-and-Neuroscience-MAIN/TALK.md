@@ -281,6 +281,17 @@ authors to confirm.
 
 ## Open questions for the authors
 
+- Kept open until addressed or decided (Y, 2026-10-25):
+  - The architecture: the canvas has no moment of its own (it appears in the paper's figure, small on
+    `#architecture`); SR-RoPE and the recurrent CLS token are in the notes only.
+  - The pretraining: why not pretrain the observer with its own policy is not argued on screen; the notes of
+    `#pretraining-policies` carry one sentence of it.
+  - The results: peak performance against prior active models is partly there (the ADE20K panel widening to AME and
+    AdaGlimpse); the narrowing of the gap with passive models is not. Yohaï is thinking about how to present it.
+    Candidates from the paper (A): Fig. 3A (accuracy against cumulative FLOPs, CanViT's curves far above the prior
+    models' points; `#frontier` in Backup) and Fig. 4C (the Pareto frontier against DINOv3 ViT-B at input resolutions
+    up to 512 px: CanViT above it at low FLOPs, close to its 47.2 at the top). Fig. 4C compares CanViT with its own
+    teacher's architecture, which is the comparison the gap is about.
 - Prior models on "Accuracy by viewing policy" (A, 2026-10-25): the ADE20K panel has AME and AdaGlimpse as lines
   (agreed 2026-10-24), the ImageNet-1k panel none, because only the ADE20K export carries baselines (ImageNet-1k's are
   typed in the paper's Table 1). Adding them there would mislead: AdaptiveNN's 82.2 sits above CanViT's frozen 81.1,

@@ -83,6 +83,10 @@ Before any work on the talk, and again after every context reset or compaction, 
 (`../../../paper/latex/CanViT_Toward_AVFMs.tex`) in full, appendix included, and `TALK.md`. Summaries and memory
 of them are not a substitute [Yohaï, 2026-10-24].
 
+In every session, and again in every context window, view every main figure of the paper (the figures of its body,
+`../../../paper/latex/figures/exported/`: `canvit_overview.pdf`, `arch_overview.pdf`,
+`canvas_attention_combined.pdf`, `main_results.pdf`, `resolution_and_mask_size.pdf`) [Yohaï, 2026-10-25].
+
 [Yohaï, 2026-10-01] A talk is designed in `TALK.md` ("The deck as it stands") before it becomes slides: for every slide, the
 proposition it states or proves, what is on screen, the visual and how it builds, what is said, the
 sources and the status. Each entry separates what the slide must show, say or carry across (without it the story

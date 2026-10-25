@@ -393,7 +393,7 @@ about 16, 1 of slack).
    answer is not that passive models see the whole image, which feeding them a crop would disprove).
 4b. C `#human-vision`, no title · 0:20 (from Backup, Y 2026-10-25): the foveation animation on the street,
    the answer to "What's missing?".
-6. C "A brief history of deep active computer vision" · 1:00 · exists. Models since 2014; how each chose where to
+6. C "A brief history of deep active computer vision" · 1:00 · exists. Opens on RAM alone on a short axis, beside its Fig. 1A (glimpse sensor) and a Fig. 3 glimpse path; a click fades them, grows the axis and brings the later models in turn, without further clicks; then the neuro-AI models (Sabrina, 2026-10-25). Models since 2014; how each chose where to
    look (mostly RL); neuro-AI active models, each built for a task or a way of looking.
 7. C "The wide gap between passive and active computer vision" · 0:45 · exists. ADE20K segmentation, then the bars.
 8. C "What's in an active-vision model?" · 1:30 · exists. The three axes, observer and policy; "prior work often

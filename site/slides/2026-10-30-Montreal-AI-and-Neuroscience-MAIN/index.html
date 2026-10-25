@@ -142,11 +142,19 @@
 
 <section id="timeline" data-status="draft">
   <h2>A brief history of deep active computer vision</h2>
-  <!-- Drawn by timeline.js from sources/active-vision-timeline.json; each model a fragment, then how each chose where
-       to look. Evidence for every entry: sources/literature.md, "Prior active vision". -->
+  <!-- Drawn by timeline.js from sources/active-vision-timeline.json: RAM alone on a short axis beside its paper's
+       figures (Sabrina, 2026-10-25); then the axis grows and the later models arrive in turn; then the neuro-AI models.
+       Evidence for every entry: sources/literature.md, "Prior active vision"; the figures: assets/figures/PROVENANCE.md. -->
   <div class="timeline"></div>
+  <div class="ram">
+    <img class="sensor" src="assets/figures/mnih-2014-fig1a-glimpse-sensor.png" alt="RAM's glimpse sensor: patches of increasing size around a location on an MNIST digit, each resampled to the same resolution">
+    <figure class="path"><img src="assets/figures/mnih-2014-fig3-glimpse-path.png" alt="A cluttered digit with RAM's learned glimpse path in green: from a corner straight to the digit, then around it"><figcaption>Learned glimpse path</figcaption></figure>
+    <p class="cite">Mnih et al. 2014, <i>NeurIPS</i></p>
+  </div>
+  <span class="fragment step-marker" data-shows="rest"></span>
   <span class="fragment step-marker" data-shows="neuro"></span>
   <aside class="notes"><ul>
+    <li>[Main point: Drawing inspiration from this process, there have been a few deep active computer vision models, tracing back to the Recurrent Attention Model by Mnih et al. in 2014.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Drawing inspiration from this process, there have been a few deep active computer vision models, tracing back to RAM in 2014.</li>
     <li>Almost all of them learn where to look with reinforcement learning; AME is the exception.</li>

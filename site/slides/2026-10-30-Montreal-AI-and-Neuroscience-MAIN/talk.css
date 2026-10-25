@@ -749,6 +749,23 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 
 /* RAM, which the field traces back to: a larger name and a ring around its marker. */
 #timeline .pioneer .name { font-size: 40px; }
+
+/* The slide opens on RAM alone, its paper's figures on the right; on rest they fade, the axis grows to its full length
+   and the later models arrive in turn (timeline.js). */
+#timeline .grows { transform: translateX(var(--grow-dx)); transition: transform 1s ease; }
+#timeline .axis-line { transform-origin: 40px 0; transform: scaleX(var(--axis-k)); transition: transform 1s ease; }
+#timeline .axis-head { transform: translateX(var(--head-dx)); transition: transform 1s ease; }
+#timeline.shows-rest :is(.grows, .axis-line, .axis-head) { transform: none; }
+#timeline .later, #timeline .later-model { opacity: 0; transition: opacity .5s ease; }
+#timeline.shows-rest .later { opacity: 1; transition-delay: .6s; }
+#timeline.shows-rest .later-model { opacity: 1; transition-delay: calc(1s + var(--i) * .7s); }
+#timeline .ram { position: absolute; right: var(--slide-pad-x); top: 120px; width: 600px; display: flex; flex-direction: column;
+                 align-items: center; gap: 14px; transition: opacity .5s ease; }
+#timeline.shows-rest .ram { opacity: 0; }
+#timeline .ram .sensor { width: 560px; }
+#timeline .ram .path { margin: 0; display: flex; align-items: center; gap: 16px; }
+#timeline .ram .path img { width: 210px; }
+#timeline .ram .path figcaption { font-size: 22px; font-weight: 700; }
 #timeline .pioneer-ring { fill: none; stroke: var(--ink); stroke-width: 3; }
 
 /* The gap chart's rows (gap.js): the core rows bunched at first, then every row at its place in the full chart. */

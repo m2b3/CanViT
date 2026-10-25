@@ -659,6 +659,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #vit-on-a-glimpse .box { position: absolute; box-sizing: border-box; border: 3px solid var(--glimpse); border-radius: 3px; opacity: 0; transition: opacity .4s ease; }
 #vit-on-a-glimpse .glimpse img, #vit-on-a-glimpse .tokens img { width: 210px; height: 210px; border-radius: 8px; }
 #vit-on-a-glimpse .glimpse img { box-shadow: 0 0 0 3px var(--glimpse); }
+#vit-on-a-glimpse .pca-label { margin: 4px 0 0; font-size: 15px; color: var(--muted); white-space: nowrap; }
 #vit-on-a-glimpse .glimpse figcaption { color: var(--glimpse); }
 #vit-on-a-glimpse .vit { display: grid; place-items: center; width: 150px; height: 210px; border-radius: 14px;
                          background: #d8b4e2; border: 2px solid #a879b8; color: #5b2a73; font-size: 20px; font-weight: 800; text-align: center; }

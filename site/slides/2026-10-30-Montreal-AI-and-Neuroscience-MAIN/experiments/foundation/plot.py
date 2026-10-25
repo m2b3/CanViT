@@ -1,10 +1,9 @@
 """The "DINOv3 feature maps" slide's images, from export.py's and decode.py's exports, into <out>/<id>/, every map
 upsampled with nearest neighbor so its patches stay visible:
   photo.png           the scene as DINOv3 saw it
-  pca.png             patch features, LayerNormed, projected on the principal components COMPONENTS, each clipped to
-                      its CLIP percentiles: chosen among variants (variants.py) for how distinct the objects look
-  pca-<first>.png     the same for CYCLE triplets of consecutive components from COMPONENTS on (2-4, 5-7, ...), which
-                      the slide shows one after another: a few views of features with far more dimensions
+  pca-<first>.png     patch features, LayerNormed, projected on CYCLE triplets of principal components (1-3, 4-6, ...;
+                      pca_colors.pca_cycle), which the slide shows one after another: a few views of features with far
+                      more dimensions; pca.png is the first
   prob-<class>.png    the ADE20K linear probe's probability of the class per patch, inferno from 0 to 1
   maps.json           what each image is"""
 
@@ -22,14 +21,12 @@ from PIL import Image
 
 from experiments import logs
 from experiments.foundation.decode import PROBE_INPUT_PX
-from experiments.foundation.pca_colors import colors, components
+from experiments.foundation.pca_colors import CLIP_PERCENTILES, pca_cycle
 from experiments.outputs import DECK_DATA, WORK
 
 log = logging.getLogger(__name__)
 
-COMPONENTS = (1, 2, 3)  # the second to fourth principal components
-CLIP = (2.0, 98.0)
-CYCLE = 8  # triplets shown in turn on the slide, from COMPONENTS on
+CYCLE = 8  # triplets of principal components shown in turn on the slide
 
 
 @dataclass(frozen=True)
@@ -54,13 +51,11 @@ def main(cfg: Config) -> None:
     out.mkdir(parents=True, exist_ok=True)
     photo.save(out / "photo.png")
     features = data["features"].astype(np.float64)
-    triplets = [tuple(c + 3 * k for c in COMPONENTS) for k in range(CYCLE)]
-    projection = components(features, max(triplets[-1]) + 1)
-    for triplet in triplets:
-        rgb = colors(projection[:, list(triplet)], *CLIP)
+    cycle = pca_cycle(features, CYCLE)
+    for k, (triplet, rgb) in enumerate(cycle):
         image = nearest((rgb.reshape(grid_h, grid_w, 3) * 255).astype(np.uint8), photo.size)
-        image.save(out / f"pca-{triplet[0] + 1}.png")
-        if triplet == COMPONENTS:
+        image.save(out / f"pca-{triplet[0]}.png")
+        if k == 0:
             image.save(out / "pca.png")
     inferno = colormaps["inferno"]
     for name in cfg.classes:
@@ -68,9 +63,8 @@ def main(cfg: Config) -> None:
         nearest((inferno(p)[..., :3] * 255).astype(np.uint8), photo.size).save(out / f"prob-{name.replace(' ', '-')}.png")
     (out / "maps.json").write_text(json.dumps({
         "image_id": cfg.image_id, "input_px": list(photo.size), "patch_grid": [grid_h, grid_w],
-        "pca": {"components": [c + 1 for c in COMPONENTS], "clip_percentiles": list(CLIP)},
-        "feature_dim": int(features.shape[1]),
-        "pca_cycle": [{"components": [c + 1 for c in t], "image": f"pca-{t[0] + 1}.png"} for t in triplets],
+        "clip_percentiles": list(CLIP_PERCENTILES), "feature_dim": int(features.shape[1]),
+        "pca_cycle": [{"components": list(t), "image": f"pca-{t[0]}.png"} for t, _ in cycle],
         "probe": released_dinov3_ade20k_probe("dv3b", input_size_px=PROBE_INPUT_PX),
         "classes": list(cfg.classes), "colormap": "inferno, p from 0 to 1"}, indent=1))
     log.info("wrote %s: %s", out, ", ".join(sorted(p.name for p in out.iterdir())))

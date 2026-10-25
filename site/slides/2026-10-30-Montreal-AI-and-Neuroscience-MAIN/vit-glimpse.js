@@ -12,6 +12,5 @@ export async function drawVitOnGlimpse(section, src) {
   };
   find(".scene img").src = `${src}/scene.png`;
   find(".glimpse img").src = `${src}/glimpse-vit.png`;
-  find(".tokens img").src = `${src}/tokens.png`;
   Object.assign(find(".scene .box").style, { top: `${100 * top}%`, left: `${100 * left}%`, width: `${100 * size}%`, height: `${100 * size}%` });
 }

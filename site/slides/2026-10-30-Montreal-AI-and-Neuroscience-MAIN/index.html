@@ -75,8 +75,8 @@
 <section id="foundation" data-status="draft">
   <h2>DINOv3</h2>
   <!-- The living room segmented on #history. DINOv3 ViT-B/16 at 1536 x 1024 px (96 x 64 patches); the feature colors
-       are principal components 2 to 4 clipped at their 2nd and 98th percentiles, chosen among variants for how
-       distinct the objects look; the maps are the released DINOv3 ADE20K linear probe's class probabilities (trained
+       cycle through principal components 1-3, 4-6, ... (pca-cycle.js), each clipped at its 2nd and 98th percentiles,
+       as on #vit-on-a-glimpse; the maps are the released DINOv3 ADE20K linear probe's class probabilities (trained
        at 512 px; patch accuracy 0.81 on this scene). Upsampled with nearest neighbor. maps.json beside the images
        records all of it (experiments/foundation). -->
   <div class="stage">
@@ -315,7 +315,8 @@
 <section id="vit-on-a-glimpse" data-status="draft">
   <h2>Processing a glimpse with a Vision Transformer (ViT)</h2>
   <!-- vit-glimpse.js fills the images from experiments/vit_glimpse: DINOv3 ViT-B/16 on a 128 px glimpse of the cat photograph
-       used throughout the CanViT project, its tokens in their first three principal components. -->
+       used throughout the CanViT project, its tokens cycling through principal components 1-3, 4-6, ... as on #foundation
+       (pca-cycle.js). -->
   <div class="vit-flow">
     <figure class="scene"><div class="frame"><img alt="A ginger cat looking at the camera"><span class="box"></span></div><figcaption>Scene</figcaption></figure>
     <span class="arrow to-glimpse"></span>
@@ -323,7 +324,7 @@
     <span class="arrow to-vit"></span>
     <div class="vit"><span>Vision<br>Transformer</span></div>
     <span class="arrow to-tokens"></span>
-    <figure class="tokens"><img class="pixels" alt="The glimpse's patch tokens as colors"><figcaption>Patch tokens</figcaption></figure>
+    <figure class="tokens"><img class="pixels features" alt="The glimpse's patch tokens as colors"><figcaption>Patch tokens</figcaption><p class="pca-label"></p><span class="pca-player" data-play></span></figure>
   </div>
   <p class="credit">Photo: Fir0002/Flagstaffotos, CC BY-NC 3.0</p>
   <span class="fragment step-marker" data-shows="glimpse"></span>
@@ -1052,8 +1053,9 @@
   await drawIfPresent("#detail", (slide) => drawDetail(slide, "../../data/talk/looking-closer/ADE_val_00001715-television"));
   await drawPolicyStages(document.querySelector("#c2f-and-f2c .stages"), ["../../data/street-c2f", "../../data/street-f2c"]);
   await drawPretrainingGrid(document.querySelector("#pretraining-policies .pretraining-grid"), "../../data/talk/pretraining", "truck", ["random", "full_then_random"]);
-  await drawPcaCycle(document.querySelector("#foundation"), "../../data/talk/foundation/ADE_val_00001509");
+  await drawPcaCycle(document.querySelector("#foundation"), "../../data/talk/foundation/ADE_val_00001509", "maps.json");
   await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), "../../data/talk/vit-glimpse");
+  await drawPcaCycle(document.querySelector("#vit-on-a-glimpse"), "../../data/talk/vit-glimpse", "meta.json");
   await drawSrRope(document.querySelector("#sr-rope"), "../../data/talk/vit-glimpse");
   await drawIfPresent("#canvas", (slide) => drawCanvasConcept(slide, "../../data/talk/architecture/street-riid"));
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");

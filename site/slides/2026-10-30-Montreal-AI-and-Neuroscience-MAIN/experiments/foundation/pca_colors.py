@@ -18,3 +18,13 @@ def components(features: np.ndarray, count: int) -> np.ndarray:
 def colors(projection: np.ndarray, low_pct: float, high_pct: float) -> np.ndarray:
     low, high = np.percentile(projection, low_pct, axis=0), np.percentile(projection, high_pct, axis=0)
     return np.clip((projection - low) / (high - low), 0, 1)
+
+
+CLIP_PERCENTILES = (2.0, 98.0)
+
+
+def pca_cycle(features: np.ndarray, views: int) -> list[tuple[tuple[int, int, int], np.ndarray]]:
+    """The views a slide cycles through: for principal components 1-3, 4-6, ... (views triplets, numbered from 1),
+    the [N, 3] colors of each patch, each component clipped to CLIP_PERCENTILES."""
+    projection = components(features, 3 * views)
+    return [((3 * k + 1, 3 * k + 2, 3 * k + 3), colors(projection[:, 3 * k:3 * k + 3], *CLIP_PERCENTILES)) for k in range(views)]

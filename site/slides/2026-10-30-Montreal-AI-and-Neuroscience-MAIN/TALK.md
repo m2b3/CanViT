@@ -509,9 +509,6 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
   - Scale is not a reason to care about DINOv3 in itself: it is the means to the semantic representation, which
     requires it.
   - `#dinov3-and-the-brain`: too quick; say what Raugel et al. did and what the paper is about.
-- `#dinov3-and-the-brain` notes (2026-10-25): the study step is in Yohaï's words; the Fig. 5E step is an AI draft
-  awaiting his. Dropped from the draft as unchecked: that the half-time curves come from DINOv3's 1.7-billion-image
-  run, and "only a company like Meta could make this plot" (Raugel et al. trained their own models).
   - "What's missing?" and `#human-vision`: the non-uniform front end (foveation, eccentricity-dependent acuity) was
     glossed over.
   - `#timeline`: the neuro-AI active models are passed over too quickly.

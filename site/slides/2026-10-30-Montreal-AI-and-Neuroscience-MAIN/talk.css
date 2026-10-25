@@ -506,41 +506,36 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #timeline .canvit .cite { font-style: normal; font-weight: 650; fill: var(--ink); }
 #timeline .marker.ours { fill: url(#timeline-brand); }
 
-/* The model's own uncertainty: the scene with two rings, the class probabilities at each as bars, then the
-   uncertainty map, its quadrants, and the one EG-C2F visits next. */
-#eg-c2f .layout { display: grid; grid-template-columns: 400px 300px 400px; gap: 26px; justify-content: center;
-                       align-items: start; margin-top: 10px; }
-#eg-c2f figure { position: relative; margin: 0; }
-#eg-c2f canvit-scene, #eg-c2f canvit-map { display: block; width: 400px; }
-#eg-c2f .rings .halo { stroke-width: 1.4; }
-#eg-c2f .rings .ring { stroke-width: .7; }
-#eg-c2f .ring-certain, #eg-c2f .ring-uncertain { opacity: 0; transition: opacity .4s ease; }
-#eg-c2f.shows-certain .ring-certain, #eg-c2f.shows-uncertain .ring-uncertain { opacity: 1; }
-#eg-c2f .bars { opacity: 0; transition: opacity .5s ease; margin-bottom: 26px; }
-#eg-c2f.shows-certain .bars.certain, #eg-c2f.shows-uncertain .bars.uncertain { opacity: 1; }
-#eg-c2f .bars .head { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 800; margin-bottom: 6px; }
-/* The sure cell's ring is solid, the unsure one's dashed, on the scene and in each panel's heading. */
-#eg-c2f .rings .ring-uncertain .ring { stroke-dasharray: 2.2 1.6; }
-#eg-c2f .bars .glyph { width: 26px; height: 26px; flex: none; }
-#eg-c2f .bars .glyph circle { fill: none; stroke: var(--ink); stroke-width: 2.6; }
-#eg-c2f .bars .glyph.ring-uncertain circle { stroke-dasharray: 4.4 3.2; }
-#eg-c2f .bars .glyph.ring-certain, #eg-c2f .bars .glyph.ring-uncertain { opacity: 1; }
-#eg-c2f .bars .row { display: grid; grid-template-columns: 96px 150px 46px; align-items: center; gap: 8px; font-size: 17px; }
-#eg-c2f .bars .name { text-align: right; color: var(--text); }
-#eg-c2f .bars .bar { height: 16px; width: calc(var(--p) * 150px); border-radius: 3px; background: var(--ink); }
-#eg-c2f .bars .p { color: var(--muted); font-variant-numeric: tabular-nums; }
-#eg-c2f .bars .entropy { margin-top: 6px; font-size: 18px; font-weight: 700; color: var(--text); opacity: 0;
-                              transition: opacity .4s ease; }
-#eg-c2f.shows-map .bars .entropy { opacity: 1; }
-#eg-c2f .map { opacity: 0; transition: opacity .6s ease; }
-#eg-c2f.shows-map .map { opacity: 1; }
-#eg-c2f .quadrants { position: absolute; left: 0; top: 0; width: 400px; height: 400px; pointer-events: none; }
+/* EG-C2F's choice in one frame (uncertainty.js): the scene with two canvas patches outlined at their true size, each
+   linked by a leader line to its class probabilities; the scene crossfades into the entropy map (shows-map) with its
+   quadrants and their means (shows-quadrants), then back to the scene with the second glimpse (shows-next). Geometry in
+   px, shared with uncertainty.js's leader lines: the frame FRAME wide at the layout's left, the panels at PANEL_X. */
+#eg-c2f .layout { --frame: 480px; position: relative; width: 1000px; height: 530px; margin: 8px auto 0; }
+#eg-c2f .frame { position: absolute; left: 0; top: 0; width: var(--frame); }
+#eg-c2f .frame canvit-scene, #eg-c2f .frame canvit-map { display: block; width: var(--frame); }
+#eg-c2f .frame .map { position: absolute; left: 0; top: 0; width: var(--frame); opacity: 0; transition: opacity .7s ease; }
+#eg-c2f.shows-map:not(.shows-next) .frame .map { opacity: 1; }
+#eg-c2f .frame :is(.patches, .quadrants) { position: absolute; left: 0; top: 0; width: var(--frame); height: var(--frame); pointer-events: none; }
+#eg-c2f .patches rect { fill: none; vector-effect: non-scaling-stroke; opacity: 0; transition: opacity .4s ease; }
+#eg-c2f .patches .halo { stroke: #fff; stroke-width: 6; }
+#eg-c2f .patches .outline { stroke: var(--ink); stroke-width: 2.5; }
+#eg-c2f .patch { position: absolute; left: 590px; width: 410px; opacity: 0; transition: opacity .5s ease; }
+#eg-c2f .patch.certain { top: 10px; }
+#eg-c2f .patch.uncertain { top: 270px; }
+#eg-c2f.shows-certain :is(.patch.certain, .certain-mark), #eg-c2f.shows-uncertain :is(.patch.uncertain, .uncertain-mark) { opacity: 1; }
+#eg-c2f .patch .head { margin: 0 0 8px; font-size: 20px; font-weight: 700; color: var(--muted); }
+#eg-c2f .patch .row { display: grid; grid-template-columns: 110px 190px 60px; align-items: center; gap: 10px; font-size: 19px; }
+#eg-c2f .patch .name { text-align: right; color: var(--text); }
+#eg-c2f .patch .bar { height: 18px; width: calc(var(--p) * 190px); border-radius: 3px; background: var(--ink); }
+#eg-c2f .patch .p { color: var(--muted); font-variant-numeric: tabular-nums; }
+#eg-c2f .patch .entropy { margin: 10px 0 0; font-size: 22px; font-weight: 800; color: var(--ink); }
+#eg-c2f .leaders { position: absolute; left: 0; top: 0; width: 1000px; height: 500px; overflow: visible; pointer-events: none; }
+#eg-c2f .leaders path { fill: none; stroke: var(--ink); stroke-width: 2; opacity: 0; transition: opacity .4s ease; }
 #eg-c2f .quadrants span { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
-                               border: 2px dashed rgba(255, 255, 255, .85); color: #fff; font-size: 26px; font-weight: 800;
-                               text-shadow: 0 0 4px #000; opacity: 0; transition: opacity .4s ease, border .4s ease; }
+                          border: 2px dashed rgba(255, 255, 255, .85); color: #fff; font-size: 26px; font-weight: 800;
+                          text-shadow: 0 0 4px #000; opacity: 0; transition: opacity .4s ease; }
 #eg-c2f .quadrants small { margin-left: 6px; font-size: 18px; font-weight: 650; }
-#eg-c2f.shows-quadrants .quadrants span { opacity: 1; }
-#eg-c2f.shows-next .quadrants span.next { border: 5px solid var(--canvit-glimpse); }
+#eg-c2f.shows-quadrants:not(.shows-next) .quadrants span { opacity: 1; }
 
 
 /* The divider before the Backup slides. */

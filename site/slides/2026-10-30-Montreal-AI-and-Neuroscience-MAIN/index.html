@@ -575,19 +575,24 @@
 
 <section id="eg-c2f" data-status="draft">
   <h2>Entropy-Guided Coarse-to-Fine (EG-C2F)</h2>
-  <!-- How EG-C2F chooses, on the street of #c2f-and-f2c after its first glimpse (the full scene). The street-egc2f
-       bundle draws the scene, the boxes and the uncertainty map; uncertainty.js draws the rings, the bars and the
-       quadrants from experiments/metacognition/export.py's data, a replay of that rollout checked against the bundle's
-       viewpoints. -->
+  <!-- How EG-C2F chooses its second glimpse, on the street of #c2f-and-f2c after the first (the full scene), in one
+       frame: two canvas patches, outlined at their true size (1/64 of the side), each linked to the class probabilities
+       read out there and their entropy; then the scene crossfades into the entropy of every patch, its quadrants and
+       their mean entropy; then back to the scene, with the second glimpse on the highest quadrant. The street-egc2f
+       bundle draws the scene, the glimpses and the map; uncertainty.js draws the patches, the probabilities, the leader
+       lines and the quadrants from experiments/metacognition/export.py's data, a replay of that rollout checked against
+       the bundle's viewpoints. -->
   <div class="layout">
-    <!-- The scene moves on to the next glimpse; the map stays at the first, whose uncertainty chose it. -->
-    <canvit-rollout class="next-glimpse" src="../../data/street-egc2f" t="0">
-      <figure class="scene"><canvit-scene trail="past"></canvit-scene><svg class="marks rings" viewBox="0 0 100 100"></svg></figure>
-    </canvit-rollout>
-    <div class="all-bars"><div class="bars certain"></div><div class="bars uncertain"></div></div>
-    <canvit-rollout src="../../data/street-egc2f" t="0">
-      <figure class="map"><canvit-map layer="entropy" domain="frame"></canvit-map><div class="quadrants"></div><canvit-legend layer="entropy" domain="frame"></canvit-legend></figure>
-    </canvit-rollout>
+    <div class="frame">
+      <!-- The scene moves on to the next glimpse; the map stays at the first, whose entropy chose it. -->
+      <canvit-rollout class="next-glimpse" src="../../data/street-egc2f" t="0"><canvit-scene class="scene" trail="past"></canvit-scene></canvit-rollout>
+      <canvit-rollout class="map" src="../../data/street-egc2f" t="0"><canvit-map layer="entropy" domain="frame"></canvit-map><canvit-legend layer="entropy" domain="frame"></canvit-legend></canvit-rollout>
+      <div class="quadrants"></div>
+      <svg class="patches" viewBox="0 0 64 64"></svg>
+    </div>
+    <div class="patch certain"></div>
+    <div class="patch uncertain"></div>
+    <svg class="leaders"></svg>
   </div>
   <span class="fragment step-marker" data-shows="certain"></span>
   <span class="fragment step-marker" data-shows="uncertain"></span>
@@ -596,9 +601,9 @@
   <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>EG-C2F is coarse to fine, but within each level it looks first where the model is least sure. After the first glimpse, read out the canvas: every cell has a distribution over 150 classes. A cell on the building: 99.7% building.</li>
-    <li>A cell near the cars: car 27%, building 27%, road 12%. That cell's entropy is 3.2 bits.</li>
-    <li>Map the entropy everywhere.</li>
+    <li>EG-C2F is coarse to fine, but within each level it looks first where the model is least sure. After the first glimpse, the whole scene, read out the canvas: every canvas patch gets a probability for each of the 150 classes. This patch, on the building: 99.7% building. Its entropy, how spread out those probabilities are, is 0.04 bits: sure.</li>
+    <li>This one, near the cars: car 27%, building 27%, road 12%. Entropy 3.2 bits: unsure.</li>
+    <li>Now the entropy of every patch.</li>
     <li>Average it per quadrant.</li>
     <li>And look next where it's highest. That's the whole rule, no learning. And the uncertainty means something: over ADE20K validation, the surest tenth of cells are 99% right, the least sure 37%. And people do something like this: Renninger and colleagues showed in 2007 that eye movements reduce local uncertainty.</li>
   </ul></aside>

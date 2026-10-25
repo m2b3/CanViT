@@ -237,10 +237,16 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #active-vision-model .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
 #active-vision-model .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
 #active-vision-model .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
+/* After the claim, what each line of work focused on: prior active vision on the policy, passive vision foundation models
+   on instantaneous vision, the observer's first column. */
 #active-vision-model .focus { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap;
-                              padding: 4px 14px; border-radius: 999px; background: var(--policy); color: #fff; font-size: 18px; font-weight: 700; }
+                              padding: 4px 14px; border-radius: 999px; color: #fff; font-size: 18px; font-weight: 700;
+                              opacity: 0; transition: opacity .6s ease; }
+#active-vision-model .focus.active { background: var(--policy); }
+#active-vision-model .focus.passive { left: 16px; transform: none; background: var(--glimpse); }
+#active-vision-model.shows-focus .focus { opacity: 1; }
 /* Below the diagram, the claim, then the prior models' ablations under it. */
-#active-vision-model .bottom { display: grid; gap: 6px; margin-top: 30px; }
+#active-vision-model .bottom { display: grid; gap: 6px; margin-top: 50px; }
 #active-vision-model .bottom > * { opacity: 0; transition: opacity .6s ease; }
 #active-vision-model.shows-claim .claim, #active-vision-model.shows-ablations .ablations { opacity: 1; }
 #active-vision-model .claim { margin-top: 18px; font-size: 27px; }

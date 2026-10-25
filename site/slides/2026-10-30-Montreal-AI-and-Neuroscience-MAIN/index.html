@@ -181,6 +181,7 @@
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
     <li>[Main point: Whether these models seek biological relevance or computational efficiency, they have struggled to match the performance and representational richness of their passive counterparts, particularly on dense prediction. To put things in perspective, [the passive models' bars appear], the few active-vision models that support dense prediction tasks like ADE20K semantic segmentation lag dramatically behind passive models.]</li>
+    <li>[Transition: But why have they lagged behind?]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>How far behind are active models? Take semantic segmentation: a class for every pixel, 150 classes in ADE20K, wall and floor included. You need to know what's everywhere, including where you didn't look closely.</li>
     <li>The score is mIoU: for each class, how much the predicted and true regions overlap, averaged over classes. A frozen DINOv3 with a linear readout gets 47.2; the best prior active models, AME and AdaGlimpse, 27.6 and 25.7. And most active models can't output a segmentation at all.</li>
@@ -199,6 +200,7 @@
         <article class="job" style="--accent: var(--canvas)"><h3>Memory</h3><p>updating a persistent, evolving understanding of the scene</p></article>
       </div>
       <p class="role">Observer</p>
+      <p class="focus passive">focus of passive vision foundation models</p>
     </div>
     <div class="group policy">
       <p class="does">Choosing where to look</p>
@@ -206,7 +208,7 @@
         <article class="job" style="--accent: var(--policy)"><h3>Action selection</h3><p>deciding where and at what zoom level to look next</p></article>
       </div>
       <p class="role">Policy</p>
-      <p class="focus fragment">prior work often focused here</p>
+      <p class="focus active">focus of prior active vision work</p>
     </div>
   </div>
   <!-- The claim, then what learning where to look bought in the papers' own ablations (sources/policy-ablations.json)
@@ -216,8 +218,10 @@
     <div class="ablations"></div>
   </div>
   <span class="fragment step-marker" data-shows="claim"></span>
+  <span class="fragment step-marker" data-shows="focus"></span>
   <span class="fragment step-marker" data-shows="ablations"></span>
   <aside class="notes"><ul>
+    <li>[Main point: Breaking down the components of an active-vision model helped us identify why. An active vision model can be considered along three axes: making sense of what it sees at a given moment (instantaneous vision); updating a persistent, evolving understanding of the scene, which may in turn inform further processing (memory); and deciding where and at what zoom level to look next (action selection). The first two axes define an observer's ability to understand, persist, and recall visual inputs, while the last defines its input-selection strategy. They do not play comparable roles: given perfect instantaneous vision and memory, naive policies should reach the same accuracy after enough glimpses of a static scene, but no policy can make up for a poor observer. Yet, prior ACV work has often focused on policy.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>So what's actually in an active-vision model? Three things. Instantaneous vision: making sense of what you see right now. Memory: keeping a persistent, evolving understanding of the scene. And action selection: deciding where, and at what zoom, to look next.</li>
     <li>The first two make up what we call the observer. The third is the policy.</li>

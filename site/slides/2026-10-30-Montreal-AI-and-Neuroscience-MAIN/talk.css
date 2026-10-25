@@ -237,10 +237,11 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 :is(#active-vision-model, #active-vision-model-ablations) .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
 :is(#active-vision-model, #active-vision-model-ablations) .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
 :is(#active-vision-model, #active-vision-model-ablations) .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
-/* After the claim, what each line of work focused on: a contour around instantaneous vision (passive vision foundation
-   models) and around action selection (most prior active vision work), each in its component's color. */
+/* After the claim, what each line of work focused on, a click each: a contour around action selection (most prior active
+   vision work), then around instantaneous vision (passive vision foundation models), each in its component's color. */
 :is(#active-vision-model, #active-vision-model-ablations) .job { transition: box-shadow .6s ease; }
-:is(#active-vision-model, #active-vision-model-ablations).shows-focus .job:is(.instant, .action) { box-shadow: 0 0 0 5px var(--accent); }
+:is(#active-vision-model, #active-vision-model-ablations).shows-active-focus .job.action,
+:is(#active-vision-model, #active-vision-model-ablations).shows-passive-focus .job.instant { box-shadow: 0 0 0 5px var(--accent); }
 /* Below the diagram, the claim, then the prior models' ablations under it. */
 :is(#active-vision-model, #active-vision-model-ablations) .bottom { display: grid; gap: 6px; margin-top: 50px; }
 :is(#active-vision-model, #active-vision-model-ablations) .bottom > * { opacity: 0; transition: opacity .6s ease; }

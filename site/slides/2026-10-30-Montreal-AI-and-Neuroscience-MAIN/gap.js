@@ -25,14 +25,14 @@ export async function drawGap(container, { paper, references }) {
   const [data, refs] = await Promise.all([fetchJson(paper), fetchJson(references)]);
   const prior = (name, label) => {
     const run = bestPrior(data.baselines, name);
-    return { name: label, note: `active, ${run.num_glimpses} glimpses`, value: run.miou_pct, kind: "active", core: true };
+    return { name: label, note: `${run.num_glimpses} glimpses`, value: run.miou_pct, kind: "active", core: true };
   };
   const rows = [
     prior("AME (MAE)", "AME (MAE ViT-L)"),
     prior("AdaGlimpse", "AdaGlimpse"),
     prior("AME (SETR)", "AME (SETR ViT-L)"),
-    { name: "DINOv3 ViT-S", note: "passive, frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-S/16"), kind: "passive", core: false },
-    { name: "DINOv3 ViT-B", note: "passive, frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-B/16"), kind: "passive", core: false },
+    { name: "DINOv3 ViT-S", note: "frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-S/16"), kind: "passive", core: false },
+    { name: "DINOv3 ViT-B", note: "frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-B/16"), kind: "passive", core: false },
     ...refs.references.filter((r) => r.shown).map((r) => ({ name: r.name, note: r.note, value: r.value, kind: "passive", core: false })),
   ];
   drawBarRows(container, rows, { groups: ["active", "passive"], max: MAX, zoomMax: ZOOM_MAX, ticks: [0, 10, 20, 30, 40, 50, 60, 70],

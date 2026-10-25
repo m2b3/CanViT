@@ -154,7 +154,7 @@
   <span class="fragment step-marker" data-shows="rest"></span>
   <span class="fragment step-marker" data-shows="neuro"></span>
   <aside class="notes"><ul>
-    <li>[Main point: Drawing inspiration from this process, there have been a few deep active computer vision models, tracing back to the Recurrent Attention Model by Mnih et al. in 2014.]</li>
+    <li>[Main point: Drawing inspiration from this process, there have been a few deep active computer vision models, tracing back to the Recurrent Attention Model by Mnih et al. in 2014. And more recently, active-vision models have emerged for NeuroAI purposes.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Drawing inspiration from this process, there have been a few deep active computer vision models, tracing back to RAM in 2014.</li>
     <li>Almost all of them learn where to look with reinforcement learning; AME is the exception.</li>
@@ -180,6 +180,7 @@
   <span class="fragment step-marker" data-shows="bars"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
+    <li>[Main point: Whether these models seek biological relevance or computational efficiency, they have all struggled to match the performance and representational richness of their passive counterparts, specifically on dense prediction. To put things in perspective, [the passive models' bars appear], the few active-vision models that support dense prediction tasks like ADE20K semantic segmentation lag dramatically behind passive models.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>How far behind are active models? Take semantic segmentation: a class for every pixel, 150 classes in ADE20K, wall and floor included. You need to know what's everywhere, including where you didn't look closely.</li>
     <li>The score is mIoU: for each class, how much the predicted and true regions overlap, averaged over classes. A frozen DINOv3 with a linear readout gets 47.2; the best prior active models, AME and AdaGlimpse, 27.6 and 25.7. And most active models can't output a segmentation at all.</li>

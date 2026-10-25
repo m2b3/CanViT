@@ -1,9 +1,9 @@
 {
- "_about": "Passive ADE20K semantic segmentation results shown beside the paper's own numbers on the gap slide (#gap), each read in its source on 2026-10-25 by a Claude Code session. value: mIoU (%) on ADE20K val as the source prints it; inference: single-scale unless noted. The paper's export (assets/paper/ade20k_seg.json) supplies DINOv3 ViT-S/16 and ViT-B/16 with the paper's linear probe at 512 px, and the active models. shown: whether the gap slide draws it (a few for perspective, Y 2026-10-25); the others stay recorded.",
+ "_about": "Passive ADE20K semantic segmentation results shown beside the paper's own numbers on the gap slide (#gap), each read in its source on 2026-10-25 by a Claude Code session. value: mIoU (%) on ADE20K val as the source prints it; inference: single-scale unless noted. The paper's export (assets/paper/ade20k_seg.json) supplies DINOv3 ViT-S/16 and ViT-B/16 with the paper's linear probe at 512 px, and the active models. note: how it was evaluated, drawn after the word passive; shown: whether the gap slide draws it (a few for perspective, Y 2026-10-25); the others stay recorded.",
  "references": [
   {
    "name": "DeepLabV3 R-101",
-   "note": "passive, fine-tuned",
+   "note": "fine-tuned",
    "value": 44.08,
    "source": "mmsegmentation model zoo, configs/deeplabv3/README.md, ADE20K, R-101-D8, 512x512, 80k iterations, single-scale (not a paper; AdaGlimpse's segmentation teacher is a DeepLabV3 ResNet-101)",
    "url": "https://github.com/open-mmlab/mmsegmentation/tree/main/configs/deeplabv3",
@@ -11,7 +11,7 @@
   },
   {
    "name": "SETR-PUP ViT-L",
-   "note": "passive, fine-tuned",
+   "note": "fine-tuned",
    "value": 48.58,
    "source": "Zheng et al., CVPR 2021, Table 3 (21K pre-training, T-Large, single-scale)",
    "url": "https://arxiv.org/abs/2012.15840",
@@ -19,7 +19,7 @@
   },
   {
    "name": "SETR-MLA ViT-L",
-   "note": "passive, fine-tuned",
+   "note": "fine-tuned",
    "value": 48.64,
    "source": "Zheng et al., CVPR 2021, Table 3 (21K pre-training, T-Large, single-scale)",
    "url": "https://arxiv.org/abs/2012.15840",
@@ -27,7 +27,7 @@
   },
   {
    "name": "MAE ViT-L + UperNet",
-   "note": "passive, fine-tuned",
+   "note": "fine-tuned",
    "value": 53.6,
    "source": "He et al., CVPR 2022, Table 5 (MAE, IN1K pre-training)",
    "url": "https://arxiv.org/abs/2111.06377",
@@ -35,7 +35,7 @@
   },
   {
    "name": "DINOv3 7B + Mask2Former",
-   "note": "passive, frozen backbone",
+   "note": "frozen backbone",
    "value": 63.0,
    "source": "Siméoni et al. 2025, Table 11 (ViT-Adapter + Mask2Former, multi-scale 'TTA'; 62.6 single-scale); sources/sota-history.md",
    "url": "https://arxiv.org/abs/2508.10104",

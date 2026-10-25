@@ -595,6 +595,7 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 .bar-chart .value { font-size: 26px; font-weight: 800; fill: var(--ink); }
 .bar-chart .passive .bar { fill: var(--ink); }
 .bar-chart .active .bar { fill: #d97706; }
+.bar-chart .active .note .kind { fill: #d97706; font-weight: 700; }
 .bar-chart .canvit .bar { fill: var(--canvas); }
 
 /* Yes/no comparison: the families of models against what an active-vision foundation model needs. */

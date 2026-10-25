@@ -505,6 +505,7 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
   - 2026-10-25: `#dinov3-and-the-brain` 35 s.
   - 2026-10-25: "What's missing?" (`#passive-models`) 10 s.
   - 2026-10-25: `#human-vision` 15 s.
+  - 2026-10-25: `#timeline` 35 s.
 - Yohaï's feedback on Sabrina's run-through of Part I (2026-10-25), not yet applied (to be worked through with her):
   - Title: the contrast with passive computer vision models is said too loosely.
   - `#tradition`: "a new class of models" is questionable (new?); spell out IT; say where the better categorization

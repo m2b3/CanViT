@@ -768,12 +768,12 @@
     <figure class="table1"><table class="sota">
       <thead><tr><th>Model</th><th>ADE20K mIoU (%)</th><th>ImageNet-1k top-1 (%)</th></tr></thead>
       <tbody>
-        <tr><td>Saccader</td><td class="none">—</td><td>75.0</td></tr>
-        <tr><td>AME (MAE)</td><td>24.4</td><td class="none">—</td></tr>
-        <tr><td>AME (SETR)</td><td>27.6</td><td class="none">—</td></tr>
+        <tr><td>Saccader</td><td>—</td><td>75.0</td></tr>
+        <tr><td>AME (MAE)</td><td>24.4</td><td>—</td></tr>
+        <tr><td>AME (SETR)</td><td>27.6</td><td>—</td></tr>
         <tr><td>AdaGlimpse</td><td>25.7</td><td>77.5</td></tr>
-        <tr><td>AdaptiveNN</td><td class="none">—</td><td>82.2</td></tr>
-        <tr class="ours"><td><span class="brand">CanViT</span>-B</td><td><b><span data-macro="adeBestMiou">45.9</span></b><sup>†</sup></td><td><span data-macro="inkFrozenBest">81.1</span><sup>†</sup> / <b><span data-macro="inkFinetunedBest">84.5</span></b></td></tr>
+        <tr><td>AdaptiveNN</td><td>—</td><td>82.2</td></tr>
+        <tr class="ours"><td>CanViT-B</td><td><span data-macro="adeBestMiou">45.9</span><sup>†</sup></td><td><span data-macro="inkFrozenBest">81.1</span><sup>†</sup> / <span data-macro="inkFinetunedBest">84.5</span></td></tr>
       </tbody>
     </table><figcaption><sup>†</sup> frozen weights, linear probe</figcaption></figure>
     <figure class="efficiency"><figcaption>ADE20K segmentation against inference compute</figcaption><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="prior egc2f-32 egc2f-64 f2c-32 f2c-64" height="470"></canvit-frontier></figure>

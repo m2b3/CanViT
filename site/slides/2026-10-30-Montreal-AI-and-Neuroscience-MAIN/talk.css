@@ -884,18 +884,16 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #state-of-the-art figure { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity .6s ease; }
 #state-of-the-art:not(.shows-efficiency) .table1, #state-of-the-art.shows-efficiency .efficiency { opacity: 1; }
 #state-of-the-art figcaption { font-size: 26px; font-weight: 750; text-align: center; margin-bottom: 6px; }
-/* The paper's Table 1, clean: CanViT-B's row emphasized, best values bold. */
+/* The paper's Table 1, plain: ink text, rules at the top, under the header and at the bottom, CanViT-B's row bold. */
 #state-of-the-art .table1 { display: flex; flex-direction: column; align-items: center; }
-#state-of-the-art table.sota { border-collapse: collapse; margin-top: 30px; font-size: 28px; }
-#state-of-the-art .sota th { padding: 10px 34px; font-size: 22px; font-weight: 650; color: var(--muted); border-bottom: 2px solid var(--ink); }
-#state-of-the-art .sota td { padding: 12px 34px; text-align: center; color: var(--text); border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
-#state-of-the-art .sota td:first-child { font-variant-numeric: normal; }
-#state-of-the-art .sota :is(th, td):first-child { text-align: left; }
-#state-of-the-art .sota .none { color: var(--muted); }
-#state-of-the-art .sota .ours td { border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); font-weight: 650; color: var(--ink); }
-#state-of-the-art .sota b { font-weight: 800; }
+#state-of-the-art table.sota { border-collapse: collapse; margin-top: 30px; font-size: 28px; color: var(--ink);
+                               border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+#state-of-the-art .sota th { padding: 10px 34px; font-size: 24px; font-weight: 700; border-bottom: 1px solid var(--ink); }
+#state-of-the-art .sota td { padding: 10px 34px; text-align: center; font-variant-numeric: tabular-nums; }
+#state-of-the-art .sota :is(th, td):first-child { text-align: left; font-variant-numeric: normal; }
+#state-of-the-art .sota .ours td { font-weight: 700; border-top: 1px solid var(--ink); }
 #state-of-the-art .sota sup { font-size: .55em; vertical-align: .7em; line-height: 0; margin-left: 2px; }
-#state-of-the-art .table1 figcaption { margin-top: 14px; font-size: 18px; font-weight: 500; color: var(--muted); }
+#state-of-the-art .table1 figcaption { margin-top: 14px; font-size: 20px; font-weight: 400; color: var(--ink); }
 #sr-rope .box .tag { position: absolute; left: 0; top: 100%; margin-top: 3px; padding: 1px 6px; border-radius: 4px;
                     background: var(--glimpse); color: #fff; font-size: 14px; font-weight: 650; white-space: nowrap;
                     font-variant-numeric: tabular-nums; }

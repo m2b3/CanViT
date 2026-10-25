@@ -106,30 +106,30 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 
 /* Each glimpse's answer is the map clipped to its box (--top, --left, --size from table.js); it appears over its glimpse
    on the photograph, one figure width and gap to the left, then flies to its place in the map. */
-#integrating-information-across-viewpoints .table-demo { --side: 420px; --gap: 44px; display: flex; justify-content: center; gap: var(--gap); }
-#integrating-information-across-viewpoints figure { position: relative; width: var(--side); }
-#integrating-information-across-viewpoints figure > img, #integrating-information-across-viewpoints .blank { display: block; width: var(--side); height: var(--side); border-radius: 10px; }
-#integrating-information-across-viewpoints .photo .over { position: absolute; inset: 0; opacity: 0; transition: opacity .4s ease; }
+:is(#integrating-information-across-viewpoints, #table-callback) .table-demo { --side: 420px; --gap: 44px; display: flex; justify-content: center; gap: var(--gap); }
+:is(#integrating-information-across-viewpoints, #table-callback) figure { position: relative; width: var(--side); }
+:is(#integrating-information-across-viewpoints, #table-callback) figure > img, :is(#integrating-information-across-viewpoints, #table-callback) .blank { display: block; width: var(--side); height: var(--side); border-radius: 10px; }
+:is(#integrating-information-across-viewpoints, #table-callback) .photo .over { position: absolute; inset: 0; opacity: 0; transition: opacity .4s ease; }
 #integrating-information-across-viewpoints.shows-glimpses .photo .over { opacity: 1; }
-#integrating-information-across-viewpoints .blank { background: #ebebf0; opacity: 0; transition: opacity .5s ease .5s; }
-#integrating-information-across-viewpoints .map > img.answer { position: absolute; left: 0; top: 0;
+:is(#integrating-information-across-viewpoints, #table-callback) .blank { background: #ebebf0; opacity: 0; transition: opacity .5s ease .5s; }
+:is(#integrating-information-across-viewpoints, #table-callback) .map > img.answer { position: absolute; left: 0; top: 0;
   clip-path: inset(calc(var(--top) * 100%) calc((1 - var(--left) - var(--size)) * 100%)
                    calc((1 - var(--top) - var(--size)) * 100%) calc(var(--left) * 100%));
   opacity: 0; transform: translateX(calc(-1 * (var(--side) + var(--gap))));
   transition: opacity .35s ease, transform 1s cubic-bezier(.45, 0, .2, 1) .55s; }
 #integrating-information-across-viewpoints.shows-answer-far .answer:nth-of-type(1), #integrating-information-across-viewpoints.shows-answer-near .answer:nth-of-type(2) { opacity: 1; transform: none; }
 #integrating-information-across-viewpoints.shows-answer-far .blank { opacity: 1; }
-#integrating-information-across-viewpoints .map .scale { opacity: 0; transition: opacity .5s ease .5s; }
+:is(#integrating-information-across-viewpoints, #table-callback) .map .scale { opacity: 0; transition: opacity .5s ease .5s; }
 #integrating-information-across-viewpoints.shows-answer-far .map .scale { opacity: 1; }
-#integrating-information-across-viewpoints .marks { height: var(--side); opacity: 0; transition: opacity .5s ease; }
+:is(#integrating-information-across-viewpoints, #table-callback) .marks { height: var(--side); opacity: 0; transition: opacity .5s ease; }
 #integrating-information-across-viewpoints.shows-gap .marks { opacity: 1; }
-#integrating-information-across-viewpoints .marks .ring { stroke: var(--ink); }
-#integrating-information-across-viewpoints .marks .halo { stroke: var(--bg); }
-#integrating-information-across-viewpoints .marks .query { fill: var(--ink); font-size: 44px; font-weight: 800; }
-#integrating-information-across-viewpoints .scale { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 17px; color: var(--muted); }
-#integrating-information-across-viewpoints .scale i { width: 160px; height: 12px; border-radius: 3px;
+:is(#integrating-information-across-viewpoints, #table-callback) .marks .ring { stroke: var(--ink); }
+:is(#integrating-information-across-viewpoints, #table-callback) .marks .halo { stroke: var(--bg); }
+:is(#integrating-information-across-viewpoints, #table-callback) .marks .query { fill: var(--ink); font-size: 44px; font-weight: 800; }
+:is(#integrating-information-across-viewpoints, #table-callback) .scale { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 17px; color: var(--muted); }
+:is(#integrating-information-across-viewpoints, #table-callback) .scale i { width: 160px; height: 12px; border-radius: 3px;
   background: linear-gradient(90deg, #000004, #420a68, #932667, #dd513a, #fca50a, #fcffa4); }
-#integrating-information-across-viewpoints .scale b { margin-left: 8px; font-weight: 650; color: var(--text); }
+:is(#integrating-information-across-viewpoints, #table-callback) .scale b { margin-left: 8px; font-weight: 650; color: var(--text); }
 
 /* DINOv3 feature maps: the photo; then the feature map beside it; then the feature map small, with arrows to the
    linear probe's probability maps. Positions per state, so the images glide between them. */
@@ -888,3 +888,12 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .viewpoint span { position: absolute; inset: 0; transition: opacity .9s ease; }
 #sr-rope .viewpoint .zoom, #sr-rope.shows-zoom .viewpoint .first { opacity: 0; }
 #sr-rope.shows-zoom .viewpoint .zoom { opacity: 1; }
+
+/* The table again, after pretraining (#table-callback): the table slide's last state, then CanViT's p(table) after
+   both glimpses fading in over the passive answers, and the question mark gone. */
+#table-callback .photo .over, #table-callback .map > img.answer, #table-callback .blank, #table-callback .map .scale,
+#table-callback .marks { opacity: 1; transform: none; }
+#table-callback .map > img.canvit { position: absolute; left: 0; top: 0; width: var(--side); height: var(--side); border-radius: 10px;
+                                    opacity: 0; transition: opacity .8s ease; }
+#table-callback.shows-canvit .map > img.canvit { opacity: 1; }
+#table-callback.shows-canvit .marks { opacity: 0; }

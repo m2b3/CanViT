@@ -500,6 +500,7 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
   - 2026-10-25, Sabrina with Yohaï: `#title` 45 s, more than the notes say; can come down if needed.
   - 2026-10-25: `#tradition` 50 s (retitled "Deep neural networks as models of vision", Y).
   - 2026-10-25: `#foundation` 45 s.
+  - 2026-10-25: `#dinov3-and-the-brain` 35 s.
 - Yohaï's feedback on Sabrina's run-through of Part I (2026-10-25), not yet applied (to be worked through with her):
   - Title: the contrast with passive computer vision models is said too loosely.
   - `#tradition`: "a new class of models" is questionable (new?); spell out IT; say where the better categorization

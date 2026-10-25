@@ -14,7 +14,8 @@
 // in the shadow part "added" so that a slide can reveal it. baselines lists prior models of src's baselines,
 // comma-separated by name ("AME (SETR), AdaGlimpse"); each one's best result is a marker at the glimpse count it was
 // measured at, named beside it, drawn when inside the axes. The chart's height is its width times
-// --canvit-chart-aspect (default 0.78); --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text
+// --canvit-chart-aspect (default 0.78). show="dashed-only" draws only the dashed set, solid and named (a slide's step
+// before both); --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text
 // sizes (14, 15 and 16 px by default).
 
 import { POLICIES } from "./policies.js";
@@ -74,7 +75,7 @@ function required(element, name) {
 }
 
 class CanvitPolicyCurves extends HTMLElement {
-  static observedAttributes = ["src", "dashed-src", "added-src", "glimpses", "task", "canvas-grid", "dashed-canvas-grid", "legend", "policies", "baselines", "y-range", "x-scale", "t"];
+  static observedAttributes = ["show", "src", "dashed-src", "added-src", "glimpses", "task", "canvas-grid", "dashed-canvas-grid", "legend", "policies", "baselines", "y-range", "x-scale", "t"];
   #curves = null;
   #baselines = [];
   #legend = null;
@@ -107,7 +108,7 @@ class CanvitPolicyCurves extends HTMLElement {
   }
 
   async attributeChangedCallback(name) {
-    if (name === "t" || name === "y-range" || name === "x-scale" || name === "glimpses") return this.#render();
+    if (["t", "y-range", "x-scale", "glimpses", "show"].includes(name)) return this.#render();
     const version = ++this.#loadVersion;
     const src = this.getAttribute("src");
     if (!src || !this.hasAttribute("task") || !this.hasAttribute("canvas-grid")) return;
@@ -156,8 +157,12 @@ class CanvitPolicyCurves extends HTMLElement {
   #render() {
     const width = Math.round(this.svg.clientWidth);
     if (!this.#curves || width === 0) return;
+    // show="dashed-only" draws the second set alone, solid and named, as a slide's first step before both.
+    const dashedOnly = this.getAttribute("show") === "dashed-only";
+    if (dashedOnly && !this.#legend) throw new Error('<canvit-policy-curves>: show="dashed-only" without dashed curves');
+    const curves = dashedOnly ? this.#curves.filter((c) => c.style === "dashed").map((c) => ({ ...c, style: "solid" })) : this.#curves;
     const [low, high] = this.#yRange;
-    const steps = Math.min(Math.max(...this.#curves.map((c) => c.per_timestep.length)), Number(this.getAttribute("glimpses") ?? Infinity));
+    const steps = Math.min(Math.max(...curves.map((c) => c.per_timestep.length)), Number(this.getAttribute("glimpses") ?? Infinity));
     const shown = Math.min(steps, this.hasAttribute("t") ? Number(this.getAttribute("t")) + 1 : steps);
     const aspect = Number(getComputedStyle(this).getPropertyValue("--canvit-chart-aspect") || 0.78);
     const height = Math.round(width * aspect);
@@ -197,7 +202,7 @@ class CanvitPolicyCurves extends HTMLElement {
     }
     const lines = el("g", { "clip-path": "url(#plot)" }, svg);
     // Dashed curves are unnamed beside the solid ones; the legend says which is which.
-    if (this.#legend) {
+    if (this.#legend && !dashedOnly) {
       const legend = el("g", { class: "legend" }, svg);
       [["solid", this.#legend[0]], ["dashed", this.#legend[1]]].forEach(([style, text], i) => {
         const ly = plot.top + 12 + 22 * i;
@@ -216,7 +221,7 @@ class CanvitPolicyCurves extends HTMLElement {
                end: Math.round(1000 * means.at(-1)), mean: means.reduce((a, b) => a + b) / means.length };
     };
     const ranked = [
-      ...this.#curves.map((curve) => rank(curve, { ...POLICIES[curve.policy], style: curve.style, group: svg })),
+      ...curves.map((curve) => rank(curve, { ...POLICIES[curve.policy], style: curve.style, group: svg })),
       ...(this.#added ? [rank(this.#added, { label: this.#added.label, color: "var(--canvit-policy, #0d9488)", style: "solid", group: addedGroup })] : []),
     ].sort((a, b) => b.end - a.end || b.mean - a.mean);
     for (const { points, color, style, group } of [...ranked].reverse()) {

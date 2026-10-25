@@ -720,15 +720,20 @@
        below [Yohaï, 2026-10-01: axis ranges chosen for the story the chart tells]. One task after the other. -->
   <div class="charts">
     <figure class="in1k"><figcaption>ImageNet-1k classification</figcaption>
-      <canvit-policy-curves src="../../assets/paper/in1k_clf_finetuned.json" dashed-src="../../assets/paper/in1k_clf_frozen.json" legend="Fine-tuned|Frozen" task="in1k" policies="random full_then_random coarse_to_fine fine_to_coarse" canvas-grid="32" y-range="74 86" x-scale="log"></canvit-policy-curves></figure>
+      <canvit-policy-curves show="dashed-only" src="../../assets/paper/in1k_clf_finetuned.json" dashed-src="../../assets/paper/in1k_clf_frozen.json" legend="Fine-tuned|Frozen" task="in1k" policies="random full_then_random coarse_to_fine fine_to_coarse" canvas-grid="32" y-range="74 86" x-scale="log"></canvit-policy-curves></figure>
     <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption>
-      <canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" policies="random full_then_random coarse_to_fine fine_to_coarse entropy_coarse_to_fine" canvas-grid="64" dashed-canvas-grid="32" legend="64² canvas|32² canvas" y-range="35 47" x-scale="log"></canvit-policy-curves></figure>
+      <canvit-policy-curves show="dashed-only" src="../../assets/paper/ade20k_seg.json" task="ade20k" policies="random full_then_random coarse_to_fine fine_to_coarse entropy_coarse_to_fine" canvas-grid="64" dashed-canvas-grid="32" legend="64² canvas|32² canvas" y-range="35 47" x-scale="log"></canvit-policy-curves></figure>
   </div>
+  <!-- Frozen first, then fine-tuned beside it; ADE20K at the 32 x 32 canvas of pretraining first, then 64 x 64. -->
+  <span class="fragment step-marker" data-canvit-target=".in1k canvit-policy-curves" data-canvit-show="both"></span>
   <span class="fragment step-marker" data-shows="ade20k"></span>
+  <span class="fragment step-marker" data-canvit-target=".ade20k canvit-policy-curves" data-canvit-show="both"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>ImageNet first. Dashed is the frozen model with a linear readout; solid is the same model fine-tuned on ImageNet. After the first glimpse, frozen C2F is at 76.8 top-1 and F2C, which starts with its smallest tile, at 32.2; by 21 glimpses they're within 1.3 points. Fine-tuned, C2F reaches <span data-macro="inkFinetunedBest">84.5</span>.</li>
-    <li>ADE20K: dashed is the 32 by 32 canvas it was pretrained with; solid, a 64 by 64 canvas it never saw in training, chosen at inference, and it does better: zero-shot generalization to a higher resolution.</li>
+    <li>ImageNet first, the frozen model with a linear readout. After the first glimpse, frozen C2F is at 76.8 top-1 and F2C, which starts with its smallest tile, at 32.2; by 21 glimpses they're within 1.3 points.</li>
+    <li>Now fine-tuned on ImageNet, solid; frozen goes dashed. Fine-tuned, C2F reaches <span data-macro="inkFinetunedBest">84.5</span>.</li>
+    <li>ADE20K, with the 32 by 32 canvas it was pretrained with.</li>
+    <li>Now a 64 by 64 canvas, which it never saw in training, chosen at inference; 32 goes dashed. It does better: zero-shot generalization to a higher resolution.</li>
     <li>At 64 by 64, C2F reaches <span data-macro="adeCTFCSixFourTTwenty">45.9</span>; the same viewpoints in the opposite order, F2C, <span data-macro="adeFTCCSixFourTTwenty">42.9</span>. Order matters. The observer works under every policy we tested, including ones it never saw. And even F2C, in a worse-than-random order, ends far above every prior active model, as we'll see: in this task, perception, not viewpoint selection, was the bottleneck.</li>
   </ul></aside>
 </section>

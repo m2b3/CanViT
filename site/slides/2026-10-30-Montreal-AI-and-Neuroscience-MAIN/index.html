@@ -409,7 +409,7 @@
     <span class="arrow"></span>
     <figure class="scene"><div class="frame"><img alt="A ginger cat"><div class="canvas-cells patch-cells"></div><span class="box"><span class="grid patch-cells"></span><span class="tag"><span class="first"></span><span class="zoom"></span></span></span>
       <!-- The scene's coordinates, as the paper's Figure 1A draws them: x from -1 to 1 across, y from -1 to 1 down. -->
-      <svg class="axes" viewBox="0 0 470 470" aria-hidden="true"><path d="M0,-24 H462 M454,-30 L464,-24 L454,-18"/><path d="M-24,0 V462 M-30,454 L-24,464 L-18,454"/><text x="0" y="-34">−1</text><text x="470" y="-34" text-anchor="end">1  x</text><text x="-34" y="10" text-anchor="end">−1</text><text x="-34" y="470" text-anchor="end">1</text><text x="-34" y="440" text-anchor="end">y</text></svg><div class="dots"></div></div><figcaption>Scene</figcaption></figure>
+      <svg class="axes" viewBox="0 0 420 420" aria-hidden="true"><path d="M0,-16 H412 M405,-21 L414,-16 L405,-11"/><path d="M-16,0 V412 M-21,405 L-16,414 L-11,405"/><text x="0" y="-24" text-anchor="middle">−1</text><text x="420" y="-24" text-anchor="middle">1</text><text class="name" x="210" y="-24" text-anchor="middle">x</text><text x="-24" y="5" text-anchor="end">−1</text><text x="-24" y="420" text-anchor="end">1</text><text class="name" x="-24" y="215" text-anchor="end">y</text></svg><div class="dots"></div></div><figcaption>Scene</figcaption></figure>
     <p class="legend"><span class="glimpse-key">Glimpse patches</span><span class="canvas-key">Canvas patches</span></p>
   </div>
   <span class="fragment step-marker" data-shows="canvas"></span>
@@ -681,12 +681,17 @@
        policy 640k glimpse forwards per run, about 80 minutes per seed on one RTX 4090
        (the authors' unpublished experiments). -->
   <div class="budget">
-    <div class="budget-row pretraining"><p class="who">Pretraining<small class="llm">no RL, as in LLM pretraining</small></p><div class="track"><span class="bar"></span></div><p class="n">1 billion glimpses</p></div>
-    <div class="budget-row policy"><p class="who">Policy<small class="llm">RL, as in LLM post-training</small></p><div class="track"><span class="bar"></span></div><p class="n">640 thousand glimpses</p></div>
+    <div class="budget-row pretraining"><p class="who">Pretraining</p><div class="track"><span class="bar"></span></div><p class="n">1 billion glimpses</p></div>
+    <div class="budget-row policy"><p class="who">Policy</p><div class="track"><span class="bar"></span></div><p class="n">640 thousand glimpses</p></div>
   </div>
   <span class="fragment step-marker" data-shows="learned"></span>
   <span class="fragment step-marker" data-shows="budget"></span>
-  <!-- The parallel with LLMs (Y, 2026-10-24 and 2026-10-25): pretraining without RL, RL after. -->
+  <!-- The parallel with LLMs, its own step after the budgets (Y, 2026-10-24 and 2026-10-25): pretraining without RL,
+       RL after, for LLMs and for CanViT. -->
+  <div class="llm-parallel">
+    <p class="who">LLMs</p><p class="phase pretrain">Pretraining<small>no RL</small></p><span class="to"></span><p class="phase rl">Post-training<small>RL</small></p>
+    <p class="who"><span class="brand">CanViT</span></p><p class="phase pretrain">Pretraining<small>no RL</small></p><span class="to"></span><p class="phase rl">Learning where to look<small>RL</small></p>
+  </div>
   <span class="fragment step-marker" data-shows="llm"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>

@@ -544,7 +544,7 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 
 /* The chart, then the budget below it: the chart shrinks and the glimpses of pretraining and of learning where to
    look appear to scale. */
-#learned-policy .learned-layout { width: 900px; margin: 18px auto 0; transition: width .7s ease; }
+#learned-policy .learned-layout { width: 900px; margin: 18px auto 0; transition: width .7s ease, opacity .5s ease; }
 #learned-policy canvit-policy-curves { --canvit-chart-aspect: .6; }
 #learned-policy canvit-policy-curves::part(added) { transition: opacity .6s ease; }
 #learned-policy:not(.shows-learned) canvit-policy-curves::part(added) { opacity: 0; }
@@ -558,9 +558,21 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #learned-policy .budget .pretraining .bar { width: 100%; background: var(--canvas); }
 #learned-policy .budget .policy .bar { width: max(4px, calc(100% * 640e3 / 1e9)); background: var(--policy); }
 #learned-policy .budget .n { margin: 4px 0 0; font-size: 19px; font-weight: 700; }
-#learned-policy .budget .who .llm { display: block; margin-top: 2px; font-size: 17px; font-weight: 600; color: var(--muted);
-                                    opacity: 0; transition: opacity .5s ease; }
-#learned-policy.shows-llm .budget .who .llm { opacity: 1; }
+/* The LLM parallel, after the budgets and in their place. */
+#learned-policy .llm-parallel { position: absolute; left: 50%; top: auto; bottom: 230px; height: auto; transform: translateX(-50%); display: grid; align-content: start;
+                                grid-template-columns: 150px 300px 60px 340px; align-items: center; row-gap: 18px;
+                                opacity: 0; transition: opacity .6s ease; }
+#learned-policy.shows-llm .llm-parallel { opacity: 1; }
+#learned-policy.shows-llm :is(.budget, .learned-layout) { opacity: 0; }
+#learned-policy .llm-parallel .who { margin: 0; font-size: 28px; font-weight: 800; text-align: right; padding-right: 22px; }
+#learned-policy .llm-parallel .phase { margin: 0; padding: 12px 18px; border-radius: 12px; font-size: 24px; font-weight: 750;
+                                       text-align: center; color: var(--ink); background: var(--soft); }
+#learned-policy .llm-parallel .phase small { display: block; font-size: 18px; font-weight: 600; color: var(--muted); }
+#learned-policy .llm-parallel .rl { box-shadow: inset 0 0 0 3px var(--policy); }
+#learned-policy .llm-parallel .rl small { color: var(--policy); }
+#learned-policy .llm-parallel .to { height: 3px; margin: 0 10px; background: var(--muted); position: relative; }
+#learned-policy .llm-parallel .to::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent;
+                                           border-left: 10px solid var(--muted); border-right: 0; }
 
 /* Next: two directions, each in its own panel. */
 
@@ -821,14 +833,14 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
    dots glide when the glimpse changes to the smaller one (shows-zoom); dots scale with the cells. */
 #sr-rope { --top: var(--first-top); --left: var(--first-left); --size: var(--first-size); }
 #sr-rope.shows-zoom { --top: var(--zoom-top); --left: var(--zoom-left); --size: var(--zoom-size); }
-#sr-rope .rope-layout { display: grid; grid-template-columns: 300px 70px 440px; grid-template-rows: auto auto;
-                        justify-content: center; align-items: center; column-gap: 28px; margin-top: 48px; }
+#sr-rope .rope-layout { display: grid; grid-template-columns: 300px 70px 420px; grid-template-rows: auto auto;
+                        justify-content: center; align-items: center; column-gap: 40px; margin-top: 56px; }
 #sr-rope figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
 #sr-rope figcaption { margin-top: 10px; font-size: 22px; font-weight: 750; }
 #sr-rope .glimpse figcaption { color: var(--glimpse); }
 #sr-rope .frame { position: relative; }
 #sr-rope .glimpse .frame { --cell: calc(300px / var(--grid)); width: 300px; height: 300px; }
-#sr-rope .scene .frame { --cell: calc(440px * var(--size) / var(--grid)); width: 440px; height: 440px; }
+#sr-rope .scene .frame { --cell: calc(420px * var(--size) / var(--grid)); width: 420px; height: 420px; }
 #sr-rope .scene img { display: block; width: 100%; height: 100%; border-radius: 8px; }
 #sr-rope .crop { position: absolute; inset: 0; border-radius: 6px; box-shadow: 0 0 0 3px var(--glimpse); overflow: hidden; }
 #sr-rope .crop img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .9s ease; }
@@ -854,7 +866,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .canvas-cells::after { content: ""; position: absolute; inset: 0;
                                 background: radial-gradient(circle, var(--canvas) 1.7px, transparent 2.3px) 0 0 / calc(100% / 32) calc(100% / 32); }
 #sr-rope.shows-canvas .canvas-cells { opacity: 1; }
-#sr-rope .arrow { height: 3px; background: var(--muted); position: relative; margin-bottom: 40px; }
+#sr-rope .arrow { height: 3px; background: var(--muted); position: relative; margin: 0 26px 40px 0; }
 #sr-rope .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }
 #sr-rope .legend { grid-column: 3; display: flex; justify-content: center; gap: 26px; margin: 8px 0 0; font-size: 17px; font-weight: 650; }
 #sr-rope .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; vertical-align: 1px; }
@@ -886,16 +898,17 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #state-of-the-art .bar-chart .note { font-size: 17px; }
 #state-of-the-art .bar-chart .value { font-size: 26px; }
 #state-of-the-art .bar-chart .tick { font-size: 20px; }
-#sr-rope .box .tag { position: absolute; left: 0; bottom: 100%; margin-bottom: 4px; padding: 2px 7px; border-radius: 4px;
-                    background: var(--glimpse); color: #fff; font-size: 15px; font-weight: 650; white-space: nowrap;
+#sr-rope .box .tag { position: absolute; left: 0; top: 100%; margin-top: 3px; padding: 1px 6px; border-radius: 4px;
+                    background: var(--glimpse); color: #fff; font-size: 14px; font-weight: 650; white-space: nowrap;
                     font-variant-numeric: tabular-nums; }
 #sr-rope .box .tag span { transition: opacity .9s ease; }
-#sr-rope .box .tag .zoom { position: absolute; left: 7px; top: 2px; }
+#sr-rope .box .tag .zoom { position: absolute; left: 6px; top: 1px; }
 #sr-rope .box .tag .zoom, #sr-rope.shows-zoom .box .tag .first { opacity: 0; }
 #sr-rope.shows-zoom .box .tag .zoom { opacity: 1; }
 #sr-rope .axes { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 #sr-rope .axes path { fill: none; stroke: var(--ink); stroke-width: 2; }
-#sr-rope .axes text { fill: var(--ink); font-size: 17px; font-weight: 600; }
+#sr-rope .axes text { fill: var(--muted); font-size: 15px; font-weight: 600; }
+#sr-rope .axes .name { fill: var(--ink); font-size: 17px; font-weight: 750; font-style: italic; }
 
 /* The table again, after pretraining (#table-callback): the table slide's last state, then CanViT's p(table) after
    both glimpses fading in over the passive answers, and the question mark gone. */

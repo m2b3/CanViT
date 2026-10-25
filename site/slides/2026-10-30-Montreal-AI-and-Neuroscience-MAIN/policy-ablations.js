@@ -4,7 +4,7 @@
 // scale of PX_PER_POINT; each value under its dot, the gain in points at the right.
 
 const NS = "http://www.w3.org/2000/svg";
-const WIDTH = 1100, ROW = 76, TOP = 30, START = 560;
+const WIDTH = 1100, ROW = 90, TOP = 30, START = 560;
 const PX_PER_POINT = 140; // accuracy points, the same for every row
 
 function el(name, attributes, parent) {

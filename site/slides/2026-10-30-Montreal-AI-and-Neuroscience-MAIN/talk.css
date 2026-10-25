@@ -621,15 +621,15 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 
 
 /* Hours: DINOv3's teacher against CanViT-B, to scale. */
-#pretraining .hours { display: grid; gap: 56px; margin-top: 150px; }
-#pretraining .hour-row { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: auto auto; column-gap: 24px; align-items: center; }
-#pretraining .who { grid-row: 1 / 3; margin: 0; font-size: 24px; font-weight: 750; text-align: right; }
-#pretraining .who small { display: block; font-size: 17px; font-weight: 500; color: var(--muted); }
-#pretraining .track { height: 40px; }
+#pretraining .hours { display: grid; gap: 80px; margin-top: 140px; }
+#pretraining .hour-row { display: grid; grid-template-columns: 340px 1fr; grid-template-rows: auto auto; column-gap: 28px; align-items: center; }
+#pretraining .who { grid-row: 1 / 3; margin: 0; font-size: 32px; font-weight: 750; text-align: right; }
+#pretraining .who small { display: block; font-size: 20px; font-weight: 500; color: var(--muted); }
+#pretraining .track { height: 56px; }
 #pretraining .bar { display: block; height: 100%; border-radius: 6px; background: var(--ink); }
 #pretraining .dinov3 .bar { width: 100%; background: #94a3b8; }
 #pretraining .canvit .bar { width: max(4px, calc(100% * 174 / 61440)); background: var(--canvas); }
-#pretraining .n { margin: 6px 0 0; font-size: 22px; font-weight: 700; }
+#pretraining .n { margin: 10px 0 0; font-size: 30px; font-weight: 700; }
 
 #adaglimpse-policies figure { margin: 30px auto 0; width: 1152px; }
 #adaglimpse-policies figure img { width: 100%; height: auto; }
@@ -746,7 +746,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
                                 box-shadow: none; position: relative; }
 .reveal section.signpost .see::after { content: ""; position: absolute; left: 0; right: 0; bottom: -.06em; height: .09em;
                                        border-radius: .05em; background: var(--brand); }
-#vit-on-a-glimpse .credit { position: absolute; left: var(--slide-pad-x); bottom: 50px; margin: 0; font-size: 15px; color: var(--muted); }
 
 /* RAM, which the field traces back to: a larger name and a ring around its marker. */
 #timeline .pioneer .name { font-size: 40px; }

@@ -957,6 +957,8 @@
   import { drawGap } from "./gap.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   import { startDeck } from "../deck.js";
+  // The published deck has no Backup slides (site/deploy.sh cuts them): a Backup slide is drawn only when present.
+  const drawIfPresent = (selector, draw) => { const slide = document.querySelector(selector); return slide && draw(slide); };
   await drawHistoryCharts();
   await drawTimeline(document.querySelector("#timeline .timeline"));
   await drawMapNames();
@@ -970,15 +972,15 @@
       return chip;
     }));
   }
-  await drawDetail(document.querySelector("#detail"), "../../data/talk/looking-closer/ADE_val_00001715-television");
+  await drawIfPresent("#detail", (slide) => drawDetail(slide, "../../data/talk/looking-closer/ADE_val_00001715-television"));
   await drawPolicyStages(document.querySelector("#c2f-and-f2c .stages"), ["../../data/street-c2f", "../../data/street-f2c"]);
   await drawPretrainingGrid(document.querySelector("#pretraining-policies .pretraining-grid"), "../../data/talk/pretraining", "truck", ["random", "full_then_random"]);
   await drawPcaCycle(document.querySelector("#foundation"), "../../data/talk/foundation/ADE_val_00001509");
   await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), "../../data/talk/vit-glimpse");
-  await drawCanvasConcept(document.querySelector("#canvas"), "../../data/talk/architecture/street-riid");
+  await drawIfPresent("#canvas", (slide) => drawCanvasConcept(slide, "../../data/talk/architecture/street-riid"));
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
-  await drawTrainingCost(document.querySelector("#cost"), "../../data/talk/training-cost.json");
+  await drawIfPresent("#cost", (slide) => drawTrainingCost(slide, "../../data/talk/training-cost.json"));
   await drawGap(document.querySelector("#gap .gap-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
   await drawLearnedPolicy(document.querySelector("#learned-policy .learned-chart"),
                           { paper: "../../assets/paper/ade20k_seg.json", learned: "sources/learned-policy.json" });

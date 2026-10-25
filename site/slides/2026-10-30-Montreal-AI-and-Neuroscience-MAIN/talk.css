@@ -651,22 +651,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #task-dependent-scanpaths.shows-free .record-1, #task-dependent-scanpaths.shows-tasks figure { opacity: 1; }
 #task-dependent-scanpaths figcaption .cite { display: block; margin-top: 2px; font-weight: 400; }
 
-/* What a glimpse teaches, areas to scale: a reward's single number against the 787,200 numbers of the teacher's
-   features; both in frames of the same size, the reward a dot under a ring so that it can be found. */
-#information-per-glimpse .information { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 20px; }
-#information-per-glimpse figure { display: flex; flex-direction: column; align-items: center; }
-#information-per-glimpse .area { position: relative; width: 400px; height: 400px; border: 1px dashed var(--rule); border-radius: 8px; }
-#information-per-glimpse .dot { position: absolute; left: 50%; top: 50%; width: calc(400px / 887.2); height: calc(400px / 887.2);
-                                background: var(--policy); transform: translate(-50%, -50%); }
-#information-per-glimpse .ring { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; border: 3px solid var(--policy);
-                                 border-radius: 50%; transform: translate(-50%, -50%); }
-/* The teacher's features in DINOv3's slate, as on #pretraining; red stays the canvas's. */
-#information-per-glimpse .block { position: absolute; inset: 0; background: #94a3b8; border-radius: 6px; }
-#information-per-glimpse .target { opacity: 0; transition: opacity .6s ease; }
-#information-per-glimpse.shows-target .target { opacity: 1; }
-#information-per-glimpse figcaption { margin-top: 14px; font-size: 24px; font-weight: 750; text-align: center; }
-#information-per-glimpse figcaption small { display: block; margin-top: 4px; font-size: 18px; font-weight: 500; color: var(--muted); }
-
 /* A Vision Transformer on a glimpse: scene, glimpse, backbone, tokens, left to right, each on its own click. */
 #vit-on-a-glimpse .vit-flow { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 70px; }
 #vit-on-a-glimpse figure { display: flex; flex-direction: column; align-items: center; }

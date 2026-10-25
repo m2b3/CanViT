@@ -737,23 +737,6 @@
   </ul></aside>
 </section>
 
-<section id="information-per-glimpse" data-status="draft">
-  <h2>Learning signal per glimpse</h2>
-  <!-- Areas to scale: a reward is a single number per glimpse (or per episode); the distillation target after a glimpse
-       is DINOv3 ViT-B's features of the whole 512 px scene, 32 x 32 patches of 768 numbers plus a 768-number CLS
-       token: 787,200 numbers. Numbers, not bits: how much information each carries is not measured. -->
-  <div class="information">
-    <figure class="reward"><div class="area"><span class="dot"></span><span class="ring"></span></div><figcaption>Learning where to look, by reinforcement<small>a reward: a single number</small></figcaption></figure>
-    <figure class="target"><div class="area"><span class="block"></span></div><figcaption>Learning how to see, from a passive model<small>its features of the whole scene: 787,200 numbers</small></figcaption></figure>
-  </div>
-  <span class="fragment step-marker" data-shows="target"></span>
-  <aside class="notes"><ul>
-    <li>And there's a question of what each kind of training teaches. Learning where to look, by reinforcement, you get a reward after a glimpse: a single number saying whether that look was good.</li>
-    <li>Knowing whether a look was good tells you very little about the world. Learning how to see is different: predicting what's there, everywhere in the scene. In our pretraining, after every glimpse, the target is a passive model's features of the whole scene: 787,200 numbers. The areas are to scale; the reward is the dot you can barely see. So RL belongs to where to look, and only once the observer can see.</li>
-    <li>It's the same split as for LLMs: pretraining without RL, and RL afterwards, as post-training. RL is the last resort, not the first.</li>
-  </ul></aside>
-</section>
-
 <section id="classification-and-segmentation" data-status="draft">
   <h2>Image classification and semantic segmentation</h2>
   <!-- The second task, introduced before its first result: an ImageNet-1k validation photo with its label, beside the

@@ -34,8 +34,8 @@ Stated 2026-10-24:
     cost is an observer specific to its policy, and so inflexible (detailed below).
   - Instability. It comes from policy gradients, that is from training with reinforcement learning: gradient
     variance, instability, possibly collapse. Reinforcement learning should be avoided whenever possible.
-  - Value. Why pay to train through the policy when learned policies are probably going to be rather basic
-    (AdaGlimpse's Fig. 8, possibly shown whole on a slide).
+  - Value. Why pay for policy-specific pretraining when learned policies are probably going to be rather basic
+    (AdaGlimpse's Fig. 8, possibly shown whole on a slide). Reconsidered 2026-10-25: may not be relevant.
 - (Y) Joint training remains possible later; a frozen observer with a policy on top is what this work did; a
   policy-agnostic observer can be an initialization for joint training ("qui peut le plus peut le moins").
 - (Y) Stability and signal are fundamental. Transferring knowledge about the world into the model is what training
@@ -84,6 +84,25 @@ Stated 2026-10-24, reviewing the deck:
   cost principle is a minor question for later.
 - (Y) Whether the model is presented with custom animations or with the paper's figures, which may be better, is open.
 
+Stated 2026-10-25 evening, reviewing the deck's structure:
+- (Y) Policy-agnostic pretraining is an important point to get across; which arguments for it belong in the talk
+  needs careful thought ("learned policies tend to be simple" may not be relevant).
+- (Y) The parallel with LLMs (pretraining without RL, post-training with RL) may get a dedicated slide, after the
+  learned-policy results.
+- (Y) The results have two distinct angles, kept apart: the differences between viewing policies, and peak
+  performance against existing models. The second, CanViT's peak ADE20K and ImageNet-1k results against prior
+  active models, is missing from the deck; showing the narrowing gap with passive models, without a whole
+  dedicated slide, possibly where the new active-vision state of the art is said, would be valuable. FLOP efficiency
+  is not dealt with either; to think about.
+- (Y) Canvas Attention stays. SR-RoPE must be explained or at least mentioned: it is how the model makes sense of
+  space, fundamental to the work.
+- (Y) Policy agnosticism makes replaying recorded scanpaths possible: worth getting across, even in a few seconds,
+  plainly, without over-claiming or anchoring on papers and datasets the authors do not know well. Not settled.
+  Uniform-acuity glimpses are not a limitation of policy agnosticism; no caveat about eye-centered reference frames.
+- (Y) On the learned policy, "cheap" is always qualified: cheap to train, and it works well.
+- (Y) `#compare`'s "Rich world knowledge" ✗ for prior active models can be softened to an intermediate mark
+  (AdaGlimpse starts from MAE weights); not critical.
+
 Stated 2026-10-24, in a discussion between the speakers:
 - (Y) Say "observer", never "vision encoder": an encoder covers instantaneous vision only and leaves out memory.
 - (Y) Use the terms policy-specific and policy-agnostic pretraining. Training observer and policy at the same time
@@ -105,8 +124,8 @@ Stated 2026-10-24, in a discussion between the speakers:
 - (Y) A flow for the talk, proposed in the discussion: what a foundation model is (much training, task-agnostic, a
   general-purpose understanding); passive vision has them, active vision does not; what active vision needs that
   passive vision does not (memory; retinotopic against spatiotopic coordinates); the architecture provides those
-  components, as the paper lays out; then how to make it a foundation model: task agnosticism argues against training
-  through RL, since scanpaths depend on the goal (Yarbus), which motivates policy agnosticism. Beyond that argument,
+  components, as the paper lays out; then how to make it a foundation model: task agnosticism argues against pretraining
+  the observer with a policy learned by RL, since scanpaths depend on the goal (Yarbus), which motivates policy agnosticism. Beyond that argument,
   sub-arguments: replaying scanpaths and not overfitting to a policy; and complexity removed, since pretraining comes
   first and policy training afterwards can be far cheaper. Show how quick post-hoc policy training is: the learned
   policy took roughly 600 thousand to a million glimpses, pretraining about a billion (exact count: the RL repository's
@@ -307,7 +326,8 @@ The pretraining
     own learned policy; co-adaptation makes it specific to that policy; policy gradients bring instability; and the
     learned policy ends up nearly fixed.
 22. C "Learning signal per glimpse" (moved to Backup 2026-10-25, Y: rejected as drawn; how to convey information
-    density stays open) · 0:45 · exists. A reward as a dot; the teacher's 787,200 numbers to scale.
+    density stays open) · 0:45. Deleted 2026-10-25: it measured information by counting numbers (a reward's one
+    against the teacher's 787,200), which is meaningless: pixels give as many numbers and teach far less.
     Says: a reward says whether a look was good, not what is in the scene; LLMs: pretraining without RL, RL after.
 24. C "Pretraining policies" · 0:45 · exists (before distillation, agreed 2026-10-24). R-IID and F-IID, static: each
     policy's rollout on a scene with numbered boxes, then its glimpses (Y: static, timesteps, prominent crops).
@@ -353,7 +373,7 @@ Backup: inference compute (`#frontier`), `#human-vision`, `#history`, `#results`
 
 Now said in the notes but with no visual of their own: replaying recorded scanpaths; the two contributions named as
 such (end of `#architecture`); "before knowing where to look, we should know how to see" (`#active-vision-model`);
-the LLM pretraining/post-training parallel (`#information-per-glimpse`); why neuro-AI cares about foundation models
+the LLM pretraining/post-training parallel; why neuro-AI cares about foundation models
 (`#foundation`); the complexity that policy-agnostic pretraining removes. Not anywhere yet: a slide that introduces
 classification (tied to where the ImageNet-1k results go).
 

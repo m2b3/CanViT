@@ -94,19 +94,25 @@
     <figure class="prob" style="--row: 2"><figcaption>armchair</figcaption><img class="pixels" src="../../data/talk/foundation/ADE_val_00001509/prob-armchair.png" alt="The probability of armchair: bright on the armchair only"></figure>
   </div>
   <p class="cite">DINOv3 ViT-B/16, Siméoni et al., <i>TMLR</i> 2026</p>
-  <!-- Why the scale matters (Yohaï, 2026-10-25): Raugel et al.'s Fig. 5E (arXiv:2508.18226v1; the ICLR version numbers
-       its figures differently), each cortical region's training half time against its distance from V1
-       (assets/figures/PROVENANCE.md). -->
-  <figure class="scaling"><p class="takeaway">Late alignment with higher-order cortical areas</p><img src="assets/figures/raugel-2025-fig5e-half-time-vs-distance.png" alt="For 15 cortical regions, the training steps DINOv3 needs to reach half its final encoding score, against the region's distance from V1: early visual areas are matched first, frontal areas only after about twice as much training"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (Fig. 5E of arXiv:2508.18226v1)</figcaption></figure>
   <span class="fragment step-marker" data-shows="decode"></span>
-  <span class="fragment step-marker" data-shows="scaling"></span>
   <aside class="notes"><ul>
     <li>[Main point (to confirm with Yohaï): You give DINOv3 an image, and it outputs a high-dimensional vector for every patch, which you can see with the PCA visualizations that both we and the DINOv3 authors adopt. Each PCA visualization here shows a different view of the same output. It is all these views together which captures the entire output features. And these features are directly spatial and semantic: pass them through a linear classifier and you can tell, patch by patch, where the television, the fireplace and the armchair are.]</li>
-    <li>[Transition: not sure yet.]</li>
+    <li>[Transition: While we care about DINOv3 because of its spatiosemantically rich and dense output features, we also care about it because of its scale.]</li>
     <li>[From the AI draft, adopted by Sabrina for now; to confirm with Yohaï:]</li>
     <li>Which brings us to DINOv3, a vision foundation model, and one we'll come back to. You give it an image, and it gives you features: a high-dimensional vector for every patch, 768 numbers.</li>
     <li>To see them, we project them onto principal components and show three at a time as red, green and blue; we'll do that throughout the talk, so whenever you see a colorful map like this, that's what it is. Each view shows different structure; none of them is the representation itself.</li>
     <li>And those features are directly meaningful: a linear readout on top, and you get television, fireplace, armchair. Image in, semantic features out, without touching the model.</li>
+  </ul></aside>
+</section>
+
+<section id="dinov3-and-the-brain" data-status="draft">
+  <h2>DINOv3 and the brain</h2>
+  <!-- Why the scale matters (Yohaï, 2026-10-25): Raugel et al.'s Fig. 5E (arXiv:2508.18226v1; the ICLR version numbers
+       its figures differently), each cortical region's training half time against its distance from V1
+       (assets/figures/PROVENANCE.md). -->
+  <figure class="scaling"><p class="takeaway">Late alignment with higher-order cortical areas</p><img src="assets/figures/raugel-2025-fig5e-half-time-vs-distance.png" alt="For 15 cortical regions, the training steps DINOv3 needs to reach half its final encoding score, against the region's distance from V1: early visual areas are matched first, frontal areas only after about twice as much training"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (Fig. 5E of arXiv:2508.18226v1)</figcaption></figure>
+  <aside class="notes"><ul>
+    <li>[Main point: Show the need for vision foundation models. Raugel and colleagues show here that modelling high brain regions requires more training.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>Why care about scale? Raugel and colleagues followed DINOv3 through its training, 1.7 billion images curated from public Instagram posts. Each dot is a brain region; up is how much training the model needs to predict that region half as well as it eventually will. Early visual cortex comes first; regions further from V1, all the way to frontal cortex, need about twice as much. So if you want to model the higher regions, you need that much training. And only a company like Meta could make this plot: you need every checkpoint of the training run.</li>
   </ul></aside>

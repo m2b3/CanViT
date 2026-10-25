@@ -367,7 +367,10 @@ about 16, 1 of slack).
    "Supervised", then Zhuang et al. 2021 (Fig. 2B, IT) under "Unsupervised / self-supervised", each word large (Y:
    the key distinction of the slide). Raugel's DINOv3 result is said on `#foundation`.
    (Y) Approved for now, 2026-10-25.
-3. C "DINOv3" · 1:00 · exists. Image → frozen features → a head per task. Last click (2026-10-25): Raugel et al.'s
+3. C "DINOv3" · 1:00 · exists. Image and features side by side from the start (Sabrina, 2026-10-25), then the linear
+   decoding.
+3a. C "DINOv3 and the brain" (`#dinov3-and-the-brain`; its own slide since 2026-10-25, Sabrina: it was `#foundation`'s
+   last click): Raugel et al.'s
    Fig. 5E (arXiv numbering), each cortical region's training half time against its distance from V1. (Y) The scaling
    argument: representations that match higher cortex take training at scale; that is what a foundation model is,
    why neuro-AI cares, and why the pretraining builds on DINOv3 instead of repeating its training. Says: trained once,

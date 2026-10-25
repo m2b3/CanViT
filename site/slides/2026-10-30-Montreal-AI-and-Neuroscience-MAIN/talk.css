@@ -729,14 +729,10 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #classification-and-segmentation figcaption small { display: block; font-size: 19px; font-weight: 500; color: var(--muted); }
 .reveal section.signpost .statement small { display: block; margin-top: 18px; font-size: 30px; font-weight: 600; color: var(--muted); letter-spacing: 0; }
 
-/* Why DINOv3's scale matters: Raugel et al.'s Fig. 5E takes the slide on the last click. */
-#foundation .scaling { position: absolute; left: 50%; top: 104px; width: 860px; transform: translateX(-50%); margin: 0; text-align: center;
-                       opacity: 0; transition: opacity .6s ease; }
-#foundation .scaling img { width: 100%; height: auto; }
-#foundation .scaling figcaption { margin-top: 10px; }
-#foundation.shows-scaling .scaling { opacity: 1; }
-#foundation .stage, #foundation > .cite { transition: opacity .6s ease; }
-#foundation.shows-scaling .stage, #foundation.shows-scaling > .cite { opacity: 0; }
+/* Why DINOv3's scale matters: Raugel et al.'s Fig. 5E, as large as the slide allows. */
+#dinov3-and-the-brain .scaling { width: 980px; margin: 0 auto; text-align: center; }
+#dinov3-and-the-brain .scaling img { width: 100%; height: auto; }
+#dinov3-and-the-brain .scaling figcaption { margin-top: 10px; }
 
 /* The label of the feature view shown (pca-cycle.js), under the feature map, following it when it moves aside. */
 #foundation .pca-label { position: absolute; left: 600px; top: 418px; width: 552px; margin: 0; text-align: center;
@@ -797,7 +793,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
                    font-weight: 750; padding: 0 5px; border-radius: 4px; background: rgba(15, 23, 42, .72); opacity: 0;
                    transition: opacity .4s ease; }
 #gap.shows-map .names span { opacity: 1; transition-delay: calc(.9s + var(--i) * 70ms); }
-#foundation .scaling .takeaway { margin: 0 0 14px; font-size: 32px; font-weight: 800; color: var(--ink); }
+#dinov3-and-the-brain .scaling .takeaway { margin: 0 0 14px; font-size: 32px; font-weight: 800; color: var(--ink); }
 
 /* Pretraining policies, static: a row per policy, the scene with numbered boxes, then the glimpses numbered. */
 #pretraining-policies .pretraining-grid { display: grid; gap: 34px; margin-top: 36px; }

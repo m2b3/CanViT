@@ -281,6 +281,12 @@ authors to confirm.
 
 ## Open questions for the authors
 
+- Prior models on "Accuracy by viewing policy" (A, 2026-10-25): the ADE20K panel has AME and AdaGlimpse as lines
+  (agreed 2026-10-24), the ImageNet-1k panel none, because only the ADE20K export carries baselines (ImageNet-1k's are
+  typed in the paper's Table 1). Adding them there would mislead: AdaptiveNN's 82.2 sits above CanViT's frozen 81.1,
+  and CanViT's 84.5 is fine-tuned and off that panel. The lines also span every glimpse count though prior results
+  are at 8 glimpses. Proposal: the policy slide compares policies only; prior models, on both tasks with each
+  number's protocol, go where peak performance is shown (Y, 2026-10-25: two angles kept apart).
 - How Part I presents active vision as a field (what it has been about, why one might care) before the observer and
   policy distinction.
 - How to word the functional argument for neuro-AI.

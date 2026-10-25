@@ -413,6 +413,8 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
 - Sabrina reworks Part I over the weekend of 2026-10-24; merge her version.
 - Sabrina, 2026-10-25: write the keywords and spoken text for every slide before `#paper`, slide by slide in
   discussion with her, she writing the text and the slide following it.
+  - Her idea (2026-10-25), undecided: before `#tradition`, a short slide on the first deep networks used as models
+    (Yamins et al. 2014's) and the images they were tested on.
 - Missing material: a moving-scene clip for `#next`.
 - Known defects: segmentation colors differ between slides (the components use
   the ADE20K palette, `#extrapolation` canvit-pytorch's `LABEL_COLORS`); amber means every prior model on some

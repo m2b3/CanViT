@@ -795,7 +795,11 @@ the m2b3 fork at 9b3b72d), so its output after the last glimpse does not depend 
   data"; the top layer of the performance-optimized model predicts IT, its middle layers V4. Figure: Fig. 1
   (categorization performance against IT explained variance; r = 0.55, 0.78 and 0.80 for random, performance-
   optimized and IT-optimized model selection in panel A; r = 0.87 ± 0.15 in panel B). The scope matters: one
-  model class, 2014-era performance levels.
+  model class, 2014-era performance levels. Stimuli (read 2026-10-25 in PMC4060707): "5,760 images of
+  photorealistic 3D objects drawn from eight natural categories" on randomly selected "cluttered natural scenes",
+  with large variation in position, scale and pose. Controls: pixels, SIFT, V1-like, V2-like and HMAX, which all
+  fall short of IT "by a large margin" on the high-variation images. The model: a four-layer CNN found by
+  hierarchical modular optimization (HMO), not trained on ImageNet.
 - **Schrimpf M. et al. 2018. Brain-Score: Which Artificial Neural Network for Object Recognition is most
   Brain-Like?** bioRxiv 407007, doi:10.1101/407007. https://www.biorxiv.org/content/10.1101/407007v1. Zotero:
   `Schrimpf et al. - 2018 - Brain-Score Which Artificial Neural Network for O.pdf`.

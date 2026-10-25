@@ -44,6 +44,11 @@
       <title-teaser data-play scenes="../../data/talk/title-teaser/ADE_val_00000419 ../../data/talk/title-teaser/ADE_val_00001882 ../../data/talk/title-teaser/ADE_val_00000203 ../../data/talk/title-teaser/ADE_val_00001860" glimpses="5"></title-teaser>
     </div>
   </div>
+  <aside class="notes"><ul>
+    <li>Good afternoon everyone. [To rework] Super excited to be talking to everyone about Active-Vision Foundation Models, why we need them and how to build them today.</li>
+    <li>The animation on the right is a nice glimpse into what we'll be diving into today.</li>
+    <li>Transition [to rework, but the ideas are there]: As you can tell, the visual processing you see on the right is different from the processing you'd see from the passive computer vision models that excel at naturalistic visual tasks, and…</li>
+  </ul></aside>
 </section>
 
 <section id="tradition" data-status="draft">
@@ -55,6 +60,12 @@
     <figure class="zhuang fragment"><div class="plot"><p class="axis y">Noise-corrected IT predictivity</p><img src="assets/figures/zhuang-2021-fig2b-it.png" alt="Noise-corrected IT predictivity of networks trained without labels against a supervised network: several contrastive models, among them SimCLR and Local Aggregation, are not significantly different from the supervised one"></div><figcaption><b class="regime">Unsupervised / self-supervised</b><span class="cite">Zhuang et al. 2021, <i>PNAS</i></span></figcaption></figure>
   </div>
   <aside class="notes"><ul>
+    <li>…that have become valuable computational models of biological vision because they let us work with naturalistic images, which hand-designed models struggled to handle.</li>
+    <!-- XXX Sabrina's sentence, flagged 2026-10-25: Yamins et al. 2014's images were photorealistic rendered 3D objects
+         on random natural backgrounds, with large variation in position, scale and pose, not natural photographs; the
+         hand-designed controls (pixels, V1-like, V2-like, HMAX, SIFT) fell far short of IT on the high-variation images
+         (PMC4060707). -->
+    <li>[Earlier agent draft, not Sabrina's text; kept for reference:]</li>
     <li>Deep networks became models of the visual system because they let us work with naturalistic images, which hand-designed models couldn't handle. Yamins and colleagues trained networks with labels, to recognize objects, and found that the better a network is at categorization, the better its features predict neurons in IT.</li>
     <li>But labels are our human understanding of the world, imposed on the model. Zhuang and colleagues trained networks without labels, self-supervised, learning purely from the images, and the best of them predict IT as well as the supervised network. That's the kind of training today's vision foundation models use.</li>
   </ul></aside>

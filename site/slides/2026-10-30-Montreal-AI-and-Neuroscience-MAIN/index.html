@@ -205,15 +205,15 @@
     <div class="group observer">
       <p class="does">Seeing</p>
       <div class="jobs">
-        <article class="job instant" style="--accent: var(--glimpse)"><h3>Instantaneous vision</h3><p>making sense of what it sees at a given moment</p></article>
-        <article class="job" style="--accent: var(--canvas)"><h3>Memory</h3><p>updating a persistent, evolving understanding of the scene</p></article>
+        <article class="job instant" style="--accent: var(--glimpse)"><h3>Instantaneous vision</h3></article>
+        <article class="job" style="--accent: var(--canvas)"><h3>Memory</h3></article>
       </div>
       <p class="role">Observer</p>
     </div>
     <div class="group policy">
       <p class="does">Choosing where to look</p>
       <div class="jobs">
-        <article class="job action" style="--accent: var(--policy)"><h3>Action selection</h3><p>deciding where and at what zoom level to look next</p></article>
+        <article class="job action" style="--accent: var(--policy)"><h3>Action selection</h3></article>
       </div>
       <p class="role">Policy</p>
     </div>
@@ -227,11 +227,14 @@
   <span class="fragment step-marker" data-shows="passive-focus"></span>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:50–1:10]</li>
-    <li>[AI draft: not the authors' text]</li>
-    <li>So what's actually in an active-vision model? Three things. Instantaneous vision: making sense of what you see right now. Memory: keeping a persistent, evolving understanding of the scene. And action selection: deciding where, and at what zoom, to look next.</li>
-    <li>The first two make up what we call the observer. The third is the policy.</li>
-    <li>Prior work often focused on the policy, on learning where to look.</li>
-    <li>No policy can make up for a poor observer. And a general-purpose observer lets you use any policy, at least any of the ones we tested.</li>
+    <li>To better understand this gap, it's helpful to consider active-vision models along three axes: instantaneous vision, memory and action selection.</li>
+    <li>The first two axes define what we call the Observer.</li>
+    <li>In other words, the thing that makes sense of visual inputs.</li>
+    <li>The third axis defines the policy, or input selection strategy.</li>
+    <li>[CLICK]</li>
+    <li>The observer and the policy play fundamentally different roles:</li>
+    <li>If the observer is not good, no policy can make up for that.</li>
+    <li>If the observer is sufficiently general, it should be compatible with any policy.</li>
   </ul></aside>
 </section>
 

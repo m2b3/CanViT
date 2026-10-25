@@ -951,8 +951,8 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #pretraining .n { font-size: 28px; font-weight: 700; color: var(--ink); white-space: nowrap; }
 
 /* The main deck's version, without the ablations: the diagram keeps its descriptions and the slide spreads out. */
-#active-vision-model .axes { margin-top: 40px; }
-#active-vision-model .bottom { margin-top: 60px; }
+#active-vision-model .axes { margin-top: 80px; }
+#active-vision-model .bottom { margin-top: 90px; }
 #active-vision-model .claim { font-size: 34px; }
 
 /* DINOv3 and the brain: the study's design first, then (shows-scaling) Fig. 5E in its place. */

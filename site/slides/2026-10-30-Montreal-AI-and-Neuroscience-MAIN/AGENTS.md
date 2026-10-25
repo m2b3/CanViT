@@ -243,8 +243,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - No subtext [Yohaï, 2026-10-01]: on-screen text is the title, the labels a visual cannot be read without, and the
   citation of another paper's figure. A caption that restates the visual, a takeaway line, a conditions line, and a
   citation of the authors' own paper go to the notes.
-- Speaker notes (`<aside class="notes">`) are bullet points at most, without invented logical links, only where they
-  help, and in the presenter's voice; when unsure, leave a point out rather than dress it up [Yohaï, 2026-10-01].
+- Speaker notes (`<aside class="notes">`) are many short bullet points, never paragraphs [Yohaï, 2026-10-25],
+  without invented logical links, only where they help, and in the presenter's voice; when unsure, leave a point out rather than dress it up [Yohaï, 2026-10-01].
 - At this stage the speaker notes are agents' working drafts, unvetted by the authors. They are still written the way
   Yohaï speaks when he explains the work, conversationally, and they flow from one point to the next. A note that
   cannot be made to flow means its content does not hold together: stop, think it through and fix the content, not

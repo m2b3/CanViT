@@ -390,6 +390,9 @@ about 16, 1 of slack).
    argument: representations that match higher cortex take training at scale; that is what a foundation model is,
    why neuro-AI cares, and why the pretraining builds on DINOv3 instead of repeating its training. Says: trained once,
    without labels, at great cost; reused across tasks; also what neuro-AI now compares with the brain.
+   (Y, 2026-10-25) The slide does not open on scale: it opens on the study, the paper's OpenReview header above its
+   Fig. 1 (what Raugel et al. did: 7-Tesla fMRI and MEG to disentangle the factors of convergence between brains and
+   DINOv3), and Fig. 5E follows on a click.
 4. S "What's missing?" · 0:10. The implicit answer is eye movements, answered by Yarbus next (Y, 2026-10-25: the
    answer is not that passive models see the whole image, which feeding them a crop would disprove).
 4b. C `#human-vision`, no title · 0:20 (from Backup, Y 2026-10-25): the foveation animation on the street,
@@ -506,6 +509,9 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
   - Scale is not a reason to care about DINOv3 in itself: it is the means to the semantic representation, which
     requires it.
   - `#dinov3-and-the-brain`: too quick; say what Raugel et al. did and what the paper is about.
+- `#dinov3-and-the-brain` notes (2026-10-25): the study step is in Yohaï's words; the Fig. 5E step is an AI draft
+  awaiting his. Dropped from the draft as unchecked: that the half-time curves come from DINOv3's 1.7-billion-image
+  run, and "only a company like Meta could make this plot" (Raugel et al. trained their own models).
   - "What's missing?" and `#human-vision`: the non-uniform front end (foveation, eccentricity-dependent acuity) was
     glossed over.
   - `#timeline`: the neuro-AI active models are passed over too quickly.

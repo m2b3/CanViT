@@ -114,6 +114,8 @@ Stated 2026-10-25 late, the pretraining section's logic (supersedes earlier agen
 - (Y) Problem 2: how to give the model an understanding of the visual world, rich world knowledge, without an
   enormous amount of computation, costly and ecologically wasteful. Answer: dense latent distillation from DINOv3,
   which supplies that knowledge for a scene seen whole; what CanViT must learn is building it from glimpses.
+- (Y) The label-free angle stays, at both levels: DINOv3 learned without labels, and CanViT learns from its features without
+  labels (a callback to Part I's supervised against self-supervised).
 - (Y) Payoffs come later: cheap policy training on the frozen observer (the learned-policy results); replaying
   recorded scanpaths (likely the ending).
 
@@ -313,7 +315,7 @@ authors to confirm.
     click on `#architecture` ringing the recurrent CLS token where it leaves one glimpse and enters the next.
   - The pretraining: why not pretrain the observer with its own policy is not argued on screen; the notes of
     `#how-to-see-first` carry it (AI draft). Built 2026-10-25 for review, after Yohaï's structure:
-    `#pretraining-answers` (the two answers as a signpost, the problems said; a text slide of problems and answers was rejected, Y 2026-10-25), shown again before each answer, then
+    after `#how-to-see-first` (the framing: representation learning before policy), `#problem-any-policy` (the first problem as a signpost question) and its answer, then
     answer 1 (`#how-to-see-first`, `#pretraining-policies`), answer 2 (`#dense-latent-distillation`: the teacher's
     target for every patch, the student's prediction from a glimpse, matched), then the two together (`#distillation`,
     retitled "Policy-agnostic dense latent distillation"). Where "Before knowing where to look..." belongs is still

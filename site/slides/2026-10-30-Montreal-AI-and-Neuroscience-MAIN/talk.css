@@ -921,9 +921,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #table-callback.shows-canvit .map > img.canvit { opacity: 1; }
 #table-callback.shows-canvit .marks { opacity: 0; }
 
-/* The pretraining's two answers, as Part II's outline: the current one highlighted. */
-.outline.on-policy-agnostic p:not(.policy-agnostic), .outline.on-dense-latent p:not(.dense-latent) { opacity: .25; }
-.outline.on-policy-agnostic .policy-agnostic, .outline.on-dense-latent .dense-latent { box-shadow: inset 0 0 0 4px var(--ink); }
+
 
 /* Dense latent distillation: the teacher's row, the student's row (shows-student), the match (shows-match). */
 #dense-latent-distillation .pipes { position: relative; display: grid; grid-template-columns: 220px 60px 200px 60px 220px;
@@ -950,8 +948,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #dense-latent-distillation .match .link { width: 3px; height: 34px; background: var(--ink); border-radius: 2px; }
 #dense-latent-distillation.shows-match .match { opacity: 1; }
 #dense-latent-distillation :is(.glimpse, .student, .student-to, .prediction) { grid-row: 3; }
-.outline :is(.policy-agnostic, .dense-latent) { white-space: nowrap; }
-:is(#pretraining-answers, #pretraining-answers-policy-agnostic, #pretraining-answers-dense-latent) .outline p { font-size: 40px; }
 #dense-latent-distillation .frame { position: relative; }
 #dense-latent-distillation .seen { position: absolute; box-sizing: border-box; left: 50.2%; top: 39.9%; width: 33.1%; height: 33.1%;
                                    border: 3px solid var(--glimpse); box-shadow: 0 0 0 2px #fff; opacity: 0; transition: opacity .5s ease; }

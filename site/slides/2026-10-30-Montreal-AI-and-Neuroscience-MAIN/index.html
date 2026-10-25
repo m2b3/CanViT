@@ -64,12 +64,12 @@
   </div>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:50–1:10; rehearsed 0:50 (2026-10-25)]</li>
-    <li>[Yohaï's text, 2026-10-25]</li>
+    <li>[Yohaï's text, 2026-10-25; bold is his emphasis]</li>
     <li>Deep artificial neural networks have a long history as models of the ventral visual stream.</li>
-    <li>This was originally explored in the context of supervised learning.</li>
-    <li>In 2014, a landmark study by Yamins and colleagues found that the brain predictivity of convolutional neural networks trained to classify objects tracked their performance on this task.</li>
+    <li>This was <b>originally</b> explored in the context of <b>supervised</b> learning.</li>
+    <li>In 2014, a <b>landmark study</b> by Yamins and colleagues found that the brain predictivity of convolutional neural networks trained to classify objects tracked their performance on this task.</li>
     <li>But such networks learn from millions of human-provided labels, whereas humans are able to learn a lot about the world purely from visual experience.</li>
-    <li>More recent work has found that so-called unsupervised, or self-supervised, networks, which require no annotations, and thus learn purely from experience as well, can also achieve high neural predictivity.</li>
+    <li>More recent work has found that <b>so-called unsupervised</b>, or <b>self-supervised networks</b>, which require <b>no annotations</b>, and thus learn purely from experience as well, <b>can also achieve</b> high neural predictivity.</li>
   </ul></aside>
 </section>
 
@@ -98,12 +98,12 @@
   <span class="fragment step-marker" data-shows="decode"></span>
   <aside class="notes"><ul>
     <li>[Timing: planned 0:50–1:10]</li>
-    <li>[Main point (to confirm with Yohaï): You give DINOv3 an image, and it outputs a high-dimensional vector for every patch, which you can see with the PCA visualizations that both we and the DINOv3 authors adopt. Each PCA visualization here shows a different view of the same output. It is all these views together which captures the entire output features. And these features are directly spatial and semantic: pass them through a linear classifier and you can tell, patch by patch, where the television, the fireplace and the armchair are.]</li>
-    <li>[Transition: While we care about DINOv3 because of its spatiosemantically rich and dense output features, we also care about it because of its scale.]</li>
-    <li>[From the AI draft, adopted by Sabrina for now; to confirm with Yohaï:]</li>
-    <li>Which brings us to DINOv3, a vision foundation model, and one we'll come back to. You give it an image, and it gives you features: a high-dimensional vector for every patch, 768 numbers.</li>
-    <li>To see them, we project them onto principal components and show three at a time as red, green and blue; we'll do that throughout the talk, so whenever you see a colorful map like this, that's what it is. Each view shows different structure; none of them is the representation itself.</li>
-    <li>And those features are directly meaningful: a linear readout on top, and you get television, fireplace, armchair. Image in, semantic features out, without touching the model.</li>
+    <li>[Yohaï's text, 2026-10-25; bold is his emphasis]</li>
+    <li>A <b>notable example</b> of a self-supervised vision foundation model is DINOv3, which came out last summer.</li>
+    <li>Given an <b>image</b>, it produces a <b>feature map</b>, which is a <b>grid of high-dimensional vectors</b>, called <b>patches</b>.</li>
+    <li>To <b>visualize</b> them, <b>as we do here</b> on the right, we can do principal component analysis <b>across the patches in a given image</b>, and <b>map groups of three principal components</b> to RGB channels.</li>
+    <li>[CLICK]</li>
+    <li>These features are <b>spatially organized</b>, <b>but also semantically rich</b>: each patch is <b>linearly decodable</b> into human-interpretable categories, <b>as you can see on the right</b>.</li>
   </ul></aside>
 </section>
 

@@ -226,6 +226,59 @@ not worth highlighting); a fixed opening order.
   claim, that density is why CanViT trains without RL, is wrong: it could be trained without RL without a dense
   signal.
 
+## The paper in the talk
+
+What the paper says, and where each point stands in the deck (A, 2026-10-25; read against the paper in full). "Said"
+means in the notes only, which the authors have not reviewed. Each entry ends with an agent's judgment, for the
+authors to confirm.
+
+- Why active vision: efficient and biologically plausible perception (abstract). Biology on screen (foveation, Yarbus);
+  efficiency nowhere. Needed only if the FLOP result is shown.
+- Viewpoint = center and scale; a glimpse has fixed pixels, so scale trades coverage against detail (Preliminaries).
+  Said on `#vit-on-a-glimpse`. Should be visible: every policy, and "where and at what zoom", depend on it.
+- Glimpses do not align with the scene, so patch tokens cannot be carried across time (Preliminaries, §4). Shown by
+  `#integrating-information-across-viewpoints`.
+- Canvas: persistent, scene coordinates, token-wise readout, gradients across time; no MLP or self-attention on it
+  (§4). On screen in the paper's figure only; the figure is small on `#architecture`.
+- Canvas resolution set at inference (grid broadcast from one learned patch, §4); trained at 32², better at 64² (§6).
+  Nowhere. A distinctive property; candidate for the results or Q&A.
+- Recurrent CLS token: carried across glimpses, read out for classification (§4, §6). Said only. Yohaï (2026-10-25):
+  likely explained quickly with the architecture diagram.
+- SR-RoPE: positions in scene coordinates bind the retinotopic backbone and the spatiotopic canvas; zoom is carried by
+  the spacing of patch positions (§4). Said only. Must be explained (Y, 2026-10-25).
+- Canvas Attention, asymmetric (§4). On screen; stays (Y).
+- VPE token: a non-essential affordance for future policy learning (§4, App.). Set aside; Q&A if the learned policy
+  prompts it.
+- Distillation in DINOv3 latent space rather than pixels (§5); teacher features precomputed. On screen
+  (`#distillation`); pixels against latents only in Q&A.
+- CLS target in the loss (§5) and its ablation: dense supervision also improves CLS reconstruction (App.). Not shown;
+  goes with the recurrent CLS token if anywhere.
+- R-IID and F-IID, scale density favoring small glimpses (§5). On screen. F-IID speeds convergence (App.): set aside.
+- Truncated BPTT over 2-glimpse chunks, random rollout length averaging 4; generalizes to 21 (§5, §6). Said on
+  `#distillation`. Yohaï (2026-10-24): the generalization is a nice result; the mechanism may be too technical.
+- 166 H100-hours, 13.2 M scenes, 1 billion glimpses (§6). On screen.
+- Frozen weights with linear probes; fine-tuning only for ImageNet-1k peak (§6). Not on screen. Should be: it is what
+  makes the results a foundation-model claim.
+- Peak against prior active models (Table 1: 45.9 against 27.6 mIoU; 84.5 fine-tuned against 82.2 top-1). Missing (Y).
+- One glimpse: 38.5 mIoU, above every prior active model's best, with 20× fewer FLOPs than AME at 27.6; also above its
+  input- or FLOP-matched DINOv3 teacher (abstract, §6, Fig. 4). Missing. The abstract's headline; candidate for the
+  peak and efficiency results.
+- C2F far above R-IID and F-IID on ADE20K; EG-C2F more efficient; ImageNet-1k plateaus early (§6). On screen.
+- F2C still beats prior models: perception, not viewpoint selection, was the bottleneck (§6). On screen (the widening
+  click) and said.
+- C2F above F2C on identical viewpoints: the paper reads it as "the importance of contextually informed processing"
+  (§6). On screen as a fact. Its mechanism is not isolated: reads conditioning the backbone on the canvas is one
+  explanation; how later writes overwrite earlier ones (F2C ends on its coarsest glimpse) is another. Say what the
+  paper says, no more.
+- RFS: recurrence alone improves accuracy, then declines without new viewpoints (§6). Removed from the deck; Q&A.
+- Fig. 4 (canvas resolution, mask size, frontier against DINOv3). Nowhere; Q&A or Backup.
+- Ablations (App.): reads matter, BPTT matters, ViT-S, VPE least. Set aside; the no-reads ablation is the evidence if
+  anyone asks whether reads matter.
+- Canvas evolution within a glimpse: writes go from local to scene-wide (App. figure). Set aside.
+- Limitations and future work (§7): static scenes (`#next`); forgetting; RL policy learning (now done, `#learned-policy`);
+  depth expected; a passive teacher is needed (cost at high resolution, 19 TiB of features), active-to-active
+  self-distillation; one model size, a dataset 100× smaller than DINOv3's. Only static scenes is on screen.
+
 ## Open questions for the authors
 
 - How Part I presents active vision as a field (what it has been about, why one might care) before the observer and

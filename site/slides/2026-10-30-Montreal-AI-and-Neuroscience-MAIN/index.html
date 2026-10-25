@@ -686,19 +686,12 @@
   </div>
   <span class="fragment step-marker" data-shows="learned"></span>
   <span class="fragment step-marker" data-shows="budget"></span>
-  <!-- The parallel with LLMs, its own step after the budgets (Y, 2026-10-24 and 2026-10-25): pretraining without RL,
-       RL after, for LLMs and for CanViT. -->
-  <div class="llm-parallel">
-    <p class="who">LLMs</p><p class="phase pretrain">Pretraining<small>no RL</small></p><span class="to"></span><p class="phase rl">Post-training<small>RL</small></p>
-    <p class="who"><span class="brand">CanViT</span></p><p class="phase pretrain">Pretraining<small>no RL</small></p><span class="to"></span><p class="phase rl">Learning where to look<small>RL</small></p>
-  </div>
-  <span class="fragment step-marker" data-shows="llm"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>We pretrained the observer without RL. With the observer frozen, we then trained a policy for ADE20K segmentation, with RL. These results are unpublished. CanViT-B and its segmentation readout stay frozen; only the policy learns, choosing each next glimpse among 512 viewpoints, rewarded by how much a glimpse reduces the segmentation error.</li>
     <li>Both start with the full scene; after that, the learned policy beats EG-C2F at every glimpse: 42.65 against 42.2 after the second, 44.97 against 44.65 after the fifth, against a heuristic that is already strong.</li>
     <li>And the training cost: pretraining the observer took about a billion glimpses. Training the policy took 640 thousand, about 80 minutes on a single RTX 4090.</li>
-    <li>It's the same split as for LLMs: pretraining without RL, then RL as post-training.</li>
+    <li>It's the same split as for LLMs: pretrain with a dense prediction objective, then use reinforcement learning for a specific skill, reasoning for them, where to look for us.</li>
   </ul></aside>
 </section>
 
@@ -709,8 +702,8 @@
        the paper's Figure 3A (canvit-frontier). Glimpse counts are not compared: prior models' glimpses differ in size and
        their images in resolution. -->
   <div class="panels">
-    <figure class="ade20k"><figcaption>ADE20K segmentation <small>mIoU (%)</small></figcaption><div class="bar-chart"><div class="bars"></div></div></figure>
-    <figure class="in1k"><figcaption>ImageNet-1k classification <small>top-1 (%)</small></figcaption><div class="bar-chart"><div class="bars"></div></div></figure>
+    <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption><div class="dot-chart"><div class="bars"></div></div></figure>
+    <figure class="in1k"><figcaption>ImageNet-1k classification</figcaption><div class="dot-chart"><div class="bars"></div></div></figure>
     <figure class="efficiency"><figcaption>ADE20K segmentation against inference compute</figcaption><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="prior egc2f-32 egc2f-64 f2c-32 f2c-64" height="470"></canvit-frontier></figure>
   </div>
   <span class="fragment step-marker" data-shows="in1k"></span>

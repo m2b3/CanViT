@@ -108,7 +108,7 @@ Stated 2026-10-25 late, on the open threads:
   1 in detail, policy-agnostic pretraining; then answer 2, dense latent distillation (where the learning-signal argument
   belongs); then the two together, the policy-agnostic dense latent distillation slide.
 - (Y) The canvas's own moment may already be the SR-RoPE slide; not sure.
-- (Y) The LLM parallel: possibly a quick animation on "Learning where to look", after the result.
+- (Y) The LLM parallel: possibly a quick animation on "Learning where to look", after the result. Built, then set aside the same day (Y: too verbose); said aloud while the policy-learning budgets are shown.
 - (Y) "Extrapolation to unobserved regions" stays in Backup for now (the title slide's teaser shows extrapolation; it
   may be said aloud); a direct, streamlined callback to the table slide would be good: quick, not several rows and
   columns.

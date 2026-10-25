@@ -41,6 +41,7 @@ template.innerHTML = `
   :host { display: block; color: var(--canvit-ink, #0f172a); font: 14px/1.4 var(--canvit-sans, system-ui, sans-serif); }
   svg { display: block; width: 100%; overflow: visible; }
   .grid line { stroke: #e2e8f0; }
+  .axis-line { stroke: var(--canvit-ink, #0f172a); stroke-width: 1.5; }
   .axis text { fill: var(--canvit-muted, #475569); font-size: 14px; font-variant-numeric: tabular-nums; }
   .axis .title { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 650; }
   .curve { fill: none; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
@@ -180,6 +181,8 @@ class CanvitPolicyCurves extends HTMLElement {
     for (const glimpse of ticks.filter((g) => g <= steps)) {
       el("text", { x: x(glimpse - 1), y: plot.bottom + 22, "text-anchor": "middle" }, axis).textContent = String(glimpse);
     }
+    el("line", { class: "axis-line", x1: plot.left, x2: plot.right, y1: plot.bottom, y2: plot.bottom }, axis);
+    el("line", { class: "axis-line", x1: plot.left, x2: plot.left, y1: plot.top, y2: plot.bottom }, axis);
     el("text", { class: "title", x: (plot.left + plot.right) / 2, y: height - 6, "text-anchor": "middle" }, axis).textContent = "Glimpses";
     el("text", { class: "title", x: -(plot.top + plot.bottom) / 2, y: 14, transform: "rotate(-90)", "text-anchor": "middle" }, axis)
       .textContent = this.#task.title;

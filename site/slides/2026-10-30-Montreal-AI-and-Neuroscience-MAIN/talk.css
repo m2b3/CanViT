@@ -101,8 +101,11 @@ foveated-scene img:first-child { transform: scale(1.06); }
 foveated-scene img.masked {
   mask-image: radial-gradient(circle at var(--fx) var(--fy), #000 calc(var(--inner) * var(--fovea) * 100cqw),
                               transparent calc(var(--outer) * var(--fovea) * 100cqw)); }
-foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); width: 14px; height: 14px;
-  margin: -7px 0 0 -7px; border-radius: 50%; border: 2.5px solid #fff; box-shadow: 0 0 0 1.5px rgb(0 0 0 / .45); }
+/* Stopped, the sharp top layer is unmasked and covers the others: the photograph at full resolution. */
+foveated-scene:not(.playing) img:last-of-type { mask-image: none; }
+foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); width: 30px; height: 30px; margin: -15px 0 0 -15px;
+  background: linear-gradient(#fff, #fff) center / 100% 4px no-repeat, linear-gradient(#fff, #fff) center / 4px 100% no-repeat;
+  filter: drop-shadow(0 0 1.5px rgb(0 0 0 / .8)); }
 
 /* Each glimpse's answer is the map clipped to its box (--top, --left, --size from table.js); it appears over its glimpse
    on the photograph, one figure width and gap to the left, then flies to its place in the map. */

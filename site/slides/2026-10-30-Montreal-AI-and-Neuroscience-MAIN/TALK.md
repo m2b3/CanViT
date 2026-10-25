@@ -281,8 +281,10 @@ authors to confirm.
 ## Open questions for the authors
 
 - Kept open until addressed or decided (Y, 2026-10-25):
-  - The architecture: the canvas has no moment of its own (it appears in the paper's figure, small on
-    `#architecture`); SR-RoPE and the recurrent CLS token are in the notes only.
+  - The architecture: the canvas has no moment of its own (it appears in the paper's figure on `#architecture`, now
+    600 px wide). Built 2026-10-25, for the authors to review: `#sr-rope` after `#architecture` (a glimpse's 8 x 8
+    cells and their scene positions, the canvas's 32 x 32 cells, a smaller glimpse whose cells pack together), and a
+    click on `#architecture` ringing the recurrent CLS token where it leaves one glimpse and enters the next.
   - The pretraining: why not pretrain the observer with its own policy is not argued on screen; the notes of
     `#pretraining-policies` carry one sentence of it.
   - The results (Y, 2026-10-25): Table 1's numbers side by side, as bars on a dedicated slide, could be interesting;

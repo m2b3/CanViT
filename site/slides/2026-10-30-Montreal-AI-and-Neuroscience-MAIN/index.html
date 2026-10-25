@@ -196,9 +196,17 @@
   <aside class="notes"><ul>
     <li>[Timing: planned 1:00–1:20]</li>
     <li>[Transition: But why have they lagged behind?]</li>
+    <li>[Yohaï's text, 2026-10-25]</li>
+    <li>Although active-vision models are structurally and conceptually compelling, they have struggled to match the visual intelligence of their passive counterparts.</li>
+    <li>This gap is especially striking in so-called dense prediction tasks, such as semantic segmentation.</li>
+    <li>[CLICK]</li>
+    <li>This task involves assigning a class to <b>every</b> location of an image,</li>
+    <li>which requires more spatial understanding than image-level classification.</li>
+    <li>ADE20K is a standard benchmark for this task.</li>
     <li>[AI draft: not the authors' text]</li>
-    <li>How far behind are active models? Take semantic segmentation: a class for every pixel, 150 classes in ADE20K, wall and floor included. You need to know what's everywhere, including where you didn't look closely.</li>
+    <li>[CLICK]</li>
     <li>The score is mIoU: for each class, how much the predicted and true regions overlap, averaged over classes. A frozen DINOv3 with a linear readout gets 47.2; the best prior active models, AME and AdaGlimpse, 27.6 and 25.7. And most active models can't output a segmentation at all.</li>
+    <li>[CLICK]</li>
     <li>And to put that in perspective, the passive side. A small DINOv3, frozen, with a linear readout: 43. The base model: 47. Fine-tuned models like SETR and MAE: 49 and 54. And the state of the art, DINOv3 7B with a big segmentation head: 63.</li>
     <li>Sab keywords: focus on semantic segmentation because it requires much more spatio-semantic understanding than classification</li>
   </ul></aside>

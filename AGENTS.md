@@ -163,6 +163,10 @@ spelling.
 - Name things by what they are, without counting: a scene is "A ferry", not
   "A ferry, one smooth path". Write "a" or "the", not "one", and give a
   number only when the number is the point.
+- Never write counted parallelism (a counted tricolon): phrases set side by
+  side, each built on a count, such as "one X, one Y, seven Z" or "two A, one
+  B". It is a slogan device that replaces a description; say what the thing
+  is or shows [Yohaï, 2026-10-24].
 - Flag doubts and unresolved issues with a localized `XXX`, `TODO` or `FIXME`
   beside the relevant code, saying what the concern is.
 

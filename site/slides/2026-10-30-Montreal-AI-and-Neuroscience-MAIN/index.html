@@ -446,21 +446,25 @@
 
 <section id="canvas-attention" data-status="draft">
   <h2>Canvas Attention</h2>
-  <svg class="figure" viewBox="0 0 250 216" role="img" aria-label="A Canvas Attention read–write pair: learned projections on the glimpse side only">
+  <!-- The paper's Figure 3: panel A alone and centered first, then (shows-payoff) panels B and C, what the asymmetry
+       buys: total FLOPs against the output patch grid, and the cost of canvas-side projections. -->
+  <svg class="figure" viewBox="0 0 396 216" role="img" aria-label="Canvas Attention: a read–write pair with learned projections on the glimpse side only, then its cost against the output patch grid">
     <image href="../../assets/paper/canvas_attention_combined.svg" width="396" height="216"/>
     <g class="fragment rings">
       <ellipse cx="84.5" cy="65" rx="8" ry="6"/><ellipse cx="84.5" cy="76" rx="8" ry="6"/>
       <ellipse cx="84" cy="148" rx="8" ry="6"/><ellipse cx="142.6" cy="120.5" rx="8" ry="6"/>
     </g>
     <rect class="fragment canvas-side" x="158" y="60" width="58" height="102" rx="6"/>
+    <rect class="cover" x="250" y="0" width="146" height="216"/>
   </svg>
+  <span class="fragment step-marker" data-shows="payoff"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>Here's one read and one write up close: Canvas Attention, from the paper. It's cross-attention between the glimpse tokens and the canvas tokens.</li>
     <li>The key is the asymmetry. All the learned projections, query, key, value, output, are on the glimpse side.</li>
     <li>The canvas side gets only a LayerNorm and the positional encoding, and its update is added back. No projections, no MLP, no self-attention on the canvas.</li>
     <li>That's what makes the canvas cheap: on a 64 by 64 canvas, a read and write pair costs <span data-macro="cSixFourAsymRwPairGf">2.8</span> GFLOPs, against <span data-macro="cSixFourFullRwPairGf">37.3</span> with canvas-side projections. So the canvas can be large, as fine as you need for dense outputs. Previous dense active models ran a full decoder over the whole grid at every step.</li>
-    <li>That's the first contribution.</li>
+    <li>And the payoff, from the paper: total compute against the output grid. A plain ViT's cost explodes as you ask for finer outputs; CanViT's barely moves, even over 21 glimpses. And the saving from the asymmetry grows with the canvas.</li>
   </ul></aside>
 </section>
 

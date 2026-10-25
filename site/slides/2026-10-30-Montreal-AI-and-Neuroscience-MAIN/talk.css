@@ -321,7 +321,11 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #architecture .marks.cls .halo { fill: none; stroke: var(--bg); stroke-width: 15; }
 #architecture.shows-cls .marks.cls { opacity: 1; }
 
-#canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden; }
+#canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden;
+                               transform: translateX(185px); transition: transform .8s ease; }
+#canvas-attention .cover { fill: var(--bg); transition: opacity .6s ease .4s; }
+#canvas-attention.shows-payoff svg.figure { transform: none; }
+#canvas-attention.shows-payoff .cover { opacity: 0; }
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
 #canvas-attention .canvas-side { fill: none; stroke: var(--canvas); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
 

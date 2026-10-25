@@ -293,13 +293,27 @@
   <aside class="notes"><ul>
     <li>[Timing: planned 1:00–1:15]</li>
     <li>[AI draft: not the authors' text]</li>
-    <li>So let's put together what we'd want. We want a model that looks through glimpses, which passive models don't do and active models do.</li>
-    <li>It needs a memory, to keep what it has seen from one glimpse to the next.</li>
-    <li>It should give dense outputs, like segmentation, which most active models can't.</li>
-    <li>It should be reused across tasks, the way foundation models are, instead of being retrained for each one.</li>
-    <li>It should work with any viewing policy: as we just saw with Yarbus, where you look depends on the goal. Prior active models each come with their own policy.</li>
-    <li>And it needs rich world knowledge, as passive foundation models have and prior active models lack: that's the accuracy gap we saw.</li>
-    <li>That's what we call an Active-Vision Foundation Model. Nothing ticks all of these boxes yet; this is the goal.</li>
+    <li>So what would it take to bring these two worlds together?</li>
+    <li>On one side, passive foundation models like DINOv3; on the other, prior active models.</li>
+    <li>[CLICK]</li>
+    <li>First, the model should look through glimpses, rather than take in the whole image in a single look.</li>
+    <li>[CLICK]</li>
+    <li>It needs a memory, to integrate what it sees across glimpses.</li>
+    <li>[CLICK]</li>
+    <li>It should support dense outputs like segmentation, which only a few active models do.</li>
+    <li>[CLICK]</li>
+    <li>Like DINOv3, it should be task-agnostic: pretrained once, then used across many tasks.</li>
+    <li>[CLICK]</li>
+    <li>It should be policy-agnostic.</li>
+    <li>As Yarbus showed, the right viewing policy depends on the task, so a task-agnostic model can't commit to one.</li>
+    <li>It needs a general-purpose observer, compatible with any policy.</li>
+    <li>Prior active models are each trained with their own policy; passive models don't choose where to look at all.</li>
+    <li>[CLICK]</li>
+    <li>And it should have rich world knowledge, which passive foundation models get from pretraining at scale, and prior active models lack.</li>
+    <li>[CLICK]</li>
+    <li>That's what we call an Active-Vision Foundation Model.</li>
+    <li>Neither column has all of these.</li>
+    <li>Transition: Yohaï will now show you how we built one.</li>
   </ul></aside>
 </section>
 

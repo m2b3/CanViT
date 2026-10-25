@@ -553,10 +553,11 @@
   </ul></aside>
 </section>
 
-<section id="pretraining" data-status="draft">
+<section id="pretraining" data-status="draft" data-layout="c">
   <h2>Pretraining CanViT-B</h2>
   <!-- The run (paper §6, App. pretraining), then its compute beside DINOv3 7B's (Siméoni et al. 2025, Table 20), to scale;
        sources/checked-facts.md. -->
+  <div class="run">
   <div class="stats">
     <p><b>13.2 million</b>ImageNet-21k scenes</p>
     <p><b>1 billion</b>glimpses</p>
@@ -565,6 +566,7 @@
   <div class="hours">
     <p class="who">DINOv3 7B</p><div class="track"><span class="bar dinov3"></span><span class="n">61,440 H100-hours</span></div>
     <p class="who">CanViT-B</p><div class="track"><span class="bar canvit"></span><span class="n">166 + 8 H100-hours</span></div>
+  </div>
   </div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>

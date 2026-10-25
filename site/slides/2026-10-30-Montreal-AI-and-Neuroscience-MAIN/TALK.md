@@ -411,6 +411,8 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
   - Length: about 35 main slides, several of them signposts of 5 to 10 seconds. Cuts wait for the rehearsal,
     since timings are guesses until then (Y); candidates: `#timeline`'s neuro-AI step, `#extrapolation`.
 - Sabrina reworks Part I over the weekend of 2026-10-24; merge her version.
+- Sabrina, 2026-10-25: write the keywords and spoken text for every slide before `#paper`, slide by slide in
+  discussion with her, she writing the text and the slide following it.
 - Missing material: a moving-scene clip for `#next`.
 - Known defects: segmentation colors differ between slides (the components use
   the ADE20K palette, `#extrapolation` canvit-pytorch's `LABEL_COLORS`); amber means every prior model on some

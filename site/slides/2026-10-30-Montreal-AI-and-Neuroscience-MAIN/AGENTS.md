@@ -242,6 +242,7 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   Yohaï speaks when he explains the work, conversationally, and they flow from one point to the next. A note that
   cannot be made to flow means its content does not hold together: stop, think it through and fix the content, not
   the wording [Yohaï, 2026-10-24].
+- In the speaker notes, the sentence that leads into the next slide starts with "Transition" [Sabrina, 2026-10-25].
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../../css/canvit.css`).
 - A figure from another paper is cited on the slide (`.cite`: authors, year, venue).
 - Animations play while their slide is shown and pause when it is left (`data-play`); a slide that builds

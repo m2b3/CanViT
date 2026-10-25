@@ -467,76 +467,21 @@
   </ul></aside>
 </section>
 
-<section id="how-to-see-first" class="signpost" data-status="draft">
-  <p class="statement"><span>Before knowing <span class="look">where to look</span>,<br>we should know <span class="see">how to see</span>.</span></p>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>We have the architecture. How do we pretrain it into a foundation model? First, as a representation learning problem: learning to build a representation of the scene from glimpses. Not as an RL problem, which brings noisy, high-variance gradients, a sparse learning signal, and the observer coupled to its policy. Before knowing where to look, we should know how to see.</li>
-  </ul></aside>
-</section>
-
-<section id="problem-any-policy" class="signpost" data-status="draft">
-  <!-- Pretraining's first problem (Y, 2026-10-25); its answer is #pretraining-policies. -->
-  <p class="statement">How do we make the model robust to any policy?</p>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>First problem: the model has to work with any policy. Remember Yarbus: where people look depends on the goal, and a foundation model serves many goals. Pretrain the observer on one policy's glimpses and it co-adapts with that policy, even with a stop-gradient; with another policy, there's no guarantee. And if the policy is learned with RL jointly with the observer, the policy gradients make training unstable.</li>
-  </ul></aside>
-</section>
-
-<section id="pretraining-policies" data-status="draft">
-  <h2>Pretraining policies</h2>
-  <!-- Static, so the two policies compare at a glance (Y): pretraining-grid.js draws, for the truck scene of
-       experiments/pretraining (the package's pretraining sampler), each policy's rollout: the scene with numbered boxes,
-       then the glimpses as the model receives them (experiments/pretraining/crops.py). -->
-  <div class="pretraining-grid"></div>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Our answer: no policy at all in pretraining, and no reinforcement learning. Where does it look? Randomly: random positions and zooms, small glimpses more likely, a random number of glimpses, four on average. That's R-IID.</li>
-    <li>For each scene we also run a second rollout that starts with the full scene and then goes random: F-IID.</li>
-    <li>So there's no policy for the observer to co-adapt with. Every other policy we evaluate later, it has never seen. That's 13.2 million ImageNet-21k scenes and about a billion glimpses.</li>
-  </ul></aside>
-</section>
-
-<section id="problem-world-knowledge" class="signpost" data-status="draft">
-  <!-- Pretraining's second problem (Y, 2026-10-25); its answer is #dense-latent-distillation, its cost #pretraining. -->
-  <p class="statement">How do we give it rich knowledge of the visual world, without enormous compute?</p>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Second problem: the model has to understand the visual world. Learning that from scratch takes the kind of compute that went into DINOv3, costly and wasteful. But DINOv3 already has that knowledge, for a scene seen whole. What our model must learn is to build it from glimpses. And no labels anywhere: DINOv3 learned from images alone, and our model learns from DINOv3's features alone, the self-supervision we started the talk with.</li>
-  </ul></aside>
-</section>
-
-<section id="dense-latent-distillation" data-status="draft">
-  <h2>Dense latent distillation</h2>
-  <!-- The target and what predicts it, on the bedroom of #distillation (riid-s124-n21): the teacher, DINOv3 ViT-B
-       frozen, sees the whole 512 px scene and gives features for every patch (teacher.png, PCA); the student, CanViT,
-       gets its first two 128 px glimpses (glimpse-0.png, glimpse-1.png) and predicts those features for the whole
-       scene (prediction-1.png, after the second glimpse, same PCA basis). Boxes: steps.json's first two viewpoints,
-       (x, y, s) = (-0.52, -0.47, 0.14) and (0.33, 0.13, 0.33). -->
-  <div class="pipes">
-    <figure class="scene"><div class="frame"><img src="../../data/talk/distillation/ADE_val_00000124/scene.png" alt="A bedroom"><span class="seen a"></span><span class="seen b"></span></div><figcaption>Scene</figcaption></figure>
-    <span class="to teacher-to"></span>
-    <p class="model teacher">DINOv3<small>frozen</small></p>
-    <span class="to teacher-to"></span>
-    <figure class="target"><div class="frame"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/teacher.png" alt="DINOv3's features of the whole scene as colors"><span class="seen a"></span><span class="seen b"></span></div><figcaption>Target<small>every patch</small></figcaption></figure>
-    <figure class="glimpse"><div class="pair"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-0.png" alt="The first glimpse: a patch of wall, 128 px"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/glimpse-1.png" alt="The second glimpse: the window, 128 px"></div><figcaption>Glimpses 1 and 2</figcaption></figure>
-    <span class="to student-to"></span>
-    <img class="model student" src="../../assets/logos/canvit-wordmark.svg" alt="CanViT">
-    <span class="to student-to"></span>
-    <figure class="prediction"><div class="frame"><img class="pixels" src="../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/prediction-1.png" alt="CanViT's prediction of DINOv3's features for the whole scene"><span class="seen a"></span><span class="seen b"></span></div><figcaption>Prediction<small>after glimpse 2</small></figcaption></figure>
-    <p class="match"><span class="link"></span>match</p>
+<section id="pretraining-desiderata" data-status="draft">
+  <h2>Pretraining desiderata</h2>
+  <!-- The pretraining's two problems and their answers (Y, 2026-10-25); the answers on a click, then the slide that
+       puts them together, #distillation. -->
+  <div class="desiderata">
+    <p class="want">Robust to any viewing policy</p><span class="to"></span><p class="answer">Policy-agnostic</p>
+    <p class="want">Rich knowledge of the visual world, without enormous compute</p><span class="to"></span><p class="answer">Dense latent distillation</p>
   </div>
-  <span class="fragment step-marker" data-shows="student"></span>
-  <span class="fragment step-marker" data-shows="match"></span>
-  <!-- Where the two glimpses were taken, on the scene, the target and the prediction. -->
-  <span class="fragment step-marker" data-shows="seen"></span>
+  <span class="fragment step-marker" data-shows="answers"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>What it learns from: a teacher, DINOv3, frozen. It sees the whole scene and gives features for every patch. That's the target.</li>
-    <li>The student, CanViT, gets glimpses, here two, and after each predicts those features for the whole scene, including everything it hasn't seen.</li>
-    <li>Here's what the two glimpses actually saw: these boxes. The target is the whole scene. So to match it, the model has to fill in everything outside them from what it has seen and what it knows about scenes: integration, and extrapolation.</li>
-    <li>And we train it to match them. Dense in space: every patch of the scene is a target. A reward would only say how good a choice of glimpse was; these features say what is there, everywhere. And latent: the semantics DINOv3 learned at scale come with them, which pixels would not give.</li>
+    <li>We have the architecture. How do we pretrain it into a foundation model? We treat it as representation learning, not as an RL problem. Two things we want.</li>
+    <li>First, the model has to work with any viewing policy. Where people look depends on the goal, as Yarbus showed, and a foundation model serves many goals. Pretrain the observer on one policy's glimpses and it co-adapts with that policy, even with a stop-gradient; with another policy, there's no guarantee. And if the policy is learned with RL jointly with the observer, its gradients make training unstable.</li>
+    <li>Second, it has to understand the visual world. Learning that from scratch takes the kind of compute that went into DINOv3. But DINOv3 already has that knowledge, for a scene seen whole; our model has to learn to build it from glimpses. And no labels anywhere: DINOv3 learned from images alone, and our model learns from DINOv3's features.</li>
+    <li>Our answers: policy-agnostic pretraining, and dense latent distillation.</li>
   </ul></aside>
 </section>
 
@@ -603,6 +548,20 @@
     <li>And what does it learn from? A teacher: DINOv3, the foundation model from the start of the talk, frozen, seeing the whole scene at 512 pixels. The student is CanViT, which only ever gets glimpses.</li>
     <li>After every glimpse, CanViT predicts from its canvas the teacher's features for the whole scene, including what it hasn't seen yet, and we score that with mean squared error against the teacher. No labels.</li>
     <li>Here it is with the released model on a bedroom, with random glimpses. Training rollouts are four glimpses on average, but it keeps improving well beyond that: the error goes from 0.87 after the first glimpse to 0.31 after the 21st; predicting the average target everywhere would give 1.05.</li>
+  </ul></aside>
+</section>
+
+<section id="pretraining-policies" data-status="draft">
+  <h2>Pretraining policies</h2>
+  <!-- Static, so the two policies compare at a glance (Y): pretraining-grid.js draws, for the truck scene of
+       experiments/pretraining (the package's pretraining sampler), each policy's rollout: the scene with numbered boxes,
+       then the glimpses as the model receives them (experiments/pretraining/crops.py). -->
+  <div class="pretraining-grid"></div>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Our answer: no policy at all in pretraining, and no reinforcement learning. Where does it look? Randomly: random positions and zooms, small glimpses more likely, a random number of glimpses, four on average. That's R-IID.</li>
+    <li>For each scene we also run a second rollout that starts with the full scene and then goes random: F-IID.</li>
+    <li>So there's no policy for the observer to co-adapt with. Every other policy we evaluate later, it has never seen. That's 13.2 million ImageNet-21k scenes and about a billion glimpses.</li>
   </ul></aside>
 </section>
 
@@ -878,6 +837,14 @@
 
 <section id="backup" data-status="ready">
   <p class="divider">Backup</p>
+</section>
+
+<section id="how-to-see-first" class="signpost" data-status="draft">
+  <p class="statement"><span>Before knowing <span class="look">where to look</span>,<br>we should know <span class="see">how to see</span>.</span></p>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>We have the architecture. How do we pretrain it into a foundation model? First, as a representation learning problem: learning to build a representation of the scene from glimpses. Not as an RL problem, which brings noisy, high-variance gradients, a sparse learning signal, and the observer coupled to its policy. Before knowing where to look, we should know how to see.</li>
+  </ul></aside>
 </section>
 
 <section id="free-viewing" data-status="draft">

@@ -103,6 +103,20 @@ Stated 2026-10-25 evening, reviewing the deck's structure:
 - (Y) `#compare`'s "Rich world knowledge" ✗ for prior active models can be softened to an intermediate mark
   (AdaGlimpse starts from MAE weights); not critical.
 
+Stated 2026-10-25 late, the pretraining section's logic (supersedes earlier agent framings of it):
+- (Y) The question: with the architecture in hand, how to pretrain it into a foundation model. It is first a
+  representation learning problem, not an RL problem; RL brings noisy, high-variance gradients, a sparse learning
+  signal, and observer and policy coupled.
+- (Y) Problem 1: how to make the model robust to any policy. Answer: policy-agnostic pretraining. Behind it: task
+  agnosticism, since where people look depends on the goal (Yarbus, a callback); a policy-specific observer co-adapts
+  with its policy (even with a stop-gradient), with no guarantee under others; and, independently, joint training
+  through policy gradients is unstable. Whether instability is said is open; the nuance is kept.
+- (Y) Problem 2: how to give the model an understanding of the visual world, rich world knowledge, without an
+  enormous amount of computation, costly and ecologically wasteful. Answer: dense latent distillation from DINOv3,
+  which supplies that knowledge for a scene seen whole; what CanViT must learn is building it from glimpses.
+- (Y) Payoffs come later: cheap policy training on the frozen observer (the learned-policy results); replaying
+  recorded scanpaths (likely the ending).
+
 Stated 2026-10-25 late, on the open threads:
 - (Y) The pretraining section, so that people understand: the two problems to solve and the two answers; then answer
   1 in detail, policy-agnostic pretraining; then answer 2, dense latent distillation (where the learning-signal argument

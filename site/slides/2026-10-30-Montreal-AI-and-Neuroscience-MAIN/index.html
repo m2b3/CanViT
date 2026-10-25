@@ -101,10 +101,16 @@
   <span class="fragment step-marker" data-shows="decode"></span>
   <span class="fragment step-marker" data-shows="scaling"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Which brings us to DINOv3, a vision foundation model, and one we'll come back to. You give it an image.</li>
-    <li>And it gives you features: a high-dimensional vector for every patch, 768 numbers. To see them, we project them onto principal components and show three at a time as red, green and blue; we'll do that throughout the talk, so whenever you see a colorful map like this, that's what it is. Each view shows different structure; none of them is the representation itself.</li>
+    <li>[Main point (to confirm with Yohaï): You give DINOv3 an image, and it outputs a high-dimensional vector for every patch, which you can see with the PCA visualizations that both we and the DINOv3 authors adopt. Each PCA visualization here shows a different view of the same output, and together they form the entire output features of the input image. And these features are directly spatial and semantic: pass them through a linear classifier and you can isolate different objects.]</li>
+    <!-- XXX Flagged 2026-10-25: the views shown (maps.json's pca_cycle) cover principal components 2 to 25, 24 of the 768;
+         together they are not the entire output. The linear classifier gives each patch a probability per class
+         (television, fireplace, armchair), not separate objects. -->
+    <li>[Transition: not sure yet.]</li>
+    <li>[From the AI draft, adopted by Sabrina for now; to confirm with Yohaï:]</li>
+    <li>Which brings us to DINOv3, a vision foundation model, and one we'll come back to. You give it an image, and it gives you features: a high-dimensional vector for every patch, 768 numbers.</li>
+    <li>To see them, we project them onto principal components and show three at a time as red, green and blue; we'll do that throughout the talk, so whenever you see a colorful map like this, that's what it is. Each view shows different structure; none of them is the representation itself.</li>
     <li>And those features are directly meaningful: a linear readout on top, and you get television, fireplace, armchair. Image in, semantic features out, without touching the model.</li>
+    <li>[AI draft: not the authors' text]</li>
     <li>Why care about scale? Raugel and colleagues followed DINOv3 through its training, 1.7 billion images curated from public Instagram posts. Each dot is a brain region; up is how much training the model needs to predict that region half as well as it eventually will. Early visual cortex comes first; regions further from V1, all the way to frontal cortex, need about twice as much. So if you want to model the higher regions, you need that much training. And only a company like Meta could make this plot: you need every checkpoint of the training run.</li>
   </ul></aside>
 </section>

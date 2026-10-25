@@ -397,10 +397,10 @@ about 16, 1 of slack).
 6. C "A brief history of deep active computer vision" · 1:00 · exists. Opens on RAM alone on a short axis, beside its Fig. 1A (glimpse sensor) and a Fig. 3 glimpse path; a click fades them, grows the axis and brings the later models in turn, without further clicks; then the neuro-AI models (Sabrina, 2026-10-25). Models since 2014; how each chose where to
    look (mostly RL); neuro-AI active models, each built for a task or a way of looking.
 7. C "The wide gap between passive and active computer vision" · 0:45 · exists. ADE20K segmentation, then the bars.
-8. C "What's in an active-vision model?" · 1:30 · exists. Clicks (Sabrina, 2026-10-25): the claim; then, together, "focus of prior active vision work" (teal, under the policy) and "focus of passive vision foundation models" (blue, under instantaneous vision); then the ablations. The three axes, observer and policy; "prior work often
+8. C "What's in an active-vision model?" · 1:30 · exists. Clicks (Sabrina, 2026-10-25): the claim; then, together, "focus of most prior active vision work" (teal, under the policy) and "focus of passive vision foundation models" (blue, under instantaneous vision). The prior models' ablations left the main slide for its Backup copy, `#active-vision-model-ablations` (Sabrina, 2026-10-25). The three axes, observer and policy; "prior work often
    focused here"; prior papers' own ablations; "No policy can make up for a poor observer." The gap is the question,
    this slide a first answer.
-9b. C "Where people look depends on their goal" · 1:00 (moved 2026-10-25, Y: before the requirements of an
+9b. C "Where people look depends on their goal" · 1:00 (a click goes from the painting straight to all seven records, Sabrina, 2026-10-25) (moved 2026-10-25, Y: before the requirements of an
    AVFM). Yarbus: a model for any task must handle any sequence of fixations.
 10. C "Toward Active-Vision Foundation Models" · 1:15 · exists. The requirements, a row per click, then the goal
     column.

@@ -208,26 +208,22 @@
         <article class="job" style="--accent: var(--policy)"><h3>Action selection</h3><p>deciding where and at what zoom level to look next</p></article>
       </div>
       <p class="role">Policy</p>
-      <p class="focus active">focus of prior active vision work</p>
+      <p class="focus active">focus of most prior active vision work</p>
     </div>
   </div>
-  <!-- The claim, then what learning where to look bought in the papers' own ablations (sources/policy-ablations.json)
-       under it [Yohaï, 2026-10-24: the claim before the examples]. -->
+  <!-- The claim under the diagram; the prior models' own ablations are on #active-vision-model-ablations (Backup). -->
   <div class="bottom">
     <p class="claim"><span>No policy can make up for a poor observer.</span> <span>A general-purpose observer lets you use any policy.</span></p>
-    <div class="ablations"></div>
   </div>
   <span class="fragment step-marker" data-shows="claim"></span>
   <span class="fragment step-marker" data-shows="focus"></span>
-  <span class="fragment step-marker" data-shows="ablations"></span>
   <aside class="notes"><ul>
-    <li>[Main point: Breaking down the components of an active-vision model helped us identify why. An active vision model can be considered along three axes: making sense of what it sees at a given moment (instantaneous vision); updating a persistent, evolving understanding of the scene, which may in turn inform further processing (memory); and deciding where and at what zoom level to look next (action selection). The first two axes define an observer's ability to understand, persist, and recall visual inputs, while the last defines its input-selection strategy. They do not play comparable roles: given perfect instantaneous vision and memory, naive policies should reach the same accuracy after enough glimpses of a static scene, but no policy can make up for a poor observer. Yet, prior ACV work has often focused on policy.]</li>
+    <li>[Main point: Breaking down the components of an active-vision model helps see why. An active vision model can be considered along three axes: making sense of what it sees at a given moment (instantaneous vision); updating a persistent, evolving understanding of the scene, which may in turn inform further processing (memory); and deciding where and at what zoom level to look next (action selection). The first two axes define an observer's ability to understand, persist, and recall visual inputs, while the last defines its input-selection strategy. They do not play comparable roles: given perfect instantaneous vision and memory, naive policies should reach the same accuracy after enough glimpses of a static scene, but no policy can make up for a poor observer. Yet, prior ACV work has often focused on policy.]</li>
     <li>[AI draft: not the authors' text]</li>
     <li>So what's actually in an active-vision model? Three things. Instantaneous vision: making sense of what you see right now. Memory: keeping a persistent, evolving understanding of the scene. And action selection: deciding where, and at what zoom, to look next.</li>
     <li>The first two make up what we call the observer. The third is the policy.</li>
     <li>Prior work often focused on the policy, on learning where to look.</li>
     <li>No policy can make up for a poor observer. And a general-purpose observer lets you use any policy, at least any of the ones we tested.</li>
-    <li>Look at prior models' own ablations: on natural images, with a glance at the whole scene or several glimpses, replacing the chosen viewpoints with random ones costs GFNet 1.5 points on ImageNet, and AME 1 point on SUN360. Where what matters is small and off-centre, it's different: on traffic signs in large road photos, GFNet's learned policy goes from 69 to 91.5% over random patches. So where to look can matter a lot, but on natural scenes the observer carries most of the accuracy.</li>
   </ul></aside>
 </section>
 
@@ -247,7 +243,6 @@
     <figure class="record-6"><img src="assets/figures/yarbus-1967-visitor/record-6.png" alt="Eye movements while remembering positions of people and objects: everywhere"><figcaption>Remember the positions of people and objects</figcaption></figure>
     <figure class="record-7"><img src="assets/figures/yarbus-1967-visitor/record-7.png" alt="Eye movements while estimating how long the visitor had been away: between his face and the family&rsquo;s"><figcaption>Estimate how long the visitor had been away</figcaption></figure>
   </div>
-  <span class="fragment step-marker" data-shows="free"></span>
   <span class="fragment step-marker" data-shows="tasks"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
@@ -833,6 +828,49 @@
   <p class="divider">Backup</p>
 </section>
 
+<section id="active-vision-model-ablations" data-status="draft">
+  <h2>What's in an active-vision model?</h2>
+  <!-- The main deck's #active-vision-model with the prior models' ablations under the claim (moved here 2026-10-25,
+       Sabrina: the main slide drops them). -->
+  <div class="axes">
+    <div class="group observer">
+      <p class="does">Seeing</p>
+      <div class="jobs">
+        <article class="job" style="--accent: var(--glimpse)"><h3>Instantaneous vision</h3><p>making sense of what it sees at a given moment</p></article>
+        <article class="job" style="--accent: var(--canvas)"><h3>Memory</h3><p>updating a persistent, evolving understanding of the scene</p></article>
+      </div>
+      <p class="role">Observer</p>
+      <p class="focus passive">focus of passive vision foundation models</p>
+    </div>
+    <div class="group policy">
+      <p class="does">Choosing where to look</p>
+      <div class="jobs">
+        <article class="job" style="--accent: var(--policy)"><h3>Action selection</h3><p>deciding where and at what zoom level to look next</p></article>
+      </div>
+      <p class="role">Policy</p>
+      <p class="focus active">focus of most prior active vision work</p>
+    </div>
+  </div>
+  <!-- The claim, then what learning where to look bought in the papers' own ablations (sources/policy-ablations.json)
+       under it [Yohaï, 2026-10-24: the claim before the examples]. -->
+  <div class="bottom">
+    <p class="claim"><span>No policy can make up for a poor observer.</span> <span>A general-purpose observer lets you use any policy.</span></p>
+    <div class="ablations"></div>
+  </div>
+  <span class="fragment step-marker" data-shows="claim"></span>
+  <span class="fragment step-marker" data-shows="focus"></span>
+  <span class="fragment step-marker" data-shows="ablations"></span>
+  <aside class="notes"><ul>
+    <li>[Main point: Breaking down the components of an active-vision model helps see why. An active vision model can be considered along three axes: making sense of what it sees at a given moment (instantaneous vision); updating a persistent, evolving understanding of the scene, which may in turn inform further processing (memory); and deciding where and at what zoom level to look next (action selection). The first two axes define an observer's ability to understand, persist, and recall visual inputs, while the last defines its input-selection strategy. They do not play comparable roles: given perfect instantaneous vision and memory, naive policies should reach the same accuracy after enough glimpses of a static scene, but no policy can make up for a poor observer. Yet, prior ACV work has often focused on policy.]</li>
+    <li>[AI draft: not the authors' text]</li>
+    <li>So what's actually in an active-vision model? Three things. Instantaneous vision: making sense of what you see right now. Memory: keeping a persistent, evolving understanding of the scene. And action selection: deciding where, and at what zoom, to look next.</li>
+    <li>The first two make up what we call the observer. The third is the policy.</li>
+    <li>Prior work often focused on the policy, on learning where to look.</li>
+    <li>No policy can make up for a poor observer. And a general-purpose observer lets you use any policy, at least any of the ones we tested.</li>
+    <li>Look at prior models' own ablations: on natural images, with a glance at the whole scene or several glimpses, replacing the chosen viewpoints with random ones costs GFNet 1.5 points on ImageNet, and AME 1 point on SUN360. Where what matters is small and off-centre, it's different: on traffic signs in large road photos, GFNet's learned policy goes from 69 to 91.5% over random patches. So where to look can matter a lot, but on natural scenes the observer carries most of the accuracy.</li>
+  </ul></aside>
+</section>
+
 <section id="pretraining-desiderata" data-status="draft">
   <h2>Pretraining desiderata</h2>
   <!-- The pretraining's two problems and their answers (Y, 2026-10-25); the answers on a click, then the slide that
@@ -1180,7 +1218,7 @@
   await drawIfPresent("#canvas", (slide) => drawCanvasConcept(slide, "../../data/talk/architecture/street-riid"));
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
-  await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
+  await drawPolicyAblations(document.querySelector("#active-vision-model-ablations .ablations"), "sources/policy-ablations.json");
   await drawIfPresent("#cost", (slide) => drawTrainingCost(slide, "../../data/talk/training-cost.json"));
   await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");

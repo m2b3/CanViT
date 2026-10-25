@@ -227,44 +227,44 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #results:not(.shows-gain-ade20k) .history-chart.ade20k .gain { opacity: 0; }
 
 /* The project page's "What's in an active-vision model?", at slide size. */
-#active-vision-model .axes { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 10px; }
-#active-vision-model .group { position: relative; display: flex; flex-direction: column; padding: 16px; border-radius: 20px; }
-#active-vision-model .group.observer { background: var(--soft); }
-#active-vision-model .group.policy { border: 2px dashed #cbd5e1; }
-#active-vision-model .does { margin-bottom: 12px; font-size: 22px; font-weight: 700; color: var(--ink); text-align: center; }
-#active-vision-model .jobs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 14px; }
-#active-vision-model .job { padding: 16px 18px; border: 1px solid var(--rule); border-top: 5px solid var(--accent); border-radius: 14px; background: var(--bg); }
-#active-vision-model .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
-#active-vision-model .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
-#active-vision-model .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
+:is(#active-vision-model, #active-vision-model-ablations) .axes { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 10px; }
+:is(#active-vision-model, #active-vision-model-ablations) .group { position: relative; display: flex; flex-direction: column; padding: 16px; border-radius: 20px; }
+:is(#active-vision-model, #active-vision-model-ablations) .group.observer { background: var(--soft); }
+:is(#active-vision-model, #active-vision-model-ablations) .group.policy { border: 2px dashed #cbd5e1; }
+:is(#active-vision-model, #active-vision-model-ablations) .does { margin-bottom: 12px; font-size: 22px; font-weight: 700; color: var(--ink); text-align: center; }
+:is(#active-vision-model, #active-vision-model-ablations) .jobs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 14px; }
+:is(#active-vision-model, #active-vision-model-ablations) .job { padding: 16px 18px; border: 1px solid var(--rule); border-top: 5px solid var(--accent); border-radius: 14px; background: var(--bg); }
+:is(#active-vision-model, #active-vision-model-ablations) .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
+:is(#active-vision-model, #active-vision-model-ablations) .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
+:is(#active-vision-model, #active-vision-model-ablations) .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
 /* After the claim, what each line of work focused on: prior active vision on the policy, passive vision foundation models
    on instantaneous vision, the observer's first column. */
-#active-vision-model .focus { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap;
+:is(#active-vision-model, #active-vision-model-ablations) .focus { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap;
                               padding: 4px 14px; border-radius: 999px; color: #fff; font-size: 18px; font-weight: 700;
                               opacity: 0; transition: opacity .6s ease; }
-#active-vision-model .focus.active { background: var(--policy); }
-#active-vision-model .focus.passive { left: 16px; transform: none; background: var(--glimpse); }
-#active-vision-model.shows-focus .focus { opacity: 1; }
+:is(#active-vision-model, #active-vision-model-ablations) .focus.active { background: var(--policy); }
+:is(#active-vision-model, #active-vision-model-ablations) .focus.passive { left: 16px; transform: none; background: var(--glimpse); }
+:is(#active-vision-model, #active-vision-model-ablations).shows-focus .focus { opacity: 1; }
 /* Below the diagram, the claim, then the prior models' ablations under it. */
-#active-vision-model .bottom { display: grid; gap: 6px; margin-top: 50px; }
-#active-vision-model .bottom > * { opacity: 0; transition: opacity .6s ease; }
-#active-vision-model.shows-claim .claim, #active-vision-model.shows-ablations .ablations { opacity: 1; }
-#active-vision-model .claim { margin-top: 18px; font-size: 27px; }
-/* Once the claim is the subject, the diagram keeps only its names. */
-#active-vision-model :is(.does, .job p) { max-height: 3em; overflow: hidden; transition: max-height .6s ease, opacity .4s ease, margin .6s ease; }
-#active-vision-model.shows-claim :is(.does, .job p) { max-height: 0; opacity: 0; margin: 0; }
-#active-vision-model .claim span { display: block; }
-#active-vision-model .ablations svg { display: block; width: 100%; height: auto; overflow: visible; }
-#active-vision-model .ablations .value { font: 600 15px var(--sans); fill: var(--ink); }
-#active-vision-model .ablations .model { font: 800 22px var(--sans); fill: var(--ink); }
-#active-vision-model .ablations .where { font: 500 16px var(--sans); fill: var(--ink); }
-#active-vision-model .ablations .span { stroke: #94a3b8; stroke-width: 4; }
-#active-vision-model .ablations .random { fill: var(--bg); stroke: #64748b; stroke-width: 3; }
-#active-vision-model .ablations .chosen { fill: var(--policy); }
-#active-vision-model .ablations .delta { font: 800 22px var(--sans); fill: var(--policy); }
-#active-vision-model .ablations .key { font: 700 16px var(--sans); }
-#active-vision-model .ablations .random-key { fill: var(--ink); }
-#active-vision-model .ablations .chosen-key { fill: var(--policy); }
+:is(#active-vision-model, #active-vision-model-ablations) .bottom { display: grid; gap: 6px; margin-top: 50px; }
+:is(#active-vision-model, #active-vision-model-ablations) .bottom > * { opacity: 0; transition: opacity .6s ease; }
+:is(#active-vision-model, #active-vision-model-ablations).shows-claim .claim, #active-vision-model-ablations.shows-ablations .ablations { opacity: 1; }
+:is(#active-vision-model, #active-vision-model-ablations) .claim { margin-top: 18px; font-size: 27px; }
+/* Once the claim is the subject, the Backup version's diagram keeps only its names, to make room for the ablations. */
+#active-vision-model-ablations :is(.does, .job p) { max-height: 3em; overflow: hidden; transition: max-height .6s ease, opacity .4s ease, margin .6s ease; }
+#active-vision-model-ablations.shows-claim :is(.does, .job p) { max-height: 0; opacity: 0; margin: 0; }
+:is(#active-vision-model, #active-vision-model-ablations) .claim span { display: block; }
+#active-vision-model-ablations .ablations svg { display: block; width: 100%; height: auto; overflow: visible; }
+#active-vision-model-ablations .ablations .value { font: 600 15px var(--sans); fill: var(--ink); }
+#active-vision-model-ablations .ablations .model { font: 800 22px var(--sans); fill: var(--ink); }
+#active-vision-model-ablations .ablations .where { font: 500 16px var(--sans); fill: var(--ink); }
+#active-vision-model-ablations .ablations .span { stroke: #94a3b8; stroke-width: 4; }
+#active-vision-model-ablations .ablations .random { fill: var(--bg); stroke: #64748b; stroke-width: 3; }
+#active-vision-model-ablations .ablations .chosen { fill: var(--policy); }
+#active-vision-model-ablations .ablations .delta { font: 800 22px var(--sans); fill: var(--policy); }
+#active-vision-model-ablations .ablations .key { font: 700 16px var(--sans); }
+#active-vision-model-ablations .ablations .random-key { fill: var(--ink); }
+#active-vision-model-ablations .ablations .chosen-key { fill: var(--policy); }
 
 
 /* Spatial coverage and perception of detail: scene, the model's 128 px input, p(class), then DINOv3's p(class) from the
@@ -638,16 +638,16 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #adaglimpse-policies figure img { width: 100%; height: auto; }
 #adaglimpse-policies figcaption { margin-top: 14px; text-align: right; }
 
-/* Yarbus's records: the painting, then free examination, then the six tasks; each record in a cell of its own. */
+/* Yarbus's records: the painting, then every record at once, free examination and the six tasks; each in a cell of its own. */
 #task-dependent-scanpaths .yarbus { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 18px; margin-top: 8px; }
 #task-dependent-scanpaths figure { display: flex; flex-direction: column; align-items: center; }
 #task-dependent-scanpaths figure img { width: 100%; height: 170px; object-fit: contain; border-radius: 6px; }
 #task-dependent-scanpaths figcaption { margin-top: 8px; font-size: 18px; font-weight: 650; line-height: 1.25; text-align: center; text-wrap: balance; }
 #task-dependent-scanpaths figure:not(.painting) { opacity: 0; transition: opacity .5s ease; }
-/* The painting opens large in the middle of the slide, then moves into its cell when free examination arrives. */
+/* The painting opens large in the middle of the slide, then moves into its cell when the records arrive. */
 #task-dependent-scanpaths figure.painting { transform: translate(430px, 150px) scale(2.1); transition: transform .8s ease; }
-#task-dependent-scanpaths.shows-free figure.painting { transform: none; }
-#task-dependent-scanpaths.shows-free .record-1, #task-dependent-scanpaths.shows-tasks figure { opacity: 1; }
+#task-dependent-scanpaths.shows-tasks figure.painting { transform: none; }
+#task-dependent-scanpaths.shows-tasks figure { opacity: 1; }
 #task-dependent-scanpaths figcaption .cite { display: block; margin-top: 2px; font-weight: 400; }
 
 /* A Vision Transformer on a glimpse: scene, glimpse, backbone, tokens, left to right, each on its own click. */
@@ -945,3 +945,8 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #pretraining .bar.dinov3 { width: 70%; background: #94a3b8; }
 #pretraining .bar.canvit { width: calc(70% * 174 / 61440); min-width: 4px; background: var(--canvas); }
 #pretraining .n { font-size: 28px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+
+/* The main deck's version, without the ablations: the diagram keeps its descriptions and the slide spreads out. */
+#active-vision-model .axes { margin-top: 40px; }
+#active-vision-model .bottom { margin-top: 90px; }
+#active-vision-model .claim { font-size: 34px; }

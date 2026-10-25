@@ -1,8 +1,0 @@
-{
- "_about": "Prior active models' best published ImageNet-1k top-1 accuracy (%), as the CanViT paper's Table 1 lists them (typed in its LaTeX, not exported), each checked against its source in sources/literature.md (2026-10-25). Read by state-of-the-art.js.",
- "references": [
-  {"name": "Saccader", "value": 75.0, "source": "Elsayed et al., NeurIPS 2019: 75.03 ± 0.08% with 6 glimpses (sources/literature.md, Saccader)"},
-  {"name": "AdaGlimpse", "value": 77.5, "source": "Pardyl et al., ECCV 2024, Table 2, p. 11: 77.54% with 14 glimpses of 32 x 32 px (sources/literature.md, AdaGlimpse)"},
-  {"name": "AdaptiveNN", "value": 82.2, "source": "Wang et al., Nat. Mach. Intell. 2025, Extended Data Tab. 2: AdaptiveNN-DeiT-S, 82.2 ± 0.11% (sources/literature.md, AdaptiveNN)"}
- ]
-}

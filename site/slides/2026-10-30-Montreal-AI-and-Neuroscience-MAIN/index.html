@@ -762,20 +762,26 @@
 
 <section id="state-of-the-art" data-status="draft">
   <h2>A new active-vision state of the art</h2>
-  <!-- In turn: the paper's Table 1 as dot plots, ADE20K then ImageNet-1k (state-of-the-art.js), each prior active
-       model's best result, CanViT-B's and the passive DINOv3 ViT-B's; then ADE20K accuracy against inference compute,
-       the paper's Figure 3A (canvit-frontier). Glimpse counts are not compared: prior models' glimpses differ in size and
-       their images in resolution. -->
+  <!-- The paper's Table 1 (prior active models' best published results as the paper lists them; CanViT-B's from its
+       macros), then ADE20K accuracy against inference compute, the paper's Figure 3A (canvit-frontier). -->
   <div class="panels">
-    <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption><div class="dot-chart"><div class="bars"></div></div></figure>
-    <figure class="in1k"><figcaption>ImageNet-1k classification</figcaption><div class="dot-chart"><div class="bars"></div></div></figure>
+    <figure class="table1"><table class="sota">
+      <thead><tr><th>Model</th><th>ADE20K mIoU (%)</th><th>ImageNet-1k top-1 (%)</th></tr></thead>
+      <tbody>
+        <tr><td>Saccader</td><td class="none">—</td><td>75.0</td></tr>
+        <tr><td>AME (MAE)</td><td>24.4</td><td class="none">—</td></tr>
+        <tr><td>AME (SETR)</td><td>27.6</td><td class="none">—</td></tr>
+        <tr><td>AdaGlimpse</td><td>25.7</td><td>77.5</td></tr>
+        <tr><td>AdaptiveNN</td><td class="none">—</td><td>82.2</td></tr>
+        <tr class="ours"><td><span class="brand">CanViT</span>-B</td><td><b><span data-macro="adeBestMiou">45.9</span></b><sup>†</sup></td><td><span data-macro="inkFrozenBest">81.1</span><sup>†</sup> / <b><span data-macro="inkFinetunedBest">84.5</span></b></td></tr>
+      </tbody>
+    </table><figcaption><sup>†</sup> frozen weights, linear probe</figcaption></figure>
     <figure class="efficiency"><figcaption>ADE20K segmentation against inference compute</figcaption><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="prior egc2f-32 egc2f-64 f2c-32 f2c-64" height="470"></canvit-frontier></figure>
   </div>
-  <span class="fragment step-marker" data-shows="in1k"></span>
   <span class="fragment step-marker" data-shows="efficiency"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Putting it together against prior active models, at their best and ours. ADE20K: the best prior active model reached <span data-macro="adeBestPriorMiou">27.6</span>; CanViT-B, frozen with a linear readout, <span data-macro="adeBestMiou">45.9</span>.</li>
+    <li>Against prior active models, each at its best, as in the paper's Table 1. ADE20K: the best prior active model reached <span data-macro="adeBestPriorMiou">27.6</span>; CanViT-B, frozen with a linear readout, <span data-macro="adeBestMiou">45.9</span>.</li>
     <li>ImageNet-1k: AdaptiveNN reached 82.2; CanViT-B gets <span data-macro="inkFrozenBest">81.1</span> frozen and <span data-macro="inkFinetunedBest">84.5</span> fine-tuned.</li>
     <li>And the passive model whose features it learned from, DINOv3 ViT-B, read out the same way: 47.2 on ADE20K, 85.0 on ImageNet-1k. The gap between active and passive vision is much narrower.</li>
     <li>Efficiency on ADE20K, against inference compute: one low-resolution glimpse of the whole scene gives <span data-macro="adeSingleGlimpseMiou">38.5</span>, with <span data-macro="adeCheapestBeatFlopRatio">20</span>&times; fewer FLOPs than AME needs for its <span data-macro="adeBestPriorMiou">27.6</span>. Even F2C, a worse-than-random order, is above the prior models at lower cost.</li>
@@ -1157,7 +1163,6 @@
   import { drawCanvasConcept } from "./canvas-concept.js";
   import { placeTableAnswers } from "./table.js";
   import { drawGap } from "./gap.js";
-  import { drawStateOfTheArt } from "./state-of-the-art.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   import { startDeck } from "../deck.js";
   // The published deck has no Backup slides (site/deploy.sh cuts them): a Backup slide is drawn only when present.
@@ -1188,9 +1193,6 @@
   await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
   await drawIfPresent("#cost", (slide) => drawTrainingCost(slide, "../../data/talk/training-cost.json"));
   await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
-  await drawStateOfTheArt(document.querySelector("#state-of-the-art"), {
-    paper: "../../assets/paper/ade20k_seg.json", macros: "../../assets/paper/data_macros.json",
-    in1kReferences: "sources/in1k-active-references.json", dinov3Probes: "../../assets/paper/dinov3_probe_data.json" });
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const egc2f = document.querySelector("#eg-c2f");
   await drawUncertainty(egc2f, "../../data/talk/metacognition/street");

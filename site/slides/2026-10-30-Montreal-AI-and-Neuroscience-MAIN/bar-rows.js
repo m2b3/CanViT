@@ -75,37 +75,3 @@ export async function fetchJson(src) {
   return response.json();
 }
 
-/**
- * A dot plot: one row per model, a dot at its score on an axis from min to max (a dot encodes position, so the axis
- * need not start at 0 and close scores stay apart), the name on the left and the value beside the dot; rows sorted by
- * value, emphasized rows (emphasis: true) drawn in color and bold, the others gray; a reference ({name, value}) is a
- * vertical line across the rows, named at its top. Colors from talk.css (.dot-chart).
- */
-export function drawDotRows(container, rows, { min, max, ticks, axisTitle, reference, label }) {
-  const W = 1000, NAME_W = 300, PLOT_W = 560, ROW_H = 56, TOP = reference ? 44 : 10;
-  if ([...rows, ...(reference ? [reference] : [])].some((r) => r.value < min || r.value > max)) {
-    throw new Error(`dot-rows: a value lies outside the axis ${min}-${max}`);
-  }
-  const sorted = [...rows].sort((a, b) => a.value - b.value);
-  const x = (v) => NAME_W + ((v - min) / (max - min)) * PLOT_W;
-  const bottom = TOP + sorted.length * ROW_H;
-  const svg = el("svg", { viewBox: `0 0 ${W} ${bottom + 70}`, role: "img", "aria-label": label });
-  for (const v of ticks) {
-    el("line", { x1: x(v), x2: x(v), y1: TOP - 6, y2: bottom, class: "grid" }, svg);
-    text(v, { x: x(v), y: bottom + 26, "text-anchor": "middle", class: "tick" }, svg);
-  }
-  el("line", { x1: x(min), x2: x(max), y1: bottom, y2: bottom, class: "axis-line" }, svg);
-  text(axisTitle, { x: x((min + max) / 2), y: bottom + 58, "text-anchor": "middle", class: "axis-title" }, svg);
-  if (reference) {
-    el("line", { x1: x(reference.value), x2: x(reference.value), y1: TOP - 10, y2: bottom, class: "reference" }, svg);
-    text(`${reference.name} ${reference.value.toFixed(1)}`, { x: x(reference.value), y: TOP - 18, "text-anchor": "middle", class: "reference-label" }, svg);
-  }
-  sorted.forEach((row, i) => {
-    const y = TOP + i * ROW_H + ROW_H / 2;
-    const group = el("g", { class: row.emphasis ? "row emphasis" : "row" }, svg);
-    text(row.name, { x: NAME_W - 24, y: y + 7, "text-anchor": "end", class: "name" }, group);
-    el("circle", { cx: x(row.value), cy: y, r: row.emphasis ? 11 : 8, class: "dot" }, group);
-    text(row.value.toFixed(1), { x: x(row.value) + (row.emphasis ? 20 : 16), y: y + 7, class: "value" }, group);
-  });
-  container.replaceChildren(svg);
-}

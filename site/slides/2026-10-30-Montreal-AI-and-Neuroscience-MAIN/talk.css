@@ -237,14 +237,10 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 :is(#active-vision-model, #active-vision-model-ablations) .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
 :is(#active-vision-model, #active-vision-model-ablations) .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
 :is(#active-vision-model, #active-vision-model-ablations) .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
-/* After the claim, what each line of work focused on: prior active vision on the policy, passive vision foundation models
-   on instantaneous vision, the observer's first column. */
-:is(#active-vision-model, #active-vision-model-ablations) .focus { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap;
-                              padding: 4px 14px; border-radius: 999px; color: #fff; font-size: 18px; font-weight: 700;
-                              opacity: 0; transition: opacity .6s ease; }
-:is(#active-vision-model, #active-vision-model-ablations) .focus.active { background: var(--policy); }
-:is(#active-vision-model, #active-vision-model-ablations) .focus.passive { left: 16px; transform: none; background: var(--glimpse); }
-:is(#active-vision-model, #active-vision-model-ablations).shows-focus .focus { opacity: 1; }
+/* After the claim, what each line of work focused on: a contour around instantaneous vision (passive vision foundation
+   models) and around action selection (most prior active vision work), each in its component's color. */
+:is(#active-vision-model, #active-vision-model-ablations) .job { transition: box-shadow .6s ease; }
+:is(#active-vision-model, #active-vision-model-ablations).shows-focus .job:is(.instant, .action) { box-shadow: 0 0 0 5px var(--accent); }
 /* Below the diagram, the claim, then the prior models' ablations under it. */
 :is(#active-vision-model, #active-vision-model-ablations) .bottom { display: grid; gap: 6px; margin-top: 50px; }
 :is(#active-vision-model, #active-vision-model-ablations) .bottom > * { opacity: 0; transition: opacity .6s ease; }
@@ -948,5 +944,5 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 
 /* The main deck's version, without the ablations: the diagram keeps its descriptions and the slide spreads out. */
 #active-vision-model .axes { margin-top: 40px; }
-#active-vision-model .bottom { margin-top: 90px; }
+#active-vision-model .bottom { margin-top: 60px; }
 #active-vision-model .claim { font-size: 34px; }

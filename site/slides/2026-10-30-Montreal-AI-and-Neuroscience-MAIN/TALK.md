@@ -322,8 +322,7 @@ authors to confirm.
   at 21 glimpses).
 - From 2026-10-01, still undecided: `#architecture` as the click-by-click drawing (the paper's full figure is in
   Backup as `#architecture-paper`); one segmentation
-  palette for the talk; whether policy colors keep the paper's meanings when they clash with glimpse blue and canvas
-  red; "runs everywhere" (JAX and MLX ports) or PyTorch and the browser only.
+  palette for the talk; policy colors: settled 2026-10-25, the paper's (Y); "runs everywhere" (JAX and MLX ports) or PyTorch and the browser only.
 
 ## The deck: a design (agent's proposal, 2026-10-25; not approved)
 

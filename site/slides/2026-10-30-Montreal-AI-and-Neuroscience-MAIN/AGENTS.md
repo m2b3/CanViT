@@ -254,6 +254,7 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   agent's text kept beside an author's is marked the same way. Agents' framings and words ("a twist") are never passed
   off as the authors' [Yohaï, 2026-10-25].
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../../css/canvit.css`).
+- Viewing policies keep the paper's figure colors (`../../js/canvit/policies.js`) [Yohaï, 2026-10-25].
 - A figure from another paper is cited on the slide (`.cite`: authors, year, venue).
 - Animations play while their slide is shown and pause when it is left (`data-play`); a slide that builds
   click by click uses fragments, so the replay button and the speaker view stay in step.

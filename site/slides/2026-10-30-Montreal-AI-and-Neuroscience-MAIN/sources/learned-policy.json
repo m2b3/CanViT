@@ -1,25 +1,32 @@
 {
- "_about": "A viewing policy learned on top of the frozen, released CanViT-B and its frozen ADE20K linear probe (64 x 64 canvas), from the authors' unpublished reinforcement-learning experiments (read 2026-10-23): mean and standard deviation across 8 training seeds of ADE20K validation mIoU (%), the paper's protocol. Every rollout starts with the full-scene glimpse (t = 0), as EG-C2F's does, so t = 0 is the paper's 39.6. Training: 640k glimpse-forwards, about 80 minutes per seed on one RTX 4090; the reward is how much a glimpse reduces the segmentation error; the policy chooses each next glimpse among 512 candidate viewpoints. Baselines on the slide come from the paper's export (assets/paper/ade20k_seg.json), not from this file.",
- "t": [
-  0,
-  1,
-  2,
-  3,
-  4
- ],
- "miou_mean": [
-  39.6,
-  42.65,
-  43.95,
-  44.62,
-  44.97
- ],
- "miou_sd": [
-  0,
-  0.16,
-  0.16,
-  0.12,
-  0.1
+ "_about": "A viewing policy learned on top of the frozen, released CanViT-B and its frozen ADE20K linear probe (64 x 64 canvas), from the authors' unpublished reinforcement-learning experiments (read 2026-10-23): mean and standard deviation across 8 training seeds of ADE20K validation mIoU, as fractions (per_timestep, t from 0), the paper's protocol. Every rollout starts with the full-scene glimpse (t = 0), as EG-C2F's does, so t = 0 is the paper's 39.6. Training: 640k glimpse-forwards, about 80 minutes per seed on one RTX 4090; the reward is how much a glimpse reduces the segmentation error; the policy chooses each next glimpse among 512 candidate viewpoints. Baselines on the slide come from the paper's export (assets/paper/ade20k_seg.json), not from this file.",
+ "label": "Learned",
+ "per_timestep": [
+  {
+   "t": 0,
+   "mean": 0.396,
+   "sd": 0.0
+  },
+  {
+   "t": 1,
+   "mean": 0.4265,
+   "sd": 0.0016
+  },
+  {
+   "t": 2,
+   "mean": 0.4395,
+   "sd": 0.0016
+  },
+  {
+   "t": 3,
+   "mean": 0.4462,
+   "sd": 0.0012
+  },
+  {
+   "t": 4,
+   "mean": 0.4497,
+   "sd": 0.001
+  }
  ],
  "n_seeds": 8,
  "minutes_per_seed": 80,

@@ -550,6 +550,9 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 /* The chart, then the budget below it: the chart shrinks and the glimpses of pretraining and of learning where to
    look appear to scale. */
 #learned-policy .learned-layout { width: 900px; margin: 18px auto 0; transition: width .7s ease; }
+#learned-policy canvit-policy-curves { --canvit-chart-aspect: .6; }
+#learned-policy canvit-policy-curves::part(added) { transition: opacity .6s ease; }
+#learned-policy:not(.shows-learned) canvit-policy-curves::part(added) { opacity: 0; }
 #learned-policy.shows-budget .learned-layout { width: 600px; margin-top: 0; }
 #learned-policy .budget { display: grid; gap: 14px; margin-top: 14px; opacity: 0; transition: opacity .6s ease .4s; }
 #learned-policy.shows-budget .budget { opacity: 1; }
@@ -560,17 +563,6 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #learned-policy .budget .pretraining .bar { width: 100%; background: var(--canvas); }
 #learned-policy .budget .policy .bar { width: max(4px, calc(100% * 640e3 / 1e9)); background: var(--policy); }
 #learned-policy .budget .n { margin: 4px 0 0; font-size: 19px; font-weight: 700; }
-#learned-policy svg { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--sans); }
-#learned-policy .grid { stroke: var(--rule); }
-#learned-policy .tick { font-size: 16px; fill: var(--muted); }
-#learned-policy .axis-title { font-size: 17px; font-weight: 700; fill: var(--ink); }
-#learned-policy .curve { fill: none; stroke-width: 3.5; stroke-linejoin: round; }
-#learned-policy .curve.ours { stroke: var(--policy); stroke-width: 6; }
-#learned-policy .band { fill: var(--policy); opacity: .2; }
-#learned-policy .end-label { font-size: 19px; font-weight: 800; }
-#learned-policy .end-label.ours { font-size: 23px; }
-#learned-policy .learned { opacity: 0; transition: opacity .6s ease; }
-#learned-policy.shows-learned .learned { opacity: 1; }
 
 /* Next: two directions, each in its own panel. */
 

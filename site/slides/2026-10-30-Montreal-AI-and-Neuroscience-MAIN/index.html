@@ -635,11 +635,12 @@
 
 <section id="learned-policy" data-status="draft">
   <h2>Learning where to look</h2>
-  <!-- learned-policy.js: the paper's policies on the 64 x 64 canvas (assets/paper/ade20k_seg.json) and the learned policy,
-       mean over 8 training seeds with a one-standard-deviation band (sources/learned-policy.json, from the
-       authors' unpublished experiments). Not in the paper. -->
+  <!-- The paper's policies on the 64 x 64 canvas (assets/paper/ade20k_seg.json) over the first five glimpses, where the
+       learned policy acts, on a linear axis; the learned policy (sources/learned-policy.json, from the authors'
+       unpublished experiments; not in the paper), the mean over 8 training seeds with a one-standard-deviation band,
+       appears on "learned" (talk.css). -->
   <div class="learned-layout">
-    <div class="learned-chart"></div>
+    <canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" policies="full_then_random coarse_to_fine entropy_coarse_to_fine" added-src="sources/learned-policy.json" glimpses="5" x-scale="linear" y-range="39 45.5"></canvit-policy-curves>
   </div>
   <!-- How little learning where to look took, beside the observer's pretraining, to scale. XXX: hand-typed until an
        export carries them: pretraining "approximately 1 billion glimpses" (paper, App. pretraining); the learned
@@ -1033,7 +1034,6 @@
   import "./title-teaser.js";
   import { drawCanvasConcept } from "./canvas-concept.js";
   import { placeTableAnswers } from "./table.js";
-  import { drawLearnedPolicy } from "./learned-policy.js";
   import { drawGap } from "./gap.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   import { startDeck } from "../deck.js";
@@ -1063,8 +1063,6 @@
   await drawPolicyAblations(document.querySelector("#active-vision-model .ablations"), "sources/policy-ablations.json");
   await drawIfPresent("#cost", (slide) => drawTrainingCost(slide, "../../data/talk/training-cost.json"));
   await drawGap(document.querySelector("#gap .gap-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
-  await drawLearnedPolicy(document.querySelector("#learned-policy .learned-chart"),
-                          { paper: "../../assets/paper/ade20k_seg.json", learned: "sources/learned-policy.json" });
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const egc2f = document.querySelector("#eg-c2f");
   await drawUncertainty(egc2f, "../../data/talk/metacognition/street");

@@ -514,6 +514,7 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
   - 2026-10-25: `#active-vision-model` 45 s.
   - 2026-10-25: `#task-dependent-scanpaths` about 35 s.
   - 2026-10-25: `#compare` 45–50 s.
+  - 2026-10-25: first full run-through of Part I, from `#title` to `#compare`: about 6:15.
 - Yohaï's feedback on Sabrina's run-through of Part I (2026-10-25), not yet applied (to be worked through with her):
   - Title: the contrast with passive computer vision models is said too loosely.
   - `#tradition`: "a new class of models" is questionable (new?); spell out IT; say where the better categorization

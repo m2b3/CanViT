@@ -248,19 +248,37 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   citation of the authors' own paper go to the notes.
 - Speaker notes (`<aside class="notes">`) are many short bullet points, never paragraphs [Yohaï, 2026-10-25],
   without invented logical links, only where they help, and in the presenter's voice; when unsure, leave a point out rather than dress it up [Yohaï, 2026-10-01].
-- Speaker notes are written the way Yohaï speaks when he explains the work, conversationally. A note that cannot be
-  made to flow means its content does not hold together: stop, think it through and fix the content, not the wording
+- Speaker notes are written the way their speaker says them, conversationally. A note that cannot be made to flow
+  means its content does not hold together: stop, think it through and fix the content, not the wording
   [Yohaï, 2026-10-24].
 - The speakers say what the notes say: a connector they need ("and", "conversely") is in the notes, and nothing is
   added on stage. Notes have no transition lines [Yohaï, 2026-10-25].
 - Connect points only where the logic connects them. A fact can be set up on its own and connected later, as the
   paper's introduction does [Yohaï, 2026-10-25].
-- Each beat of a slide is its own bullet, with a click between beats. Anything said for more than a few seconds has a
-  visual on the slide [Yohaï, 2026-10-25].
-- "We" means the authors. Restate the thing rather than refer to it with "this" or "that" [Yohaï, 2026-10-25].
+- Each beat of a slide starts a new bullet, with a click between beats. Bullets are a breath long, with the key
+  logical connectors and terms in bold. Anything said for more than a few seconds has a visual on the slide
+  [Yohaï, 2026-10-25].
+- "We" means the authors. A pointer ("this", "that") refers to the thing just named; when its referent is not
+  immediate, restate the thing ("drawing inspiration from human vision", not "from this process") [Yohaï, 2026-10-25].
 - Speaker notes an agent drafted start with `[AI draft: not the authors' text]` until an author rewrites them; an
   agent's text kept beside an author's is marked the same way. Agents' framings and words ("a twist") are never passed
   off as the authors' [Yohaï, 2026-10-25].
+- An agent's notes for a slide are not acceptable until it has answered each of these in writing for that slide, the
+  way the authors work through a slide together, which takes them fifteen to twenty minutes [Yohaï, 2026-10-25]:
+  - What the slide must make the listener understand, and whether the first bullet says it, not what is visible.
+  - What the listener knows at this point of the talk: every term used is defined earlier or here; a point made
+    earlier returns only as a callback that moves the argument.
+  - For each state of the slide (before any click, then after each), what appears and what is said with it.
+  - Which sentence of the paper, or of the cited source, already says it; its wording and logical connectors are
+    reused where they fit.
+  - Each claim checked against the paper or the data, at its scope: what CanViT does is not stated as what every model
+    does, and no claim goes beyond its evidence.
+  - Every word read as a listener who sat through the slides before: no narration of what they can see, no colon
+    formula packing a label and its definition, no pointer without an immediate referent, no undefined jargon, no
+    invented connectors.
+  - Spoken length at the authors' measured speaking rate (`TALK.md`, rehearsal timings).
+  `../shoot.py` checks the mechanical part (clicks against [CLICK] marks, and Transition lines in AI drafts); passing
+  it is necessary, never sufficient.
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../../css/canvit.css`).
 - Viewing policies keep the paper's figure colors (`../../js/canvit/policies.js`) [Yohaï, 2026-10-25].
 - A figure from another paper is cited on the slide (`.cite`: authors, year, venue).

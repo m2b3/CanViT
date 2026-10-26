@@ -12,7 +12,8 @@ Writes NN-<slide id>.png (with --steps, one image per click) and errors.txt into
 missing an id. Animations are captured after --wait-ms on each slide. Layout problems on each captured state (a title
 that wraps, visible content in the footer band, a word alone on the last line of a text block, text blocks that
 overlap) go to layout.txt and are printed, without changing the exit status: some titles wrap by design. So does a
-presented slide (not Backup) whose speaker notes mark a different number of [CLICK]s than the slide has clicks.
+presented slide (not Backup) whose speaker notes mark a different number of [CLICK]s than the slide has clicks, and
+an agent's draft notes with a transition line.
 """
 
 import asyncio
@@ -101,16 +102,25 @@ LAYOUT_PROBLEMS_JS = r"""([footerTop]) => {
 }"""
 
 
-# The current slide's clicks as reveal.js counts them (fragments sharing an index are one click) against its notes'
-# [CLICK] marks; Backup slides (after #backup) are not presented and not checked.
-NOTES_CLICKS_JS = r"""() => {
+# The current slide's speaker notes: its clicks as reveal.js counts them (fragments sharing an index are one click)
+# against the notes' [CLICK] marks; and, in an agent's draft (the authors' own text is theirs to word), transition
+# lines, which notes never have. Backup slides (after #backup) are not presented and not checked.
+NOTES_PROBLEMS_JS = r"""() => {
   const slide = deck.getCurrentSlide(), backup = document.querySelector("#backup");
-  if (backup && backup.compareDocumentPosition(slide) & Node.DOCUMENT_POSITION_FOLLOWING) return null;
+  if (backup && backup.compareDocumentPosition(slide) & Node.DOCUMENT_POSITION_FOLLOWING) return [];
   const notes = slide.querySelector("aside.notes");
-  if (!notes) return null;
+  if (!notes) return [];
+  const problems = [];
   const clicks = new Set([...slide.querySelectorAll(".fragment")].map((f) => f.dataset.fragmentIndex)).size;
   const marked = (notes.textContent.match(/\[CLICK\]/g) || []).length;
-  return clicks === marked ? null : `speaker notes mark ${marked} [CLICK] for ${clicks} clicks`;
+  if (clicks !== marked) problems.push(`speaker notes mark ${marked} [CLICK] for ${clicks} clicks`);
+  if (!notes.textContent.includes("[AI draft")) return problems;
+  for (const item of notes.querySelectorAll("li")) {
+    const text = item.textContent.trim();
+    if (text.startsWith("[")) continue;
+    if (/^Transition\b/.test(text)) problems.push(`AI draft, a transition line: "${text}"`);
+  }
+  return problems;
 }"""
 
 
@@ -160,8 +170,7 @@ async def shoot(args: Shoot) -> int:
             where["slide"] = slide_id
             if args.only and slide_id not in args.only:
                 continue
-            if notes_problem := await page.evaluate(NOTES_CLICKS_JS):
-                layout.append(f"[{slide_id}] {notes_problem}")
+            layout += [f"[{slide_id}] {p}" for p in await page.evaluate(NOTES_PROBLEMS_JS)]
             if args.steps:
                 await page.evaluate(f"deck.slide({index}, 0, -1)")
                 step = 0

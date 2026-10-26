@@ -47,9 +47,13 @@
   <aside class="notes"><ul>
     <li>[Timing: 0:45]</li>
     <li>Hi, we're super excited to be here.</li>
-    <li>We're going to tell you about a new class of foundation models, which we call Active-Vision Foundation Models, or AVFMs.</li>
-    <li>In Part I of this talk, I'm going to go over our motivation for defining this class of models.</li>
-    <li>Then in Part II, Yohaï will tell you how we built the first task- and policy-agnostic AVFM: the Canvas Vision Transformer, or CanViT for short.</li>
+    <li>We're going to tell you about a <b>new class</b> of foundation models,</li>
+    <li>which we call <b>Active-Vision Foundation Models</b>, or AVFMs.</li>
+    <li>In <b>Part I</b> of this talk,</li>
+    <li>I'm going to go over our <b>motivation</b> for defining this class of models.</li>
+    <li><b>Then</b> in <b>Part II</b>,</li>
+    <li>Yohaï will tell you <b>how we built</b> the first task- and policy-agnostic AVFM:</li>
+    <li>the <b>Canvas Vision Transformer</b>, or CanViT for short.</li>
   </ul></aside>
 </section>
 
@@ -63,11 +67,18 @@
   </div>
   <aside class="notes"><ul>
     <li>[Timing: 0:50]</li>
-    <li>Deep artificial neural networks have a long history as models of the ventral visual stream.</li>
+    <li>Deep artificial neural networks have a long history</li>
+    <li>as <b>models of the ventral visual stream</b>.</li>
     <li>This was <b>originally</b> explored in the context of <b>supervised</b> learning.</li>
-    <li>In 2014, a <b>landmark study</b> by Yamins and colleagues found that the brain predictivity of convolutional neural networks trained to classify objects tracked their performance on this task.</li>
-    <li>But such networks learn from millions of human-provided labels, whereas humans are able to learn a lot about the world purely from visual experience.</li>
-    <li>More recent work has found that <b>so-called unsupervised</b>, or <b>self-supervised networks</b>, which require <b>no annotations</b>, and thus learn purely from experience as well, <b>can also achieve</b> high neural predictivity.</li>
+    <li>In 2014, a <b>landmark study</b> by Yamins and colleagues found</li>
+    <li>that the <b>brain predictivity</b> of convolutional neural networks trained to classify objects</li>
+    <li><b>tracked their performance</b> on this task.</li>
+    <li><b>But</b> such networks learn from millions of <b>human-provided labels</b>,</li>
+    <li><b>whereas</b> humans are able to learn a lot about the world <b>purely from visual experience</b>.</li>
+    <li>More recent work has found</li>
+    <li>that <b>so-called unsupervised</b>, or <b>self-supervised networks</b>,</li>
+    <li>which require <b>no annotations</b>, and <b>thus</b> learn purely from experience as well,</li>
+    <li><b>can also achieve</b> high neural predictivity.</li>
   </ul></aside>
 </section>
 
@@ -96,11 +107,17 @@
   <span class="fragment step-marker" data-shows="decode"></span>
   <aside class="notes"><ul>
     <li>[Timing: 0:45]</li>
-    <li>A <b>notable example</b> of a self-supervised vision foundation model is DINOv3, which came out last summer.</li>
-    <li>Given an <b>image</b>, it produces a <b>feature map</b>, which is a <b>grid of high-dimensional vectors</b>, called <b>patches</b>.</li>
-    <li>To <b>visualize</b> them, <b>as we do here</b> on the right, we can do principal component analysis <b>across the patches in a given image</b>, and <b>map groups of three principal components</b> to RGB channels.</li>
+    <li>A <b>notable example</b> of a self-supervised vision foundation model is DINOv3,</li>
+    <li>which came out last summer.</li>
+    <li>Given an <b>image</b>, it produces a <b>feature map</b>,</li>
+    <li>which is a <b>grid of high-dimensional vectors</b>, called <b>patches</b>.</li>
+    <li>To <b>visualize</b> them, <b>as we do here</b> on the right,</li>
+    <li>we can do principal component analysis <b>across the patches in a given image</b>,</li>
+    <li>and <b>map groups of three principal components</b> to RGB channels.</li>
     <li>[CLICK]</li>
-    <li>These features are <b>spatially organized</b> <b>and also semantically rich</b>: each patch is <b>linearly decodable</b> into human-interpretable categories, <b>as you can see on the right</b>.</li>
+    <li>These features are <b>spatially organized</b> <b>and also semantically rich</b>:</li>
+    <li>each patch is <b>linearly decodable</b> into human-interpretable categories,</li>
+    <li><b>as you can see on the right</b>.</li>
   </ul></aside>
 </section>
 
@@ -114,10 +131,15 @@
   <figure class="scaling"><p class="takeaway">Late alignment with higher-order cortical areas</p><img src="assets/figures/raugel-2025-fig5e-half-time-vs-distance.png" alt="For 15 cortical regions, the training steps DINOv3 needs to reach half its final encoding score, against the region's distance from V1: early visual areas are matched first, frontal areas only after about twice as much training"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (Fig. 5E of arXiv:2508.18226v1)</figcaption></figure>
   <aside class="notes"><ul>
     <li>[Timing: 0:35]</li>
-    <li>DINOv3 was at the center of a recent study by Raugel and colleagues that used 7-Tesla fMRI and MEG imaging to disentangle the factors of convergence between brains and the model.</li>
+    <li>DINOv3 was at the center of a recent study by Raugel and colleagues</li>
+    <li>that used <b>7-Tesla fMRI and MEG</b> imaging</li>
+    <li>to <b>disentangle</b> the factors of convergence between brains and the model.</li>
     <li>[CLICK]</li>
-    <li>A striking finding was that representational alignment between the model and higher brain areas took more training to emerge than for lower areas.</li>
-    <li>This highlights the importance of scaling up model pretraining if we aim to capture higher-order neural responses.</li>
+    <li>A <b>striking finding</b> was</li>
+    <li>that representational alignment between the model and <b>higher brain areas</b></li>
+    <li>took <b>more training</b> to emerge than for lower areas.</li>
+    <li>This highlights the importance of <b>scaling up</b> model pretraining</li>
+    <li>if we aim to capture <b>higher-order neural responses</b>.</li>
   </ul></aside>
 </section>
 
@@ -125,7 +147,9 @@
   <p class="statement">What's missing?</p>
   <aside class="notes"><ul>
     <li>[Timing: 0:10]</li>
-    <li>These models are great NeuroAI tools, but they're missing something fundamental. Can you guess?</li>
+    <li>These models are great NeuroAI tools,</li>
+    <li><b>but</b> they're missing something <b>fundamental</b>.</li>
+    <li>Can you guess?</li>
   </ul></aside>
 </section>
 
@@ -139,9 +163,12 @@
   <span class="fragment step-marker" data-shows="full-scene"></span>
   <aside class="notes"><ul>
     <li>[Timing: 0:15]</li>
-    <li>Our vision is inherently <b>active</b>: we constantly shift our gaze to bring our high acuity fovea to regions of interest.</li>
+    <li>Our vision is inherently <b>active</b>:</li>
+    <li>we constantly <b>shift our gaze</b></li>
+    <li>to bring our high acuity <b>fovea</b> to regions of interest.</li>
     <li>[CLICK]</li>
-    <li>In contrast, <b>standard</b> computer vision models process images in a single, uniform-resolution look.</li>
+    <li><b>In contrast</b>, <b>standard</b> computer vision models</li>
+    <li>process images in a <b>single, uniform-resolution look</b>.</li>
   </ul></aside>
 </section>
 
@@ -160,12 +187,16 @@
   <span class="fragment step-marker" data-shows="neuro"></span>
   <aside class="notes"><ul>
     <li>[Timing: 0:35]</li>
-    <li>Drawing inspiration from human vision, so-called deep active vision models, which incorporate virtual eye movements, have been developed.</li>
-    <li>This line of work traces back to Mnih et al's Recurrent Attention Model, in 2014, which was originally applied to very simple tasks such as digit recognition.</li>
+    <li>Drawing inspiration from human vision,</li>
+    <li>so-called <b>deep active vision models</b>,</li>
+    <li>which incorporate <b>virtual eye movements</b>, have been developed.</li>
+    <li>This line of work traces back to Mnih et al's <b>Recurrent Attention Model</b>, in 2014,</li>
+    <li>which was originally applied to <b>very simple tasks</b> such as digit recognition.</li>
     <li>[CLICK]</li>
-    <li>Since then, there have been a few follow-ups which handle more complex images and tasks.</li>
+    <li><b>Since then</b>, there have been a few follow-ups</li>
+    <li>which handle <b>more complex</b> images and tasks.</li>
     <li>[CLICK]</li>
-    <li>And in recent years, pioneering NeuroAI work has begun leveraging this paradigm.</li>
+    <li><b>And in recent years</b>, pioneering <b>NeuroAI</b> work has begun leveraging this paradigm.</li>
   </ul></aside>
 </section>
 
@@ -188,15 +219,18 @@
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
     <li>[Timing: 0:45]</li>
-    <li>Although active-vision models are structurally and conceptually compelling, they have struggled to match the visual intelligence of their passive counterparts.</li>
-    <li>This gap is especially striking in so-called dense prediction tasks, such as semantic segmentation.</li>
+    <li><b>Although</b> active-vision models are structurally and conceptually compelling,</li>
+    <li>they have <b>struggled to match</b> the visual intelligence of their passive counterparts.</li>
+    <li>This gap is <b>especially striking</b> in so-called <b>dense prediction</b> tasks,</li>
+    <li>such as <b>semantic segmentation</b>.</li>
     <li>[CLICK]</li>
     <li>This task involves assigning a class to <b>every</b> location of an image,</li>
-    <li>which requires more spatial understanding than image-level classification.</li>
+    <li>which requires <b>more spatial understanding</b> than image-level classification.</li>
     <li>[CLICK]</li>
-    <li>On ADE20K, a standard semantic segmentation benchmark, the few active-vision models that support dense prediction</li>
+    <li>On <b>ADE20K</b>, a standard semantic segmentation benchmark,</li>
+    <li>the <b>few</b> active-vision models that support dense prediction</li>
     <li>[CLICK]</li>
-    <li>lag dramatically behind the state-of-the-art.</li>
+    <li>lag <b>dramatically</b> behind the state-of-the-art.</li>
   </ul></aside>
 </section>
 
@@ -227,16 +261,20 @@
   <span class="fragment step-marker" data-shows="active-focus"></span>
   <aside class="notes"><ul>
     <li>[Timing: 0:45]</li>
-    <li>To better understand this gap, it's helpful to consider active-vision models along three axes: instantaneous vision, memory and action selection.</li>
-    <li>The first two axes define what we call the Observer.</li>
-    <li>In other words, the thing that makes sense of visual inputs.</li>
-    <li>The third axis defines the policy, or input selection strategy.</li>
+    <li>To better understand this gap,</li>
+    <li>it's helpful to consider active-vision models along <b>three axes</b>:</li>
+    <li><b>instantaneous vision</b>, <b>memory</b> and <b>action selection</b>.</li>
+    <li>The first two axes define what we call the <b>Observer</b>.</li>
+    <li><b>In other words</b>, the thing that makes sense of visual inputs.</li>
+    <li>The third axis defines the <b>policy</b>, or input selection strategy.</li>
     <li>[CLICK]</li>
-    <li>The observer and the policy play fundamentally different roles:</li>
-    <li>If the observer is not good, no policy can make up for that.</li>
-    <li>Conversely, if the observer is sufficiently general, it should be compatible with any policy.</li>
+    <li>The observer and the policy play <b>fundamentally different roles</b>:</li>
+    <li><b>If</b> the observer is not good, <b>no policy can make up for that</b>.</li>
+    <li><b>Conversely</b>, if the observer is sufficiently general,</li>
+    <li>it should be <b>compatible with any policy</b>.</li>
     <li>[CLICK]</li>
-    <li>Most prior active vision works have focused on learning good policies, without much focus on the observer.</li>
+    <li>Most prior active vision works have focused on <b>learning good policies</b>,</li>
+    <li><b>without</b> much focus on the observer.</li>
   </ul></aside>
 </section>
 
@@ -259,13 +297,14 @@
   <span class="fragment step-marker" data-shows="tasks"></span>
   <aside class="notes"><ul>
     <li>[Timing: 0:35]</li>
-    <li>So, we just talked about a "general-purpose observer".</li>
+    <li><b>So</b>, we just talked about a "general-purpose observer".</li>
     <li>Can we train a general-purpose <b>policy</b>?</li>
-    <li>In a landmark 1967 experimental psychology study by Yarbus,</li>
+    <li>In a landmark 1967 experimental psychology study by <b>Yarbus</b>,</li>
     <li>[CLICK]</li>
     <li>participants were asked <b>different questions</b> before viewing the <b>same image</b>.</li>
-    <li>The study found that their eye movement patterns, or scanpaths, were strongly dependent on the question they were asked,</li>
-    <li>showing that the "right" viewing policy depends on the task at hand.</li>
+    <li>The study found that their eye movement patterns, or <b>scanpaths</b>,</li>
+    <li>were <b>strongly dependent</b> on the question they were asked,</li>
+    <li><b>showing that</b> the "right" viewing policy <b>depends on the task</b> at hand.</li>
     <li>[next slide]</li>
   </ul></aside>
 </section>
@@ -287,14 +326,19 @@
   <aside class="notes"><ul>
     <li>[Timing: 0:45–0:50]</li>
     <li>Alright, that was a lot.</li>
-    <li>Putting it all together:</li>
-    <li>passive foundation models like DINOv3 have rich <b>general-purpose</b> representations, which can be used for many tasks,</li>
-    <li>but they see in a single look, without localized glimpses or memory.</li>
-    <li>Conversely, prior active vision models struggled to match the <b>visuospatial intelligence</b> of their passive counterparts, and are lacking in generality.</li>
-    <li>What's missing is a model with the best of both worlds: a vision model that understands the spatial and semantic structure of scenes across arbitrary sequences of glimpses,</li>
+    <li><b>Putting it all together</b>:</li>
+    <li><b>passive</b> foundation models like DINOv3 have rich <b>general-purpose</b> representations,</li>
+    <li>which can be used for many tasks,</li>
+    <li><b>but</b> they see in a single look, without localized glimpses or memory.</li>
+    <li><b>Conversely</b>, prior <b>active</b> vision models</li>
+    <li>struggled to match the <b>visuospatial intelligence</b> of their passive counterparts,</li>
+    <li><b>and</b> are lacking in generality.</li>
+    <li>What's missing is a model with <b>the best of both worlds</b>:</li>
+    <li>a vision model that understands the spatial and semantic structure of scenes</li>
+    <li>across arbitrary sequences of glimpses,</li>
     <li>with rich representations that transfer across tasks and viewing policies.</li>
     <li>[CLICK]</li>
-    <li>We call such a model an Active-Vision Foundation Model.</li>
+    <li>We call such a model an <b>Active-Vision Foundation Model</b>.</li>
   </ul></aside>
 </section>
 

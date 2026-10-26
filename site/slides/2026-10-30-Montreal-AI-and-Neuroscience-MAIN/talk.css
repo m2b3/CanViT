@@ -713,9 +713,9 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
                                       letter-spacing: -.02em; line-height: 1.2; text-align: center; color: var(--ink); text-wrap: balance; }
 .reveal section.signpost .outline { display: flex; justify-content: center; align-items: center; gap: 44px; height: 560px; }
 .reveal section.signpost .outline p { margin: 0; padding: 26px 38px; border-radius: 22px; font-size: 48px; font-weight: 800;
-                                      color: var(--ink); background: var(--soft); transition: box-shadow .5s ease; }
-#outline-architecture.shows-architecture .outline p:not(.architecture), .reveal section.signpost .outline.on-pretraining p:not(.pretraining),
-.reveal section.signpost .outline.on-experiments p:not(.experiments) { font-weight: 500; }
+                                      color: var(--ink); background: var(--soft); transition: opacity .5s ease, box-shadow .5s ease; }
+#outline-architecture.shows-architecture .outline p:not(.architecture), .outline.on-pretraining p:not(.pretraining),
+.outline.on-experiments p:not(.experiments) { opacity: .25; }
 #outline-architecture.shows-architecture .architecture, .outline.on-pretraining .pretraining, .outline.on-experiments .experiments {
   box-shadow: inset 0 0 0 4px var(--ink); }
 

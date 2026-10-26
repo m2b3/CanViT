@@ -309,6 +309,16 @@ authors to confirm.
 ## Open questions for the authors
 
 - Kept open until addressed or decided (Y, 2026-10-25):
+  - Part I read-through (2026-10-25 evening), flagged, not to change yet (Y):
+    - `#task-dependent-scanpaths` asks "Can we train a general-purpose policy?" and ends on the right viewing policy
+      depending on the task; the conclusion the argument needs (an observer meant for any task must work with any
+      policy, hence the "Policy-agnostic" row of `#compare`) is not said there or on `#compare`. Yarbus shows that no
+      single fixed policy suits every task, not that no general-purpose policy can exist.
+    - `#active-vision-model` opens "To better understand this gap" but leaves the link to the gap unsaid (prior work
+      focused on the policy; the observer as the bottleneck, a position of Y's).
+    - "Foundation model" is not defined in Part I; assumed known for now (Y).
+    - The scale point of `#dinov3-and-the-brain` is not picked up again in Part I; to keep in mind for Part II's
+      pretraining (rich world knowledge without enormous compute). Not critical (Y).
   - The architecture: the canvas has no moment of its own (it appears in the paper's figure on `#architecture`, now
     600 px wide). Built 2026-10-25, for the authors to review: `#sr-rope` after `#architecture` (a glimpse's 8 x 8
     cells and their scene positions, the canvas's 32 x 32 cells, a smaller glimpse whose cells pack together), and a

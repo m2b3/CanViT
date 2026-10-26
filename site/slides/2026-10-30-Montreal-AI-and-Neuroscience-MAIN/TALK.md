@@ -410,8 +410,9 @@ about 16, 1 of slack).
    AVFM). Yarbus: a model for any task must handle any sequence of fixations.
 10. C "Toward Active-Vision Foundation Models" · 1:15 · exists. Passive foundation models and prior active
     models side by side, then the goal column on the only click (Y, 2026-10-25: no row by row). The row "Rich world knowledge"
-    is now "Visuospatial intelligence" (Y, 2026-10-25). Rows in the order of the definition said on the click
-    (glimpses and memory; visuospatial intelligence and dense outputs; task- and policy-agnostic), 2026-10-25.
+    is now "Visuospatial intelligence" (Y, 2026-10-25). Rows (Y, 2026-10-25): Instantaneous vision, Memory,
+    Visuospatial intelligence, Task-agnostic, Policy-agnostic; "Dense outputs" removed. Passive models have
+    instantaneous vision (the paper's introduction), so that row is ✓ for them.
 
 ### Part II (Yohaï): how, and what it does
 

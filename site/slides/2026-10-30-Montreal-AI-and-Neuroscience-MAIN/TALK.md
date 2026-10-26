@@ -314,8 +314,6 @@ authors to confirm.
       depending on the task; the conclusion the argument needs (an observer meant for any task must work with any
       policy, hence the "Policy-agnostic" row of `#compare`) is not said there or on `#compare`. Yarbus shows that no
       single fixed policy suits every task, not that no general-purpose policy can exist.
-    - `#active-vision-model` opens "To better understand this gap" but leaves the link to the gap unsaid (prior work
-      focused on the policy; the observer as the bottleneck, a position of Y's).
     - "Foundation model" is not defined in Part I; assumed known for now (Y).
     - The scale point of `#dinov3-and-the-brain` is not picked up again in Part I; to keep in mind for Part II's
       pretraining (rich world knowledge without enormous compute). Not critical (Y).

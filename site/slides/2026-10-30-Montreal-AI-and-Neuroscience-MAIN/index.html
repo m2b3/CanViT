@@ -373,9 +373,9 @@
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>Thank you, Sabrina.</li>
-    <li>This is our paper: CanViT, the <b>Canvas Vision Transformer</b>,</li>
-    <li>the first task- and policy-agnostic Active-Vision Foundation Model.</li>
-    <li>It's a NeurIPS 2026 paper, with Audrey Durand and Suresh Krishna.</li>
+    <li>The <b>Canvas Vision Transformer</b>, or CanViT,</li>
+    <li>is the first task- and policy-agnostic Active-Vision Foundation Model.</li>
+    <li>We describe it in a paper accepted at NeurIPS 2026, with Audrey Durand and Suresh Krishna.</li>
   </ul></aside>
 </section>
 
@@ -388,6 +388,7 @@
     <li>Our work has two contributions: an <b>architecture</b>, and a way to <b>pretrain</b> it.</li>
     <li><b>Then</b>, experiments.</li>
     <li>[CLICK]</li>
+    <li>First, the architecture.</li>
   </ul></aside>
 </section>
 
@@ -423,7 +424,7 @@
     <li>shown, as before, by mapping principal components to colors.</li>
     <li>These tokens describe the glimpse well,</li>
     <li><b>but</b> only the glimpse:</li>
-    <li>they live in its own frame, and know nothing of the rest of the scene.</li>
+    <li>they don't say where in the scene the glimpse was taken, or what is around it.</li>
   </ul></aside>
 </section>
 
@@ -460,7 +461,7 @@
     <li>[CLICK]</li>
     <li>We take <b>two glimpses</b>, one at each end of the table.</li>
     <li>[CLICK]</li>
-    <li>A passive model, DINOv3, on the far glimpse:</li>
+    <li>A passive model, DINOv3 with a linear readout, on the far glimpse:</li>
     <li>its probability of table, pasted back where the glimpse was taken.</li>
     <li>[CLICK]</li>
     <li><b>Same</b> for the near glimpse.</li>
@@ -490,13 +491,15 @@
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>This is the <b>Canvas Vision Transformer</b>, as in our paper.</li>
-    <li>On the left, in purple, a Vision Transformer <b>backbone</b> processes the first glimpse, as before.</li>
+    <li>Here is CanViT's architecture, as the paper draws it.</li>
+    <li>On the left, in purple, a Vision Transformer processes the first glimpse, as before;</li>
+    <li>we call it the <b>backbone</b>.</li>
     <li>On the right, in red, the new component: the <b>canvas</b>,</li>
-    <li>a memory laid out over the whole scene: a grid of tokens, each tied to a fixed region of the scene.</li>
-    <li>Between the backbone's blocks, the two exchange information:</li>
-    <li>in a <b>read</b>, the glimpse's tokens query the canvas;</li>
-    <li>in a <b>write</b>, the canvas queries the glimpse's tokens.</li>
+    <li>a memory laid out over the whole scene.</li>
+    <li>It's a grid of tokens, each tied to a fixed region of the scene.</li>
+    <li>Between the backbone's layers, the two exchange information:</li>
+    <li>in a <b>read</b>, the backbone pulls information from the canvas;</li>
+    <li>in a <b>write</b>, it sends updates to the canvas.</li>
     <li>Three of each, per glimpse.</li>
     <li>[CLICK]</li>
     <li>Second glimpse: the glimpse's tokens are <b>discarded</b>, <b>but</b> the canvas <b>persists</b>.</li>
@@ -529,7 +532,8 @@
     <li>[AI draft: not the authors' text]</li>
     <li>The backbone receives the glimpse as an 8 by 8 grid of patches.</li>
     <li>We give each patch its <b>position in the scene</b>,</li>
-    <li>computed from the glimpse's viewpoint: its center, x and y, and its scale, s.</li>
+    <li>computed from where the glimpse was taken: its center, x and y, and its scale, s.</li>
+    <li>We call these three numbers the glimpse's <b>viewpoint</b>.</li>
     <li>[CLICK]</li>
     <li>The canvas patches have positions in the <b>same</b> scene coordinates, on a fixed grid.</li>
     <li><b>So</b> the backbone, which is <b>retinotopic</b>, and the canvas, which is <b>spatiotopic</b>,</li>
@@ -578,6 +582,7 @@
   <div class="outline on-pretraining"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
+    <li>Our second contribution: pretraining.</li>
   </ul></aside>
 </section>
 
@@ -644,14 +649,16 @@
     <li>How do we pretrain this architecture into a <b>foundation model</b>?</li>
     <li>We want a model that <b>understands the visual world</b>,</li>
     <li><b>and</b> that works with <b>any</b> viewing policy.</li>
-    <li>We treat this as a <b>representation learning</b> problem, <b>not</b> a reinforcement learning one.</li>
+    <li>Prior active models usually learn a policy together with the observer, often with reinforcement learning.</li>
+    <li>We treat pretraining as a <b>representation learning</b> problem instead.</li>
     <li>If we pretrained with a learned policy, the model would <b>adapt to that policy's glimpses</b>;</li>
     <li><b>and</b> if the policy's gradients reached the model, they would bring RL's <b>noise and instability</b>.</li>
     <li><b>So</b> no policy at all during pretraining: the glimpses are <b>random</b>.</li>
     <li>After each glimpse, CanViT predicts a representation of the <b>whole scene</b>,</li>
     <li>including what it <b>hasn't seen</b>.</li>
     <li>[CLICK]</li>
-    <li>The <b>target</b>: DINOv3's features for the whole scene, from the frozen teacher, which sees all of it.</li>
+    <li>The <b>target</b>: DINOv3's features for the whole scene.</li>
+    <li>DINOv3 sees all of it, and stays frozen: it is the teacher.</li>
     <li>We score the prediction with a mean squared error.</li>
     <li><b>No labels</b> anywhere: DINOv3 learned without labels, and CanViT learns from its features.</li>
     <li>[CLICK]</li>
@@ -660,7 +667,7 @@
     <li><b>And</b> again.</li>
     <li>[CLICK]</li>
     <li>By glimpse 21, the error is far lower,</li>
-    <li><b>well beyond</b> the four glimpses of an average training rollout.</li>
+    <li><b>well beyond</b> the four glimpses of an average training sequence.</li>
   </ul></aside>
 </section>
 
@@ -675,10 +682,10 @@
     <li><b>Concretely</b>, two random policies.</li>
     <li><b>R-IID</b>: a random position and zoom level at every glimpse, with small glimpses more likely.</li>
     <li><b>F-IID</b>: the whole scene first, <b>then</b> random glimpses.</li>
-    <li>Each scene gets a rollout of each,</li>
-    <li>and each rollout has a random length, four glimpses on average.</li>
+    <li>Each training scene is seen once under each,</li>
+    <li>in a sequence of random length, four glimpses on average.</li>
     <li>No viewing strategy for the model to adapt to:</li>
-    <li>the other policies in our results, it <b>never saw</b> in pretraining.</li>
+    <li>the other policies we test it with later, it <b>never saw</b> in pretraining.</li>
   </ul></aside>
 </section>
 
@@ -702,8 +709,8 @@
     <li>We pretrained CanViT-B on <b>13.2 million</b> ImageNet-21k scenes, about a billion glimpses in all,</li>
     <li>in <b>166 hours</b> on a single H100,</li>
     <li>plus about 8 GPU-hours to compute DINOv3's features once.</li>
-    <li>For scale: DINOv3's 7-billion-parameter model, from which our ViT-B teacher was distilled,</li>
-    <li>took <b>61,440</b> GPU-hours to pretrain.</li>
+    <li>For scale: our teacher, a smaller DINOv3, was distilled from DINOv3's 7-billion-parameter model,</li>
+    <li>which took <b>61,440</b> GPU-hours to pretrain.</li>
     <li>We <b>don't repeat</b> that work; we <b>build on</b> it.</li>
   </ul></aside>
 </section>
@@ -954,12 +961,12 @@
   <span class="fragment step-marker" data-shows="second" data-lines="19-22"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Everything is <b>open source</b>: the code, the pretrained models, and the probes.</li>
+    <li>Everything is <b>open source</b>: the code, the pretrained models, and their linear readouts.</li>
     <li>Installing it: uv add canvit-pytorch.</li>
     <li>[CLICK]</li>
     <li>Here is a complete example.</li>
     <li>[CLICK]</li>
-    <li>Load the pretrained model, with an ADE20K segmentation probe.</li>
+    <li>Load the pretrained model, with its linear readout for ADE20K segmentation.</li>
     <li>[CLICK]</li>
     <li>Load a scene, and initialize the model's state: a <b>fresh canvas</b>.</li>
     <li>[CLICK]</li>

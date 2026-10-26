@@ -245,11 +245,16 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
   citation of the authors' own paper go to the notes.
 - Speaker notes (`<aside class="notes">`) are many short bullet points, never paragraphs [Yohaï, 2026-10-25],
   without invented logical links, only where they help, and in the presenter's voice; when unsure, leave a point out rather than dress it up [Yohaï, 2026-10-01].
-- At this stage the speaker notes are agents' working drafts, unvetted by the authors. They are still written the way
-  Yohaï speaks when he explains the work, conversationally, and they flow from one point to the next. A note that
-  cannot be made to flow means its content does not hold together: stop, think it through and fix the content, not
-  the wording [Yohaï, 2026-10-24].
-- In the speaker notes, the sentence that leads into the next slide starts with "Transition" [Sabrina, 2026-10-25].
+- Speaker notes are written the way Yohaï speaks when he explains the work, conversationally. A note that cannot be
+  made to flow means its content does not hold together: stop, think it through and fix the content, not the wording
+  [Yohaï, 2026-10-24].
+- The speakers say what the notes say: a connector they need ("and", "conversely") is in the notes, and nothing is
+  added on stage. Notes have no transition lines [Yohaï, 2026-10-25].
+- Connect points only where the logic connects them. A fact can be set up on its own and connected later, as the
+  paper's introduction does [Yohaï, 2026-10-25].
+- Each beat of a slide is its own bullet, with a click between beats. Anything said for more than a few seconds has a
+  visual on the slide [Yohaï, 2026-10-25].
+- "We" means the authors. Restate the thing rather than refer to it with "this" or "that" [Yohaï, 2026-10-25].
 - Speaker notes an agent drafted start with `[AI draft: not the authors' text]` until an author rewrites them; an
   agent's text kept beside an author's is marked the same way. Agents' framings and words ("a twist") are never passed
   off as the authors' [Yohaï, 2026-10-25].

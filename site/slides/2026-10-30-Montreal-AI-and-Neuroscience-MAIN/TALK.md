@@ -314,6 +314,11 @@ authors to confirm.
       depending on the task; the conclusion the argument needs (an observer meant for any task must work with any
       policy, hence the "Policy-agnostic" row of `#compare`) is not said there or on `#compare`. Yarbus shows that no
       single fixed policy suits every task, not that no general-purpose policy can exist.
+      (Y, 2026-10-25, in the speakers' run-through) The question is left open on purpose, without a conclusion; its
+      payoff belongs on `#compare`. A general-purpose policy does exist in one sense (free viewing), and a human's
+      policy is conditioned on the goal: a model conditioned on any goal would need something like a future
+      vision-language model, so a task-agnostic model is made policy-agnostic instead. This is for questions, which
+      Sabrina may hand to Yohaï.
     - "Foundation model" is not defined in Part I; assumed known for now (Y).
     - The scale point of `#dinov3-and-the-brain` is not picked up again in Part I; to keep in mind for Part II's
       pretraining (rich world knowledge without enormous compute). Not critical (Y).
@@ -510,6 +515,7 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
 
 ## Open work
 
+- Speaker notes not updating during rehearsal (2026-10-25): a second tab of the deck was open; closing it fixed it.
 - Rehearsal timings (run-throughs; agents' estimates are guesses until these exist):
   - 2026-10-25, Sabrina with Yohaï: `#title` 45 s, more than the notes say; can come down if needed.
   - 2026-10-25: `#tradition` 50 s (retitled "Deep neural networks as models of vision", Y).

@@ -5,8 +5,9 @@ a TPU v6e-4 slice with PyTorch/XLA SPMD. The default task configuration is the
 published LP-FT run, whose checkpoint is
 `canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`.
 
-The task uses the pretraining checkpoint
-`canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02` and
+By default the task uses the pretraining checkpoint
+`canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02`
+(`PRETRAINING_DATASET=in1k` selects the ImageNet-1k-pretrained one) and
 the released DINOv3 ViT-B/16 ImageNet-1k CLS probe. It samples four
 glimpses per scene with the full-then-random policy, computes classification
 loss after every glimpse, and uses four-glimpse truncated backpropagation
@@ -97,6 +98,8 @@ optional values are:
 
 - `RUN_NAME`: experiment name and fallback checkpoint-directory name;
 - `INIT_FROM`: classifier checkpoint whose model weights initialize a new run;
+- `PRETRAINING_DATASET`: `in1k` to fine-tune the ImageNet-1k-pretrained CanViT-B instead of
+  the default `in21k` flagship;
 - `EVAL_C2F`: any nonempty value to add coarse-to-fine validation;
 - `EVAL_N_GLIMPSES`: validation episode length; and
 - `EARLY_STOP_DELTA`: stop when validation accuracy falls below the best by

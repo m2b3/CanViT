@@ -119,7 +119,8 @@ A note points to its source (paper section, module and symbol, file path) and st
 generates stay in its macros.
 
 `../shoot.py` exits nonzero when the page logged an error; read `errors.txt`, `layout.txt` (titles that wrap, content in
-the footer band, a word alone on the last line of a text block, text blocks that overlap) and the images of every slide you touched, with all fragments shown (default) and before them
+the footer band, a word alone on the last line of a text block, text blocks that overlap, speaker notes whose
+[CLICK] marks do not match the slide's clicks) and the images of every slide you touched, with all fragments shown (default) and before them
 (`--first-fragment`), or click by click (`--steps`).
 Screenshots are review material and are never committed (`site/.screens/` is ignored).
 
@@ -186,6 +187,7 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - A description on a slide is precise and distinctive [Yohaï, 2026-10-01].
 - No unnecessary or obvious caveats [Yohaï, 2026-10-01].
 - Think about axis scalings, including transforms such as Fisher's [Yohaï, 2026-10-01].
+- A curve keeps its style (solid or dashed) across a slide's steps [Yohaï, 2026-10-25].
 - A number on a slide carries its unit [Yohaï, 2026-10-01].
 - An example must be inspiring [Yohaï, 2026-10-01].
 - Never overload a slide with text [Yohaï, 2026-10-01]. A slide says exactly what is needed and nothing more;

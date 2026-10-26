@@ -170,8 +170,12 @@ def stochastic_n_runs(curves: list[dict]) -> int:
     return n_runs.pop()
 
 
+def printed_mean(point: dict, *, decimals: int) -> str:
+    return fixed(point["mean"] * 100, decimals)
+
+
 def mean_cell(point: dict, *, n_runs: int, decimals: int) -> str:
-    mean = fixed(point["mean"] * 100, decimals)
+    mean = printed_mean(point, decimals=decimals)
     if n_runs < 2:
         return mean
     half_width = (point["ci_hi"] - point["ci_lo"]) / 2 * 100
@@ -179,7 +183,10 @@ def mean_cell(point: dict, *, n_runs: int, decimals: int) -> str:
 
 
 def policy_table_rows(curves: list[dict], *, timesteps: tuple[int, ...], decimals: int, show_canvas: bool) -> list[str]:
-    best = {t: max(c["per_timestep"][t]["mean"] for c in curves) for t in timesteps}
+    def shown(point: dict) -> Decimal:
+        return Decimal(printed_mean(point, decimals=decimals))
+
+    best = {t: max(shown(c["per_timestep"][t]) for c in curves) for t in timesteps}
     rows = []
     for c in curves:
         cells = [policy_label(c["policy"])]
@@ -188,7 +195,8 @@ def policy_table_rows(curves: list[dict], *, timesteps: tuple[int, ...], decimal
         for t in timesteps:
             point = c["per_timestep"][t]
             cell = mean_cell(point, n_runs=c["n_runs"], decimals=decimals)
-            cells.append(bold(cell) if point["mean"] >= best[t] else cell)  # every tied winner is bold
+            # Every cell tied with the best at the printed precision is bold: a reader compares printed values.
+            cells.append(bold(cell) if shown(point) == best[t] else cell)
         rows.append(row(cells))
     return rows
 

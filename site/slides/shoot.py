@@ -11,7 +11,8 @@
 Writes NN-<slide id>.png (with --steps, one image per click) and errors.txt into --out; exits with status 1 when the page logged an error or a slide is
 missing an id. Animations are captured after --wait-ms on each slide. Layout problems on each captured state (a title
 that wraps, visible content in the footer band, a word alone on the last line of a text block, text blocks that
-overlap) go to layout.txt and are printed, without changing the exit status: some titles wrap by design.
+overlap) go to layout.txt and are printed, without changing the exit status: some titles wrap by design. So does a
+presented slide (not Backup) whose speaker notes mark a different number of [CLICK]s than the slide has clicks.
 """
 
 import asyncio
@@ -100,6 +101,19 @@ LAYOUT_PROBLEMS_JS = r"""([footerTop]) => {
 }"""
 
 
+# The current slide's clicks as reveal.js counts them (fragments sharing an index are one click) against its notes'
+# [CLICK] marks; Backup slides (after #backup) are not presented and not checked.
+NOTES_CLICKS_JS = r"""() => {
+  const slide = deck.getCurrentSlide(), backup = document.querySelector("#backup");
+  if (backup && backup.compareDocumentPosition(slide) & Node.DOCUMENT_POSITION_FOLLOWING) return null;
+  const notes = slide.querySelector("aside.notes");
+  if (!notes) return null;
+  const clicks = new Set([...slide.querySelectorAll(".fragment")].map((f) => f.dataset.fragmentIndex)).size;
+  const marked = (notes.textContent.match(/\[CLICK\]/g) || []).length;
+  return clicks === marked ? null : `speaker notes mark ${marked} [CLICK] for ${clicks} clicks`;
+}"""
+
+
 async def layout_problems(page: Page) -> list[str]:
     return await page.evaluate(LAYOUT_PROBLEMS_JS, [FOOTER_TOP_PX])
 
@@ -146,6 +160,8 @@ async def shoot(args: Shoot) -> int:
             where["slide"] = slide_id
             if args.only and slide_id not in args.only:
                 continue
+            if notes_problem := await page.evaluate(NOTES_CLICKS_JS):
+                layout.append(f"[{slide_id}] {notes_problem}")
             if args.steps:
                 await page.evaluate(f"deck.slide({index}, 0, -1)")
                 step = 0

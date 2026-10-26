@@ -7,8 +7,9 @@
     node site/serve.mjs 8765 &
     uv run site/slides/check_published.py --talk 2026-10-30-Montreal-AI-and-Neuroscience-MAIN
 
-Opens the page and scrolls through it, then walks the talk's every slide and click, showing each scene and readout of
-its episodes, and records the site's files they request; then requests each from the published site. Exits with
+Opens the page and scrolls through it, then walks the talk's every slide and click as published (its Backup slides
+cut, published_deck.py), showing each scene and readout of its episodes, and records the site's files they request;
+then requests each from the published site. Exits with
 status 1 when a file is missing there or a local request failed.
 """
 
@@ -20,7 +21,9 @@ from dataclasses import dataclass
 from urllib.parse import urlsplit
 
 import tyro
-from playwright.async_api import Page, async_playwright
+from playwright.async_api import Page, Route, async_playwright
+
+from published_deck import without_backup
 
 LOCAL_ONLY = {"/__reload"}  # the dev server's reload channel
 
@@ -72,7 +75,16 @@ async def requested_paths(args: Check) -> tuple[set[str], list[str]]:
             await page.evaluate(f"window.scrollTo(0, {y})")
             await page.wait_for_timeout(args.wait_ms // 2)
 
-        await page.goto(f"{args.local}/slides/{args.talk}/")
+        deck_url = f"{args.local}/slides/{args.talk}/"
+
+        async def as_published(route: Route) -> None:
+            response = await route.fetch()
+            # The cut body is shorter than the original's Content-Length, which must not be passed on.
+            headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
+            await route.fulfill(response=response, headers=headers, body=without_backup(await response.text()))
+
+        await page.route(deck_url, as_published)
+        await page.goto(deck_url)
         await page.wait_for_function("window.deck?.isReady()")
         for index in range(await page.evaluate("deck.getTotalSlides()")):
             await page.evaluate(f"deck.slide({index}, 0, -1)")

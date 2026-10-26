@@ -26,16 +26,7 @@ mkdir -p "$out/slides/node_modules/reveal.js" && cp site/slides/deck.js site/sli
 cp -R site/slides/node_modules/reveal.js/dist "$out/slides/node_modules/reveal.js/"
 for file in $talks; do mkdir -p "$out/$(dirname "${file#site/}")" && cp "$file" "$out/${file#site/}"; done
 # A talk's Backup slides stay out of the published deck.
-python3 - "$out"/slides/[0-9][0-9][0-9][0-9]-*/index.html <<'PY'
-import sys
-for path in sys.argv[1:]:
-    html = open(path).read()
-    if '<section id="backup"' not in html:
-        continue
-    start = html.index('<section id="backup"')
-    end = html.index("</div>\n</div>", start)  # the close of .slides, then of .reveal
-    open(path, "w").write(html[:start] + html[end:])
-PY
+python3 site/slides/published_deck.py "$out"/slides/[0-9][0-9][0-9][0-9]-*/index.html
 # The bundles the published pages and talks load, as they name them; other recorded bundles stay local. data/talk is
 # the talks' own data, not a bundle.
 bundles=$(grep -ho 'data/[a-z0-9-]*' "$out/index.html" "$out"/slides/*/index.html | grep -v '^data/talk$' | sort -u)

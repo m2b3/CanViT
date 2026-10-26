@@ -1386,7 +1386,7 @@
   await drawIfPresent("#canvas", (slide) => drawCanvasConcept(slide, "../../data/talk/architecture/street-riid"));
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
-  await drawPolicyAblations(document.querySelector("#active-vision-model-ablations .ablations"), "sources/policy-ablations.json");
+  await drawIfPresent("#active-vision-model-ablations", (slide) => drawPolicyAblations(slide.querySelector(".ablations"), "sources/policy-ablations.json"));
   await drawIfPresent("#cost", (slide) => drawTrainingCost(slide, "../../data/talk/training-cost.json"));
   await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");

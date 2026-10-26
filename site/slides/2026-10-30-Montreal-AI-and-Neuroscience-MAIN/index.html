@@ -490,7 +490,7 @@
     <li>The two interact through <b>Canvas Attention</b>,</li>
     <li>which lets the backbone <b>pull</b> information from the canvas and <b>send</b> updates to it, three times per glimpse.</li>
     <li>[CLICK]</li>
-    <li>The glimpse's tokens are discarded after each glimpse, <b>since</b> consecutive glimpses need not align.</li>
+    <li>The glimpse's tokens are discarded after each glimpse, <b>since</b> the next glimpse may be anywhere, at any zoom.</li>
     <li>The canvas <b>persists</b>,</li>
     <li><b>so</b> each glimpse is processed in the context of what was seen before.</li>
     <li>[CLICK]</li>
@@ -522,7 +522,7 @@
     <li><b>Scene-Relative RoPE</b> gives each patch its position in the <b>scene</b>, computed from the glimpse's viewpoint.</li>
     <li>[CLICK]</li>
     <li>Canvas patches have fixed positions in the <b>same</b> scene coordinates.</li>
-    <li>This binds the <b>retinotopic</b> backbone and the <b>spatiotopic</b> canvas with a shared reference frame.</li>
+    <li>Scene-relative positions bind the <b>retinotopic</b> backbone and the <b>spatiotopic</b> canvas with a shared reference frame.</li>
     <li>[CLICK]</li>
     <li>When the model zooms in, the glimpse's patches cluster in a small region of the scene.</li>
     <li>Their spacing tells the model the zoom level.</li>
@@ -552,7 +552,7 @@
     <li>[CLICK]</li>
     <li>Canvas tokens only go through layer normalization and position embeddings,</li>
     <li>with no MLP and no self-attention.</li>
-    <li><b>That</b> is what lets the canvas be much larger than the glimpse.</li>
+    <li>With so little computation per canvas token, the canvas can be much larger than the glimpse.</li>
     <li>[CLICK]</li>
     <li><b>As a result</b>, CanViT supports fine-grained canvases</li>
     <li>without incurring the quadratic cost of self-attention.</li>
@@ -629,9 +629,8 @@
     <li>[AI draft: not the authors' text]</li>
     <li>How can we teach CanViT to see,</li>
     <li>in a way that depends neither on the task nor on the viewing policy, and without labels?</li>
-    <li>Prior active models usually train the observer together with a policy, often with reinforcement learning.</li>
-    <li>Training with a policy makes the observer <b>specific</b> to it,</li>
-    <li><b>and</b> policy gradients are noisy and unstable.</li>
+    <li>Pretraining the observer with a policy would make it <b>specific</b> to that policy.</li>
+    <li><b>And</b> if the policy is learned with reinforcement learning, its noisy gradients make pretraining unstable.</li>
     <li><b>So</b> we pretrain without any policy, on <b>random</b> glimpses.</li>
     <li>After every glimpse, CanViT reconstructs the <b>whole scene</b>, including what it hasn't seen.</li>
     <li>[CLICK]</li>
@@ -690,7 +689,7 @@
     <li>Computing DINOv3's features once took about 8 more GPU-hours.</li>
     <li>Our teacher was distilled from DINOv3's 7-billion-parameter model,</li>
     <li>which took <b>61,440</b> GPU-hours to train.</li>
-    <li>We <b>build on</b> that investment instead of repeating it.</li>
+    <li>We <b>build on</b> DINOv3's training instead of repeating it.</li>
   </ul></aside>
 </section>
 
@@ -790,7 +789,7 @@
     <li>[CLICK]</li>
     <li>Near the cars, it hesitates between car, building and road, a <b>high</b> entropy.</li>
     <li>[CLICK]</li>
-    <li>This gives an entropy map over the whole scene,</li>
+    <li>The result is an entropy map over the whole scene,</li>
     <li>[CLICK]</li>
     <li>averaged over each quadrant.</li>
     <li>[CLICK]</li>
@@ -830,7 +829,7 @@
     <li>[CLICK]</li>
     <li>A 64 by 64 canvas, never used in pretraining, improves <b>every</b> policy.</li>
     <li>Coarse-to-Fine reaches <span data-macro="adeCTFCSixFourTTwenty">45.9</span>%, Fine-to-Coarse <span data-macro="adeFTCCSixFourTTwenty">42.9</span>%, with the same viewpoints in reverse order.</li>
-    <li>This highlights the importance of contextually informed processing.</li>
+    <li>The difference highlights the importance of contextually informed processing.</li>
     <li><b>Yet</b> even Fine-to-Coarse is far above the best prior active model's <span data-macro="adeBestPriorMiou">27.6</span>%,</li>
     <li>showing that <b>perception, not viewpoint selection, was the bottleneck</b>.</li>
   </ul></aside>

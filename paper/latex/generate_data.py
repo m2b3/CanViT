@@ -227,7 +227,7 @@ def ade20k(out: Outputs, ade: dict) -> None:
     out.macro("adeBestPriorMiou", fmt1(claims["best_prior_miou_pct"]))
     out.macro("adeBestPriorGflops", fmt1(claims["best_prior_gflops"]))
     out.macro("adeCheapestBeatMiou", fmt1(cheapest_beat["first_beat_miou_pct"]))
-    out.macro("adeCheapestBeatFlopRatio", str(round(cheapest_beat["flop_ratio"])))
+    out.macro("adeCheapestBeatFlopRatio", fixed(cheapest_beat["flop_ratio"], 0))
 
     baselines = {(b["name"], b["num_glimpses"]): b for b in ade["baselines"]}
     out.macro("ameSetrMiou", fmt1(baselines["AME (SETR)", 8]["miou_pct"]))

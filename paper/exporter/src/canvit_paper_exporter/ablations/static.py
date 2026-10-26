@@ -37,7 +37,7 @@ def _record(v: AblationVariant, bl_params: int, bl_gflops: float) -> dict:
         "params": p,
         "params_str": f"{p / 1e6:.1f}M",
         "params_pct": _fractional_change(p, bl_params),
-        "gflops_per_glimpse": round(f, REL_DIGITS),
+        "gflops_per_glimpse": f,
         "gflops_str": f"{f:.1f}",
         "gflops_pct": _fractional_change(f, bl_gflops),
     }

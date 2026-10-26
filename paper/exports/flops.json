@@ -5,14 +5,14 @@
     "n_patches": 64,
     "backbone_regs": 5,
     "canvas_grid": 32,
-    "asym_rw_pair_gf": 1.052,
-    "full_rw_pair_gf": 9.776,
-    "qkvo_rw_pair_ratio": 9.3,
+    "asym_rw_pair_gf": 1.051590656,
+    "full_rw_pair_gf": 9.775742976,
+    "qkvo_rw_pair_ratio": 9.296148572853047,
     "c64": {
       "canvas_grid": 64,
-      "asym_rw_pair_gf": 2.838,
-      "full_rw_pair_gf": 37.332,
-      "qkvo_rw_pair_ratio": 13.2
+      "asym_rw_pair_gf": 2.83836416,
+      "full_rw_pair_gf": 37.332320256,
+      "qkvo_rw_pair_ratio": 13.152759178018933
     }
   }
 }

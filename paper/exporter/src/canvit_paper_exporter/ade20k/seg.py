@@ -58,7 +58,7 @@ BASELINES = [
 
 def _cum_gflops(grid: int, n_timesteps: int) -> list[float]:
     per_glimpse = segmentation_glimpse_flops(CANVIT_B, canvas_grid_size=grid)
-    return [round((t + 1) * per_glimpse / 1e9, 2) for t in range(n_timesteps)]
+    return [(t + 1) * per_glimpse / 1e9 for t in range(n_timesteps)]
 
 
 def _summarise(key: PolicyKey, files: list[Path]) -> dict:
@@ -107,7 +107,7 @@ def _probe_table(seg_dir: Path) -> list[dict]:
                 "model": label,
                 "input_px": res,
                 "output_grid": res // DINOV3_PATCH_SIZE,
-                "gflops": round(dinov3_flops(DINOV3_CONFIGS[label], input_size_px=res) / 1e9, 2),
+                "gflops": dinov3_flops(DINOV3_CONFIGS[label], input_size_px=res) / 1e9,
                 "miou_pct": round(100 * r["mious"]["t0"], 2),
             }
         elif mcv is not None:
@@ -119,7 +119,7 @@ def _probe_table(seg_dir: Path) -> list[dict]:
                 "scene_size": scene,
                 "input_px": RELEASED_GLIMPSE_SIZE_PX,
                 "output_grid": grid,
-                "gflops": round(segmentation_glimpse_flops(CANVIT_B, canvas_grid_size=grid) / 1e9, 2),
+                "gflops": segmentation_glimpse_flops(CANVIT_B, canvas_grid_size=grid) / 1e9,
                 "miou_pct": round(100 * r["mious"]["t0"], 2),
             }
     return sorted(rows.values(), key=lambda r: (r["model"], r["input_px"]))
@@ -144,7 +144,7 @@ def _compute_claims(curves: list[dict], best_prior: dict) -> dict:
                     "first_beat_t": p["t"],
                     "first_beat_gflops": p["cum_gflops"],
                     "first_beat_miou_pct": round(p["mean"] * 100, 2),
-                    "flop_ratio": round(prior_gf / p["cum_gflops"], 1),
+                    "flop_ratio": prior_gf / p["cum_gflops"],
                 })
                 break
 
@@ -169,7 +169,7 @@ def _compute_claims(curves: list[dict], best_prior: dict) -> dict:
             "gflops": best_t0["cum_gflops"],
             "canvas_grid": g,
             "scene_size": best_c["scene_size"],
-            "flop_ratio": round(prior_gf / best_t0["cum_gflops"], 1),
+            "flop_ratio": prior_gf / best_t0["cum_gflops"],
         }
 
     # Per-grid cheapest prior-beat.

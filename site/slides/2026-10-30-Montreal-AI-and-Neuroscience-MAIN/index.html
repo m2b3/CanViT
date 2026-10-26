@@ -376,7 +376,6 @@
     <li>This is our paper: CanViT, the <b>Canvas Vision Transformer</b>,</li>
     <li>the first task- and policy-agnostic Active-Vision Foundation Model.</li>
     <li>It's a NeurIPS 2026 paper, with Audrey Durand and Suresh Krishna.</li>
-    <li>Transition: how we built it, and what it does.</li>
   </ul></aside>
 </section>
 
@@ -389,7 +388,6 @@
     <li>Our work has two contributions: an <b>architecture</b>, and a way to <b>pretrain</b> it.</li>
     <li><b>Then</b>, experiments.</li>
     <li>[CLICK]</li>
-    <li>Transition: first, the architecture.</li>
   </ul></aside>
 </section>
 
@@ -426,7 +424,6 @@
     <li>These tokens describe the glimpse well,</li>
     <li><b>but</b> only the glimpse:</li>
     <li>they live in its own frame, and know nothing of the rest of the scene.</li>
-    <li>Transition: so what happens when we look somewhere else?</li>
   </ul></aside>
 </section>
 
@@ -473,7 +470,7 @@
     <li>Nothing here says anything about it.</li>
     <li><b>And</b> to paste the answers in place at all, <b>I</b> had to use where each glimpse was taken; the model doesn't know.</li>
     <li>You, <b>on the other hand</b>, would infer that the table <b>continues</b>.</li>
-    <li>Transition: we need a model that <b>integrates</b> visual information across viewpoints into an understanding of the whole scene.</li>
+    <li>We need a model that <b>integrates</b> visual information across viewpoints into an understanding of the whole scene.</li>
   </ul></aside>
 </section>
 
@@ -509,7 +506,6 @@
     <li>a global summary, which we read out for classification.</li>
     <li>[CLICK]</li>
     <li><b>And so on</b>, glimpse after glimpse.</li>
-    <li>Transition: <b>for this to work</b>, the backbone and the canvas have to agree on <b>where</b> things are.</li>
   </ul></aside>
 </section>
 
@@ -543,7 +539,6 @@
     <li><b>now</b> packed into a small region of the scene.</li>
     <li>The spacing between positions tells the model <b>how far it has zoomed in</b>.</li>
     <li>These positions enter attention as <b>rotary position embeddings</b>: hence Scene-Relative RoPE.</li>
-    <li>Transition: now, the reads and writes themselves.</li>
   </ul></aside>
 </section>
 
@@ -576,7 +571,6 @@
     <li>Here is what that buys: total compute against the resolution of the output.</li>
     <li>A plain ViT's cost grows <b>steeply</b> with resolution;</li>
     <li>CanViT's grows <b>far more slowly</b>, even over 21 glimpses.</li>
-    <li>Transition: that's the architecture. <b>Now</b>, how do we pretrain it?</li>
   </ul></aside>
 </section>
 
@@ -584,7 +578,6 @@
   <div class="outline on-pretraining"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Transition: our second contribution, pretraining.</li>
   </ul></aside>
 </section>
 
@@ -668,7 +661,6 @@
     <li>[CLICK]</li>
     <li>By glimpse 21, the error is far lower,</li>
     <li><b>well beyond</b> the four glimpses of an average training rollout.</li>
-    <li>Transition: what "random" means, exactly.</li>
   </ul></aside>
 </section>
 
@@ -687,7 +679,6 @@
     <li>and each rollout has a random length, four glimpses on average.</li>
     <li>No viewing strategy for the model to adapt to:</li>
     <li>the other policies in our results, it <b>never saw</b> in pretraining.</li>
-    <li>Transition: what this pretraining cost.</li>
   </ul></aside>
 </section>
 
@@ -714,7 +705,6 @@
     <li>For scale: DINOv3's 7-billion-parameter model, from which our ViT-B teacher was distilled,</li>
     <li>took <b>61,440</b> GPU-hours to pretrain.</li>
     <li>We <b>don't repeat</b> that work; we <b>build on</b> it.</li>
-    <li>Transition: back to the table.</li>
   </ul></aside>
 </section>
 
@@ -749,7 +739,6 @@
     <li>[CLICK]</li>
     <li>CanViT, <b>after the same two glimpses</b>:</li>
     <li>the table <b>continues</b> through the middle, where neither glimpse looked.</li>
-    <li>Transition: now, the experiments.</li>
   </ul></aside>
 </section>
 
@@ -760,7 +749,6 @@
     <li>To test the model, we read it out with a <b>linear layer</b> per task:</li>
     <li>ImageNet-1k <b>classification</b>, and ADE20K <b>segmentation</b>.</li>
     <li>The model stays <b>frozen</b>; on ImageNet-1k, we <b>also</b> fine-tune it.</li>
-    <li>Transition: <b>first</b>, the viewing policies we test.</li>
   </ul></aside>
 </section>
 
@@ -778,7 +766,6 @@
     <li>each level in random order.</li>
     <li><b>Fine-to-Coarse</b>: the <b>same</b> glimpses, in <b>reverse</b> order.</li>
     <li>By the end, both have seen exactly the same viewpoints; <b>only the order differs</b>.</li>
-    <li>Transition: and a policy guided by the model's <b>own uncertainty</b>.</li>
   </ul></aside>
 </section>
 
@@ -827,7 +814,6 @@
     <li>[CLICK]</li>
     <li>The next glimpse goes to the <b>most uncertain</b> quadrant.</li>
     <li>The uncertainty read out from the canvas <b>guides</b> where to look next, with <b>no reinforcement learning</b>.</li>
-    <li>Transition: how does the model do under each of these policies?</li>
   </ul></aside>
 </section>
 
@@ -869,7 +855,6 @@
     <li><b>Order matters</b>.</li>
     <li><b>And yet</b> even that worse-than-random order is far above every prior active model, whose best is <span data-macro="adeBestPriorMiou">27.6</span>:</li>
     <li><b>perception, not viewpoint selection, was the bottleneck</b>.</li>
-    <li>Transition: <b>so</b>, can we learn where to look?</li>
   </ul></aside>
 </section>
 
@@ -908,7 +893,6 @@
     <li>640 thousand glimpses, about 80 minutes per run on one GPU,</li>
     <li><b>against</b> a billion glimpses for pretraining.</li>
     <li><b>As with LLMs</b>: pretraining <b>without</b> RL, <b>then</b> RL for a specific skill.</li>
-    <li>Transition: how does CanViT compare with prior active models?</li>
   </ul></aside>
 </section>
 
@@ -942,7 +926,6 @@
     <li><b>And</b> efficiency: ADE20K accuracy against inference compute.</li>
     <li>A <b>single</b> low-resolution glimpse of the whole scene gives <span data-macro="adeSingleGlimpseMiou">38.5</span>,</li>
     <li>with <b><span data-macro="adeCheapestBeatFlopRatio">20</span> times fewer</b> FLOPs than AME needs for its <span data-macro="adeBestPriorMiou">27.6</span>.</li>
-    <li>Transition: and you can use it <b>today</b>.</li>
   </ul></aside>
 </section>
 
@@ -985,7 +968,6 @@
     <li>[CLICK]</li>
     <li>A second glimpse, <b>zoomed in</b> on the bus:</li>
     <li><b>now</b> it's a <b>bus</b>.</li>
-    <li>Transition: where we're going next.</li>
   </ul></aside>
 </section>
 
@@ -1007,7 +989,6 @@
     <li>CanViT 2, in broad strokes:</li>
     <li><b>dynamic</b> scenes, videos,</li>
     <li><b>and</b> eccentricity-dependent acuity, as in human vision.</li>
-    <li>Transition: thank you.</li>
   </ul></aside>
 </section>
 

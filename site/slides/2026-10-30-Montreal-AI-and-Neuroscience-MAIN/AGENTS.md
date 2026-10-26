@@ -99,7 +99,8 @@ in it; slides are built from it, and an outline change comes before a slide chan
 ```bash
 npm ci --prefix site/slides                     # once: reveal.js
 node site/serve.mjs 8765                        # serve site/; open pages reload when a file changes
-# http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/   (S: speaker view with notes)
+# http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/   (S: speaker view with notes; with a second
+#   tab of the deck open, the speaker view stops following the slides)
 uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/ \
     --out site/.screens/main-2026 > site/.screens/shoot.log 2>&1
 uv run --no-sync --project canvit-pytorch python site/check_paper_numbers.py

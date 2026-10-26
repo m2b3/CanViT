@@ -632,7 +632,7 @@
     <li>Pretraining the observer with a policy would make it <b>specific</b> to that policy.</li>
     <li><b>And</b> if the policy is learned with reinforcement learning, its noisy gradients make pretraining unstable.</li>
     <li><b>So</b> we pretrain without any policy, on <b>random</b> glimpses.</li>
-    <li>After every glimpse, CanViT reconstructs the <b>whole scene</b>, including what it hasn't seen.</li>
+    <li>After every glimpse, CanViT predicts the <b>whole scene</b>, including what it hasn't seen.</li>
     <li>[CLICK]</li>
     <li><b>Not</b> in pixels, <b>but</b> in DINOv3's feature space.</li>
     <li>DINOv3 sees the whole scene, and its features are the target.</li>
@@ -640,12 +640,12 @@
     <li>to teach an active student how to see from arbitrary glimpse sequences.</li>
     <li>No labels are involved at any stage.</li>
     <li>[CLICK]</li>
-    <li>The canvas carries over, and the next reconstruction is closer to the target.</li>
+    <li>The canvas carries over, and the next prediction is closer to the target.</li>
     <li>[CLICK]</li>
     <li>Each glimpse refines it further.</li>
     <li>[CLICK]</li>
     <li>Training sequences average four glimpses,</li>
-    <li><b>yet</b> by glimpse 21 the reconstruction is far closer to the target.</li>
+    <li><b>yet</b> by glimpse 21 the prediction is far closer to the target.</li>
   </ul></aside>
 </section>
 
@@ -850,7 +850,7 @@
        (the authors' unpublished experiments). -->
   <div class="budget">
     <div class="budget-row pretraining"><p class="who">Pretraining</p><div class="track"><span class="bar"></span></div><p class="n">1 billion glimpses</p></div>
-    <div class="budget-row policy"><p class="who">Policy</p><div class="track"><span class="bar"></span></div><p class="n">640 thousand glimpses</p></div>
+    <div class="budget-row policy"><p class="who">Policy learning</p><div class="track"><span class="bar"></span></div><p class="n">640 thousand glimpses</p></div>
   </div>
   <span class="fragment step-marker" data-shows="learned"></span>
   <span class="fragment step-marker" data-shows="budget"></span>

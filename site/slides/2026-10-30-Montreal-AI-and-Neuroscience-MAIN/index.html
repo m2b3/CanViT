@@ -371,7 +371,8 @@
   </div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>This is the paper: CanViT, the Canvas Vision Transformer, accepted at NeurIPS this year, with Audrey Durand and Suresh Krishna.</li>
+    <li>This is the paper: CanViT, the Canvas Vision Transformer,</li>
+    <li>accepted at NeurIPS this year, with Audrey Durand and Suresh Krishna.</li>
     <li>Transition: I'll take you through how we built it, then what it does.</li>
   </ul></aside>
 </section>
@@ -382,7 +383,9 @@
   <span class="fragment step-marker" data-shows="architecture"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Two contributions: an architecture, and a way to pretrain it. Then experiments.</li>
+    <li>Two contributions: an architecture, and a way to pretrain it.</li>
+    <li>Then experiments.</li>
+    <li>[CLICK]</li>
     <li>Transition: the architecture first.</li>
   </ul></aside>
 </section>
@@ -407,9 +410,18 @@
   <span class="fragment step-marker" data-shows="tokens"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>This is a Vision Transformer, the architecture behind most vision models today. An active model doesn't see the whole scene at once; it sees a glimpse, a crop at some position and some zoom.</li>
+    <li>An active model sees a scene</li>
+    <li>[CLICK]</li>
+    <li>through glimpses: crops at some position and some zoom.</li>
+    <li>[CLICK]</li>
     <li>The glimpse goes through a Vision Transformer, here DINOv3.</li>
-    <li>Out come patch tokens, a high-dimensional vector per patch, shown as before with principal components as colors. A good representation of this glimpse, but in the glimpse's own frame: it doesn't know where in the scene the glimpse was.</li>
+    <li>[CLICK]</li>
+    <li>Out come patch tokens,</li>
+    <li>a high-dimensional vector per patch,</li>
+    <li>shown as before with principal components as colors.</li>
+    <li>A good representation of this glimpse,</li>
+    <li>but in the glimpse's own frame:</li>
+    <li>it doesn't know where in the scene the glimpse was.</li>
     <li>Transition: so what happens with a second glimpse, somewhere else?</li>
   </ul></aside>
 </section>
@@ -442,11 +454,21 @@
   <span class="fragment step-marker" data-shows="gap"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
+    <li>[CLICK]</li>
     <li>Two glimpses, one at each end of this table.</li>
-    <li>A Vision Transformer on each glimpse, its answer pasted back where the glimpse was taken: brightness is the probability of table.</li>
+    <li>[CLICK]</li>
+    <li>A Vision Transformer on the far glimpse,</li>
+    <li>its answer pasted back where the glimpse was taken:</li>
+    <li>brightness is the probability of table.</li>
+    <li>[CLICK]</li>
+    <li>The same on the near glimpse.</li>
     <li>Each answer is fine on its own.</li>
-    <li>But the middle, which neither glimpse saw, is unknown. And to place the answers at all, I had to use where each glimpse was taken: each one lives in its own glimpse's frame.</li>
-    <li>You would simply infer that the table continues. Transition: so we need a model that integrates what it sees across viewpoints into one understanding of the scene.</li>
+    <li>[CLICK]</li>
+    <li>But the middle, which neither glimpse saw, is unknown.</li>
+    <li>And to place the answers at all, I had to use where each glimpse was taken:</li>
+    <li>each one lives in its own glimpse's frame.</li>
+    <li>You would simply infer that the table continues.</li>
+    <li>Transition: so we need a model that integrates what it sees across viewpoints into one understanding of the scene.</li>
   </ul></aside>
 </section>
 
@@ -466,11 +488,22 @@
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Here is our architecture, from the paper. On the left, the Vision Transformer, the backbone, processing the first glimpse. On the right, a new component: the canvas, a memory laid out over the whole scene.</li>
-    <li>Between the backbone's blocks, the two exchange information: the glimpse reads from the canvas, then the canvas is written from the glimpse, three times each per glimpse.</li>
-    <li>Next glimpse: the glimpse's tokens are discarded, but the canvas stays. So what the model saw before shapes how it processes what it sees now.</li>
-    <li>One more token carries over: the recurrent CLS token, a summary of the scene so far, which we use for classification.</li>
-    <li>And so on, glimpse after glimpse. Transition: for this to work, the backbone and the canvas must agree on where things are.</li>
+    <li>Here is our architecture, from the paper.</li>
+    <li>On the left, the Vision Transformer, the backbone, processing the first glimpse.</li>
+    <li>On the right, a new component: the canvas,</li>
+    <li>a memory laid out over the whole scene.</li>
+    <li>Between the backbone's blocks, the two exchange information:</li>
+    <li>the glimpse reads from the canvas, then the canvas is written from the glimpse,</li>
+    <li>three times each per glimpse.</li>
+    <li>[CLICK]</li>
+    <li>Next glimpse: the glimpse's tokens are discarded, but the canvas stays.</li>
+    <li>So what the model saw before shapes how it processes what it sees now.</li>
+    <li>[CLICK]</li>
+    <li>One more token carries over: the recurrent CLS token,</li>
+    <li>a summary of the scene so far, which we use for classification.</li>
+    <li>[CLICK]</li>
+    <li>And so on, glimpse after glimpse.</li>
+    <li>Transition: for this to work, the backbone and the canvas must agree on where things are.</li>
   </ul></aside>
 </section>
 
@@ -492,10 +525,18 @@
   <span class="fragment step-marker" data-shows="zoom"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>The backbone sees the glimpse as an 8 by 8 grid of patches, in the glimpse's own frame. We give each patch its position in the scene, given by the viewpoint.</li>
-    <li>The canvas patches have positions in the same scene coordinates, on a fixed grid. So the backbone, which works in the glimpse's frame, and the canvas, which works in the scene's frame, share one frame of reference.</li>
-    <li>Zoom in: still 8 by 8 patches, now packed into a small part of the scene. The spacing of the positions tells the model the zoom.</li>
-    <li>These positions enter the attention through rotary position embeddings. Transition: now, how the reads and writes work.</li>
+    <li>The backbone sees the glimpse as an 8 by 8 grid of patches, in the glimpse's own frame.</li>
+    <li>We give each patch its position in the scene, given by the viewpoint.</li>
+    <li>[CLICK]</li>
+    <li>The canvas patches have positions in the same scene coordinates, on a fixed grid.</li>
+    <li>So the backbone, which works in the glimpse's frame,</li>
+    <li>and the canvas, which works in the scene's frame,</li>
+    <li>share one frame of reference.</li>
+    <li>[CLICK]</li>
+    <li>Zoom in: still 8 by 8 patches, now packed into a small part of the scene.</li>
+    <li>The spacing of the positions tells the model the zoom.</li>
+    <li>These positions enter the attention through rotary position embeddings.</li>
+    <li>Transition: now, how the reads and writes work.</li>
   </ul></aside>
 </section>
 
@@ -515,10 +556,19 @@
   <span class="fragment step-marker" data-shows="payoff"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>One read and one write up close: Canvas Attention. It's cross-attention between the glimpse's tokens and the canvas's tokens.</li>
+    <li>One read and one write up close: Canvas Attention.</li>
+    <li>It's cross-attention between the glimpse's tokens and the canvas's tokens.</li>
+    <li>[CLICK]</li>
     <li>The learned projections are all on the glimpse side.</li>
-    <li>The canvas side gets only a normalization and its positions. No projections, no MLPs, no self-attention on the canvas.</li>
-    <li>So the canvas is cheap and can be large, as detailed as dense outputs need. And the payoff: total compute against output resolution. A plain ViT's cost explodes; CanViT's barely moves, even over 21 glimpses.</li>
+    <li>[CLICK]</li>
+    <li>The canvas side gets only a normalization and its positions.</li>
+    <li>No projections, no MLPs, no self-attention on the canvas.</li>
+    <li>So the canvas is cheap in compute and can be large,</li>
+    <li>as detailed as dense outputs need.</li>
+    <li>[CLICK]</li>
+    <li>The payoff: total compute against output resolution.</li>
+    <li>A plain ViT's cost explodes;</li>
+    <li>CanViT's grows far more slowly, even over 21 glimpses.</li>
     <li>Transition: that's the architecture. Now, how to pretrain it.</li>
   </ul></aside>
 </section>
@@ -591,10 +641,25 @@
   <span class="fragment step-marker" data-shows="last"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>How do we pretrain this architecture into a foundation model? We want a model that understands the visual world, and that works with any viewing policy.</li>
-    <li>We treat this as representation learning, not as a reinforcement learning problem. Pretraining the model on a learned policy's glimpses would make it adapt to that policy; and if the policy's gradients reach the model, RL's noisy gradients can make training unstable.</li>
-    <li>So, no policy during pretraining: random glimpses. And what does the model learn from? DINOv3, frozen, sees the whole scene; after every glimpse, our model predicts DINOv3's features for the whole scene, including what it hasn't seen. No labels, at either level.</li>
-    <li>Here it is on a bedroom, with random glimpses: the prediction gets closer to the target with every glimpse, well beyond the four glimpses of an average training rollout.</li>
+    <li>How do we pretrain this architecture into a foundation model?</li>
+    <li>We want a model that understands the visual world,</li>
+    <li>and that works with any viewing policy.</li>
+    <li>We treat this as representation learning, not as a reinforcement learning problem.</li>
+    <li>Pretraining the model on a learned policy's glimpses would make it adapt to that policy;</li>
+    <li>and if the policy's gradients reach the model, RL's noisy gradients can make training unstable.</li>
+    <li>So, no policy during pretraining: random glimpses.</li>
+    <li>After every glimpse, our model predicts DINOv3's features for the whole scene,</li>
+    <li>including what it hasn't seen.</li>
+    <li>[CLICK]</li>
+    <li>DINOv3, frozen, sees the whole scene: that's the target.</li>
+    <li>No labels, at either level.</li>
+    <li>[CLICK]</li>
+    <li>Here it is on a bedroom, with random glimpses.</li>
+    <li>Next glimpse: the canvas carries over.</li>
+    <li>[CLICK]</li>
+    <li>The prediction gets closer to the target, glimpse after glimpse,</li>
+    <li>[CLICK]</li>
+    <li>well beyond the four glimpses of an average training rollout.</li>
     <li>Transition: what random glimpses means, exactly.</li>
   </ul></aside>
 </section>
@@ -607,9 +672,13 @@
   <div class="pretraining-grid"></div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Random positions and zooms, smaller glimpses more likely, and a random number of glimpses. That's R-IID.</li>
-    <li>For each scene, a second rollout starts with the whole scene, then goes random: F-IID.</li>
-    <li>No policy for the model to adapt to: every policy we use later, it has never seen. Transition: what this pretraining took.</li>
+    <li>Random positions and zooms, smaller glimpses more likely,</li>
+    <li>and a random number of glimpses.</li>
+    <li>That's R-IID.</li>
+    <li>For each scene, a second rollout starts with the whole scene, then goes random:</li>
+    <li>F-IID.</li>
+    <li>The other policies we use later, the model never saw in pretraining.</li>
+    <li>Transition: what this pretraining took.</li>
   </ul></aside>
 </section>
 
@@ -630,8 +699,12 @@
   </div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>13.2 million ImageNet-21k scenes, a billion glimpses, one GPU: 166 hours, plus about 8 GPU-hours to compute DINOv3's features once.</li>
-    <li>DINOv3's largest model, the source of its knowledge, took 61,440 GPU-hours to pretrain. We don't repeat that; we build on it. Transition: back to the table.</li>
+    <li>We pretrained on 13.2 million ImageNet-21k scenes, about a billion glimpses in all,</li>
+    <li>in 166 hours on a single H100,</li>
+    <li>plus about 8 GPU-hours to compute DINOv3's features once.</li>
+    <li>DINOv3's largest model, whose knowledge our teacher distills, took 61,440 GPU-hours to pretrain.</li>
+    <li>We don't repeat that; we build on it.</li>
+    <li>Transition: back to the table.</li>
   </ul></aside>
 </section>
 
@@ -661,8 +734,11 @@
   <span class="fragment step-marker" data-shows="canvit"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>The two glimpses at the ends of the table, and the middle no one saw.</li>
-    <li>CanViT after both glimpses: the table continues through the middle. Transition: now, the experiments.</li>
+    <li>The two glimpses at the ends of the table,</li>
+    <li>and the middle no one saw.</li>
+    <li>[CLICK]</li>
+    <li>CanViT after both glimpses: the table continues through the middle.</li>
+    <li>Transition: now, the experiments.</li>
   </ul></aside>
 </section>
 
@@ -670,7 +746,10 @@
   <div class="outline on-experiments"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>We read out the frozen model with a linear layer per task: ImageNet-1k classification and ADE20K segmentation. Transition: first, the viewing policies we test.</li>
+    <li>We read the model out with a linear layer per task:</li>
+    <li>ImageNet-1k classification and ADE20K segmentation.</li>
+    <li>The model stays frozen; on ImageNet-1k, we also fine-tune it.</li>
+    <li>Transition: first, the viewing policies we test.</li>
   </ul></aside>
 </section>
 
@@ -682,7 +761,10 @@
   <div class="stages"></div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Coarse to fine: the whole scene, then the four quadrants, then sixteen smaller tiles. Fine to coarse: the same viewpoints, smallest first.</li>
+    <li>Coarse to fine: the whole scene,</li>
+    <li>then the four quadrants,</li>
+    <li>then sixteen smaller tiles.</li>
+    <li>Fine to coarse: the same viewpoints, smallest first.</li>
     <li>Transition: and a policy that uses the model's own uncertainty.</li>
   </ul></aside>
 </section>
@@ -715,11 +797,24 @@
   <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Entropy-guided coarse to fine: within each level, look first where the model is least sure. After the first glimpse, read out the canvas: every canvas patch gets a probability for each class. This patch, on the building: 99.7% building. Low entropy: sure.</li>
-    <li>This one, near the cars: car, building, road, all plausible. High entropy: unsure.</li>
+    <li>Entropy-guided coarse to fine:</li>
+    <li>within each level, look first where the model is least sure.</li>
+    <li>After the first glimpse, read out the canvas:</li>
+    <li>every canvas patch gets a probability for each class.</li>
+    <li>[CLICK]</li>
+    <li>This patch, on the building: 99.7% building.</li>
+    <li>Low entropy: sure.</li>
+    <li>[CLICK]</li>
+    <li>This one, near the cars: car, building, road, all plausible.</li>
+    <li>High entropy: unsure.</li>
+    <li>[CLICK]</li>
     <li>The entropy of every patch.</li>
+    <li>[CLICK]</li>
     <li>Averaged per quadrant.</li>
-    <li>And look next where it's highest. No learning involved. Transition: how the model does under each of these policies.</li>
+    <li>[CLICK]</li>
+    <li>And look next where it's highest.</li>
+    <li>No reinforcement learning involved.</li>
+    <li>Transition: how the model does under each of these policies.</li>
   </ul></aside>
 </section>
 
@@ -745,11 +840,22 @@
   <span class="fragment step-marker" data-canvit-target=".ade20k canvit-policy-curves" data-canvit-show="both"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>ImageNet, frozen: every policy ends up close. The model works under all of them, including the ones it never saw during pretraining.</li>
+    <li>ImageNet, frozen: every policy ends up close.</li>
+    <li>The model works under all of them,</li>
+    <li>including the ones it never saw during pretraining.</li>
+    <li>[CLICK]</li>
     <li>Fine-tuned, solid: up to <span data-macro="inkFinetunedBest">84.5</span>.</li>
+    <li>[CLICK]</li>
     <li>ADE20K, with the canvas size used in pretraining.</li>
-    <li>Now a larger canvas, never seen in training, chosen at inference: better for every policy.</li>
-    <li>Coarse to fine reaches <span data-macro="adeCTFCSixFourTTwenty">45.9</span>; the same viewpoints in the opposite order, <span data-macro="adeFTCCSixFourTTwenty">42.9</span>. Order matters. And even that worse-than-random order ends far above every prior active model: perception, not viewpoint selection, was the bottleneck. Transition: so now, can we learn where to look?</li>
+    <li>[CLICK]</li>
+    <li>Now a larger canvas, never seen in pretraining, chosen at inference:</li>
+    <li>better for every policy.</li>
+    <li>Coarse to fine reaches <span data-macro="adeCTFCSixFourTTwenty">45.9</span>;</li>
+    <li>the same viewpoints in the opposite order, <span data-macro="adeFTCCSixFourTTwenty">42.9</span>.</li>
+    <li>Order matters.</li>
+    <li>And even that worse-than-random order ends far above every prior active model:</li>
+    <li>perception, not viewpoint selection, was the bottleneck.</li>
+    <li>Transition: so now, can we learn where to look?</li>
   </ul></aside>
 </section>
 
@@ -774,9 +880,20 @@
   <span class="fragment step-marker" data-shows="budget"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>With the observer frozen, we trained a policy for ADE20K segmentation, with RL: at each step it picks the next glimpse, rewarded by how much that glimpse improves the segmentation. These results are unpublished.</li>
-    <li>Both begin with the whole scene; after that, the learned policy beats entropy-guided coarse to fine at every glimpse, a heuristic that's already strong.</li>
-    <li>And it was cheap to train: 640 thousand glimpses, about 80 minutes on one GPU, against a billion for pretraining. Like LLMs: pretraining without RL, then RL for a specific skill. Transition: how CanViT compares with prior active models.</li>
+    <li>With the observer frozen, we trained a policy for ADE20K segmentation, with RL:</li>
+    <li>at each step it picks the next glimpse,</li>
+    <li>rewarded by how much that glimpse improves the segmentation.</li>
+    <li>These results are unpublished.</li>
+    <li>[CLICK]</li>
+    <li>Both begin with the whole scene;</li>
+    <li>after that, the learned policy beats entropy-guided coarse to fine at every glimpse,</li>
+    <li>a heuristic that's already strong.</li>
+    <li>[CLICK]</li>
+    <li>And it was cheap to train:</li>
+    <li>640 thousand glimpses, about 80 minutes on one GPU,</li>
+    <li>against a billion for pretraining.</li>
+    <li>Like LLMs: pretraining without RL, then RL for a specific skill.</li>
+    <li>Transition: how CanViT compares with prior active models.</li>
   </ul></aside>
 </section>
 
@@ -801,8 +918,15 @@
   <span class="fragment step-marker" data-shows="efficiency"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>Prior active models, each at its best. ADE20K: <span data-macro="adeBestPriorMiou">27.6</span> at best; CanViT, frozen, <span data-macro="adeBestMiou">45.9</span>. ImageNet: 82.2 at best; CanViT <span data-macro="inkFrozenBest">81.1</span> frozen and <span data-macro="inkFinetunedBest">84.5</span> fine-tuned. Its teacher, DINOv3, reaches 47.2 and 85.0: the gap with passive vision is much narrower.</li>
-    <li>And efficiency: a single low-resolution glimpse of the whole scene gives <span data-macro="adeSingleGlimpseMiou">38.5</span>, with <span data-macro="adeCheapestBeatFlopRatio">20</span> times fewer FLOPs than AME needs for its <span data-macro="adeBestPriorMiou">27.6</span>. Transition: and you can use it today.</li>
+    <li>Prior active models, each at its best.</li>
+    <li>ADE20K: <span data-macro="adeBestPriorMiou">27.6</span> at best; CanViT, frozen, <span data-macro="adeBestMiou">45.9</span>.</li>
+    <li>ImageNet: 82.2 at best; CanViT <span data-macro="inkFrozenBest">81.1</span> frozen and <span data-macro="inkFinetunedBest">84.5</span> fine-tuned.</li>
+    <li>Its teacher, DINOv3 ViT-B, reaches 47.2 and 85.0:</li>
+    <li>the gap with passive vision is much narrower.</li>
+    <li>[CLICK]</li>
+    <li>And efficiency: a single low-resolution glimpse of the whole scene gives <span data-macro="adeSingleGlimpseMiou">38.5</span>,</li>
+    <li>with <span data-macro="adeCheapestBeatFlopRatio">20</span> times fewer FLOPs than AME needs for its <span data-macro="adeBestPriorMiou">27.6</span>.</li>
+    <li>Transition: and you can use it today.</li>
   </ul></aside>
 </section>
 
@@ -832,10 +956,18 @@
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>The code is open source: uv add canvit-pytorch.</li>
+    <li>[CLICK]</li>
+    <li>[CLICK]</li>
     <li>Load the model and a segmentation readout.</li>
+    <li>[CLICK]</li>
     <li>A scene, and a fresh canvas.</li>
-    <li>A first glimpse, the whole scene: the bus reads as car.</li>
-    <li>A second glimpse, zoomed in on it: now it's a bus. Transition: where we're going next.</li>
+    <li>[CLICK]</li>
+    <li>A first glimpse, the whole scene:</li>
+    <li>the bus reads as car.</li>
+    <li>[CLICK]</li>
+    <li>A second glimpse, zoomed in on it:</li>
+    <li>now it's a bus.</li>
+    <li>Transition: where we're going next.</li>
   </ul></aside>
 </section>
 
@@ -851,9 +983,14 @@
   <span class="fragment step-marker" data-shows="next"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>CanViT 2, in broad strokes, with the same principles.</li>
-    <li>The paper handles static scenes; the world moves.</li>
-    <li>And every glimpse is a uniform crop; human acuity falls off from the center of gaze. Transition: thank you.</li>
+    <li>CanViT, as in the paper:</li>
+    <li>static scenes,</li>
+    <li>and every glimpse a uniform crop.</li>
+    <li>[CLICK]</li>
+    <li>CanViT 2, in broad strokes:</li>
+    <li>the world moves,</li>
+    <li>and human acuity falls off from the center of gaze.</li>
+    <li>Transition: thank you.</li>
   </ul></aside>
 </section>
 

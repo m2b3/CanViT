@@ -14,8 +14,8 @@
 // in the shadow part "added" so that a slide can reveal it. baselines lists prior models of src's baselines,
 // comma-separated by name ("AME (SETR), AdaGlimpse"); each one's best result is a marker at the glimpse count it was
 // measured at, named beside it, drawn when inside the axes. The chart's height is its width times
-// --canvit-chart-aspect (default 0.78). show="dashed-only" draws only the dashed set, solid and named (a slide's step
-// before both); --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text
+// --canvit-chart-aspect (default 0.78). show="dashed-only" draws only the dashed set, still dashed, its policies named at
+// its heads (a slide's step before both, so no curve changes style between steps); --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text
 // sizes (14, 15 and 16 px by default).
 
 import { POLICIES } from "./policies.js";
@@ -157,10 +157,10 @@ class CanvitPolicyCurves extends HTMLElement {
   #render() {
     const width = Math.round(this.svg.clientWidth);
     if (!this.#curves || width === 0) return;
-    // show="dashed-only" draws the second set alone, solid and named, as a slide's first step before both.
+    // show="dashed-only" draws the second set alone, dashed as when both are shown, as a slide's first step before both.
     const dashedOnly = this.getAttribute("show") === "dashed-only";
     if (dashedOnly && !this.#legend) throw new Error('<canvit-policy-curves>: show="dashed-only" without dashed curves');
-    const curves = dashedOnly ? this.#curves.filter((c) => c.style === "dashed").map((c) => ({ ...c, style: "solid" })) : this.#curves;
+    const curves = dashedOnly ? this.#curves.filter((c) => c.style === "dashed") : this.#curves;
     const [low, high] = this.#yRange;
     const steps = Math.min(Math.max(...curves.map((c) => c.per_timestep.length)), Number(this.getAttribute("glimpses") ?? Infinity));
     const shown = Math.min(steps, this.hasAttribute("t") ? Number(this.getAttribute("t")) + 1 : steps);
@@ -201,11 +201,11 @@ class CanvitPolicyCurves extends HTMLElement {
       el("text", { class: "baseline-label", x: bx + 14, y: by + 5 }, svg).textContent = `${name} ${value.toFixed(1)}`;
     }
     const lines = el("g", { "clip-path": "url(#plot)" }, svg);
-    // Dashed curves are unnamed beside the solid ones; the legend says which is which.
-    // The legend names the sets drawn: both, or the dashed set alone, then drawn solid.
+    // Dashed curves are unnamed beside the solid ones; the legend says which is which. It names the sets drawn: both,
+    // or the dashed set alone.
     if (this.#legend) {
       const legend = el("g", { class: "legend" }, svg);
-      const entries = dashedOnly ? [["solid", this.#legend[1]]] : [["solid", this.#legend[0]], ["dashed", this.#legend[1]]];
+      const entries = dashedOnly ? [["dashed", this.#legend[1]]] : [["solid", this.#legend[0]], ["dashed", this.#legend[1]]];
       entries.forEach(([style, text], i) => {
         const ly = plot.top + 12 + 22 * i;
         el("line", { class: style, x1: plot.left + 14, x2: plot.left + 44, y1: ly, y2: ly }, legend);
@@ -236,8 +236,10 @@ class CanvitPolicyCurves extends HTMLElement {
       el("polygon", { class: "band", points: [...edge(1), ...edge(-1).reverse()].map((p) => p.join(",")).join(" ") }, addedGroup);
       el("polyline", { class: "curve", points: band.map((p) => [x(p.t), y(100 * p.mean)].join(",")).join(" ") }, addedGroup);
     }
-    // A head below or above the range is not drawn or named yet.
-    const heads = ranked.filter(({ points, style }) => style === "solid" && points.at(-1)[1] <= plot.bottom && points.at(-1)[1] >= plot.top);
+    // The named set's heads (the solid set's, or the dashed set's when drawn alone); a head below or above the range is
+    // not drawn or named yet.
+    const named = dashedOnly ? "dashed" : "solid";
+    const heads = ranked.filter(({ points, style }) => style === named && points.at(-1)[1] <= plot.bottom && points.at(-1)[1] >= plot.top);
     for (const { points, color, group } of [...heads].reverse()) {
       const [hx, hy] = points.at(-1);
       el("circle", { class: "head", cx: hx, cy: hy, r: 5.5, fill: color }, group);

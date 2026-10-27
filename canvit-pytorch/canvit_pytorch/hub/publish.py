@@ -107,6 +107,46 @@ def _released_checkpoint(pretrained_repo: str) -> tuple[str, str]:
     return hub_id(name), names[name]
 
 
+def probe_card(record: dict[str, Any], *, embed_dim: int) -> tuple[str, str]:
+    """(repo name, card) of a probe from its training record (canvit_pytorch.specialize.ade20k), the probe-name
+    grammar of canvit_pytorch.hub.repos giving the name."""
+    setup, training = record["config"], record["config"]["training"]
+    low, high = training["scale_jitter_range"]
+    probe_training = cards.ProbeTraining(
+        steps=record["steps_trained"], selected_step=record["selected_step"], batch_size=training["batch_size"],
+        peak_lr=training["peak_lr"], weight_decay=training["weight_decay"], warmup_steps=training["warmup_steps"],
+        dropout=training["dropout"], crop_size_px=training["scene_size_px"], scale_jitter_range=(low, high),
+        flip_probability=training["horizontal_flip_probability"],
+        bfloat16=training["feature_dtype"] == "bfloat16",
+    )
+    match record["config_type"]:
+        case "CanvasProbeConfig":
+            pretrained_repo, model_name = _released_checkpoint(setup["pretrained_repo"])
+            name = ade20k_probe_name(
+                model_name, scene_size_px=training["scene_size_px"],
+                canvas_grid_size=setup["canvas_grid_size"], steps=record["steps_trained"],
+            )
+            return name, cards.canvas_probe_card(repo=hub_id(name), facts=cards.CanvasProbeFacts(
+                pretrained_repo=pretrained_repo, scene_size_px=training["scene_size_px"],
+                canvas_grid_size=setup["canvas_grid_size"], canvas_dim=embed_dim,
+                glimpse_size_px=setup["glimpse_size_px"], training_glimpses=setup["num_glimpses"],
+                training_policy=POLICIES[cast(PolicyName, setup["training_policy"])].paper_name,
+                training=probe_training,
+            ))
+        case "DINOv3ProbeConfig":
+            variant = cast(DINOv3Variant, setup["variant"])
+            name = dinov3_ade20k_probe_name(
+                DINOV3_PROBE_MODEL_NAMES[variant], input_size_px=setup["input_size_px"], steps=record["steps_trained"],
+            )
+            return name, cards.dinov3_probe_card(repo=hub_id(name), facts=cards.DINOv3ProbeFacts(
+                dinov3_repo=DINOV3_REPOS[variant], dinov3_name=DINOV3_NAMES[variant],
+                input_size_px=setup["input_size_px"], patch_size=DINOV3_PATCH_SIZE, embed_dim=embed_dim,
+                training=probe_training,
+            ))
+        case other:
+            raise ValueError(f"unknown probe configuration {other!r}")
+
+
 @dataclass(frozen=True)
 class Probe:
     """A probe-training run directory (canvit_pytorch.specialize.ade20k) as a SegmentationProbe repo, named by
@@ -118,40 +158,8 @@ class Probe:
 
     def run(self) -> None:
         record = json.loads((self.run_dir / "record.json").read_text())
-        setup, training = record["config"], record["config"]["training"]
         probe = SegmentationProbe.from_pretrained(str(self.run_dir / record["probe_dir"]))
-        low, high = training["scale_jitter_range"]
-        probe_training = cards.ProbeTraining(
-            steps=record["steps_trained"], batch_size=training["batch_size"], peak_lr=training["peak_lr"],
-            weight_decay=training["weight_decay"], warmup_steps=training["warmup_steps"],
-            dropout=training["dropout"], crop_scale_range=(low, high), bfloat16=training["feature_dtype"] == "bfloat16",
-        )
-        match record["config_type"]:
-            case "CanvasProbeConfig":
-                pretrained_repo, model_name = _released_checkpoint(setup["pretrained_repo"])
-                name = ade20k_probe_name(
-                    model_name, scene_size_px=training["scene_size_px"],
-                    canvas_grid_size=setup["canvas_grid_size"], steps=record["steps_trained"],
-                )
-                card = cards.canvas_probe_card(repo=hub_id(name), facts=cards.CanvasProbeFacts(
-                    pretrained_repo=pretrained_repo, scene_size_px=training["scene_size_px"],
-                    canvas_grid_size=setup["canvas_grid_size"], canvas_dim=probe.embed_dim,
-                    glimpse_size_px=setup["glimpse_size_px"], training_glimpses=setup["num_glimpses"],
-                    training_policy=POLICIES[cast(PolicyName, setup["training_policy"])].paper_name,
-                    training=probe_training,
-                ))
-            case "DINOv3ProbeConfig":
-                variant = cast(DINOv3Variant, setup["variant"])
-                name = dinov3_ade20k_probe_name(
-                    DINOV3_PROBE_MODEL_NAMES[variant], input_size_px=setup["input_size_px"], steps=record["steps_trained"],
-                )
-                card = cards.dinov3_probe_card(repo=hub_id(name), facts=cards.DINOv3ProbeFacts(
-                    dinov3_repo=DINOV3_REPOS[variant], dinov3_name=DINOV3_NAMES[variant],
-                    input_size_px=setup["input_size_px"], patch_size=DINOV3_PATCH_SIZE, embed_dim=probe.embed_dim,
-                    training=probe_training,
-                ))
-            case other:
-                raise ValueError(f"{self.run_dir}: unknown probe configuration {other!r}")
+        name, card = probe_card(record, embed_dim=probe.embed_dim)
         staged = self.out_dir / name
         shutil.rmtree(staged, ignore_errors=True)
         probe.save_pretrained(staged)

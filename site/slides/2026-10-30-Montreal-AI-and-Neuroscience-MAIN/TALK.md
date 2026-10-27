@@ -736,7 +736,10 @@ removed.
     `#table-callback` 19, `#state-of-the-art` 41, `#c2f-and-f2c` 72, `#eg-c2f` 90, `#policy-accuracy` 142, `#frontier`
     74, `#learned-policy` 65, `#canvas-updates` to its first Write 45. The rest (`#canvas-updates`' other Writes,
     `#quickstart`, `#next`, `#links`), estimated from their notes at the same rate: about 2:10. With Part I's 6:15,
-    the talk comes to about 29 minutes, for a 25-minute slot.
+    the talk comes to about 29 minutes, for a 25-minute slot. That wall-clock time includes the false starts and
+    repetitions (the cleaned notes for the same span have 2,165 words against the 2,616 spoken) and 3.2 minutes of
+    silence between utterances. The cleaned notes at the recorded pace, pauses included, take about 16.9 minutes for
+    that span, so about 19 for Part II and 25 for the talk; read with no pauses at all (152 words per minute), 14.3.
 - Yohaï's feedback on Sabrina's run-through of Part I (2026-10-25), not yet applied (to be worked through with her):
   - Title: the contrast with passive computer vision models is said too loosely.
   - `#tradition`: "a new class of models" is questionable (new?); spell out IT; say where the better categorization

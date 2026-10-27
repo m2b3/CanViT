@@ -371,11 +371,11 @@
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Thank you, Sabrina.</li>
-    <li>Our NeurIPS 2026 paper introduces the <b>Canvas Vision Transformer</b>, or CanViT,</li>
-    <li>the first task- and policy-agnostic Active-Vision Foundation Model.</li>
-    <li>This work was supervised by Audrey Durand and Suresh Krishna.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>Thank you for this great intro.</li>
+    <li>Now I'm going to tell you about our efforts to actually build an active-vision foundation model, one that we call CanViT, standing for the Canvas Vision Transformer.</li>
+    <li>This work was supervised by Professor Audrey Durand and Professor Suresh Krishna.</li>
+    <li>Here you have the QR code to our preprint; we'll have an updated version out next week, for the NeurIPS camera-ready.</li>
   </ul></aside>
 </section>
 
@@ -397,19 +397,20 @@
   <span class="fragment step-marker" data-shows="g3"></span>
   <span class="fragment step-marker" data-shows="g4"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Here is CanViT viewing a scene.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>Let's set up the problem that CanViT is supposed to solve.</li>
+    <li>We consider a scene, which is a high-resolution image,</li>
     <li>[CLICK]</li>
-    <li>Its first glimpse: a <b>viewpoint</b>, where it looks and at what zoom,</li>
-    <li>the 128-pixel glimpse it receives,</li>
-    <li><b>and</b> the <b>canvas</b>, a representation of the whole scene, shown with PCA.</li>
-    <li>The bottom row shows how much the glimpse changed the canvas.</li>
+    <li>and from that scene we take what we call a glimpse: a crop taken at a given location and scale in the image.</li>
+    <li>From that glimpse, which is the only thing the model sees, the model updates a representation that we call the canvas, which represents its current understanding of the entire scene.</li>
+    <li>On the second row, you can see a PCA visualization of the canvas after the first glimpse, and on the third row, the magnitude of the change in the canvas after that first glimpse.</li>
     <li>[CLICK]</li>
-    <li>A second glimpse, elsewhere: the canvas changes mostly where it looked.</li>
+    <li>Then we can do the same thing with a second glimpse elsewhere in the scene.</li>
+    <li>The model keeps the understanding it acquired from its first glimpse and integrates new information into its canvas.</li>
     <li>[CLICK]</li>
-    <li>A third, zoomed in further.</li>
+    <li>And we can do this again,</li>
     <li>[CLICK]</li>
-    <li>And a fourth: the canvas integrates broad context and fine detail from glimpses at different zoom levels.</li>
+    <li>and again. The model gradually builds up an understanding of its visual surroundings, using glimpses taken at various locations and zoom levels.</li>
   </ul></aside>
 </section>
 
@@ -419,13 +420,10 @@
   <div class="outline"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <span class="fragment step-marker" data-shows="architecture"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Building an Active-Vision Foundation Model raises <b>two problems</b>, and the paper's two contributions address them.</li>
-    <li>First, an <b>architecture</b> that gives the observer instantaneous vision and memory.</li>
-    <li>Second, a <b>pretraining</b> that gives it visuospatial intelligence, for any task and any viewing policy.</li>
-    <li><b>Then</b>, experiments.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>To actually build this model, we needed to develop a new architecture and a new pretraining scheme, and to evaluate the quality of this model, we ran some experiments.</li>
     <li>[CLICK]</li>
-    <li>First, the architecture.</li>
+    <li>I'm going to tell you first about the architecture side of things.</li>
   </ul></aside>
 </section>
 
@@ -449,17 +447,15 @@
   <span class="fragment step-marker" data-shows="vit"></span>
   <span class="fragment step-marker" data-shows="tokens"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Take a scene, and one <b>glimpse</b> of it.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>Let's go back to what we would do if we didn't have CanViT.</li>
+    <li>If we have a scene and we want to process it with a modern vision architecture, like a regular Vision Transformer,</li>
     <li>[CLICK]</li>
-    <li>A glimpse is the crop of the scene at a viewpoint, resized to 128 by 128 pixels whatever the zoom,</li>
-    <li><b>so</b> zooming out trades detail for coverage.</li>
+    <li>we would take a crop from the scene, a glimpse,</li>
     <li>[CLICK]</li>
-    <li>A Vision Transformer, like DINOv3, can process a glimpse</li>
+    <li>pass it through the Vision Transformer,</li>
     <li>[CLICK]</li>
-    <li>into <b>patch tokens</b>, a high-dimensional vector per patch.</li>
-    <li>Here the lamp is the same white as the ceiling, yet its tokens <b>stand out</b>.</li>
-    <li>They describe this glimpse <b>only</b>.</li>
+    <li>and we would get patch tokens that are spatially organized and semantically rich, if that ViT is good, like we've seen in the DINOv3 visualizations in part one that Sabrina introduced.</li>
   </ul></aside>
 </section>
 
@@ -469,7 +465,7 @@
   <div class="table-demo">
     <figure class="photo">
       <img src="../../data/talk/table-clean/ADE_val_00001271-table/scene.png" alt="A conference room with a long table">
-      <img class="over" src="../../data/talk/table/ADE_val_00001271-table/scene.png" alt="The same room, with two glimpses at the two ends of the table">
+      <img class="over" src="../../data/talk/table/ADE_val_00001271-table/scene.png" alt="The same room, with two glimpses at two corners of the table">
     </figure>
     <figure class="map">
       <div class="blank"></div>
@@ -491,19 +487,17 @@
   <span class="fragment step-marker" data-shows="answer-near"></span>
   <span class="fragment step-marker" data-shows="gap"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Say we want to find the <b>table</b> in this room, from glimpses.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>But there's a problem with this: each glimpse is processed independently of the other glimpses,</li>
+    <li>so the model only has instantaneous vision, one of those three components that we told you about in part one.</li>
+    <li>It really has no way to extrapolate spatially beyond what it has seen, or to put together disparate pieces of evidence.</li>
     <li>[CLICK]</li>
-    <li>We take a glimpse at each end of the table.</li>
+    <li>In this example, if you see two corners of a table, you might be able to infer that in between them lies more table.</li>
     <li>[CLICK]</li>
-    <li>DINOv3 with a linear readout gives the probability of table in the far glimpse,</li>
     <li>[CLICK]</li>
-    <li><b>and</b> in the near one.</li>
+    <li>But with isolated per-glimpse processing,</li>
     <li>[CLICK]</li>
-    <li><b>But</b> neither answer says anything about the middle of the table.</li>
-    <li><b>And</b> placing each answer in the scene required knowing where its glimpse was taken, which the model does not.</li>
-    <li>A person would infer that the table <b>continues</b>.</li>
-    <li>What's needed is to <b>integrate</b> visual information across viewpoints into an understanding of the whole scene.</li>
+    <li>you don't know anything about what stands in between these points.</li>
   </ul></aside>
 </section>
 
@@ -520,20 +514,20 @@
   <span class="fragment step-marker" data-shows="next"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>To integrate glimpses, CanViT pairs a Vision Transformer <b>backbone</b>, which processes each glimpse,</li>
-    <li>with a <b>canvas</b>, a scene-wide memory.</li>
-    <li>The backbone gives the observer its instantaneous vision; the canvas, its memory.</li>
-    <li>Each canvas patch maps onto a fixed region of the scene, regardless of the current viewpoint.</li>
-    <li>The two interact through <b>Canvas Attention</b>,</li>
-    <li>which lets the backbone <b>pull</b> information from the canvas and <b>send</b> updates to it, three times per glimpse.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>That motivates why we needed to come up with a new architecture.</li>
+    <li>Our architecture builds upon a standard Vision Transformer for instantaneous processing, but we augment this component with a memory module that we call the canvas.</li>
+    <li>The Vision Transformer is responsible for retinotopic, glimpse-centered visual processing,</li>
+    <li>whereas the canvas starts off without any scene-relevant information at the beginning of an episode, and then gets gradually updated through what we call Canvas Attention read and write operations.</li>
+    <li>[AI draft: not the authors' text] We also carry a recurrent CLS token from one glimpse to the next, a global summary that we read out for classification.</li>
+    <li>Here we see a glimpse coming into the model. As the backbone processes it, it reads from the canvas and writes to it.</li>
+    <li>From that local evidence, the model produces a global understanding of the scene.</li>
+    <li>But of course, it hasn't seen much here: only a cat's ears. It does extrapolate that there might be something like a whole cat in the picture, but it can't know for sure.</li>
+    <li>As it gets more visual evidence, it is able to refine that understanding.</li>
     <li>[CLICK]</li>
-    <li>The glimpse's tokens are discarded after each glimpse, <b>since</b> the next glimpse may be anywhere, at any zoom.</li>
-    <li>The canvas <b>persists</b>,</li>
-    <li><b>so</b> each glimpse is processed in the context of what was seen before.</li>
-    <li>A recurrent <b>CLS token</b> also carries over, a global summary that we read out for classification.</li>
+    <li>Here, with a second glimpse,</li>
     <li>[CLICK]</li>
-    <li>At every glimpse, the canvas can be decoded into <b>dense predictions</b>, like segmentation.</li>
+    <li>and now with a third. We can see that the model's understanding becomes progressively sharper.</li>
   </ul></aside>
 </section>
 
@@ -554,15 +548,14 @@
   </div>
   <span class="fragment step-marker" data-shows="zoom"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>The backbone sees a glimpse as an 8 by 8 grid of patches.</li>
-    <li><b>Scene-Relative RoPE</b> gives each patch its position in the <b>scene</b>, computed from the glimpse's viewpoint.</li>
-    <li>Canvas patches have fixed positions in the <b>same</b> scene coordinates.</li>
-    <li>Scene-relative positions bind the <b>retinotopic</b> backbone and the <b>spatiotopic</b> canvas with a shared reference frame.</li>
-    <li><b>So</b> CanViT knows where each glimpse was taken, which a passive model on a crop does not.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>A key component of this process is to handle space correctly.</li>
+    <li>We developed a positional encoding scheme based on a well-established technique called rotary position embeddings, or RoPE,</li>
+    <li>which allows the model to identify where each piece of evidence came from, and relate it to its spatiotopic, scene-wide canvas.</li>
+    <li>Here we can see that the coordinates of each patch in a glimpse are given to the model in scene coordinates; that's why we call this scene-relative.</li>
     <li>[CLICK]</li>
-    <li>When the model zooms in, the glimpse's patches cluster in a small region of the scene.</li>
-    <li>Their spacing tells the model the zoom level.</li>
+    <li>If we take the glimpse elsewhere, those coordinates change,</li>
+    <li>and the model is able to understand the zoom level of that glimpse from the offset between neighboring glimpse patches in canvas coordinates.</li>
   </ul></aside>
 </section>
 
@@ -586,28 +579,25 @@
   </div>
   <span class="fragment step-marker" data-shows="payoff"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Canvas Attention connects a <b>small</b> set of glimpse tokens with a much <b>larger</b> set of canvas tokens.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>To zoom in a bit more on the computational mechanism behind the Canvas Attention reads and writes that I told you about: here's one step of Canvas Attention.</li>
+    <li>You can think of it as a cross-attention mechanism, for those who are familiar with Transformers, which uses the scene-relative rotary position embeddings that I just told you about, with a few twists.</li>
     <li>[CLICK]</li>
-    <li>It is <b>asymmetric</b>.</li>
-    <li>All the learned projections are on the glimpse side.</li>
+    <li>One thing that's notable is that the only fully connected linear projections in the architecture lie on the glimpse side.</li>
+    <li>These are somewhat expensive operations, but they're only applied to a relatively low number of glimpse tokens.</li>
     <li>[CLICK]</li>
-    <li>Canvas tokens only go through layer normalization and position embeddings,</li>
-    <li>with no MLP and no self-attention.</li>
-    <li>With so little computation per canvas token, the canvas can be much larger than the glimpse.</li>
+    <li>On the canvas side, we only apply basic normalization operations for stability, and position embeddings where appropriate.</li>
+    <li>There is no self-attention and no multilayer perceptron on the canvas side.</li>
     <li>[CLICK]</li>
-    <li>Here is the total inference cost against the resolution of the output.</li>
-    <li>A ViT on the whole scene, dashed, grows <b>quadratically</b>.</li>
-    <li>CanViT-B grows slowly, <b>even</b> over 21 glimpses,</li>
-    <li><b>so</b> it supports fine-grained canvases without the quadratic cost of self-attention.</li>
+    <li>This means that the model is able to handle a very large canvas at low computational cost, scaling to very large canvases in a sub-quadratic manner.</li>
   </ul></aside>
 </section>
 
 <section id="outline-pretraining" class="signpost" data-status="draft">
   <div class="outline on-pretraining"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Our second contribution is the pretraining.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>Now I'm going to tell you about how we actually train this model to be a general-purpose active-vision foundation model.</li>
   </ul></aside>
 </section>
 
@@ -616,13 +606,9 @@
        "disentangles 'how to see in an active-vision setting' from 'where to look'"); Yohaï's formulation. -->
   <p class="statement"><span>Before knowing <span class="look">where to look</span>,<br>we should know <span class="see">how to see</span>.</span></p>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>How do we pretrain this observer?</li>
-    <li>Prior active models often learned how to see together with where to look, the policy trained with reinforcement learning.</li>
-    <li><b>But</b> before knowing where to look, we should know how to see.</li>
-    <li><b>So</b> we pretrain the observer on its own, without any policy: a representation learning problem, not a reinforcement learning one.</li>
-    <li>An observer trained with one policy adapts to that policy, <b>and</b> ours must work with any, since where we look depends on the task.</li>
-    <li>It also avoids the noisy gradients of reinforcement learning.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>One of the key ideas behind what we did is that before knowing where to look, it's critical to know how to see.</li>
+    <li>That ties back into the observer–policy distinction that Sabrina told you about in part one.</li>
   </ul></aside>
 </section>
 
@@ -633,13 +619,11 @@
        then the glimpses as the model receives them (experiments/pretraining/crops.py). -->
   <div class="pretraining-grid"></div>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>In practice, the observer sees random glimpses, from two policies.</li>
-    <li><b>R-IID</b> samples a random position and zoom level at every glimpse, favoring small glimpses.</li>
-    <li><b>F-IID</b> sees the whole scene first, then samples like R-IID,</li>
-    <li><b>so</b> the model gets a low-resolution view of each whole scene.</li>
-    <li>Every training scene gets a sequence of each, of random length, four glimpses on average.</li>
-    <li>Apart from these two, the policies we test later were never seen in pretraining.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>During training, we presented the model with random glimpses: glimpses from random locations, at various zoom levels.</li>
+    <li>We used two pretraining policies: one that we call R-IID, random, independent and identically distributed,</li>
+    <li>and F-IID, the same thing, except that the very first glimpse is zoomed out.</li>
+    <li>This second one is basically a stability trick. It's not strictly necessary to train the model; it speeds up its pretraining and stabilizes it.</li>
   </ul></aside>
 </section>
 
@@ -702,22 +686,20 @@
   <span class="fragment step-marker" data-shows="third"></span>
   <span class="fragment step-marker" data-shows="last"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>From random glimpses, what should the observer learn to do?</li>
-    <li>After every glimpse, CanViT predicts the <b>whole scene</b>, including what it hasn't seen,</li>
-    <li>which requires understanding the scene's spatial and semantic structure.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>So what do we do with those glimpses?</li>
+    <li>We take glimpses from scenes from a large dataset, we pass them through CanViT, and from the canvas we get predictions.</li>
+    <li>Here it has seen the corner of a room: not a very informative prediction.</li>
     <li>[CLICK]</li>
-    <li><b>Not</b> in pixels, <b>but</b> in the features of DINOv3, which learned rich knowledge of the visual world without labels, at great cost.</li>
-    <li>DINOv3 sees the whole scene, and its features are the target.</li>
-    <li>We use a passive teacher's knowledge of the visual world</li>
-    <li>to teach an active student how to see from arbitrary glimpse sequences.</li>
-    <li>No labels are involved at any stage.</li>
+    <li>And we have a target, treated as the ground truth, in DINOv3 latent space.</li>
+    <li>That target is scene-wide, so it covers the entire source image, and it is both spatially organized and semantically rich.</li>
+    <li>The model receives a training signal based on the quality of its predictions, compared to that reference understanding of the entire scene that a well-trained passive model with full access to the visual information of the scene would produce.</li>
     <li>[CLICK]</li>
-    <li>The canvas carries over, and the next prediction is closer to the target.</li>
+    <li>Then we continue this process: we take another glimpse, the model produces an updated prediction, and it still gets compared against the same target.</li>
     <li>[CLICK]</li>
-    <li>Each glimpse refines it further.</li>
+    <li>And we can do this over and over again.</li>
     <li>[CLICK]</li>
-    <li>By glimpse 21, far beyond the training sequences' length, it is closer still.</li>
+    <li>We train this with truncated backpropagation through time for credit assignment, which is dense across both space and time.</li>
   </ul></aside>
 </section>
 
@@ -737,15 +719,12 @@
   </div>
   </div>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>We pretrained CanViT-B from scratch on <b>13.2 million</b> ImageNet-21k scenes,</li>
-    <li>about a billion random glimpses,</li>
-    <li>in <b>166 hours</b> on a single H100.</li>
-    <li>Computing DINOv3's features once took about 8 more GPU-hours.</li>
-    <li>Precomputing them is entirely optional, a tradeoff between storage and compute cost.</li>
-    <li>Our teacher was distilled from DINOv3's 7-billion-parameter model,</li>
-    <li>which took <b>61,440</b> GPU-hours to train.</li>
-    <li>We <b>build on</b> DINOv3's training instead of repeating it.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>Some numbers.</li>
+    <li>We pretrained CanViT-B, our flagship, on 13.2 million unique scenes from the ImageNet-21k dataset.</li>
+    <li>We took one billion glimpses from this dataset, and we only used one H100 GPU.</li>
+    <li>The flagship model by Meta that was used to produce CanViT's teacher, DINOv3 7B, required over sixty thousand H100 hours to train.</li>
+    <li>In contrast, CanViT, which benefits from the visual understanding, the world knowledge, of this model as it learns to see in an active setting, was trained in less than 180 H100 hours.</li>
   </ul></aside>
 </section>
 
@@ -757,7 +736,7 @@
   <div class="table-demo">
     <figure class="photo">
       <img src="../../data/talk/table-clean/ADE_val_00001271-table/scene.png" alt="A conference room with a long table">
-      <img class="over" src="../../data/talk/table/ADE_val_00001271-table/scene.png" alt="The same room, with two glimpses at the two ends of the table">
+      <img class="over" src="../../data/talk/table/ADE_val_00001271-table/scene.png" alt="The same room, with two glimpses at two corners of the table">
     </figure>
     <figure class="map">
       <div class="blank"></div>
@@ -774,22 +753,18 @@
   </div>
   <span class="fragment step-marker" data-shows="canvit"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>With a passive model, two glimpses gave two separate answers, and nothing in between.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>To go back to the example I told you about earlier:</li>
     <li>[CLICK]</li>
-    <li>After the same two glimpses, CanViT predicts the table <b>continuing through the middle</b>,</li>
-    <li>where neither glimpse looked,</li>
-    <li><b>since</b> it learned to predict the whole scene.</li>
+    <li>here's what things look like if we use CanViT instead of independent per-glimpse processing. CanViT actually completes the table.</li>
   </ul></aside>
 </section>
 
 <section id="outline-experiments" class="signpost" data-status="draft">
   <div class="outline on-experiments"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>We evaluate the pretrained checkpoint with <b>linear readouts</b>,</li>
-    <li>on ImageNet-1k classification and ADE20K segmentation, with frozen weights.</li>
-    <li>On ImageNet-1k, we also fine-tune it, to measure peak performance.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>Now let's get to experiments.</li>
   </ul></aside>
 </section>
 
@@ -812,25 +787,15 @@
   <span class="fragment step-marker" data-shows="in1k"></span>
   <span class="fragment step-marker" data-shows="in1k-canvit"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Let's go back to the <b>gap</b> we started from, on ADE20K segmentation:</li>
-    <li>prior active models on top, passive models below.</li>
-    <li>Hatched bars are <b>frozen</b> backbones; solid bars were trained end to end.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>On ADE20K semantic segmentation,</li>
     <li>[CLICK]</li>
-    <li>Frozen, with a linear readout, CanViT-B reaches <span data-macro="adeBestMiou">45.9</span>% mIoU,</li>
-    <li>up from <span data-macro="adeBestPriorMiou">27.6</span>% for the best prior active model.</li>
-    <li>That's a <b>new state of the art</b> for active vision,</li>
-    <li><b>and</b> close to its passive teacher, DINOv3 ViT-B, read out the same way.</li>
-    <li>Our work <b>narrows</b> the wide gap between passive and active computer vision.</li>
+    <li>CanViT sets a new state of the art among active-vision models, by a very large margin,</li>
+    <li>doing better than a small DINOv3 model using frozen features and linear decoding, and almost as well as the DINOv3 ViT-B teacher that we used to train our model.</li>
     <li>[CLICK]</li>
-    <li>On <b>ImageNet-1k</b> classification, accuracies crowd near the top,</li>
-    <li>so here the axis starts at <b>70%</b>.</li>
-    <li>On this task, prior active models come closer to passive ones.</li>
+    <li>On ImageNet-1k classification,</li>
     <li>[CLICK]</li>
-    <li>Frozen, with a linear readout, CanViT-B reaches <span data-macro="inkFrozenBest">81.1</span>% top-1 accuracy,</li>
-    <li>close to the best prior active model.</li>
-    <li>Fine-tuned, it reaches <span data-macro="inkFinetunedBest">84.5</span>%,</li>
-    <li><b>ahead of every</b> prior active model.</li>
+    <li>we also set an active-vision state of the art, upon fine-tuning.</li>
   </ul></aside>
 </section>
 
@@ -841,14 +806,13 @@
        introduced on #pretraining-policies, EG-C2F on #eg-c2f, every policy before the results (Y, 2026-10-24). -->
   <div class="stages"></div>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>These two policies are for <b>evaluation</b>: CanViT never saw them in pretraining,</li>
-    <li><b>so</b> they test how it generalizes across policies.</li>
-    <li><b>Coarse-to-Fine</b> sees the whole scene, then its four quadrants, then sixteen tiles,</li>
-    <li>in random order within each level.</li>
-    <li><b>Fine-to-Coarse</b> visits the same viewpoints in <b>reverse</b> order.</li>
-    <li>By the last glimpse both have seen the same viewpoints,</li>
-    <li><b>so</b> comparing them isolates the effect of order.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>To zoom in on how we evaluated the model: we used distinct policies during evaluation, not just the pretraining policies that I told you about before, R-IID and F-IID.</li>
+    <li>The most important is what we call the C2F policy, or coarse-to-fine, which subdivides a scene into quadrants recursively and traverses them sequentially.</li>
+    <li>This policy is deterministic across zoom levels, but it randomizes the visitation order within each zoom level,</li>
+    <li>so it goes from a zoomed-out, low-resolution view of a scene to progressively finer visual evidence.</li>
+    <li>In contrast, F2C, or fine-to-coarse, does the exact opposite: it starts from fine-grained evidence, then gradually zooms out,</li>
+    <li>which is not a very optimal strategy, because to make sense of fine detail, it helps to know the broader context in which this detail is inscribed.</li>
   </ul></aside>
 </section>
 
@@ -879,21 +843,21 @@
   <span class="fragment step-marker" data-shows="quadrants"></span>
   <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li><b>Entropy-Guided Coarse-to-Fine</b> uses the model's own uncertainty.</li>
-    <li>Within each level, it visits the most uncertain tile first.</li>
-    <li>Uncertainty is read out from the canvas, here after the first glimpse.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>Another policy that is particularly interesting is what we call the entropy-guided coarse-to-fine policy.</li>
+    <li>It's the same idea as C2F, except that it takes into account the model's own estimate of its uncertainty.</li>
+    <li>For each output location of the model on ADE20K, we can get a probability distribution over classes.</li>
     <li>[CLICK]</li>
-    <li>On the building, the readout says 99.7% building, a <b>low</b> entropy.</li>
+    <li>Here, for example, the model is quite sure that at this location lies a building, so the entropy is very low.</li>
     <li>[CLICK]</li>
-    <li>Near the cars, it hesitates between car, building and road, a <b>high</b> entropy.</li>
+    <li>Conversely, after its first glimpse, it's really not quite sure about this cluttered area here: it's split between car, building, road, maybe plant, maybe other things. So the entropy is high.</li>
     <li>[CLICK]</li>
-    <li>The result is an entropy map over the whole scene,</li>
+    <li>We can turn this into an entropy map,</li>
     <li>[CLICK]</li>
-    <li>averaged over each quadrant.</li>
+    <li>and as we subdivide the scene into quadrants, we can compute the mean entropy over each quadrant.</li>
     <li>[CLICK]</li>
-    <li>The next glimpse goes to the <b>most uncertain</b> quadrant.</li>
-    <li><b>So</b> the canvas can guide viewpoint selection, even without reinforcement learning.</li>
+    <li>Then we instruct the model to visit the highest-entropy quadrant in priority; here, that's the bottom-right quadrant.</li>
+    <li>Then we eliminate this quadrant from the quadrants it is allowed to visit at this zoom level, and do the same thing again.</li>
   </ul></aside>
 </section>
 
@@ -918,17 +882,21 @@
   <span class="fragment step-marker" data-shows="ade20k"></span>
   <span class="fragment step-marker" data-canvit-target=".ade20k canvit-policy-curves" data-canvit-show="both"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>On ImageNet-1k, with frozen weights, accuracy rises with glimpses under every policy,</li>
-    <li><b>and</b> the policies end close together.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>We looked at the accuracy of the model by viewing policy, on both classification and segmentation.</li>
+    <li>The fine-to-coarse strategy is by far the worst; it's actually worse than a random strategy.</li>
+    <li>Starting from a full-scene view boosts performance significantly, although performance keeps improving afterwards.</li>
+    <li>The coarse-to-fine strategy outperforms random glimpses after that first full-scene glimpse, until they converge to the same accuracy level, after 15 to 21 glimpses.</li>
+    <li>Here we see results with frozen weights and linear decoding.</li>
     <li>[CLICK]</li>
-    <li>Fine-tuning raises the peak to <span data-macro="inkFinetunedBest">84.5</span>%, above the best prior active model's 82.2%.</li>
+    <li>If we allow the model to be fine-tuned end to end, all policies get much better results.</li>
     <li>[CLICK]</li>
-    <li>On ADE20K segmentation, the policy matters <b>much more</b>.</li>
+    <li>On segmentation, the choice of the policy appears more important.</li>
+    <li>For example, even after 21 glimpses, the F-IID policy yields lower performance than the C2F policy.</li>
+    <li>And the entropy-guided C2F policy yields a better glimpse-to-segmentation-performance Pareto frontier: it acquires relevant evidence earlier in the episode, and eventually converges to a similar accuracy level as C2F, once both have been given the same viewing budget.</li>
+    <li>In dashed lines, these are results with a 32 by 32 canvas.</li>
     <li>[CLICK]</li>
-    <li>A 64 by 64 canvas, never used in pretraining, improves <b>every</b> policy.</li>
-    <li>Coarse-to-Fine ends <b>three points</b> above Fine-to-Coarse, with the same viewpoints in reverse order.</li>
-    <li>The difference highlights the importance of contextually informed processing.</li>
+    <li>Even though the model was trained with this canvas resolution, it generalizes to larger canvases at inference time, so all policies get a significant performance lift with a 64 by 64 canvas.</li>
   </ul></aside>
 </section>
 
@@ -942,19 +910,15 @@
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Now the <b>cost</b>: mIoU against the compute spent so far, glimpse by glimpse.</li>
-    <li>The prior active models, each at its best published result.</li>
-    <li>This is Fine-to-Coarse, a <b>worse-than-random</b> viewing order, with a 32 by 32 canvas.</li>
-    <li><b>Even</b> Fine-to-Coarse beats them, for less compute.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>So what about computational efficiency in practice?</li>
+    <li>Here we're plotting the cumulative cost of an episode, on the x-axis, against ADE20K segmentation quality.</li>
+    <li>Here we're using the fine-to-coarse policy, first with a 32 by 32 canvas,</li>
     <li>[CLICK]</li>
-    <li>And with a 64 by 64 canvas.</li>
-    <li><b>So</b> perception, not viewpoint selection, was the bottleneck here:</li>
-    <li>no policy can make up for a poor observer.</li>
+    <li>and then 64 by 64. A 64 by 64 canvas is more expensive per glimpse, which explains this shift here, but it also yields higher eventual performance.</li>
+    <li>Even that very worst policy of all those we tried, fine-to-coarse, outperforms the previous leading active-vision models on segmentation, on both computational efficiency and accuracy.</li>
     <li>[CLICK]</li>
-    <li>Entropy-Guided Coarse-to-Fine.</li>
-    <li>In a <b>single</b> low-resolution glimpse, CanViT-B reaches <span data-macro="adeSingleGlimpseMiou">38.5</span>%,</li>
-    <li>with <b><span data-macro="adeCheapestBeatFlopRatio">20</span> times less</b> compute than AME needs for <span data-macro="adeBestPriorMiou">27.6</span>%.</li>
+    <li>And this gap is even more striking if we look at our best policy for segmentation, EG-C2F.</li>
   </ul></aside>
 </section>
 
@@ -978,17 +942,13 @@
   <span class="fragment step-marker" data-shows="learned"></span>
   <span class="fragment step-marker" data-shows="budget"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Now that CanViT knows how to see, we can <b>learn</b> where to look, with the observer frozen.</li>
-    <li>These results are new; they'll be in the camera-ready version of the paper.</li>
-    <li>We trained a policy for ADE20K with <b>Q-learning</b>, a reinforcement learning method,</li>
-    <li>rewarded by the fraction of the segmentation error that each glimpse removes.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed]</li>
+    <li>Heuristic policies are great and all, but could we also have the model just learn where to look, in order to maximize both accuracy and efficiency? And could we do so inexpensively?</li>
     <li>[CLICK]</li>
-    <li>Averaged over 8 training runs, the learned policy beats Entropy-Guided Coarse-to-Fine from the second glimpse on.</li>
+    <li>The answer is yes. We tried training policies using a couple of reinforcement learning methods; here I'm showing Q-learning.</li>
+    <li>Our learned policies outperform all of our heuristic policies, including EG-C2F, on short temporal horizons; here I'm showing a budget of five glimpses.</li>
     <li>[CLICK]</li>
-    <li>Training it took <b>640 thousand</b> glimpses, 74 to 91 minutes per run on one GPU,</li>
-    <li>against a <b>billion</b> glimpses for pretraining.</li>
-    <li><b>As with LLMs</b>, pretraining without RL, <b>then</b> RL for a specific skill.</li>
+    <li>We obtained these policies on top of a frozen CanViT model, using an extremely low amount of policy training: where pretraining required one billion glimpses, we trained the policies shown here in only 640,000 glimpses.</li>
   </ul></aside>
 </section>
 
@@ -1014,16 +974,17 @@
   <span class="fragment step-marker" data-shows="write-2"></span>
   <span class="fragment step-marker" data-shows="write-3"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>One last thing: what happens <b>inside</b> a single glimpse.</li>
-    <li>Each glimpse writes to the canvas three times; each map shows what one write adds.</li>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed] The recording ends during this slide; the lines marked AI draft continue it in his manner.</li>
+    <li>One more thing that I'd like to tell you about is what we saw when we looked inside the model.</li>
+    <li>It has multiple Canvas Attention layers within a single glimpse,</li>
+    <li>and we observed an interesting progression across depth within each glimpse, in the Canvas Attention write residuals that get sent to the canvas.</li>
     <li>[CLICK]</li>
-    <li>The first write mirrors the glimpse's 8 by 8 grid of <b>patches</b>.</li>
+    <li>The first Canvas Attention write seems to deal with essentially only what is contained within the glimpse, and doesn't represent much that is interpretable in human terms.</li>
     <li>[CLICK]</li>
-    <li>The second follows the <b>objects</b> inside the glimpse.</li>
+    <li>[AI draft: not the authors' text] The second write starts to reflect the structure of the objects within the glimpse.</li>
     <li>[CLICK]</li>
-    <li>The third reaches <b>beyond</b> the glimpse, into the scene around it.</li>
-    <li>This progression is <b>emergent</b>: we never trained for it, yet it reads like a processing hierarchy.</li>
+    <li>[AI draft: not the authors' text] And the third one actually extrapolates beyond the confines of the glimpse, and delineates sharper object boundaries.</li>
+    <li>[AI draft: not the authors' text] So this progression is emergent: we never trained the model for it, but it reads like a processing hierarchy, going from local, feature-level content to scene-wide, semantically grounded content.</li>
   </ul></aside>
 </section>
 
@@ -1050,16 +1011,15 @@
   <span class="fragment step-marker" data-shows="first" data-lines="14-17"></span>
   <span class="fragment step-marker" data-shows="second" data-lines="19-22"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>CanViT is <b>open source</b>, with its pretrained models and linear readouts.</li>
-    <li>It installs with uv add canvit-pytorch.</li>
+    <li>[AI draft: not the authors' text; written in the manner of Yohaï's run-through of 2026-10-27]</li>
+    <li>So, CanViT is open source: the code, the pretrained models and the linear readouts are all available, and you can install it with uv add canvit-pytorch.</li>
     <li>[CLICK]</li>
-    <li>Here is a complete example: we load the model with its ADE20K readout, a scene, and a fresh canvas.</li>
+    <li>Here's a complete example. We load the pretrained model with its ADE20K segmentation readout, we load a scene, and we start from a fresh canvas, here 64 by 64.</li>
     <li>[CLICK]</li>
-    <li>We process a first glimpse of the whole scene,</li>
+    <li>Then we take a first glimpse, here of the whole scene, zoomed out, and we get a segmentation of the entire scene.</li>
     <li>[CLICK]</li>
-    <li>then a second, zoomed in on the bus.</li>
-    <li>(With the scene and maps shown: the first glimpse reads the bus as a <b>car</b>, the second corrects it to <b>bus</b>.)</li>
+    <li>And then a second glimpse, zoomed in on the bus, and the model updates its understanding of the scene. And that's basically it.</li>
+    <li>(With the scene and maps shown: after the first glimpse, the bus is read as a car; after the second, as a bus.)</li>
   </ul></aside>
 </section>
 
@@ -1074,11 +1034,11 @@
   </div>
   <span class="fragment step-marker" data-shows="next"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>CanViT handles <b>static</b> scenes, with <b>uniform-resolution</b> glimpses.</li>
+    <li>[AI draft: not the authors' text; written in the manner of Yohaï's run-through of 2026-10-27]</li>
+    <li>So, what's next? CanViT, as it stands, handles static scenes, so images, with glimpses of uniform resolution.</li>
     <li>[CLICK]</li>
-    <li>With CanViT 2, we're working on <b>dynamic</b> scenes,</li>
-    <li><b>and</b> on eccentricity-dependent acuity, as in human vision.</li>
+    <li>With CanViT 2, we're working on dynamic scenes, so videos,</li>
+    <li>and on eccentricity-dependent acuity, as in human vision, where resolution falls off away from the center of gaze.</li>
   </ul></aside>
 </section>
 
@@ -1105,10 +1065,11 @@
   </div>
   <!-- The funders and computing providers of the paper's acknowledgments. -->
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Thank you.</li>
-    <li>The paper, the code and the models are linked here,</li>
-    <li><b>and</b> thanks to our funders.</li>
+    <li>[AI draft: not the authors' text; written in the manner of Yohaï's run-through of 2026-10-27]</li>
+    <li>So that's it for me. Thank you very much.</li>
+    <li>Here you have the paper, the code and the models, and you can get started with uv add canvit-pytorch.</li>
+    <li>And thanks to all of our funders and computing providers, who made this work possible.</li>
+    <li>We're happy to take your questions.</li>
   </ul></aside>
 </section>
 
@@ -1116,6 +1077,17 @@
 
 <section id="backup" data-status="ready">
   <p class="divider">Backup</p>
+</section>
+
+<section id="brain-score" data-status="draft">
+  <!-- No title. Brain-Score against ImageNet top-1, Schrimpf et al. 2018, Figure 1's lower half, cropped from the paper's
+       PDF (assets/figures/PROVENANCE.md). -->
+  <figure class="lone"><img src="assets/figures/brain-score-2018.png" alt="Brain-Score against ImageNet top-1 accuracy across many networks: correlated overall (r = 0.92); among the models above 70% top-1, no significant relationship"><figcaption class="cite">Schrimpf et al. 2018, <i>bioRxiv</i></figcaption></figure>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Across networks, Brain-Score rises with ImageNet accuracy, with a correlation of 0.92.</li>
+    <li><b>But</b> among the models above 70% top-1, the relationship is not significant.</li>
+  </ul></aside>
 </section>
 
 <section id="free-viewing" data-status="draft">

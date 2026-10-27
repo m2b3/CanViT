@@ -858,3 +858,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #canvas-updates :is(.flow-arrow, .writes-label, .write) { opacity: 0; transition: opacity .5s ease; }
 #canvas-updates.shows-write-1 :is(.flow-arrow, .writes-label, [data-write="1"]), #canvas-updates.shows-write-2 [data-write="2"],
 #canvas-updates.shows-write-3 [data-write="3"] { opacity: 1; }
+
+/* A paper's figure alone, without a title (#brain-score). */
+#brain-score figure.lone { width: 1150px; margin: 60px auto 0; }
+#brain-score figure.lone img { display: block; width: 100%; height: auto; }

@@ -297,7 +297,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - "We" means the authors. A pointer ("this", "that") refers to the thing just named; when its referent is not
   immediate, restate the thing ("drawing inspiration from human vision", not "from this process") [Yohaï, 2026-10-25].
 - Speaker notes an agent drafted start with `[AI draft: not the authors' text]` until an author rewrites them; an
-  agent's text kept beside an author's is marked the same way. Agents' framings and words ("a twist") are never passed
+  agent's text kept beside an author's is marked the same way. Notes taken from an author's run-through start with
+  a line naming the run-through and keep its wording, false starts removed and self-corrections applied. Agents' framings and words ("a twist") are never passed
   off as the authors' [Yohaï, 2026-10-25].
 - An agent's notes for a slide are not acceptable until it has answered each of these in writing for that slide, the
   way the authors work through a slide together, which takes them fifteen to twenty minutes [Yohaï, 2026-10-25]:

@@ -637,6 +637,18 @@ removed.
 
 ## Open work
 
+- (A, 2026-10-27 evening) Part II's notes, from `#paper` to `#canvas-updates`, are now Yohaï's wording from the
+  run-through of 2026-10-27 at 16:37, false starts removed and self-corrections applied ("two corners of a table";
+  "a positional encoding scheme based on RoPE"); the reads and writes are stated from the backbone's side; one AI line
+  on `#architecture` mentions the recurrent CLS token; `#canvas-updates` keeps its AI lines after the first Write,
+  where the recording ends. Dropped with the AI drafts, for the authors to restore if wanted: the lamp's tokens
+  standing out (`#vit-on-a-glimpse`), the passive model not knowing where its glimpse was
+  (`#integrating-information-across-viewpoints`), the 8 GPU-hours of teacher features (`#pretraining`), the
+  single-glimpse 38.5% at 20 times less compute (`#frontier`), the reward and the 8 training runs (`#learned-policy`).
+  The slides the run-through did not reach (`#canvas-updates` after the first Write, `#quickstart`, `#next`, `#links`)
+  have AI drafts written in the run-through's manner, marked as such. `#brain-score` (Backup, after the divider): the
+  Brain-Score figure of Schrimpf et al. 2018 alone, no title, cited (`assets/figures/brain-score-2018.png`).
+
 - (A, 2026-10-27 evening) Done, for review: `#integrating-information-across-viewpoints` is titled as a question,
   "Integrating visual information across viewpoints?", the problem that `#table-callback` answers under the same title;
   `#architecture` lost its CLS rings and their click; `#sr-rope` shows the canvas patches from the start (one click,

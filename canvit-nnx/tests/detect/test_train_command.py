@@ -2,6 +2,7 @@ import dataclasses
 import json
 from pathlib import Path
 
+import jax
 import numpy as np
 import pytest
 from canvit_core import CanViTConfig
@@ -24,9 +25,12 @@ def test_an_interrupted_run_resumes_as_if_uninterrupted(
     CanViTForPretraining(canvit_config=small_config, teacher_dim=8, teacher_patch_grid=2, rngs=nnx.Rngs(0)).save_pretrained(
         pretrained
     )
+    # The command splits each batch over every device: one scene per device, and as many epochs, gives seven
+    # steps on any device count.
+    batch_size = jax.device_count()
     recipe = train.Recipe(
-        pretrained=str(pretrained), compute_dtype="float32", batch_size=2, num_glimpses=2, head_width=8, epochs=2,
-        canvas_grid_size=4,
+        pretrained=str(pretrained), compute_dtype="float32", batch_size=batch_size, num_glimpses=2, head_width=8,
+        epochs=batch_size, canvas_grid_size=4,
     )
     assert recipe.total_steps == 7
 

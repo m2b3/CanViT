@@ -85,7 +85,7 @@
 
 <section id="foundation" data-status="draft">
   <h2>DINOv3</h2>
-  <!-- The living room segmented on #history. DINOv3 ViT-B/16 at 1536 x 1024 px (96 x 64 patches); the feature colors
+  <!-- The living room segmented on #gap. DINOv3 ViT-B/16 at 1536 x 1024 px (96 x 64 patches); the feature colors
        cycle through principal components 1-3, 4-6, ... (pca-cycle.js), each clipped at its 2nd and 98th percentiles,
        as on #vit-on-a-glimpse; the maps are the released DINOv3 ADE20K linear probe's class probabilities (trained
        at 512 px; patch accuracy 0.81 on this scene). Upsampled with nearest neighbor. maps.json beside the images
@@ -379,19 +379,6 @@
   </ul></aside>
 </section>
 
-<section id="outline-architecture" class="signpost" data-status="draft">
-  <!-- Part II's outline: the paper's two contributions, then its experiments; the current part highlighted. -->
-  <div class="outline"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
-  <span class="fragment step-marker" data-shows="architecture"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>The paper makes two contributions, an <b>architecture</b> and a way to <b>pretrain</b> it.</li>
-    <li><b>Then</b> we'll look at experiments.</li>
-    <li>[CLICK]</li>
-    <li>First, the architecture.</li>
-  </ul></aside>
-</section>
-
 <section id="vit-on-a-glimpse" data-status="draft">
   <h2>Processing a glimpse with a Vision Transformer (ViT)</h2>
   <!-- vit-glimpse.js fills the images from experiments/vit_glimpse: DINOv3 ViT-B/16 on a 128 px glimpse of the cat photograph
@@ -465,6 +452,49 @@
     <li><b>And</b> placing each answer in the scene required knowing where its glimpse was taken, which the model does not.</li>
     <li>A person would infer that the table <b>continues</b>.</li>
     <li>What's needed is to <b>integrate</b> visual information across viewpoints into an understanding of the whole scene.</li>
+  </ul></aside>
+</section>
+
+<section id="canvit-rollout" data-status="draft">
+  <h2>A <span class="brand">CanViT</span> rollout</h2>
+  <!-- The paper's Figure 1 (assets/paper-figures/canvit_overview.svg, rendered and recorded by paper_figures.py; its
+       entry stays disabled so that the tool does not add a slide of its own), as large as the slide allows: the scene
+       and its viewpoints first, then panel B row by row, under covers placed in the figure's own units (measured on its
+       render: panel A ends at x = 166, the rows meet at y = 79 and y = 125). The figure counts timesteps from 0. -->
+  <svg class="figure" viewBox="0 0 396 178.58" role="img" aria-label="A CanViT rollout: a food truck scene with four numbered viewpoints; for each, the 128-pixel glimpse, the canvas after it shown with PCA, and how much the glimpse changed the canvas">
+    <image href="assets/paper-figures/canvit_overview.svg" width="396" height="178.58"/>
+    <rect class="cover glimpses" x="166" y="0" width="230" height="79"/>
+    <rect class="cover canvas" x="166" y="79" width="230" height="46"/>
+    <rect class="cover delta" x="166" y="125" width="230" height="53.58"/>
+  </svg>
+  <span class="fragment step-marker" data-shows="glimpses"></span>
+  <span class="fragment step-marker" data-shows="canvas"></span>
+  <span class="fragment step-marker" data-shows="delta"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Here is CanViT viewing a scene, glimpse by glimpse.</li>
+    <li>Each numbered box is a <b>viewpoint</b>: where it looks, and at what zoom.</li>
+    <li>[CLICK]</li>
+    <li>Whatever the zoom, each glimpse is 128 by 128 pixels.</li>
+    <li>[CLICK]</li>
+    <li>Each glimpse updates the <b>canvas</b>, a representation of the whole scene, shown with PCA.</li>
+    <li>It integrates the broad context of zoomed-out glimpses <b>and</b> the fine detail of zoomed-in ones.</li>
+    <li>[CLICK]</li>
+    <li>This row shows how much each glimpse changed the canvas:</li>
+    <li>after the first, mostly where it looked.</li>
+  </ul></aside>
+</section>
+
+<section id="outline-architecture" class="signpost" data-status="draft">
+  <!-- Part II's outline: the paper's two contributions, then its experiments; the current part highlighted. -->
+  <div class="outline"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
+  <span class="fragment step-marker" data-shows="architecture"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>The paper makes two contributions, an <b>architecture</b> and a way to <b>pretrain</b> it.</li>
+    <li><b>Then</b> we'll look at experiments.</li>
+    <li>[CLICK]</li>
+    <li>First, the architecture.</li>
   </ul></aside>
 </section>
 
@@ -687,6 +717,7 @@
     <li>about a billion random glimpses,</li>
     <li>in <b>166 hours</b> on a single H100.</li>
     <li>Computing DINOv3's features once took about 8 more GPU-hours.</li>
+    <li>Precomputing them is entirely optional, a tradeoff between storage and compute cost.</li>
     <li>Our teacher was distilled from DINOv3's 7-billion-parameter model,</li>
     <li>which took <b>61,440</b> GPU-hours to train.</li>
     <li>We <b>build on</b> DINOv3's training instead of repeating it.</li>
@@ -733,6 +764,26 @@
     <li>We evaluate the pretrained checkpoint with <b>linear readouts</b>,</li>
     <li>on ImageNet-1k classification and ADE20K segmentation, with frozen weights.</li>
     <li>On ImageNet-1k, we also fine-tune it, to measure peak performance.</li>
+  </ul></aside>
+</section>
+
+<section id="state-of-the-art" data-status="draft">
+  <h2>A new active-vision state of the art</h2>
+  <!-- A callback to #gap as it ended: the same rows, from the same export and references (gap.js); then, on "canvit",
+       CanViT-B's best result, frozen with a linear readout (the export's best point: C2F, 64 x 64 canvas, glimpse 21),
+       in its own row between the active and passive models. The paper's Table 1 as bars (TALK.md); ImageNet-1k is said. -->
+  <div class="bar-chart"><p class="axis-title">ADE20K mean intersection over union (mIoU, %)</p><div class="bars"></div></div>
+  <span class="fragment step-marker" data-shows="canvit"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Let's go back to the <b>gap</b> we started from, on ADE20K segmentation:</li>
+    <li>prior active models on top, passive models below.</li>
+    <li>[CLICK]</li>
+    <li>Frozen, with a linear readout, CanViT-B reaches <span data-macro="adeBestMiou">45.9</span>% mIoU,</li>
+    <li>up from <span data-macro="adeBestPriorMiou">27.6</span>% for the best prior active model.</li>
+    <li>That's a <b>new state of the art</b> for active vision,</li>
+    <li><b>and</b> close to its passive teacher, DINOv3 ViT-B, read out the same way.</li>
+    <li>Our work <b>narrows</b> the wide gap between passive and active computer vision.</li>
   </ul></aside>
 </section>
 
@@ -823,15 +874,49 @@
     <li>On ImageNet-1k, with frozen weights, accuracy rises with glimpses under every policy,</li>
     <li><b>and</b> the policies end close together.</li>
     <li>[CLICK]</li>
-    <li>Fine-tuning raises the peak to <span data-macro="inkFinetunedBest">84.5</span>%.</li>
+    <li>Fine-tuning raises the peak to <span data-macro="inkFinetunedBest">84.5</span>%, above the best prior active model's 82.2%.</li>
     <li>[CLICK]</li>
     <li>On ADE20K segmentation, the policy matters <b>much more</b>.</li>
     <li>[CLICK]</li>
     <li>A 64 by 64 canvas, never used in pretraining, improves <b>every</b> policy.</li>
-    <li>Coarse-to-Fine reaches <span data-macro="adeCTFCSixFourTTwenty">45.9</span>%, Fine-to-Coarse <span data-macro="adeFTCCSixFourTTwenty">42.9</span>%, with the same viewpoints in reverse order.</li>
+    <li>Coarse-to-Fine ends <b>three points</b> above Fine-to-Coarse, with the same viewpoints in reverse order.</li>
     <li>The difference highlights the importance of contextually informed processing.</li>
-    <li><b>Yet</b> even Fine-to-Coarse is far above the best prior active model's <span data-macro="adeBestPriorMiou">27.6</span>%,</li>
-    <li>showing that <b>perception, not viewpoint selection, was the bottleneck</b>.</li>
+  </ul></aside>
+</section>
+
+<section id="frontier" data-status="draft">
+  <h2>ADE20K accuracy against inference compute</h2>
+  <!-- The paper's Figure 3A, built step by step: the worst policy at a 32² canvas, then at 64², then the prior active
+       models, then the best policy at both resolutions (the frontier's series attribute, set by the fragments; the cost
+       axis glides to fit what is shown). Best policy: EG-C2F, the frontier policy of the paper's Figure 3A. Fine-to-Coarse
+       passes AME (SETR)'s 27.6 at its fifth glimpse, 79 GFLOPs with a 32² canvas against AME's 312 (ade20k_seg.json). -->
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="f2c-32" height="480"></canvit-frontier></div>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior"></span>
+  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Now the <b>cost</b>: mIoU against the compute spent so far, glimpse by glimpse.</li>
+    <li>This is Fine-to-Coarse, a <b>worse-than-random</b> viewing order, with a 32 by 32 canvas.</li>
+    <li>[CLICK]</li>
+    <li>And with a 64 by 64 canvas.</li>
+    <li>[CLICK]</li>
+    <li>The prior active models, each at its best published result.</li>
+    <li><b>Even</b> Fine-to-Coarse beats them, for less compute.</li>
+    <li><b>So</b> perception, not viewpoint selection, was the bottleneck here:</li>
+    <li>no policy can make up for a poor observer.</li>
+    <li>[CLICK]</li>
+    <li>Entropy-Guided Coarse-to-Fine.</li>
+    <li>In a <b>single</b> low-resolution glimpse, CanViT-B reaches <span data-macro="adeSingleGlimpseMiou">38.5</span>%,</li>
+    <li>with <b><span data-macro="adeCheapestBeatFlopRatio">20</span> times less</b> compute than AME needs for <span data-macro="adeBestPriorMiou">27.6</span>%.</li>
+  </ul></aside>
+</section>
+
+<section id="how-to-see-first" class="signpost" data-status="draft">
+  <p class="statement"><span>Before knowing <span class="look">where to look</span>,<br>we should know <span class="see">how to see</span>.</span></p>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>Before knowing where to look, we should know how to see.</li>
   </ul></aside>
 </section>
 
@@ -857,7 +942,7 @@
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>With the observer frozen, we can now <b>learn</b> where to look.</li>
-    <li>These results are unpublished.</li>
+    <li>These results are new; they'll be in the camera-ready version of the paper.</li>
     <li>We trained a policy for ADE20K with <b>Q-learning</b>, a reinforcement learning method,</li>
     <li>rewarded by the fraction of the segmentation error that each glimpse removes.</li>
     <li>[CLICK]</li>
@@ -866,39 +951,6 @@
     <li>Training it took <b>640 thousand</b> glimpses, 74 to 91 minutes per run on one GPU,</li>
     <li>against a <b>billion</b> glimpses for pretraining.</li>
     <li><b>As with LLMs</b>, pretraining without RL, <b>then</b> RL for a specific skill.</li>
-  </ul></aside>
-</section>
-
-<section id="state-of-the-art" data-status="draft">
-  <h2>A new active-vision state of the art</h2>
-  <!-- The paper's Table 1 (prior active models' best published results as the paper lists them; CanViT-B's from its
-       macros), then ADE20K accuracy against inference compute, the paper's Figure 3A (canvit-frontier). -->
-  <div class="panels">
-    <figure class="table1"><table class="sota">
-      <thead><tr><th>Model</th><th>ADE20K mIoU (%)</th><th>ImageNet-1k top-1 (%)</th></tr></thead>
-      <tbody>
-        <tr><td>Saccader</td><td>—</td><td>75.0</td></tr>
-        <tr><td>AME (MAE)</td><td>24.4</td><td>—</td></tr>
-        <tr><td>AME (SETR)</td><td>27.6</td><td>—</td></tr>
-        <tr><td>AdaGlimpse</td><td>25.7</td><td>77.5</td></tr>
-        <tr><td>AdaptiveNN</td><td>—</td><td>82.2</td></tr>
-        <tr class="ours"><td>CanViT-B</td><td><span data-macro="adeBestMiou">45.9</span><sup>†</sup></td><td><span data-macro="inkFrozenBest">81.1</span><sup>†</sup> / <span data-macro="inkFinetunedBest">84.5</span></td></tr>
-      </tbody>
-    </table><figcaption><sup>†</sup> frozen weights, linear probe</figcaption></figure>
-    <figure class="efficiency"><figcaption>ADE20K segmentation against inference compute</figcaption><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="prior egc2f-32 egc2f-64 f2c-32 f2c-64" height="470"></canvit-frontier></figure>
-  </div>
-  <span class="fragment step-marker" data-shows="efficiency"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>CanViT-B sets a new state of the art among active vision models, on both ADE20K and ImageNet-1k.</li>
-    <li>On ADE20K, <span data-macro="adeBestMiou">45.9</span>% with frozen weights, up from <span data-macro="adeBestPriorMiou">27.6</span>%.</li>
-    <li>On ImageNet-1k, <span data-macro="inkFinetunedBest">84.5</span>% fine-tuned, up from 82.2%.</li>
-    <li>Its passive teacher, DINOv3 ViT-B, reaches 47.2% and 85.0%.</li>
-    <li>Our work <b>narrows</b> the wide gap between passive and active computer vision.</li>
-    <li>[CLICK]</li>
-    <li>Accuracy is paired with <b>efficiency</b>.</li>
-    <li>In a single low-resolution glimpse, CanViT-B reaches <span data-macro="adeSingleGlimpseMiou">38.5</span>%,</li>
-    <li>with <b><span data-macro="adeCheapestBeatFlopRatio">20</span> times fewer</b> FLOPs than AME needs for <span data-macro="adeBestPriorMiou">27.6</span>%.</li>
   </ul></aside>
 </section>
 
@@ -997,73 +1049,6 @@
   <p class="divider">Backup</p>
 </section>
 
-<section id="active-vision-model-ablations" data-status="draft">
-  <h2>What's in an active-vision model?</h2>
-  <!-- The main deck's #active-vision-model with the prior models' ablations under the claim (moved here 2026-10-25,
-       Sabrina: the main slide drops them). -->
-  <div class="axes">
-    <div class="group observer">
-      <p class="does">Seeing</p>
-      <div class="jobs">
-        <article class="job instant" style="--accent: var(--glimpse)"><h3>Instantaneous vision</h3><p>making sense of what it sees at a given moment</p></article>
-        <article class="job" style="--accent: var(--canvas)"><h3>Memory</h3><p>updating a persistent, evolving understanding of the scene</p></article>
-      </div>
-      <p class="role">Observer</p>
-    </div>
-    <div class="group policy">
-      <p class="does">Choosing where to look</p>
-      <div class="jobs">
-        <article class="job action" style="--accent: var(--policy)"><h3>Action selection</h3><p>deciding where and at what zoom level to look next</p></article>
-      </div>
-      <p class="role">Policy</p>
-    </div>
-  </div>
-  <!-- The claim, then what learning where to look bought in the papers' own ablations (sources/policy-ablations.json)
-       under it [Yohaï, 2026-10-24: the claim before the examples]. -->
-  <div class="bottom">
-    <p class="claim"><span>No policy can make up for a poor observer.</span> <span>A general-purpose observer lets you use any policy.</span></p>
-    <div class="ablations"></div>
-  </div>
-  <span class="fragment step-marker" data-shows="claim"></span>
-  <span class="fragment step-marker" data-shows="active-focus"></span>
-  <span class="fragment step-marker" data-shows="passive-focus"></span>
-  <span class="fragment step-marker" data-shows="ablations"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>So what's actually in an active-vision model? Three things. Instantaneous vision: making sense of what you see right now. Memory: keeping a persistent, evolving understanding of the scene. And action selection: deciding where, and at what zoom, to look next.</li>
-    <li>The first two make up what we call the observer. The third is the policy.</li>
-    <li>Prior work often focused on the policy, on learning where to look.</li>
-    <li>No policy can make up for a poor observer. And a general-purpose observer lets you use any policy, at least any of the ones we tested.</li>
-    <li>Look at prior models' own ablations: on natural images, with a glance at the whole scene or several glimpses, replacing the chosen viewpoints with random ones costs GFNet 1.5 points on ImageNet, and AME 1 point on SUN360. Where what matters is small and off-centre, it's different: on traffic signs in large road photos, GFNet's learned policy goes from 69 to 91.5% over random patches. So where to look can matter a lot, but on natural scenes the observer carries most of the accuracy.</li>
-  </ul></aside>
-</section>
-
-<section id="pretraining-desiderata" data-status="draft">
-  <h2>Pretraining desiderata</h2>
-  <!-- The pretraining's two problems and their answers (Y, 2026-10-25); the answers on a click, then the slide that
-       puts them together, #distillation. -->
-  <div class="desiderata">
-    <p class="want">Robust to any viewing policy</p><span class="to"></span><p class="answer">Policy-agnostic</p>
-    <p class="want">Rich knowledge of the visual world, without enormous compute</p><span class="to"></span><p class="answer">Dense latent distillation</p>
-  </div>
-  <span class="fragment step-marker" data-shows="answers"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>We have the architecture. How do we pretrain it into a foundation model? We treat it as representation learning, not as an RL problem. Two things we want.</li>
-    <li>First, the model has to work with any viewing policy. Where people look depends on the goal, as Yarbus showed, and a foundation model serves many goals. Pretrain the observer on one policy's glimpses and it co-adapts with that policy, even with a stop-gradient; with another policy, there's no guarantee. And if the policy is learned with RL jointly with the observer, its gradients make training unstable.</li>
-    <li>Second, it has to understand the visual world. Learning that from scratch takes the kind of compute that went into DINOv3. But DINOv3 already has that knowledge, for a scene seen whole; our model has to learn to build it from glimpses. And no labels anywhere: DINOv3 learned from images alone, and our model learns from DINOv3's features.</li>
-    <li>Our answers: policy-agnostic pretraining, and dense latent distillation.</li>
-  </ul></aside>
-</section>
-
-<section id="how-to-see-first" class="signpost" data-status="draft">
-  <p class="statement"><span>Before knowing <span class="look">where to look</span>,<br>we should know <span class="see">how to see</span>.</span></p>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>We have the architecture. How do we pretrain it into a foundation model? First, as a representation learning problem: learning to build a representation of the scene from glimpses. Not as an RL problem, which brings noisy, high-variance gradients, a sparse learning signal, and the observer coupled to its policy. Before knowing where to look, we should know how to see.</li>
-  </ul></aside>
-</section>
-
 <section id="free-viewing" data-status="draft">
   <h2>Toward AVFMs for Neuro-AI</h2>
   <!-- Figures cropped from the papers' PDFs (assets/figures/PROVENANCE.md). -->
@@ -1099,20 +1084,6 @@
   </ul></aside>
 </section>
 
-<section id="adaglimpse-policies" data-status="draft">
-  <h2>AdaGlimpse's learned viewing policies</h2>
-  <!-- Fig. 8 of AdaGlimpse (Pardyl et al., ECCV 2024, arXiv:2404.03482), cropped from the PDF (assets/figures/PROVENANCE.md).
-       Shown whole, in Part II, as part of the case against pretraining an observer with its own learned policy. -->
-  <figure><img src="assets/figures/pardyl-2024-adaglimpse-fig8-average-glimpses.png" alt="Average glimpse maps of AdaGlimpse over ImageNet-1k test images, glimpse by glimpse: for reconstruction, the whole image, then four quadrants in a fixed order; for classification, the whole image, then mostly the centre"><figcaption class="cite">Pardyl et al. 2024, <i>ECCV</i>, Fig. 8</figcaption></figure>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>So how do you pretrain an observer that has to handle any sequence of fixations? The usual approach is to train it together with a policy. Here's what AdaGlimpse's learned policies do, averaged over all ImageNet test images, step by step.</li>
-    <li>For reconstruction: the whole image, then the four quadrants, in the same order, for nearly every image. For classification: the whole image, then mostly the center.</li>
-    <li>Two separate issues. Co-adaptation: after pretraining on random patches, the observer is trained together with its policy, on the glimpses that policy picks, so it becomes specific to that policy. It may do great with it, but swap the policy, or replay human scanpaths, and there's no guarantee. And the policy is learned with reinforcement learning, here soft actor-critic, which is where instability comes from.</li>
-    <li>And why pay for all that, if the learned policy ends up this basic?</li>
-  </ul></aside>
-</section>
-
 <section id="extrapolation" data-status="draft">
   <h2>Extrapolation to unobserved regions</h2>
   <div class="extrapolation">
@@ -1135,155 +1106,6 @@
     <li>After the near end, the same from the other side.</li>
     <li>After both, it connects them.</li>
     <li>And the probability of table, for each. Over 1,436 large ADE20K objects with a glimpse at each end, about half of the unseen middle is labeled as the object after one end, 65% after both; it also labels as the object 46% of the other pixels between the glimpses, so it overshoots too. This table was picked for few false positives.</li>
-  </ul></aside>
-</section>
-
-<section id="classification-and-segmentation" data-status="draft">
-  <h2>Image classification and semantic segmentation</h2>
-  <!-- The second task, introduced before its first result: an ImageNet-1k validation photo with its label, beside the
-       ADE20K living room of #gap with its annotation (experiments/history_examples). -->
-  <div class="tasks">
-    <figure><div class="frame"><img src="../../data/talk/history/classification/ILSVRC2012_val_00037182/image.png" alt="An English springer spaniel lying down"><span class="tag">English springer</span></div>
-      <figcaption>ImageNet-1k classification<small>a label for the whole image</small></figcaption></figure>
-    <figure><div class="frame"><img src="../../data/talk/history/segmentation/ADE_val_00001509/image.png" alt="A living room"><img class="pixels map" src="../../data/talk/history/segmentation/ADE_val_00001509/map.png" alt="The living room's annotation: a class for every pixel"></div>
-      <figcaption>ADE20K semantic segmentation<small>a class for every pixel</small></figcaption></figure>
-  </div>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>We evaluate on two tasks. Image classification on ImageNet-1k: a single label for the whole image, out of a thousand classes. And the segmentation we've already seen: a class for every pixel. Classification is global; segmentation needs to know what's everywhere.</li>
-  </ul></aside>
-</section>
-
-<section id="cost" data-status="draft">
-  <h2>Accuracy against training compute</h2>
-  <!-- [Yohaï, 2026-10-01: an
-       earlier train/adapt/run version lacked comparison points; peak performance against training compute instead]. training-cost.js draws
-       ../../data/talk/training-cost.json, which experiments/training_cost/export.py writes from the authors' training-FLOP
-       accounting (teachers and pretrained weights counted on no side), the paper's macros and sources/sota-history.json.
-       ImageNet-1k first, then ADE20K beside it. This is where CanViT-B meets the prior models' best published results. -->
-  <div class="cost-charts">
-    <figure class="imagenet"><figcaption>ImageNet-1k classification</figcaption><div data-benchmark="imagenet"></div></figure>
-    <figure class="ade20k"><figcaption>ADE20K segmentation</figcaption><div data-benchmark="ade20k"></div></figure>
-  </div>
-  <p class="counted">Not counted: training the teachers and pretrained weights each model starts from.</p>
-  <span class="fragment step-marker" data-shows="ade20k"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>This is where we compare with prior active models, each at its best published result. CanViT-B, frozen with a linear readout: <span data-macro="adeBestMiou">45.9</span> mIoU on ADE20K, against <span data-macro="adeBestPriorMiou">27.6</span> for AME; on ImageNet, <span data-macro="inkFrozenBest">81.1</span> frozen and <span data-macro="inkFinetunedBest">84.5</span> fine-tuned, against 82.2 for AdaptiveNN.</li>
-    <li>Efficiency at inference is nice, but what matters scientifically is the cost of training. Here's each model's best accuracy against its own training compute; the teachers' and inherited weights' training isn't counted on any side.</li>
-    <li>CanViT-B's pretraining is 52.5 exaFLOPs plus 2.8 for the teacher's features. AdaGlimpse: 63 to 145 on ImageNet, 84 to 167 on ADE20K; AdaptiveNN 22.6; AME under 2, but it starts from SETR weights already trained on ADE20K.</li>
-    <li>So CanViT isn't cheaper than every prior model. On ADE20K it's far more accurate for a comparable budget. On ImageNet, AdaptiveNN uses less than half the compute: CanViT frozen is 1.1 points below it, fine-tuned 2.3 above. And the same pretraining serves both tasks.</li>
-  </ul></aside>
-</section>
-
-<section id="canvas" data-status="draft">
-  <h2>The canvas</h2>
-  <!-- canvas-concept.js fills it from the street rollout recorded with --capture-writes
-       (data/talk/architecture/street-riid): the scene and the canvas side by side at the same size, so a glimpse's
-       box and its footprint on the canvas coincide. -->
-  <div class="concept">
-    <figure class="scene"><div class="frame"><img alt="A street"><span class="box g0"></span><span class="box g1"></span><span class="box now"></span></div><figcaption>Scene</figcaption></figure>
-    <div class="glimpse">
-      <div class="crops"><img class="pixels g0" alt="Glimpse 1"><img class="pixels g1" alt="Glimpse 2"><img class="pixels now" alt="The current glimpse"></div>
-      <p class="count"></p>
-      <div class="flow"><span class="read">read</span><span class="write">write</span></div>
-    </div>
-    <figure class="canvas"><div class="frame">
-      <img class="pixels initial" alt="The canvas before any glimpse"><img class="pixels g0" alt="The canvas after glimpse 1"><img class="pixels g1" alt="The canvas after glimpse 2"><img class="pixels now" alt="The canvas after the current glimpse">
-      <span class="grid"></span><span class="footprint g0"></span><span class="footprint g1"></span><span class="footprint now"></span>
-    </div><figcaption>Canvas</figcaption></figure>
-    <span class="player" data-play="more"></span>
-  </div>
-  <span class="fragment step-marker" data-shows="first"></span>
-  <span class="fragment step-marker" data-shows="second"></span>
-  <span class="fragment step-marker" data-shows="more"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>So here's the idea. Next to the scene, keep a grid of latent vectors laid over the whole scene, in scene coordinates: the canvas. Before any glimpse, it holds a learned starting state.</li>
-    <li>The first glimpse comes in. It's processed, and it writes into the canvas, at the place in the scene where it was taken. Notice that it doesn't only change its own footprint: it already says something about the rest.</li>
-    <li>The second glimpse, somewhere else. Before writing, it reads the canvas: what the first glimpse left there shapes how this one is processed. Then it writes, in the same scene coordinates, so the two end up in the same place, a single representation of the scene.</li>
-    <li>And so on, glimpse after glimpse. Wherever you look, at whatever zoom, it all accumulates in the same canvas. That's the Canvas Vision Transformer.</li>
-  </ul></aside>
-</section>
-
-<section id="frontier" data-status="draft">
-  <h2>ADE20K accuracy against inference compute</h2>
-  <!-- Built step by step [Yohaï, 2026-10-01: the worst policy at
-       a 32² canvas, then at 64², then the previous active models, then the best policy at both resolutions]: the frontier's series attribute, set by the
-       fragments; the cost axis glides to fit what is shown. Best policy: EG-C2F, the frontier policy of the paper's
-       Figure 3A. -->
-  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="f2c-32" height="480"></canvit-frontier></div>
-  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64"></span>
-  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior"></span>
-  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>ADE20K mIoU vs inference FLOPs, glimpse by glimpse.</li>
-    <li>Even F2C, a worse-than-random viewing order (paper): better performance at lower cost than AME.</li>
-    <li>One low-resolution glimpse of the full scene (EG-C2F's first), 32 &times; 32 canvas: <span data-macro="adeSingleGlimpseMiou">38.5</span>, <span data-macro="adeCheapestBeatFlopRatio">20</span>&times; fewer FLOPs than AME at <span data-macro="adeBestPriorMiou">27.6</span>.</li>
-    <li>Paper: perception, not viewpoint selection, was the bottleneck.</li>
-    <li>No efficiency claim on ImageNet-1k.</li>
-  </ul></aside>
-</section>
-
-<section id="history" data-status="draft">
-  <h2>Passive and active models over time</h2>
-  <!-- One benchmark after the other, each introduced by its task. Examples chosen by sweeps (git history: OUTLINE.md, #history;
-       experiments/history_examples): an ImageNet-1k validation photo the passive classifier names with p = 0.994, and an
-       ADE20K validation living room with 13 named classes and 0.9% unlabeled pixels. -->
-  <div class="stage">
-    <figure class="example classification">
-      <figcaption>Classification</figcaption>
-      <div class="frame"><img src="../../data/talk/history/classification/ILSVRC2012_val_00037182/image.png" alt="An English springer spaniel lying down"><span class="tag">English springer</span></div>
-    </figure>
-    <div class="history-chart imagenet" data-benchmark="imagenet"></div>
-    <figure class="example segmentation">
-      <figcaption>Semantic segmentation</figcaption>
-      <div class="frame">
-        <img src="../../data/talk/history/segmentation/ADE_val_00001509/image.png" alt="A living room">
-        <img class="pixels map wipe" src="../../data/talk/history/segmentation/ADE_val_00001509/map.png" alt="The living room's annotation: a class for every pixel">
-        <div class="names" data-src="../../data/talk/history/segmentation/ADE_val_00001509/names.json"></div>
-      </div>
-    </figure>
-    <div class="history-chart ade20k" data-benchmark="ade20k"></div>
-  </div>
-  <span class="fragment step-marker" data-shows="label"></span>
-  <span class="fragment step-marker" data-shows="imagenet"></span>
-  <span class="fragment step-marker" data-shows="frozen"></span>
-  <span class="fragment step-marker" data-shows="active"></span>
-  <span class="fragment step-marker" data-shows="segmentation"></span>
-  <span class="fragment step-marker" data-shows="map"></span>
-  <span class="fragment step-marker" data-shows="ade20k"></span>
-  <span class="fragment step-marker" data-shows="gap"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>ImageNet-1k: a label per image, 1,000 classes. English springer.</li>
-    <li>ADE20K: a class per pixel, 150 classes, wall and floor included.</li>
-    <li>Harder for an active model: you need what is everywhere, including where you did not look closely. Most active models cannot output it at all (paper).</li>
-    <li>mIoU: per class, overlap of predicted and true regions over their union; averaged over classes.</li>
-    <li>Lines: passive, base size, trained end to end; frozen self-supervised features + linear layer.</li>
-    <li>Active on ADE20K: AME <span data-macro="ameSetrMiou">27.6</span>, AdaGlimpse <span data-macro="adaglimpseEightMiou">25.7</span>.</li>
-    <li>Paper: active models have struggled to match passive ones.</li>
-  </ul></aside>
-</section>
-
-<section id="results" data-status="draft">
-  <h2>CanViT-B among passive and active models over time</h2>
-  <div class="stage">
-    <div class="history-chart imagenet" data-benchmark="imagenet" data-canvit></div>
-    <div class="history-chart ade20k" data-benchmark="ade20k" data-canvit></div>
-  </div>
-  <span class="fragment step-marker" data-shows="canvit-imagenet"></span>
-  <span class="fragment step-marker" data-shows="ade20k"></span>
-  <span class="fragment step-marker" data-shows="canvit-ade20k"></span>
-  <span class="fragment step-marker" data-shows="gain-ade20k"></span>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>ImageNet-1k: <span data-macro="inkFrozenBest">81.1</span> frozen, <span data-macro="inkFinetunedBest">84.5</span> fine-tuned; AdaptiveNN 82.2, trained end to end (+2.3).</li>
-    <li>ADE20K: <span data-macro="adeBestMiou">45.9</span> frozen (C2F, 64 &times; 64 canvas); AME <span data-macro="ameSetrMiou">27.6</span>.</li>
-    <li>Paper: CanViT-B outperforms prior active vision models on both by a wide margin.</li>
-    <li>ImageNet-1k, the dashed line's last step: frozen DINOv3 ViT-B, CanViT-B's teacher, with the paper's probe: 85.0.</li>
-    <li>DINOv3 ViT-B with our linear probe: 47.2. Dashed line: 51.8, DINOv3's own protocol; what explains the gap was not measured.</li>
   </ul></aside>
 </section>
 
@@ -1321,17 +1143,6 @@
   </ul></aside>
 </section>
 
-<section id="architecture-paper" data-status="draft">
-  <h2>CanViT architecture diagram</h2>
-  <!-- The paper's Figure 2, for questions about what #architecture leaves out: the recurrent CLS token, the viewpoint
-       encoding (VPE) token and the registers, over three glimpses. -->
-  <img class="arch" src="../../assets/paper/arch_overview.svg" alt="CanViT architecture: a ViT backbone processes each glimpse with a recurrent CLS token, a Viewpoint Encoding token and registers, and alternates Canvas Attention reads and writes with a scene-wide canvas.">
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>Green: recurrent CLS token. Orange: viewpoint encoding (VPE) token. Gray: registers; the glimpse's are dropped after each glimpse, the canvas's persist.</li>
-  </ul></aside>
-</section>
-
 </div>
 </div>
 
@@ -1341,21 +1152,17 @@
   import "../../js/canvit/frontier.js";
   import "../../js/canvit/policy-curves.js";
   import "./foveate.js";
-  import { drawHistoryCharts } from "./history.js";
   import { drawTimeline } from "./timeline.js";
   import { drawMapNames } from "./labeled-map.js";
   import { drawUncertainty } from "./uncertainty.js";
   import { drawDetail } from "./detail.js";
   import { drawDistillation } from "./distillation.js";
-  import { drawTrainingCost } from "./training-cost.js";
-  import { drawPolicyAblations } from "./policy-ablations.js";
   import { drawVitOnGlimpse } from "./vit-glimpse.js";
   import { drawSrRope } from "./sr-rope.js";
   import { drawPcaCycle } from "./pca-cycle.js";
   import { drawPretrainingGrid } from "./pretraining-grid.js";
   import { drawPolicyStages } from "./policy-stages.js";
   import "./title-teaser.js";
-  import { drawCanvasConcept } from "./canvas-concept.js";
   import { placeTableAnswers } from "./table.js";
   import { drawGap } from "./gap.js";
   import { POLICIES } from "../../js/canvit/policies.js";
@@ -1363,7 +1170,6 @@
   import { startDeck } from "../deck.js";
   // The published deck has no Backup slides (site/deploy.sh cuts them): a Backup slide is drawn only when present.
   const drawIfPresent = (selector, draw) => { const slide = document.querySelector(selector); return slide && draw(slide); };
-  await drawHistoryCharts();
   await drawTimeline(document.querySelector("#timeline .timeline"));
   await drawMapNames();
   // Class legends: each class in its color, from a plot step's legend.json.
@@ -1383,12 +1189,10 @@
   await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), "../../data/talk/vit-glimpse");
   await drawPcaCycle(document.querySelector("#vit-on-a-glimpse"), "../../data/talk/vit-glimpse", "meta.json");
   await drawSrRope(document.querySelector("#sr-rope"), "../../data/talk/vit-glimpse");
-  await drawIfPresent("#canvas", (slide) => drawCanvasConcept(slide, "../../data/talk/architecture/street-riid"));
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
-  await drawIfPresent("#active-vision-model-ablations", (slide) => drawPolicyAblations(slide.querySelector(".ablations"), "sources/policy-ablations.json"));
-  await drawIfPresent("#cost", (slide) => drawTrainingCost(slide, "../../data/talk/training-cost.json"));
   await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
+  await drawGap(document.querySelector("#state-of-the-art .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json", canvit: true });
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const egc2f = document.querySelector("#eg-c2f");
   await drawUncertainty(egc2f, "../../data/talk/metacognition/street");

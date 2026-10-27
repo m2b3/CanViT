@@ -7,8 +7,9 @@ this file. Keep it current: when the workflow changes, change it here in the sam
 whenever a session shows it failing.
 
 The talk is developed on the branch `talk-2026-10-30-MAIN`, which takes in `main` regularly; never on `main`. The
-branch may hold messy working material; it merges into `main` only after the talk, once the whole diff has been
-checked with the authors. The repository is public: pushing the branch publishes what it holds.
+branch may hold messy working material; it merges into `main` only after the talk, as one squashed commit, once the
+whole diff has been checked with the authors. Its own history does not matter. The repository is public: pushing the
+branch publishes what it holds.
 
 ## Where knowledge lives
 
@@ -18,7 +19,6 @@ Each thing has one home; everything else points to it.
 |---|---|
 | `AGENTS.md` | How to work. |
 | `TALK.md` | The authors' positions (marked (Y), dated), agents' inferences and proposals (marked (A)), open questions, the deck as it stands, open work. |
-| `PROPOSALS.md` | Agents' proposals written for the authors to review; a decided entry moves into the deck or `TALK.md`, and the file goes once empty. |
 | `sources/checked-facts.md` | Facts about CanViT, its paper, its code and the talk's measurements, with where each lives. "Essential" first: what the current argument rests on; then the bank. |
 | `sources/literature.md` | What other papers say, read in the papers, with pages, quotes and numbers. |
 | `sources/*.json`, `sota-history.md` | Data the deck reads, each with its provenance. |
@@ -101,8 +101,10 @@ uv run site/slides/paper_figures.py reject --talk $TALK learned_policies_miou
   until accepted. A figure is its export as SVG; a table is cut from the camera-ready build at the same commit, from
   its top rule to its bottom rule.
 - Accepting publishes. `accept` moves the trial render into `assets/paper-figures/` and records its commit, source,
-  renderer and checksum in the entry; commit the render and the manifest together. The branch is public, so accept
-  only what may be public.
+  renderer and checksum in the entry; commit the render and the manifest together. The branch is public; the authors
+  accept the camera-ready's figures and tables on it. A slide built by hand around a render (`#canvit-rollout`, to
+  reveal it part by part) uses an accepted entry left disabled, so that the render keeps its record without a second
+  slide.
 - Rejecting leaves no trace. `reject` deletes the entry's renders, trial and accepted, and resets its line as `sync`
   wrote it. Setting `"enabled": false` only hides the slide.
 - `deploy.sh` runs `paper_figures.py check`, which refuses an enabled entry that is not accepted, an accepted render
@@ -246,7 +248,7 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - Think through when things update and how: a map that depends on a step updates with that step, without an extra
   click [Yohaï, 2026-10-01].
 - Semantic segmentation needs an introduction for this kind of audience: an image, then its mask sliding across it,
-  as `#history` (Backup) does [Yohaï, 2026-10-01]. `.wipe` (`../deck.css`) reveals
+  as `#gap` does [Yohaï, 2026-10-01]. `.wipe` (`../deck.css`) reveals
   an overlay across its image. Overlays can confuse: also try side by side and one after the other.
 - DINOv3 feature maps and probability maps are drawn with hard nearest-neighbor upsampling [Yohaï, 2026-10-01].
 - A glimpse shown on a slide is what the model receives: 128 × 128 px, sampled from the 512 px scene with

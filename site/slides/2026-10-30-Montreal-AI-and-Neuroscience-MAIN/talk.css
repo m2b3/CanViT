@@ -156,116 +156,36 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #foundation.shows-decode .prob { opacity: 1; }
 #foundation > .cite { position: absolute; left: var(--slide-pad-x); bottom: 50px; }
 
-/* The history charts (history.js), one benchmark at a time on a stage: passive (ink), frozen features (dashed slate),
-   active models (amber), the gap (amber bracket), CanViT-B (canvas red; hollow when frozen). */
+/* A stage: a positioned area for a slide's elements (#foundation). */
 .reveal .stage { position: relative; height: 556px; }
-.reveal .history-chart { position: absolute; left: 0; right: 0; bottom: 0; opacity: 0; transition: opacity .6s ease; }
-.reveal .history-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
-.reveal .history-chart text { font: 500 18px var(--sans); fill: var(--ink); }
-.reveal .history-chart .unit { font-weight: 650; fill: var(--text); }
-.reveal .history-chart .grid { stroke: var(--rule); stroke-width: 1; }
-.reveal .history-chart .line { fill: none; stroke-width: 4; }
-.reveal .history-chart .passive .line { stroke: var(--ink); }
+
 /* Frozen features: the family's color, dashed. */
-.reveal .history-chart .frozen .line { stroke: var(--ink); stroke-width: 3; stroke-dasharray: 9 6; }
-.reveal .history-chart .label { font-size: 20px; font-weight: 600; fill: var(--text); }
-.reveal .history-chart .label.head { font-weight: 800; fill: var(--ink); }
-.reveal .history-chart .active circle { fill: #d97706; stroke: var(--bg); stroke-width: 2; }
-.reveal .history-chart .active .label { fill: #b45309; font-weight: 700; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
-.reveal .history-chart .active .label.head { fill: #b45309; }
-.reveal .history-chart .gap .bracket { fill: none; stroke: #b45309; stroke-width: 3; }
-.reveal .history-chart .gap .gap-label { font-size: 28px; font-weight: 800; fill: #b45309; }
-.reveal .history-chart .canvit circle { stroke: var(--canvas); stroke-width: 4; }
-.reveal .history-chart .canvit .filled { fill: var(--canvas); }
-.reveal .history-chart .canvit .hollow { fill: var(--bg); }
-.reveal .history-chart .canvit .leader { fill: none; stroke: var(--canvas); stroke-width: 1.5; }
-.reveal .history-chart .gain .level { fill: none; stroke: var(--canvas); stroke-width: 2; stroke-dasharray: 2 6;
-  stroke-linecap: round; }
-.reveal .history-chart .gain .arrow { fill: none; stroke: var(--canvas); stroke-width: 4; stroke-linecap: round;
-  stroke-linejoin: round; }
-.reveal .history-chart .gain .gain-label { font-size: 28px; font-weight: 800; fill: var(--canvas); paint-order: stroke;
-  stroke: var(--bg); stroke-width: 6px; }
-.reveal .history-chart .canvit .label { fill: var(--canvas); font-weight: 800; font-size: 21px;
-                                         paint-order: stroke; stroke: var(--bg); stroke-width: 6px; }
-.reveal .history-chart g { transition: opacity .5s ease; }
-
-/* The history slide: each task's example large, then small in its chart's empty corner as the chart arrives. */
-#history .example { position: absolute; margin: 0; transform-origin: 0 0; transition: transform .8s ease, opacity .6s ease; }
-#history .example figcaption { margin-bottom: 8px; font-size: 30px; font-weight: 800; transition: opacity .4s ease; }
-#history .example .frame { position: relative; }
-#history .example img { display: block; width: 100%; height: auto; border-radius: 10px; }
-#history .example .tag { position: absolute; left: 16px; bottom: 16px; padding: 6px 16px; border-radius: 10px;
-                         background: var(--ink); color: #fff; font-size: 28px; font-weight: 700; opacity: 0;
-                         transition: opacity .4s ease; }
-#history.shows-label .example .tag { opacity: 1; }
-#history .classification { left: 313px; top: 0; width: 526px; }
-#history.shows-imagenet .classification { transform: translate(-243px, 44px) scale(.34); }
-#history.shows-imagenet .example figcaption { opacity: 0; }
-#history.shows-segmentation .classification { opacity: 0; }
-#history .segmentation { left: 226px; top: 0; width: 700px; opacity: 0; }
-#history.shows-segmentation .segmentation { opacity: 1; }
-#history.shows-segmentation .segmentation figcaption { opacity: 1; }
-#history.shows-ade20k .segmentation { transform: translate(-160px, 44px) scale(.3); }
-#history.shows-ade20k .segmentation figcaption { opacity: 0; }
-#history .segmentation .map { position: absolute; inset: 0; }
-#history.shows-map .segmentation .map { clip-path: inset(0); }
-#history .names { position: absolute; inset: 0; transition: opacity .4s ease; }
-#history .names span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; color: #fff;
-                       font-size: 17px; font-weight: 750; text-shadow: 0 0 3px #000, 0 0 6px rgba(0, 0, 0, .6);
-                       opacity: 0; transition: opacity .4s ease; }
-#history.shows-map .names span { opacity: 1; transition-delay: calc(.9s + var(--i) * 70ms); }
-#history.shows-ade20k .names { opacity: 0; }
-#history.shows-imagenet:not(.shows-segmentation) .history-chart.imagenet { opacity: 1; }
-#history.shows-ade20k .history-chart.ade20k { opacity: 1; }
-#history .history-chart .gap, #history .history-chart .canvit { opacity: 0; }
-#history:not(.shows-frozen) .history-chart.imagenet .frozen,
-#history:not(.shows-active) .history-chart.imagenet .active { opacity: 0; }
-#history.shows-gap .history-chart.ade20k .gap { opacity: 1; }
-
-/* The results slide: the same charts with CanViT-B, ImageNet-1k then ADE20K. */
-#results .history-chart .gap { opacity: 0; }
-#results:not(.shows-ade20k) .history-chart.imagenet, #results.shows-ade20k .history-chart.ade20k { opacity: 1; }
-#results:not(.shows-canvit-imagenet) .history-chart.imagenet .canvit,
-#results:not(.shows-canvit-ade20k) .history-chart.ade20k .canvit,
-#results:not(.shows-gain-ade20k) .history-chart.ade20k .gain { opacity: 0; }
 
 /* The project page's "What's in an active-vision model?", at slide size. */
-:is(#active-vision-model, #active-vision-model-ablations) .axes { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 10px; }
-:is(#active-vision-model, #active-vision-model-ablations) .group { position: relative; display: flex; flex-direction: column; padding: 16px; border-radius: 20px; }
-:is(#active-vision-model, #active-vision-model-ablations) .group.observer { background: var(--soft); }
-:is(#active-vision-model, #active-vision-model-ablations) .group.policy { border: 2px dashed #cbd5e1; }
-:is(#active-vision-model, #active-vision-model-ablations) .does { margin-bottom: 12px; font-size: 22px; font-weight: 700; color: var(--ink); text-align: center; }
-:is(#active-vision-model, #active-vision-model-ablations) .jobs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 14px; }
-:is(#active-vision-model, #active-vision-model-ablations) .job { padding: 16px 18px; border: 1px solid var(--rule); border-top: 5px solid var(--accent); border-radius: 14px; background: var(--bg); }
-:is(#active-vision-model, #active-vision-model-ablations) .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
-:is(#active-vision-model, #active-vision-model-ablations) .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
-:is(#active-vision-model, #active-vision-model-ablations) .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
+#active-vision-model .axes { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 10px; }
+#active-vision-model .group { position: relative; display: flex; flex-direction: column; padding: 16px; border-radius: 20px; }
+#active-vision-model .group.observer { background: var(--soft); }
+#active-vision-model .group.policy { border: 2px dashed #cbd5e1; }
+#active-vision-model .does { margin-bottom: 12px; font-size: 22px; font-weight: 700; color: var(--ink); text-align: center; }
+#active-vision-model .jobs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 14px; }
+#active-vision-model .job { padding: 16px 18px; border: 1px solid var(--rule); border-top: 5px solid var(--accent); border-radius: 14px; background: var(--bg); }
+#active-vision-model .job h3 { color: var(--accent); font-size: 28px; white-space: nowrap; text-align: center; }
+#active-vision-model .job p { margin-top: 10px; font-size: 20px; text-align: center; color: var(--text); }
+#active-vision-model .role { margin-top: 16px; font-size: 30px; font-weight: 800; text-align: center; }
 /* After the claim, what each line of work focused on, a click each: a contour around action selection (most prior active
    vision work), then around instantaneous vision (passive vision foundation models), each in its component's color. */
-:is(#active-vision-model, #active-vision-model-ablations) .job { transition: box-shadow .6s ease; }
-:is(#active-vision-model, #active-vision-model-ablations).shows-active-focus .job.action,
-:is(#active-vision-model, #active-vision-model-ablations).shows-passive-focus .job.instant { box-shadow: 0 0 0 5px var(--accent); }
-/* Below the diagram, the claim, then the prior models' ablations under it. */
-:is(#active-vision-model, #active-vision-model-ablations) .bottom { display: grid; gap: 6px; margin-top: 50px; }
-:is(#active-vision-model, #active-vision-model-ablations) .bottom > * { opacity: 0; transition: opacity .6s ease; }
-:is(#active-vision-model, #active-vision-model-ablations).shows-claim .claim, #active-vision-model-ablations.shows-ablations .ablations { opacity: 1; }
-:is(#active-vision-model, #active-vision-model-ablations) .claim { margin-top: 18px; font-size: 27px; }
-/* Once the claim is the subject, the Backup version's diagram keeps only its names, to make room for the ablations. */
-#active-vision-model-ablations :is(.does, .job p) { max-height: 3em; overflow: hidden; transition: max-height .6s ease, opacity .4s ease, margin .6s ease; }
-#active-vision-model-ablations.shows-claim :is(.does, .job p) { max-height: 0; opacity: 0; margin: 0; }
-:is(#active-vision-model, #active-vision-model-ablations) .claim span { display: block; }
-#active-vision-model-ablations .ablations svg { display: block; width: 100%; height: auto; overflow: visible; }
-#active-vision-model-ablations .ablations .value { font: 600 15px var(--sans); fill: var(--ink); }
-#active-vision-model-ablations .ablations .model { font: 800 22px var(--sans); fill: var(--ink); }
-#active-vision-model-ablations .ablations .where { font: 500 16px var(--sans); fill: var(--ink); }
-#active-vision-model-ablations .ablations .span { stroke: #94a3b8; stroke-width: 4; }
-#active-vision-model-ablations .ablations .random { fill: var(--bg); stroke: #64748b; stroke-width: 3; }
-#active-vision-model-ablations .ablations .chosen { fill: var(--policy); }
-#active-vision-model-ablations .ablations .delta { font: 800 22px var(--sans); fill: var(--policy); }
-#active-vision-model-ablations .ablations .key { font: 700 16px var(--sans); }
-#active-vision-model-ablations .ablations .random-key { fill: var(--ink); }
-#active-vision-model-ablations .ablations .chosen-key { fill: var(--policy); }
+#active-vision-model .job { transition: box-shadow .6s ease; }
+#active-vision-model.shows-active-focus .job.action,
+#active-vision-model.shows-passive-focus .job.instant { box-shadow: 0 0 0 5px var(--accent); }
+/* Below the diagram, the claim. */
+#active-vision-model .bottom { display: grid; gap: 6px; margin-top: 50px; }
+#active-vision-model .bottom > * { opacity: 0; transition: opacity .6s ease; }
+#active-vision-model.shows-claim .claim { opacity: 1; }
+#active-vision-model .claim { margin-top: 18px; font-size: 27px; }
 
+.job p) { max-height: 3em; overflow: hidden; transition: max-height .6s ease, opacity .4s ease, margin .6s ease; }
+.job p) { max-height: 0; opacity: 0; margin: 0; }
+#active-vision-model .claim span { display: block; }
 
 /* Spatial coverage and perception of detail: scene, the model's 128 px input, p(class), then DINOv3's p(class) from the
    whole scene at 128 px; the input zooms into the zoomed glimpse's box (--zoom-*, detail.js), then the zoomed glimpse
@@ -296,8 +216,6 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
                        top: calc(100% * (var(--object-top) - .03)); left: calc(100% * (var(--object-left) - .03));
                        height: calc(100% * (var(--object-height) + .06)); width: calc(100% * (var(--object-width) + .06)); }
 #detail.shows-full:not(.shows-loupe) .object-ring { opacity: 1; transition-delay: 1.6s; }
-
-#architecture-paper img.arch { display: block; height: 560px; width: auto; margin: -6px auto 0; }
 
 /* The paper's architecture figure, revealed left to right by a mask over what is not yet shown, in fractions of the
    figure's width: the first glimpse's backbone and canvas end at .275; the second glimpse's at .66; the third fills the
@@ -381,7 +299,6 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #distillation :is(.out, .prediction) { --delay: .7s; } #distillation :is(.score, .target) { --delay: 1.05s; }
 #distillation:is(.shows-second, .shows-third, .shows-last) .unrolled > :not(.t0, .row-label) { transition-delay: var(--delay); }
 
-
 #rollout .episode { width: 1060px; margin: 0 auto; padding: 14px 20px; transform-origin: 0 50%;
   transition: transform .8s ease; }
 #rollout canvit-episode { font-size: 15px; }
@@ -400,7 +317,6 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
                                      border-radius: 3px; background: var(--chip); vertical-align: -.05em; }
 
 #frontier .chart { width: 1040px; margin: 0 auto; padding: 14px 20px 10px; font-size: 14px; }
-
 
 #links .layout { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding-top: 4px; }
 #links .qr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
@@ -443,30 +359,6 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 #policy-accuracy figcaption { margin-bottom: 6px; font-size: 22px; font-weight: 750; }
 #policy-accuracy .ade20k { opacity: 0; }
 
-/* Training and inference cost: one column per click, each a large number with its conditions under it. */
-/* Training cost (training-cost.js): ImageNet-1k, then ADE20K beside it; CanViT-B in canvas red, prior active models in
-   the history charts' amber. */
-#cost .cost-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 4px; }
-#cost figure { margin: 0; transition: opacity .6s ease; }
-#cost figure.ade20k { opacity: 0; }
-#cost.shows-ade20k figure.ade20k { opacity: 1; }
-#cost figcaption { font-size: 24px; font-weight: 750; text-align: center; }
-#cost svg { display: block; width: 100%; height: auto; overflow: visible; }
-#cost .grid { stroke: var(--rule); }
-#cost .axis { stroke: var(--muted); stroke-width: 1.5; }
-#cost .tick { font: 500 16px var(--sans); fill: var(--ink); }
-#cost .title { font: 650 17px var(--sans); fill: var(--text); }
-#cost .counted { margin-top: 10px; font-size: 19px; color: var(--ink); text-align: center; }
-#cost .label { font: 700 17px var(--sans); paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
-#cost .prior .label { fill: #b45309; }
-#cost .canvit .label { fill: var(--canvas); font-weight: 800; }
-#cost .prior :is(.filled, .range) { fill: #d97706; stroke: #d97706; }
-#cost .range { stroke-width: 5; stroke-linecap: round; }
-#cost .prior circle { stroke: var(--bg); stroke-width: 2; }
-#cost .canvit circle { stroke: var(--canvas); stroke-width: 4; }
-#cost .canvit .filled { fill: var(--canvas); }
-#cost .canvit .hollow { fill: var(--bg); }
-
 #policy-accuracy.shows-ade20k .ade20k { opacity: 1; }
 
 /* Quickstart: the install line alone and large, then small above the code; the code walked through block by block,
@@ -494,7 +386,7 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 #quickstart .names span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; color: #fff;
                           font-size: 13px; font-weight: 750; text-shadow: 0 0 3px #000, 0 0 6px rgba(0, 0, 0, .6); }
 
-/* The deep active vision timeline (timeline.js): active models in the history chart's amber; on the last click, those
+/* The deep active vision timeline (timeline.js): active models in amber; on the last click, those
    whose policy is learned by reinforcement learning turn policy teal. */
 #timeline .timeline svg { display: block; width: 100%; height: auto; overflow: visible; }
 #timeline .axis { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
@@ -550,7 +442,6 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
                           text-shadow: 0 0 4px #000; opacity: 0; transition: opacity .4s ease; }
 #eg-c2f .quadrants small { margin-left: 6px; font-size: 18px; font-weight: 650; }
 #eg-c2f.shows-quadrants:not(.shows-next) .quadrants span { opacity: 1; }
-
 
 /* The divider before the Backup slides. */
 #backup .divider { display: grid; place-items: center; height: 100%; margin: 0; font-size: 96px; font-weight: 800;
@@ -629,13 +520,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #compare.shows-goal td.goal, #compare.shows-goal th.goal { opacity: 1; }
 #compare table.compare thead th { white-space: nowrap; max-width: none; }
 
-
-/* Hours: DINOv3's teacher against CanViT-B, to scale. */
-
-#adaglimpse-policies figure { margin: 30px auto 0; width: 1152px; }
-#adaglimpse-policies figure img { width: 100%; height: auto; }
-#adaglimpse-policies figcaption { margin-top: 14px; text-align: right; }
-
 /* Yarbus's records: the painting, then every record at once, free examination and the six tasks; each in a cell of its own. */
 #task-dependent-scanpaths .yarbus { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 18px; margin-top: 8px; }
 #task-dependent-scanpaths figure { display: flex; flex-direction: column; align-items: center; }
@@ -668,45 +552,13 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #vit-on-a-glimpse.shows-vit :is(.to-vit, .vit) { opacity: 1; }
 #vit-on-a-glimpse.shows-tokens :is(.to-tokens, .tokens) { opacity: 1; }
 
-/* The canvas introduced (canvas-concept.js): scene and canvas at the same size, the glimpse between them. */
-#canvas .concept { display: grid; grid-template-columns: 420px 1fr 420px; gap: 24px; align-items: center; margin-top: 40px; }
-#canvas figure { margin: 0; text-align: center; }
-#canvas figcaption { margin-top: 12px; font-size: 24px; font-weight: 750; }
-#canvas .scene figcaption { color: var(--ink); }
-#canvas .canvas figcaption { color: var(--canvas); }
-#canvas .frame { position: relative; width: 420px; height: 420px; }
-#canvas .frame img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 8px; }
-#canvas .canvas .frame { box-shadow: 0 0 0 3px var(--canvas); border-radius: 8px; }
 /* The canvas's true 64 x 64 grid of latent vectors. */
-#canvas .canvas .grid { position: absolute; inset: 0; border-radius: 8px; opacity: .25;
-  background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px);
-  background-size: calc(100% / 64) calc(100% / 64); }
-#canvas .box, #canvas .footprint { position: absolute; border: 3px solid var(--glimpse); border-radius: 3px; opacity: 0; transition: opacity .4s ease; }
-#canvas .footprint { border-style: dashed; }
-#canvas .glimpse { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-#canvas .crops { position: relative; width: 180px; height: 180px; }
-#canvas .crops img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 6px; box-shadow: 0 0 0 3px var(--glimpse); opacity: 0; transition: opacity .4s ease; }
-#canvas .count { margin: 0; font-size: 20px; font-weight: 750; color: var(--glimpse); }
-#canvas .flow { display: grid; gap: 8px; width: 100%; }
-#canvas .flow span { display: block; padding: 4px 0; font-size: 19px; font-weight: 750; color: var(--canvas); text-align: center; opacity: 0; transition: opacity .4s ease; }
-#canvas .flow .write::after { content: " →"; }
-#canvas .flow .read::before { content: "← "; }
-#canvas .canvas img:not(.initial) { opacity: 0; transition: opacity .6s ease; }
+
 /* Glimpse 1: its box, crop, write, footprint, and the canvas after it. */
-#canvas.shows-first:not(.shows-second) :is(.box.g0, .crops .g0, .footprint.g0, .flow .write) { opacity: 1; }
-#canvas.shows-first:not(.shows-second) .count::before { content: "glimpse 1"; }
-#canvas.shows-first .canvas img.g0 { opacity: 1; transition-delay: .5s; }
+
 /* Glimpse 2: glimpse 1's box stays, faint; the read comes first, then the write. */
-#canvas.shows-second:not(.shows-more) .box.g0 { opacity: .35; }
-#canvas.shows-second:not(.shows-more) :is(.box.g1, .crops .g1, .footprint.g1, .flow .read) { opacity: 1; }
-#canvas.shows-second:not(.shows-more) .flow .write { opacity: 1; transition-delay: .9s; }
-#canvas.shows-second:not(.shows-more) .count::before { content: "glimpse 2"; }
-#canvas.shows-second .canvas img.g1 { opacity: 1; transition-delay: 1.3s; }
+
 /* The rest, played. */
-#canvas.shows-more :is(.box.now, .crops .now, .footprint.now, .canvas img.now, .flow span) { opacity: 1; transition-delay: 0s; }
-#canvas .count:empty::before { display: inline; }
-#canvas:not(.shows-more) .count { font-size: 0; }
-#canvas:not(.shows-more) .count::before { font-size: 20px; }
 
 /* Signposting slides: a statement alone, large and centered, or Part II's outline with the current part highlighted. */
 .reveal section.signpost .statement { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 560px; margin: 0; font-size: 56px; font-weight: 800;
@@ -719,15 +571,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #outline-architecture.shows-architecture .architecture, .outline.on-pretraining .pretraining, .outline.on-experiments .experiments {
   box-shadow: inset 0 0 0 4px var(--ink); }
 
-/* Classification beside segmentation: a label for the whole image, a class for every pixel. */
-#classification-and-segmentation .tasks { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 30px; }
-#classification-and-segmentation figure { display: flex; flex-direction: column; align-items: center; }
-#classification-and-segmentation .frame { position: relative; width: 480px; height: 400px; border-radius: 12px; overflow: hidden; }
-#classification-and-segmentation .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-#classification-and-segmentation .tag { position: absolute; left: 14px; bottom: 14px; padding: 6px 16px; border-radius: 10px;
-                                        background: var(--ink); color: #fff; font-size: 22px; font-weight: 700; }
-#classification-and-segmentation figcaption { margin-top: 12px; font-size: 26px; font-weight: 750; text-align: center; }
-#classification-and-segmentation figcaption small { display: block; font-size: 19px; font-weight: 500; color: var(--ink); }
 .reveal section.signpost .statement small { display: block; margin-top: 18px; font-size: 30px; font-weight: 600; color: var(--ink); letter-spacing: 0; }
 
 /* Why DINOv3's scale matters: Raugel et al.'s Fig. 5E, as large as the slide allows. */
@@ -784,8 +627,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #gap .bar-chart .tick { font-size: 24px; }
 #gap .bar-chart .axis-title { font-size: 20px; }
 
-
-
 /* Toward CanViT 2: CanViT's column centered, then it shifts left, the arrow draws and CanViT 2's column appears. CanViT's
    limits in red, CanViT 2's in green. */
 #next .versions { position: relative; height: 470px; margin-top: 40px; }
@@ -804,7 +645,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #next .next-arrow path { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
 #next.shows-next .next-arrow .draw { stroke-dashoffset: 0; transition-duration: .9s; transition-delay: .6s; }
 
-/* The gap slide's annotation names its classes as the map wipes in (labeled-map.js), as #history does. */
+/* The gap slide's annotation names its classes as the map wipes in (labeled-map.js). */
 #gap .names { position: absolute; inset: 0; }
 #gap .names span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; color: #fff; font-size: 13px;
                    font-weight: 750; padding: 0 5px; border-radius: 4px; background: rgba(15, 23, 42, .72); opacity: 0;
@@ -874,23 +715,22 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .canvas-key::before { background: var(--canvas); }
 #sr-rope.shows-canvas .canvas-key { opacity: 1; }
 
-/* A new active-vision state of the art: a panel per step, full width, one at a time: ADE20K, ImageNet-1k on "in1k",
-   the efficiency frontier on "efficiency". Dot plots (bar-rows.js): prior active models amber, CanViT-B large and in
-   canvas red, the passive DINOv3 ViT-B in ink. */
-#state-of-the-art .panels { position: relative; height: 560px; margin-top: 14px; }
-#state-of-the-art figure { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity .6s ease; }
-#state-of-the-art:not(.shows-efficiency) .table1, #state-of-the-art.shows-efficiency .efficiency { opacity: 1; }
-#state-of-the-art figcaption { font-size: 26px; font-weight: 750; text-align: center; margin-bottom: 6px; }
-/* The paper's Table 1, plain: ink text, rules at the top, under the header and at the bottom, CanViT-B's row bold. */
-#state-of-the-art .table1 { display: flex; flex-direction: column; align-items: center; }
-#state-of-the-art table.sota { border-collapse: collapse; margin-top: 30px; font-size: 28px; color: var(--ink);
-                               border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
-#state-of-the-art .sota th { padding: 10px 34px; font-size: 24px; font-weight: 700; border-bottom: 1px solid var(--ink); }
-#state-of-the-art .sota td { padding: 10px 34px; text-align: center; font-variant-numeric: tabular-nums; }
-#state-of-the-art .sota :is(th, td):first-child { text-align: left; font-variant-numeric: normal; }
-#state-of-the-art .sota .ours td { font-weight: 700; border-top: 1px solid var(--ink); }
-#state-of-the-art .sota sup { font-size: .55em; vertical-align: .7em; line-height: 0; margin-left: 2px; }
-#state-of-the-art .table1 figcaption { margin-top: 14px; font-size: 20px; font-weight: 400; color: var(--ink); }
+/* A new active-vision state of the art: #gap's chart as it ended, at the same sizes, then on "canvit" every row glides to
+   make room and CanViT-B's bar grows between the active and passive models, in canvas red (gap.js). */
+#state-of-the-art .bar-chart { width: 980px; margin: 14px auto 0; }
+#state-of-the-art .bar-chart .row { transform: translateY(var(--y-core)); transition: transform .8s ease, opacity .6s ease; }
+#state-of-the-art .bar-chart .row:not(.core) { opacity: 0; }
+#state-of-the-art.shows-canvit .bar-chart .row { transform: translateY(var(--y-all)); opacity: 1; }
+#state-of-the-art .bar-chart .canvit .bar { transform: scaleX(0); transform-box: fill-box; transform-origin: left center;
+                                            transition: transform .9s ease .4s; }
+#state-of-the-art.shows-canvit .bar-chart .canvit .bar { transform: none; }
+#state-of-the-art .bar-chart .canvit :is(.name, .value, .note .kind) { fill: var(--canvas); }
+#state-of-the-art .bar-chart .canvit .note .kind { font-weight: 700; }
+#state-of-the-art .bar-chart .name { font-size: 22px; }
+#state-of-the-art .bar-chart .note { font-size: 17px; }
+#state-of-the-art .bar-chart .value { font-size: 26px; }
+#state-of-the-art .bar-chart .tick { font-size: 24px; }
+#state-of-the-art .bar-chart .axis-title { font-size: 20px; }
 #sr-rope .box .tag { position: absolute; left: 0; top: 100%; margin-top: 3px; padding: 1px 6px; border-radius: 4px;
                     background: var(--glimpse); color: #fff; font-size: 14px; font-weight: 650; white-space: nowrap;
                     font-variant-numeric: tabular-nums; }
@@ -908,28 +748,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #table-callback.shows-canvit .map > img.canvit { opacity: 1; }
 #table-callback.shows-canvit .marks { opacity: 0; }
 
-
-
-/* Dense latent distillation: the teacher's row, the student's row (shows-student), the match (shows-match). */
-                                    grid-template-rows: auto auto auto; row-gap: 8px; align-items: center; justify-content: center;
-                                    margin-top: 20px; }
-                                      font-weight: 800; text-align: center; }
-                                        border-left: 10px solid var(--muted); border-right: 0; }
-                                    margin: 0; font-size: 20px; font-weight: 750; color: var(--ink); opacity: 0; transition: opacity .6s ease; }
-                                   border: 3px solid var(--glimpse); box-shadow: 0 0 0 2px #fff; opacity: 0; transition: opacity .5s ease; }
-
-/* Pretraining compute: the run as three stats, then its compute beside DINOv3 7B's, to scale, each value at its bar's end. */
-
-/* Pretraining desiderata: what we want, then (shows-answers) the answer to each. */
-#pretraining-desiderata .desiderata { display: grid; grid-template-columns: 560px 90px 420px; row-gap: 60px; align-items: center;
-                                      justify-content: center; margin-top: 130px; }
-#pretraining-desiderata .want { margin: 0; font-size: 34px; font-weight: 700; color: var(--ink); text-align: right; text-wrap: balance; }
-#pretraining-desiderata .answer { margin: 0; font-size: 34px; font-weight: 800; color: var(--ink); opacity: 0; transition: opacity .6s ease; }
-#pretraining-desiderata .to { height: 3px; margin: 0 20px; background: var(--muted); position: relative; opacity: 0; transition: opacity .6s ease; }
-#pretraining-desiderata .to::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent;
-                                     border-left: 10px solid var(--muted); border-right: 0; }
-#pretraining-desiderata.shows-answers :is(.answer, .to) { opacity: 1; }
-
 /* Pretraining CanViT-B: the run as three stats, then its compute beside DINOv3 7B's, to scale, centered on the slide. */
 #pretraining .run { display: flex; flex-direction: column; justify-content: center; gap: 80px; height: 560px; }
 #pretraining .stats { display: grid; grid-template-columns: repeat(3, 280px); justify-content: center; gap: 32px; }
@@ -944,7 +762,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #pretraining .bar.canvit { width: calc(70% * 174 / 61440); min-width: 4px; background: var(--canvas); }
 #pretraining .n { font-size: 28px; font-weight: 700; color: var(--ink); white-space: nowrap; }
 
-/* The main deck's version, without the ablations: the diagram keeps its descriptions and the slide spreads out. */
+/* The diagram spreads out over the slide. */
 #active-vision-model .axes { margin-top: 80px; }
 #active-vision-model .bottom { margin-top: 90px; }
 #active-vision-model .claim { font-size: 34px; }
@@ -957,3 +775,9 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #dinov3-and-the-brain .method figcaption { margin-top: 8px; }
 #dinov3-and-the-brain.shows-scaling .method { opacity: 0; }
 #dinov3-and-the-brain.shows-scaling .scaling { opacity: 1; }
+
+/* A CanViT rollout: the paper's Figure 1 at the full content width; panel B's rows under covers until their click. */
+#canvit-rollout svg.figure { display: block; width: 1152px; height: auto; margin: 16px auto 0; }
+#canvit-rollout .cover { fill: var(--bg); transition: opacity .6s ease; }
+#canvit-rollout.shows-glimpses .cover.glimpses, #canvit-rollout.shows-canvas .cover.canvas,
+#canvit-rollout.shows-delta .cover.delta { opacity: 0; }

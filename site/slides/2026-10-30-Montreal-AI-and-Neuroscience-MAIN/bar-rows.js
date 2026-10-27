@@ -1,7 +1,8 @@
 // A score per model, one row each, with its name and, under it, its kind then a note ("active, 8 glimpses") on the left: a bar from 0 (mark "bar"), or a dot on an axis
 // from min to max (mark "dot": a dot encodes position, not length, so its axis need not start at 0, and close scores
 // stay apart). Rows are grouped by kind in the order given, each group sorted by value; kinds "active", "passive" and
-// "canvit" take their colors from talk.css (.bar-chart). With zoomMax (bars only), the rows marked core are first drawn
+// "canvit" take their colors from talk.css (.bar-chart), and a row's kindLabel, when given, is the word its note shows
+// in place of its kind (CanViT-B is active). With zoomMax (bars only), the rows marked core are first drawn
 // alone on an axis zoomed to zoomMax; the slide's CSS then brings in the others and rescales to max (#gap).
 
 const SVG = "http://www.w3.org/2000/svg";
@@ -20,7 +21,7 @@ function text(content, attributes, parent) {
   return node;
 }
 
-/** rows: [{name, note, value, kind, core}], note without the kind, which is drawn before it; groups: the kinds, in order; ticks: the axis values, from min to max. */
+/** rows: [{name, note, value, kind, kindLabel?, core}], note without the kind, which is drawn before it; groups: the kinds, in order; ticks: the axis values, from min to max. */
 export function drawBarRows(container, rows, { groups, min = 0, max, ticks, zoomMax = max, label, mark = "bar" }) {
   if (mark === "bar" && min !== 0) throw new Error("bar-rows: bars start at 0; use mark \"dot\" for an axis from another value");
   if (mark === "dot" && zoomMax !== max) throw new Error("bar-rows: zoomMax is for bars");
@@ -55,7 +56,7 @@ export function drawBarRows(container, rows, { groups, min = 0, max, ticks, zoom
     group.style.setProperty("--y-core", `${row.core ? core.placed.get(row) : all.placed.get(row)}px`);
     text(row.name, { x: LABEL_W - 14, y: 20, "text-anchor": "end", class: "name" }, group);
     const note = el("text", { x: LABEL_W - 14, y: 38, "text-anchor": "end", class: "note" }, group);
-    el("tspan", { class: "kind" }, note).textContent = row.kind;
+    el("tspan", { class: "kind" }, note).textContent = row.kindLabel ?? row.kind;
     note.append(`, ${row.note}`);
     if (mark === "dot") {
       el("line", { x1: x(min), x2: x(max), y1: ROW / 2 - 2, y2: ROW / 2 - 2, class: "guide" }, group);

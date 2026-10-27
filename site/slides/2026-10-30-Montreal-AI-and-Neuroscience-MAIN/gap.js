@@ -3,7 +3,9 @@
 // prior active models (baselines, each at its best); sources/ade20k-passive-references.json supplies other passive
 // results, each with its source (those marked shown). The bars state shows the active models alone, on an axis zoomed
 // to ZOOM_MAX; the "more" state brings in the passive models: the axis rescales to MAX, the active bars shrink with
-// it, and every row glides to its place, active models first, then passive ones, each group by value.
+// it, and every row glides to its place, active models first, then passive ones, each group by value. With canvit,
+// the chart is the "more" state's from the start, and CanViT-B's best result (the export's best policy curve point)
+// waits for its own row between the two groups (#state-of-the-art).
 
 import { drawBarRows, fetchJson } from "./bar-rows.js";
 
@@ -21,7 +23,17 @@ export function probe(table, model) {
   return row.miou_pct;
 }
 
-export async function drawGap(container, { paper, references }) {
+/** CanViT-B's best mIoU over every policy, canvas and glimpse of the export, which must be the paper's claim. */
+export function bestCanvit(data) {
+  const points = data.policy_curves.flatMap((curve) => curve.per_timestep.map((p) => ({ ...p, curve })));
+  const best = points.reduce((a, b) => (b.mean > a.mean ? b : a));
+  if ((100 * best.mean).toFixed(1) !== data.claims.best_miou_pct.toFixed(1)) {
+    throw new Error(`gap: the export's best point (${100 * best.mean}) is not its claim (${data.claims.best_miou_pct})`);
+  }
+  return best;
+}
+
+export async function drawGap(container, { paper, references, canvit = false }) {
   const [data, refs] = await Promise.all([fetchJson(paper), fetchJson(references)]);
   const prior = (name, label) => {
     const run = bestPrior(data.baselines, name);
@@ -31,10 +43,15 @@ export async function drawGap(container, { paper, references }) {
     prior("AME (MAE)", "AME (MAE ViT-L)"),
     prior("AdaGlimpse", "AdaGlimpse"),
     prior("AME (SETR)", "AME (SETR ViT-L)"),
-    { name: "DINOv3 ViT-S", note: "frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-S/16"), kind: "passive", core: false },
-    { name: "DINOv3 ViT-B", note: "frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-B/16"), kind: "passive", core: false },
-    ...refs.references.filter((r) => r.shown).map((r) => ({ name: r.name, note: r.note, value: r.value, kind: "passive", core: false })),
+    { name: "DINOv3 ViT-S", note: "frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-S/16"), kind: "passive", core: canvit },
+    { name: "DINOv3 ViT-B", note: "frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-B/16"), kind: "passive", core: canvit },
+    ...refs.references.filter((r) => r.shown).map((r) => ({ name: r.name, note: r.note, value: r.value, kind: "passive", core: canvit })),
   ];
-  drawBarRows(container, rows, { groups: ["active", "passive"], max: MAX, zoomMax: ZOOM_MAX, ticks: [0, 10, 20, 30, 40, 50, 60, 70],
-                                 label: "ADE20K mIoU of passive and active models" });
+  if (canvit) {
+    const best = bestCanvit(data);
+    rows.push({ name: "CanViT-B", note: `frozen, linear, ${best.t + 1} glimpses`, value: 100 * best.mean, kind: "canvit",
+                kindLabel: "active", core: false });
+  }
+  drawBarRows(container, rows, { groups: ["active", "canvit", "passive"], max: MAX, zoomMax: canvit ? MAX : ZOOM_MAX,
+                                 ticks: [0, 10, 20, 30, 40, 50, 60, 70], label: "ADE20K mIoU of passive and active models" });
 }

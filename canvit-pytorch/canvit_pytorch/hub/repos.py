@@ -97,8 +97,8 @@ def released_dinov3_ade20k_probe(model: str, *, input_size_px: int) -> str:
 
 # Learned viewing policies (canvit_pytorch.rl): a ViewpointScorer per seed of each objective's training recipe
 # (rl.train.PolicyTraining); each scorer records the observer it reads.
-Q_REGRESSION_POLICIES = tuple(hub_repo(f"qpolicy-ade20k-c64-t5-qband-2026-07-04-s{seed}") for seed in range(8))
-POLICY_GRADIENT_POLICIES = tuple(hub_repo(f"pgpolicy-ade20k-c64-t5-floorband-2026-07-07-s{seed}") for seed in range(8))
+Q_LEARNING_POLICIES = tuple(hub_repo(f"qpolicy-ade20k-c64-t5-qband-2026-07-04-s{seed}") for seed in range(8))
+REINFORCE_POLICIES = tuple(hub_repo(f"pgpolicy-ade20k-c64-t5-floorband-2026-07-07-s{seed}") for seed in range(8))
 
 # The canvas grid of the project page's visualizations and of the browser exports: that of the probe they read.
 VIZ_CANVAS_GRID_SIZE = 64

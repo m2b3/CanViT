@@ -69,7 +69,7 @@ class ADE20kSegmentationLearnedPolicy(Task):
     """ADE20K mIoU after every glimpse of a learned policy (canvit_pytorch.rl), with the observer its scorer records."""
 
     scorer_repo: str
-    """Hub repo or local directory of a ViewpointScorer, such as one of hub.repos.Q_REGRESSION_POLICIES."""
+    """Hub repo or local directory of a ViewpointScorer, such as one of hub.repos.Q_LEARNING_POLICIES."""
     scorer_revision: str | None = None
     """The Hub commit, branch or tag of scorer_repo to evaluate, the latest when None; the result records the commit."""
     num_glimpses: int

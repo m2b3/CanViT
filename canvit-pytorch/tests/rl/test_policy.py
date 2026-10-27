@@ -6,29 +6,32 @@ import torch
 from PIL import Image
 
 from canvit_pytorch import CanViT, CanViTForSemanticSegmentation, SegmentationProbe
-from canvit_pytorch.hub.repos import POLICY_GRADIENT_POLICIES, Q_REGRESSION_POLICIES
+from canvit_pytorch.hub.repos import Q_LEARNING_POLICIES, REINFORCE_POLICIES
 from canvit_pytorch.preprocess import preprocess
 from canvit_pytorch.rl import LearnedPolicy, Observer, ViewpointScorer
 from canvit_pytorch.rl.candidates import CandidateViewpoints
-from canvit_pytorch.rl.features import CanvasReading, EpisodeFeatures, feature_channels
+from canvit_pytorch.rl.features import FEATURE_GROUPS, CanvasReading, EpisodeFeatures, FeatureGroup, feature_channels
 from canvit_pytorch.viewpoint import Viewpoint
 from tests.model.tiny import GLIMPSE_PX, TINY
 
-CONFIG_KEYS = {"blocks_per_stage", "canvas_dim", "candidates", "dueling", "observer", "width"}
+CONFIG_KEYS = {"blocks_per_stage", "canvas_dim", "candidates", "dueling", "feature_groups", "observer", "width"}
 
 # The candidates the published policies chose at glimpses 1-4 on test_data/Cat03.jpg, recorded with the code that
-# trained them (float32, CPU). Smallest top-two score margin: 0.0016 (Q-regression), 1.3 (policy gradient).
-CAT_CHOICES = {Q_REGRESSION_POLICIES[0]: [205, 270, 0, 208], POLICY_GRADIENT_POLICIES[0]: [14, 0, 255, 240]}
+# trained them (float32, CPU). Smallest top-two score margin: 0.0016 (Q-learning), 1.3 (REINFORCE).
+CAT_CHOICES = {Q_LEARNING_POLICIES[0]: [205, 270, 0, 208], REINFORCE_POLICIES[0]: [14, 0, 255, 240]}
 
 TINY_OBSERVER = Observer(
     pretrained_repo="unused", probe_repo="unused", scene_size_px=64, glimpse_size_px=GLIMPSE_PX, canvas_grid_size=4,
 )
 
 
-def small_scorer(*, canvas_dim: int, dueling: bool) -> ViewpointScorer:
+def small_scorer(
+    *, canvas_dim: int, dueling: bool, feature_groups: tuple[FeatureGroup, ...] = FEATURE_GROUPS,
+) -> ViewpointScorer:
     return ViewpointScorer(
-        observer=TINY_OBSERVER, canvas_dim=canvas_dim, candidates=CandidateViewpoints(scales=(0.5, 0.25), centers_per_axis=4),
-        width=8, blocks_per_stage=1, dueling=dueling,
+        observer=TINY_OBSERVER, canvas_dim=canvas_dim, feature_groups=feature_groups,
+        candidates=CandidateViewpoints(scales=(0.5, 0.25), centers_per_axis=4), width=8, blocks_per_stage=1,
+        dueling=dueling,
     ).eval()
 
 
@@ -39,14 +42,19 @@ def episode_viewpoints(policy: LearnedPolicy, images: torch.Tensor, *, num_glimp
                      scales=torch.cat([step.viewpoint.scales for step in steps]))
 
 
-@pytest.mark.parametrize("dueling", [True, False])
-def test_saved_scorer_reloads_identically(tmp_path: Path, dueling: bool) -> None:
-    scorer = small_scorer(canvas_dim=8, dueling=dueling)
+@pytest.mark.parametrize(
+    ("dueling", "feature_groups"), [(True, FEATURE_GROUPS), (False, FEATURE_GROUPS), (True, ("patches",))],
+)
+def test_saved_scorer_reloads_identically(
+    tmp_path: Path, dueling: bool, feature_groups: tuple[FeatureGroup, ...],
+) -> None:
+    scorer = small_scorer(canvas_dim=8, dueling=dueling, feature_groups=feature_groups)
     scorer.save_pretrained(tmp_path)
     assert set(json.loads((tmp_path / "config.json").read_text())) == CONFIG_KEYS
     loaded = ViewpointScorer.from_pretrained(str(tmp_path)).eval()
-    assert loaded.observer == scorer.observer and loaded.candidates == scorer.candidates
-    features = torch.randn(2, sum(feature_channels(8)), 32, 32)
+    assert (loaded.observer, loaded.candidates) == (scorer.observer, scorer.candidates)
+    assert loaded.feature_groups == feature_groups
+    features = torch.randn(2, sum(feature_channels(feature_groups, 8)), 32, 32)
     scores = scorer(features)
     assert scores.shape == (2, 2 * 4 * 4)  # [B, num_scales × centers_per_axis²]
     assert torch.equal(scores, loaded(features))
@@ -57,9 +65,10 @@ def test_features_compare_with_the_previous_and_the_initial_canvas() -> None:
         CanvasReading(logits=torch.randn(1, 5, 32, 32), entropy=torch.rand(1, 32, 32), patches=torch.randn(1, 8, 32, 32))
         for _ in range(3)
     )
-    episode = EpisodeFeatures(initial)
+    episode = EpisodeFeatures(initial, FEATURE_GROUPS)
     episode(previous)
-    _, entropy_change, to_previous, to_initial, _, patch_change = episode(current).split(feature_channels(8), dim=1)
+    full = episode(current)
+    _, entropy_change, to_previous, to_initial, _, patch_change = full.split(feature_channels(FEATURE_GROUPS, 8), dim=1)
 
     def dissimilarity(a: CanvasReading, b: CanvasReading) -> torch.Tensor:
         return 1 - torch.cosine_similarity(a.patches, b.patches, dim=1).unsqueeze(1)
@@ -68,6 +77,12 @@ def test_features_compare_with_the_previous_and_the_initial_canvas() -> None:
     torch.testing.assert_close(to_previous, dissimilarity(current, previous))
     torch.testing.assert_close(to_initial, dissimilarity(current, initial))
     torch.testing.assert_close(patch_change, current.patches - previous.patches)
+
+    selection: tuple[FeatureGroup, ...] = ("patch_change", "entropy")
+    selected = EpisodeFeatures(initial, selection)
+    selected(previous)
+    channels = dict(zip(FEATURE_GROUPS, full.split(feature_channels(FEATURE_GROUPS, 8), dim=1), strict=True))
+    torch.testing.assert_close(selected(current), torch.cat([channels[group] for group in selection], dim=1))
 
 
 def test_policy_starts_afresh_with_each_episode() -> None:

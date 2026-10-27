@@ -26,7 +26,7 @@ RESULTS = results_in(ENTRY)
 # The evaluation record: for each result, the scorer it evaluated, its training run, step and manifest; and the
 # training time of each run.
 RECORD = Inputs(ENTRY, ("checkpoints.json", "training_durations.json"))
-OBJECTIVES = {"q": "q_regression", "pg": "policy_gradient"}
+OBJECTIVES = {"q": "q_learning", "pg": "reinforce"}
 SELECTIONS = {"val-selected": "validation", "last step": "last"}
 BASELINE_POLICIES = ("coarse_to_fine", "entropy_coarse_to_fine")
 # The manifest keys of the recipe every run shares; the others name the run, its paths or its objective.
@@ -59,7 +59,7 @@ def _recipe(manifests: list[dict]) -> dict:
         "warmup_steps": int(shared["warmup_frac"] * steps), "validation_interval": shared["eval_every"],
         "adam_betas": [shared["adam_beta1"], shared["adam_beta2"]], "grad_clip": shared["grad_clip"],
         # The July code took the scorer's choice with probability prime_on_policy, a random candidate otherwise.
-        "q_regression_epsilon": 1 - prime_on_policy, "policy_gradient_entropy_floor": pg_objective["entropy_target"],
+        "q_learning_epsilon": 1 - prime_on_policy, "reinforce_entropy_floor": pg_objective["entropy_target"],
     }
 
 

@@ -47,7 +47,7 @@ def explore(
         return state, reading, segmentation_cross_entropy(reading.logits, labels, resolution_px=reward_resolution_px)
 
     state = model.init_state(batch_size=batch_size, canvas_grid_size=observer.canvas_grid_size)
-    episode = EpisodeFeatures(read_canvas(model, state.canvas))
+    episode = EpisodeFeatures(read_canvas(model, state.canvas), scorer.feature_groups)
     state, reading, loss = observe(state, Viewpoint.full_scene(batch_size=batch_size, device=images.device))
     features, taken, losses = [], [], [loss]
     for _ in range(num_glimpses - 1):

@@ -55,8 +55,8 @@ POLICY_ORDER = list(POLICY_STYLES)
 # The learned viewing policies (learned_policies), by training objective; apart from POLICY_STYLES, whose order is the
 # results figure's legend.
 LEARNED_POLICY_STYLES: dict[str, dict] = {
-    "q_regression":    {"color": "#9467bd", "label": "Q-learning"},
-    "policy_gradient": {"color": "#17becf", "label": "REINFORCE"},
+    "q_learning": {"color": "#9467bd", "label": "Q-learning"},
+    "reinforce":  {"color": "#17becf", "label": "REINFORCE"},
 }
 
 

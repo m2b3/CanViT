@@ -25,12 +25,12 @@ import torch
 from PIL import Image
 
 from canvit_pytorch.device import accelerator_or_cpu
-from canvit_pytorch.hub.repos import Q_REGRESSION_POLICIES
+from canvit_pytorch.hub.repos import Q_LEARNING_POLICIES
 from canvit_pytorch.preprocess import preprocess
 from canvit_pytorch.rl import LearnedPolicy
 
 device = accelerator_or_cpu()
-policy = LearnedPolicy.from_pretrained(Q_REGRESSION_POLICIES[0], device)
+policy = LearnedPolicy.from_pretrained(Q_LEARNING_POLICIES[0], device)
 scene_size_px = policy.scorer.observer.scene_size_px
 scene = preprocess(scene_size_px)(Image.open("scene.jpg").convert("RGB")).unsqueeze(0).to(device)
 
@@ -77,14 +77,15 @@ uv run python -m canvit_pytorch.evaluate ade20k-segmentation-canvit \
 uv sync --extra rl
 export ADE20K_ROOT=/path/to/ADEChallengeData2016
 uv run python -m canvit_pytorch.rl.train --out-dir runs/qpolicy-s0 --seed 0
-uv run python -m canvit_pytorch.rl.train objective:policy-gradient --out-dir runs/pgpolicy-s0 --seed 0
+uv run python -m canvit_pytorch.rl.train objective:reinforce --out-dir runs/pgpolicy-s0 --seed 0
 ```
 
 The defaults of `rl.train.PolicyTraining` are the recipe of the published
 policies; `--help` lists them, and `--observer.*` selects another CanViT and
 probe. The run directory holds:
 
-- `scorer/`: the selected scorer, loadable with `ViewpointScorer.from_pretrained`;
+- `scorer/`: the selected scorer, and `last_step_scorer/`, that of the last
+  training step, both loadable with `ViewpointScorer.from_pretrained`;
 - `record.json`: the objective, the configuration, provenance, the selected
   step, and at every validation the mean training loss since the previous one
   and the validation cross-entropy after each glimpse.
@@ -105,6 +106,8 @@ entropy of the probe's class distribution and the layer-normalized canvas, each
 with its change since the previous decision; and the cosine dissimilarity of
 the canvas to that of the previous decision and to that before the first glimpse.
 The features are average-pooled to a fixed grid, whatever the canvas grid.
+`--feature-groups` selects the groups a scorer reads (all by default), and the
+scorer records them in its `config.json`.
 
 **Scorer** (`rl.scorer`). Per-group projections and normalizations fuse the
 features into a map, which a ConvNeXt-V2 U-Net pools down to a single cell and
@@ -118,16 +121,15 @@ separately for each decision of an episode, since their scale changes from one
 glimpse to the next.
 
 **Objectives** (`rl.train.objectives`). Each training episode starts with the
-full scene. Under Q-regression (the default; Q-learning with discount 0 in the
-paper), the scores are the values of the candidates: a dueling head separates a
-scene's mean value from the candidates' advantages, and the score of each
-viewpoint taken regresses on its standardized reward. Episodes take a random
-candidate with probability `epsilon`, otherwise the best-scoring one under the
-current scorer, so training visits the states the deployed policy reaches.
-Under `objective:policy-gradient` (REINFORCE in the paper), the scores are the
-logits of a softmax policy that episodes sample, trained by the score-function
-estimator with an entropy bonus whose weight adapts to hold the policy's mean
-entropy at a floor.
+full scene. Under Q-learning (the default, with discount 0), the scores are the
+values of the candidates: a dueling head separates a scene's mean value from the
+candidates' advantages, and the score of each viewpoint taken regresses on its
+standardized reward. Episodes take a random candidate with probability
+`epsilon`, otherwise the best-scoring one under the current scorer, so training
+visits the states the deployed policy reaches. Under `objective:reinforce`, the
+scores are the logits of a softmax policy that episodes sample, trained by
+REINFORCE (the score-function estimator) with an entropy bonus whose weight
+adapts to hold the policy's mean entropy at a floor.
 
 **Selection** (`rl.train.validation`). Every `validation-interval` steps, the
 deployed policy runs on the ADE20K validation set; the run keeps the scorer of
@@ -135,7 +137,7 @@ lowest mean cross-entropy after the glimpses it chose.
 
 ## Published policies
 
-`hub.repos.Q_REGRESSION_POLICIES` and `hub.repos.POLICY_GRADIENT_POLICIES`
+`hub.repos.Q_LEARNING_POLICIES` and `hub.repos.REINFORCE_POLICIES`
 name the published scorers, one per training seed of each objective's recipe.
 Each repo's card states the observer, the training run and the validation
 cross-entropy of the selected step, and the repo holds the run's full record.

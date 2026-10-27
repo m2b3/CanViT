@@ -1,6 +1,6 @@
-"""How a ViewpointScorer learns from the rewards of the viewpoints its training episodes take: Q-regression
-(Q-learning with discount 0) or policy gradient (REINFORCE). Training episodes take the objective's exploratory
-choices; deployed, a policy takes the candidate of highest score under either objective."""
+"""How a ViewpointScorer learns from the rewards of the viewpoints its training episodes take: Q-learning or
+REINFORCE, both with discount 0. Training episodes take the objective's exploratory choices; deployed, a policy takes
+the candidate of highest score under either objective."""
 
 import math
 from dataclasses import dataclass
@@ -30,14 +30,14 @@ def mean_entropy(log_probs: Tensor) -> Tensor:
 
 
 @dataclass(frozen=True)
-class QRegression:
+class QLearning:
     """Q-learning with discount 0: scores are action values, and the score of each viewpoint taken regresses on its
     standardized reward (mean squared error), with no credit from later glimpses. The scorer has a dueling head.
     Training episodes take a uniformly random candidate with probability epsilon, else the candidate of highest
     score."""
 
     epsilon: float = 0.5
-    title: ClassVar[str] = "Q-regression"
+    title: ClassVar[str] = "Q-learning"
     dueling: ClassVar[bool] = True
 
     def explore(self, scores: Tensor) -> Tensor:
@@ -57,7 +57,7 @@ class QRegression:
 
 
 @dataclass(frozen=True)
-class PolicyGradient:
+class Reinforce:
     """REINFORCE with discount 0 and an entropy bonus: scores are the logits of a softmax policy, which training
     episodes sample, and the loss is the score-function estimator with the standardized reward as advantage, minus
     the bonus. The bonus weight adapts by dual ascent, as Soft Actor-Critic tunes its temperature: it rises while the
@@ -71,7 +71,7 @@ class PolicyGradient:
     max_entropy_weight: float = 10.0
     entropy_weight_rate: float = 0.05
     """Step of the log weight per nat of entropy below the floor."""
-    title: ClassVar[str] = "policy gradient"
+    title: ClassVar[str] = "REINFORCE"
     dueling: ClassVar[bool] = False
 
     def explore(self, scores: Tensor) -> Tensor:
@@ -79,13 +79,13 @@ class PolicyGradient:
         return torch.multinomial(scores.softmax(dim=1), 1).squeeze(1)
 
     def learner(self) -> Learner:
-        return EntropyRegularizedPolicyGradient(self)
+        return EntropyRegularizedReinforce(self)
 
 
-class EntropyRegularizedPolicyGradient:
-    """PolicyGradient's learner: its state is the entropy bonus weight."""
+class EntropyRegularizedReinforce:
+    """Reinforce's learner: its state is the entropy bonus weight."""
 
-    def __init__(self, objective: PolicyGradient) -> None:
+    def __init__(self, objective: Reinforce) -> None:
         self.objective = objective
         # On the CPU until the first update moves it to the device of the scores.
         self.log_entropy_weight = torch.tensor(math.log(objective.min_entropy_weight))
@@ -104,6 +104,8 @@ class EntropyRegularizedPolicyGradient:
         )
 
 
-Objective = QRegression | PolicyGradient
-OBJECTIVES: dict[str, type[Objective]] = {objective.__name__: objective for objective in (QRegression, PolicyGradient)}
+Objective = QLearning | Reinforce
+OBJECTIVES: dict[str, type[Objective]] = {objective.__name__: objective for objective in (QLearning, Reinforce)} | {
+    "QRegression": QLearning, "PolicyGradient": Reinforce,  # their earlier names, which earlier training records hold
+}
 """By the class name a training record holds."""

@@ -1,16 +1,19 @@
 """What a ViewpointScorer reads: the canvas and the probe's segmentation of it, compared with earlier canvases.
 
-At each canvas cell, in channel order:
+A scorer reads a selection of these feature groups at each canvas cell (the published scorers read all of them, in
+this order):
 
-- the entropy of the probe's class distribution, in nats, and its change since the previous canvas;
-- the cosine dissimilarity of the layer-normalized canvas patch to the same patch of the previous canvas, and to
-  that of the canvas before the first glimpse;
-- the layer-normalized canvas patch, and its change since the previous canvas.
+- entropy: the entropy of the probe's class distribution, in nats; entropy_change: its change since the previous
+  canvas;
+- dissimilarity_to_previous, dissimilarity_to_initial: the cosine dissimilarity of the layer-normalized canvas patch
+  to the same patch of the previous canvas, and to that of the canvas before the first glimpse;
+- patches: the layer-normalized canvas patch; patch_change: its change since the previous canvas.
 
 The previous canvas is the one of the previous decision, or the canvas before the first glimpse.
 """
 
 from dataclasses import dataclass
+from typing import Literal, assert_never, get_args
 
 import torch
 import torch.nn.functional as F
@@ -22,10 +25,16 @@ from canvit_pytorch.policies.entropy import predictive_entropy
 FEATURE_GRID_SIZE = 32
 """Features of any canvas grid are average-pooled to this grid, ViewpointScorer's input."""
 
+FeatureGroup = Literal[
+    "entropy", "entropy_change", "dissimilarity_to_previous", "dissimilarity_to_initial", "patches", "patch_change",
+]
+FEATURE_GROUPS: tuple[FeatureGroup, ...] = get_args(FeatureGroup)
+"""Every group, in the order the published scorers read them."""
 
-def feature_channels(canvas_dim: int) -> list[int]:
-    """The channels of each feature group, in channel order."""
-    return [1, 1, 1, 1, canvas_dim, canvas_dim]
+
+def feature_channels(groups: tuple[FeatureGroup, ...], canvas_dim: int) -> list[int]:
+    """The channels of each group, in the order of groups."""
+    return [canvas_dim if group in ("patches", "patch_change") else 1 for group in groups]
 
 
 @dataclass(frozen=True)
@@ -44,24 +53,42 @@ def read_canvas(model: CanViTForSemanticSegmentation, canvas: Tensor) -> CanvasR
         return CanvasReading(logits=logits, entropy=predictive_entropy(logits), patches=normalized)
 
 
-class EpisodeFeatures:
-    """The scorer's input at each decision of an episode, from the readings of its canvas so far."""
+def dissimilarity(a: CanvasReading, b: CanvasReading) -> Tensor:
+    """[B, 1, G, G]: the cosine dissimilarity of each patch of a to the same patch of b."""
+    return (1 - F.cosine_similarity(a.patches, b.patches, dim=1)).unsqueeze(1)
 
-    def __init__(self, initial: CanvasReading) -> None:
+
+class EpisodeFeatures:
+    """A scorer's input at each decision of an episode, from the readings of its canvas so far: the feature groups
+    it reads, in their order."""
+
+    def __init__(self, initial: CanvasReading, groups: tuple[FeatureGroup, ...]) -> None:
         """initial: the reading before the first glimpse."""
         self.initial = initial
         self.previous = initial
+        self.groups = groups
 
     def __call__(self, current: CanvasReading) -> Tensor:
         """[B, sum(feature_channels), FEATURE_GRID_SIZE, FEATURE_GRID_SIZE] at the decision on `current`, which
         becomes the previous reading."""
         previous, self.previous = self.previous, current
-        features = torch.cat([
-            current.entropy.unsqueeze(1),
-            (current.entropy - previous.entropy).unsqueeze(1),
-            (1 - F.cosine_similarity(current.patches, previous.patches, dim=1)).unsqueeze(1),
-            (1 - F.cosine_similarity(current.patches, self.initial.patches, dim=1)).unsqueeze(1),
-            current.patches,
-            current.patches - previous.patches,
-        ], dim=1)
+        features = torch.cat([self.group(group, current, previous) for group in self.groups], dim=1)
         return F.adaptive_avg_pool2d(features, FEATURE_GRID_SIZE)
+
+    def group(self, group: FeatureGroup, current: CanvasReading, previous: CanvasReading) -> Tensor:
+        """[B, channels, G, G]: one group at the decision on `current`."""
+        match group:
+            case "entropy":
+                return current.entropy.unsqueeze(1)
+            case "entropy_change":
+                return (current.entropy - previous.entropy).unsqueeze(1)
+            case "dissimilarity_to_previous":
+                return dissimilarity(current, previous)
+            case "dissimilarity_to_initial":
+                return dissimilarity(current, self.initial)
+            case "patches":
+                return current.patches
+            case "patch_change":
+                return current.patches - previous.patches
+            case _:
+                assert_never(group)

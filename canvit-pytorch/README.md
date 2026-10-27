@@ -11,6 +11,10 @@ task specialization, and evaluation code. The paper is
 uv add canvit-pytorch
 ```
 
+On Linux, torch 2.14's PyPI wheels are built for CUDA 13.0 and cannot use the GPU under an older NVIDIA driver.
+There, install the torch build for your CUDA version first ([PyTorch's selector](https://pytorch.org/get-started/locally/);
+in a uv project, [uv's PyTorch guide](https://docs.astral.sh/uv/guides/integration/pytorch/)).
+
 ## Load a Hugging Face checkpoint
 
 This example loads a PyTorch checkpoint, processes a user-provided image, and

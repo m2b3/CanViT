@@ -104,7 +104,12 @@
 \newcommand{\ztrecon}{\hat{\mathbf{z}}_t}
 
 
-\title{CanViT: Toward Active-Vision Foundation Models}
+\newcommand{\papertitle}{CanViT: Toward Active-Vision Foundation Models}
+\title{\papertitle}
+\hypersetup{
+  pdftitle={\papertitle},
+  pdfauthor={Yoha\"i-Eliel Berreby, Sabrina Du, Audrey Durand, B. Suresh Krishna},
+}
 
 \author{%
   Yoha\"i-Eliel Berreby$^{1,2}$\quad
@@ -130,7 +135,7 @@
 Active computer vision promises efficient, biologically plausible perception through sequential, localized glimpses,
 but lacks scalable general-purpose architectures and pretraining pipelines,
 leaving Active-Vision Foundation Models (AVFMs) underexplored.
-We introduce \textbf{CanViT}, the first task- and policy-agnostic AVFM.
+We introduce the Canvas Vision Transformer (\textbf{CanViT}), the first task- and policy-agnostic AVFM.
 CanViT uses scene-relative RoPE to bind
 a retinotopic Vision Transformer backbone
 and a spatiotopic scene-wide latent workspace, the \emph{canvas}.
@@ -145,7 +150,7 @@ We propose a label-free active vision pretraining scheme,
 reconstructing scene-wide DINOv3 embeddings
 from sequences of low-resolution glimpses with randomized locations, zoom levels, and lengths.
 We pretrain CanViT-B from a random initialization
-on 13.2 million ImageNet-21k scenes---an order of magnitude more than previous active models---and 1 billion random glimpses,
+on 13.2 million ImageNet-21k scenes and 1 billion random glimpses,
 in 166 hours on a single H100.
 On ADE20K segmentation,
 a frozen CanViT-B achieves \adeSingleGlimpseMiou\% mIoU

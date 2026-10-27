@@ -69,4 +69,4 @@ def adaglimpse_flops(num_glimpses: int, cfg: AdaGlimpseConfig = ADAGLIMPSE) -> i
 
 
 def adaglimpse_gflops(num_glimpses: int, cfg: AdaGlimpseConfig = ADAGLIMPSE) -> float:
-    return round(adaglimpse_flops(num_glimpses, cfg) / 1e9, 2)
+    return adaglimpse_flops(num_glimpses, cfg) / 1e9

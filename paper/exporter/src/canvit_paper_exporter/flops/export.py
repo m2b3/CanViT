@@ -21,9 +21,9 @@ def _read_write_numbers(config: CanViTConfig, canvas_grid_size: int) -> dict:
     asymmetric, qkvo = pair("asymmetric"), pair("qkvo")
     return {
         "canvas_grid": canvas_grid_size,
-        "asym_rw_pair_gf": round(asymmetric / 1e9, 3),
-        "full_rw_pair_gf": round(qkvo / 1e9, 3),
-        "qkvo_rw_pair_ratio": round(qkvo / asymmetric, 1),
+        "asym_rw_pair_gf": asymmetric / 1e9,
+        "full_rw_pair_gf": qkvo / 1e9,
+        "qkvo_rw_pair_ratio": qkvo / asymmetric,
     }
 
 

@@ -62,6 +62,7 @@ envs:
   LABEL_SMOOTHING: "0.1"
   EVAL_C2F: ""
   INIT_FROM: ""
+  PRETRAINING_DATASET: ""
   EVAL_N_GLIMPSES: ""
   EARLY_STOP_DELTA: ""
   RUN_NAME: ""
@@ -131,6 +132,7 @@ run: |
     --chunk-size $CHUNK_SIZE \
     ${EVAL_C2F:+--eval-c2f} \
     ${INIT_FROM:+--init-from "$INIT_FROM"} \
+    ${PRETRAINING_DATASET:+--pretraining-dataset "$PRETRAINING_DATASET"} \
     ${EVAL_N_GLIMPSES:+--eval-num-glimpses "$EVAL_N_GLIMPSES"} \
     ${EARLY_STOP_DELTA:+--early-stop-delta "$EARLY_STOP_DELTA"} \
     --log-every 100 \

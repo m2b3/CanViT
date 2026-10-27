@@ -72,4 +72,4 @@ def ame_flops(num_glimpses: int, cfg: AMEConfig = AME) -> int:
 
 
 def ame_gflops(num_glimpses: int, cfg: AMEConfig = AME) -> float:
-    return round(ame_flops(num_glimpses, cfg) / 1e9, 2)
+    return ame_flops(num_glimpses, cfg) / 1e9

@@ -1,6 +1,6 @@
 """ImageNet-1k fine-tuning of CanViT-B on a Cloud TPU v6e slice with PyTorch/XLA SPMD (paper, Appendix D.4).
 
-LP-FT: the flagship pretrained CanViT, its CLS readout fused with DINOv3 ViT-B/16's linear ImageNet-1k probe
+LP-FT: a pretrained CanViT (by default the flagship, pretrained on ImageNet-21k), its CLS readout fused with DINOv3 ViT-B/16's linear ImageNet-1k probe
 (CanViTForImageClassification.from_pretrained_with_probe), then every parameter trained. Each scene is seen
 through F-IID glimpses, with a cross-entropy loss after every glimpse and backpropagation through time truncated
 to chunks of glimpses.
@@ -33,7 +33,7 @@ from torch_xla.distributed.spmd import Mesh
 
 from canvit_pytorch import CanViTForImageClassification, RecurrentState, Viewpoint
 from canvit_pytorch.benchmarks.imagenet import NUM_TRAIN_IMAGES, NUM_VALIDATION_IMAGES
-from canvit_pytorch.hub.repos import DINOV3_VITB16_IN1K_PROBE, FLAGSHIP, RELEASED_GLIMPSE_SIZE_PX
+from canvit_pytorch.hub.repos import DINOV3_VITB16_IN1K_PROBE, PRETRAINED, RELEASED_GLIMPSE_SIZE_PX, PretrainingDataset
 from canvit_pytorch.policies import POLICIES, PolicyName
 from canvit_pytorch.specialize.in1k_tpu.checkpoint import (
     LATEST,
@@ -67,6 +67,8 @@ class FineTuningConfig:
 
     data_dir: Path
     """ImageNet-1k TFRecord shards, named train-* and validation-*."""
+    pretraining_dataset: PretrainingDataset = "in21k"
+    """The pretrained CanViT-B to fine-tune, named by its pretraining dataset."""
     batch_size: int = 256
     num_workers: int = 32
     peak_lr: float = 2.5e-5
@@ -173,10 +175,10 @@ def log_environment() -> None:
     log.info("─── end diagnostics ───")
 
 
-def load_classifier(device: torch.device) -> CanViTForImageClassification:
+def load_classifier(device: torch.device, pretraining_dataset: PretrainingDataset) -> CanViTForImageClassification:
     start = time.perf_counter()
     classifier = CanViTForImageClassification.from_pretrained_with_probe(
-        pretrained_repo=FLAGSHIP, probe_repo=DINOV3_VITB16_IN1K_PROBE,
+        pretrained_repo=PRETRAINED[pretraining_dataset], probe_repo=DINOV3_VITB16_IN1K_PROBE,
     ).to(device)
     log.info("Loaded classifier: %s params, %.1fs",
              f"{sum(p.numel() for p in classifier.parameters()):,}", time.perf_counter() - start)
@@ -394,7 +396,7 @@ def train(config: FineTuningConfig) -> float:
              config.batch_size, config.num_workers, eval_num_glimpses, time.perf_counter() - start)
 
     start = time.perf_counter()
-    classifier = load_classifier(device)
+    classifier = load_classifier(device, config.pretraining_dataset)
     optimizer = torch.optim.AdamW(classifier.parameters(), lr=config.peak_lr, weight_decay=config.weight_decay)
     log.info("Model + optimizer ready [%.1fs]", time.perf_counter() - start)
 

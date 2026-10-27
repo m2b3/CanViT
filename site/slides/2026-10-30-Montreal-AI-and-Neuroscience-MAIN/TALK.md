@@ -634,6 +634,18 @@ removed.
 
 ## Open work
 
+- (A, 2026-10-27) `#canvas-updates` ("Within a glimpse, from patches to objects to the scene"), after `#learned-policy` for
+  now (Y: the paper's canvas-updates figure, toward the end, briefly; placement and wording open): the paper's figure
+  "Canvas updates within and across glimpses" rebuilt from its generator (`experiments/canvas_updates/export.py`
+  reuses paper/exporter's `WriteCapture` and PCA colors): the paper's cat at its first glimpse, the scene above the
+  glimpse on the left, then what each of the glimpse's three Writes adds to the canvas (its residual, PCA per map as in
+  the paper), large and side by side, one per click, the glimpse's box on every map. Writes count from 1 on the slide,
+  from 0 in the paper. Tried and set aside (renders in the session's scratchpad): the five pictures in one small row
+  (maps too small), one large map replaced at each click (the progression needs the maps side by side), and the canvas
+  after each Write instead of the residual (at a first glimpse it is the first residual exactly, then mostly the last
+  residual). Alternatives exported beside the cat (`canvasUpdatesExample` in `index.html`): the paper's food truck, a
+  bedroom window (`ADE_val_00000124`) and a seafront bus (`ADE_val_00000996`), chosen by eye from the export's sweep of
+  the deck's scenes (`--sweep`, its contact sheet in `site/.experiments/canvas_updates/`). The notes name the cat.
 - (A, 2026-10-27) `#vit-on-a-glimpse` shows a lamp hanging from a white ceiling (ADE20K validation
   `ADE_val_00001517`, a glimpse of scale 0.29 at the top of the room) instead of the cat, whose glimpse covered most of
   its scene; the authors asked for a zoomed glimpse on an object that its pixels barely set apart and its patch tokens

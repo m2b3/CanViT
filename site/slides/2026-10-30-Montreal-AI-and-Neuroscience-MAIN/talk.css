@@ -810,3 +810,28 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #canvit-rollout .stage { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s ease; }
 #canvit-rollout .s0, #canvit-rollout.shows-g1 .s1, #canvit-rollout.shows-g2 .s2, #canvit-rollout.shows-g3 .s3,
 #canvit-rollout.shows-g4 .s4 { opacity: 1; }
+
+/* Canvas updates within a glimpse: the scene above the glimpse on the left, then what each of the glimpse's three Writes
+   adds to the canvas, large, side by side, each on its click with the arrow on the first (canvas-updates.js). */
+#canvas-updates { --picture: 200px; --map: 268px; }
+#canvas-updates .updates { display: grid; grid-template-columns: auto 40px repeat(3, auto); grid-template-rows: auto auto;
+                           gap: 14px 18px; justify-content: center; align-items: center; margin-top: 24px; }
+#canvas-updates figure { display: flex; flex-direction: column; align-items: center; margin: 0; }
+#canvas-updates figcaption { margin-top: 8px; font-size: 20px; font-weight: 750; text-align: center; }
+#canvas-updates .scene { grid-area: 1 / 1; }
+#canvas-updates .glimpse { grid-area: 2 / 1; }
+#canvas-updates .glimpse figcaption { color: var(--glimpse); }
+#canvas-updates .write { grid-row: 1 / span 2; }
+#canvas-updates .write figcaption { font-size: 24px; }
+#canvas-updates .arrow { grid-area: 1 / 2 / span 2; width: 40px; height: 3px; background: var(--muted); position: relative; }
+#canvas-updates .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent;
+                                border-left: 10px solid var(--muted); border-right: 0; }
+#canvas-updates .frame { position: relative; width: var(--picture); height: var(--picture); }
+#canvas-updates .write .frame { width: var(--map); height: var(--map); }
+#canvas-updates .frame img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 8px; }
+#canvas-updates .glimpse img { display: block; width: var(--picture); height: var(--picture); border-radius: 8px;
+                               box-shadow: 0 0 0 3px var(--glimpse); }
+#canvas-updates .box { position: absolute; box-sizing: border-box; border: 3px solid var(--glimpse); border-radius: 3px; }
+#canvas-updates :is(.arrow, .write) { opacity: 0; transition: opacity .5s ease; }
+#canvas-updates.shows-write-1 :is(.arrow, [data-write="1"]), #canvas-updates.shows-write-2 [data-write="2"],
+#canvas-updates.shows-write-3 [data-write="3"] { opacity: 1; }

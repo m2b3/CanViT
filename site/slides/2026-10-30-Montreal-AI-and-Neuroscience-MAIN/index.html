@@ -990,6 +990,41 @@
   </ul></aside>
 </section>
 
+<section id="canvas-updates" data-status="draft">
+  <h2>Within a glimpse, from patches to objects to the scene</h2>
+  <!-- The paper's figure "Canvas updates within and across glimpses" (fig:canvas-evolution) rebuilt for a slide by
+       experiments/canvas_updates/export.py from the paper's generator (paper/exporter's
+       diagrams/canvas_write_evolution.py): the paper's cat, its first glimpse, and what each of the glimpse's three
+       Canvas Attention Writes adds to the canvas (its residual), each colored by a PCA fitted on itself, as in the
+       paper; one Write per click (canvas-updates.js). The writes count from 1 here, from 0 in the paper. The
+       glimpse's box is drawn on every map. Placed after #learned-policy for now (Y, 2026-10-27: toward the end,
+       briefly); the example and its alternatives: TALK.md, "#canvas-updates". -->
+  <div class="updates">
+    <figure class="scene"><div class="frame"><img alt="The paper's cat, with the glimpse's box"><span class="box"></span></div><figcaption>Scene</figcaption></figure>
+    <figure class="glimpse"><img class="pixels" alt="The glimpse, with its 8 by 8 patches"><figcaption>Glimpse</figcaption></figure>
+    <span class="arrow"></span>
+    <figure class="write" data-write="1"><div class="frame"><img class="pixels" alt="What the first write adds: the glimpse's grid of patches"><span class="box"></span></div><figcaption>First write</figcaption></figure>
+    <figure class="write" data-write="2"><div class="frame"><img class="pixels" alt="What the second write adds: the objects inside the glimpse"><span class="box"></span></div><figcaption>Second write</figcaption></figure>
+    <figure class="write" data-write="3"><div class="frame"><img class="pixels" alt="What the third write adds: the scene beyond the glimpse"><span class="box"></span></div><figcaption>Third write</figcaption></figure>
+  </div>
+  <span class="fragment step-marker" data-shows="write-1"></span>
+  <span class="fragment step-marker" data-shows="write-2"></span>
+  <span class="fragment step-marker" data-shows="write-3"></span>
+  <aside class="notes"><ul>
+    <li>[AI draft: not the authors' text]</li>
+    <li>One last thing: what happens <b>inside</b> a single glimpse.</li>
+    <li>Each glimpse writes to the canvas <b>three times</b>.</li>
+    <li>Here, each map shows what one write adds to the canvas.</li>
+    <li>[CLICK]</li>
+    <li>The first write mirrors the glimpse's grid of <b>patches</b>.</li>
+    <li>[CLICK]</li>
+    <li>The second follows the <b>objects</b> inside the glimpse.</li>
+    <li>[CLICK]</li>
+    <li>The third reaches <b>beyond</b> the glimpse, to the whole cat, with sharper boundaries.</li>
+    <li>Nobody asked for this progression from local to scene-wide: it <b>emerged</b> in pretraining.</li>
+  </ul></aside>
+</section>
+
 <!-- code-only hides the scene and maps beside the code (Y, 2026-10-27: less on the slide); remove it to show them. -->
 <section id="quickstart" class="code-only" data-status="draft">
   <h2>Open-source and easy to use</h2>
@@ -1190,6 +1225,7 @@
   import { drawDetail } from "./detail.js";
   import { drawDistillation } from "./distillation.js";
   import { drawVitOnGlimpse } from "./vit-glimpse.js";
+  import { drawCanvasUpdates } from "./canvas-updates.js";
   import { drawSrRope } from "./sr-rope.js";
   import { drawPcaCycle } from "./pca-cycle.js";
   import { drawPretrainingGrid } from "./pretraining-grid.js";
@@ -1221,6 +1257,9 @@
   const vitExample = "../../data/talk/vit-glimpse-examples/ADE_val_00001517-lamp";
   await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), vitExample);
   await drawPcaCycle(document.querySelector("#vit-on-a-glimpse"), vitExample, "meta.json");
+  // The paper's cat first; the alternatives under data/talk/canvas-updates/ (TALK.md, "#canvas-updates").
+  const canvasUpdatesExample = "../../data/talk/canvas-updates/cat";
+  await drawCanvasUpdates(document.querySelector("#canvas-updates"), canvasUpdatesExample);
   await drawSrRope(document.querySelector("#sr-rope"), "../../data/talk/vit-glimpse");
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");

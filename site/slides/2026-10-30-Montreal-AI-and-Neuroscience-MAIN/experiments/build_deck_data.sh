@@ -131,6 +131,11 @@ architecture() {
 
 # The paper's Figure 1 built up a glimpse at a time (#canvit-rollout): the paper's own prep (the released model on its
 # scene and viewpoints) and composition, compiled once per number of glimpses shown, from the scene alone to all of them.
+canvas_updates() {
+  ade20k
+  uv run --project ../../../paper/exporter python -u -m experiments.canvas_updates.export
+}
+
 canvit_rollout() {
   (cd ../../../paper/exporter && uv run python -u -m canvit_paper_exporter.diagrams.canvit_overview)
   local meta=../../../paper/exporter/diagrams/outputs/canvit_overview/Places365_IMG_9600/metadata.json
@@ -143,7 +148,7 @@ canvit_rollout() {
 }
 
 all=(table_corners vit_glimpse looking_closer memory distillation foundation metacognition pretraining quickstart
-     whole_scene_baseline history_examples training_cost architecture title_teaser canvit_rollout)
+     whole_scene_baseline history_examples training_cost architecture title_teaser canvit_rollout canvas_updates)
 chosen=("$@")
 [[ $# -gt 0 ]] || chosen=("${all[@]}")
 for experiment in "${chosen[@]}"; do

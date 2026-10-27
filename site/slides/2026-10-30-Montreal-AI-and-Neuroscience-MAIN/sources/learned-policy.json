@@ -1,34 +1,41 @@
 {
- "_about": "A viewing policy learned on top of the frozen, released CanViT-B and its frozen ADE20K linear probe (64 x 64 canvas), from the authors' unpublished reinforcement-learning experiments (read 2026-10-23): mean and standard deviation across 8 training seeds of ADE20K validation mIoU, as fractions (per_timestep, t from 0), the paper's protocol. Every rollout starts with the full-scene glimpse (t = 0), as EG-C2F's does, so t = 0 is the paper's 39.6. Training: 640k glimpse-forwards, about 80 minutes per seed on one RTX 4090; the reward is how much a glimpse reduces the segmentation error; the policy chooses each next glimpse among 512 candidate viewpoints. Baselines on the slide come from the paper's export (assets/paper/ade20k_seg.json), not from this file.",
- "label": "Learned",
+ "_about": "Q-learning, the best checkpoint of each training run: the camera-ready's learned viewing policies (appendix \"Learned viewing policies\", label supp:learned-policies), copied exactly on 2026-10-26 from its export paper/exports/learned_policies.json (commit 5bb3e45c; still equal at 74d92df8 on 2026-10-27) (the learned entry with objective q_regression and selection validation, and its recipe and training_time) until that export is on this branch. A viewing policy trained with reinforcement learning on top of the frozen, released CanViT-B and its frozen ADE20K linear probe (64 x 64 canvas, 512 px scenes); ADE20K validation mIoU as fractions (per_timestep, t from 0), the mean across 8 training runs with its 95% bootstrap confidence interval, evaluated with the paper's protocol. Every rollout starts with the full-scene glimpse (t = 0), as C2F's and EG-C2F's do. The reward is the relative reduction in segmentation cross-entropy after each glimpse; the policy chooses each later glimpse among 512 candidate viewpoints. Training: 8,000 steps of 16 ADE20K training images with 5 glimpses each (640,000 glimpses), 74.3 to 90.5 minutes per run on one RTX 4090, validation included. Baselines on the slide come from the paper's export (assets/paper/ade20k_seg.json), not from this file.",
+ "label": "Q-learning",
  "per_timestep": [
   {
    "t": 0,
-   "mean": 0.396,
-   "sd": 0.0
+   "mean": 0.395898,
+   "ci_lo": 0.395898,
+   "ci_hi": 0.395898
   },
   {
    "t": 1,
-   "mean": 0.4265,
-   "sd": 0.0016
+   "mean": 0.426474,
+   "ci_lo": 0.425496,
+   "ci_hi": 0.427526
   },
   {
    "t": 2,
-   "mean": 0.4395,
-   "sd": 0.0016
+   "mean": 0.439532,
+   "ci_lo": 0.438415,
+   "ci_hi": 0.440372
   },
   {
    "t": 3,
-   "mean": 0.4462,
-   "sd": 0.0012
+   "mean": 0.446119,
+   "ci_lo": 0.44524,
+   "ci_hi": 0.446882
   },
   {
    "t": 4,
-   "mean": 0.4497,
-   "sd": 0.001
+   "mean": 0.449575,
+   "ci_lo": 0.44894,
+   "ci_hi": 0.450183
   }
  ],
- "n_seeds": 8,
- "minutes_per_seed": 80,
- "gpu": "RTX 4090"
+ "n_runs": 8,
+ "training_glimpses": 640000,
+ "minutes_min": 74.3,
+ "minutes_max": 90.5,
+ "gpu": "NVIDIA GeForce RTX 4090"
 }

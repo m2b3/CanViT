@@ -838,16 +838,16 @@
 <section id="learned-policy" data-status="draft">
   <h2>Learning where to look</h2>
   <!-- The paper's policies on the 64 x 64 canvas (assets/paper/ade20k_seg.json) over the first five glimpses, where the
-       learned policy acts, on a linear axis; the learned policy (sources/learned-policy.json, from the authors'
-       unpublished experiments; not in the paper), the mean over 8 training seeds with a one-standard-deviation band,
-       appears on "learned" (talk.css). -->
+       learned policy acts, on a linear axis; the learned policy (sources/learned-policy.json: Q-learning, the best
+       checkpoint of each run, from the camera-ready's appendix "Learned viewing policies"), the mean over 8 training
+       runs with its 95% confidence interval as a band, appears on "learned" (talk.css). -->
   <div class="learned-layout">
     <canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" policies="full_then_random coarse_to_fine entropy_coarse_to_fine" added-src="sources/learned-policy.json" glimpses="5" x-scale="linear" y-range="39 45.5"></canvit-policy-curves>
   </div>
   <!-- How little learning where to look took, beside the observer's pretraining, to scale. XXX: hand-typed until an
-       export carries them: pretraining "approximately 1 billion glimpses" (paper, App. pretraining); the learned
-       policy 640k glimpse forwards per run, about 80 minutes per seed on one RTX 4090
-       (the authors' unpublished experiments). -->
+       export carries them: pretraining "approximately 1 billion glimpses" (paper, App. pretraining); policy learning
+       640,000 glimpses per training run (8,000 steps of 16 images with 5 glimpses), 74 to 91 minutes per run on one
+       RTX 4090 (the camera-ready's appendix "Learned viewing policies"; sources/learned-policy.json). -->
   <div class="budget">
     <div class="budget-row pretraining"><p class="who">Pretraining</p><div class="track"><span class="bar"></span></div><p class="n">1 billion glimpses</p></div>
     <div class="budget-row policy"><p class="who">Policy learning</p><div class="track"><span class="bar"></span></div><p class="n">640 thousand glimpses</p></div>
@@ -858,12 +858,12 @@
     <li>[AI draft: not the authors' text]</li>
     <li>With the observer frozen, we can now <b>learn</b> where to look.</li>
     <li>These results are unpublished.</li>
-    <li>We trained a policy for ADE20K with reinforcement learning,</li>
-    <li>rewarded by how much each glimpse reduces the segmentation error.</li>
+    <li>We trained a policy for ADE20K with <b>Q-learning</b>, a reinforcement learning method,</li>
+    <li>rewarded by the fraction of the segmentation error that each glimpse removes.</li>
     <li>[CLICK]</li>
     <li>Averaged over 8 training runs, the learned policy beats Entropy-Guided Coarse-to-Fine from the second glimpse on.</li>
     <li>[CLICK]</li>
-    <li>Training it took <b>640 thousand</b> glimpses, about 80 minutes per run on one GPU,</li>
+    <li>Training it took <b>640 thousand</b> glimpses, 74 to 91 minutes per run on one GPU,</li>
     <li>against a <b>billion</b> glimpses for pretraining.</li>
     <li><b>As with LLMs</b>, pretraining without RL, <b>then</b> RL for a specific skill.</li>
   </ul></aside>

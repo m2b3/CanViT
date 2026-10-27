@@ -18,6 +18,7 @@ Each thing has one home; everything else points to it.
 |---|---|
 | `AGENTS.md` | How to work. |
 | `TALK.md` | The authors' positions (marked (Y), dated), agents' inferences and proposals (marked (A)), open questions, the deck as it stands, open work. |
+| `PROPOSALS.md` | Agents' proposals written for the authors to review; a decided entry moves into the deck or `TALK.md`, and the file goes once empty. |
 | `sources/checked-facts.md` | Facts about CanViT, its paper, its code and the talk's measurements, with where each lives. "Essential" first: what the current argument rests on; then the bank. |
 | `sources/literature.md` | What other papers say, read in the papers, with pages, quotes and numbers. |
 | `sources/*.json`, `sota-history.md` | Data the deck reads, each with its provenance. |

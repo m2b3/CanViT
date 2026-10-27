@@ -46,7 +46,8 @@ What the talk's current argument rests on. Each line was checked on the date giv
   scene). Truncated BPTT over chunks of K = 2, stop with p = 0.5 after each, mean length 4, constant memory.
 - Scale and cost: 13.2 M ImageNet-21k scenes at 512 px, about 1 B glimpses, 166 h on one H100, 32² canvas in
   pretraining (§6); teacher features computed once, about 8 H100-equivalent hours, about 19 TiB in float16 (App. C);
-  about 2500 H100-equivalent hours for the whole project (App. H). DINOv3's 7B teacher: 61,440 H100-hours for its
+  about 2500 H100-equivalent hours before submission (App. H; the camera-ready's compute reporting adds the review
+  period's runs separately). DINOv3's 7B teacher: 61,440 H100-hours for its
   pretraining (Siméoni et al., arXiv:2508.10104v1, Table 20); about 9 million GPU-hours for the whole DINOv3 project
   (its carbon-footprint section); ViT-B and the other small models distilled from the 7B (§5.2); 1,689 M curated
   images (LVD-1689M, §3.1) [read 2026-10-01].
@@ -54,13 +55,16 @@ What the talk's current argument rests on. Each line was checked on the date giv
   token's projection) in float32; SDPA and learned projections in bfloat16. Subtle correctness issues caused
   regressions only after several hundred thousand steps (paper App. pretraining, "Numerical precision considerations")
   [2026-10-24].
-- The learned policy (unpublished; `learned-policy.json`, its `_about` says how it was made): trained by
-  reinforcement learning on the frozen, released CanViT-B and its frozen ADE20K probe (64² canvas); the reward is how
-  much a glimpse reduces the segmentation error; it chooses each next glimpse among 512 candidate viewpoints; every
-  rollout starts with the full-scene glimpse. 8 seeds, 640 k glimpse-forwards, about 80 minutes per seed on one
-  RTX 4090. ADE20K validation mIoU, mean ± sd over seeds, glimpses 2–5: 42.65 ± .16, 43.95 ± .16, 44.62 ± .12,
-  44.97 ± .10, against EG-C2F 42.23, 43.29, 44.05, 44.65 (deterministic) and C2F 41.34, 42.52, 43.60, 44.69 (the
-  authors' experiments, read 2026-10-24).
+- The learned policy (`learned-policy.json`, its `_about` says how it was made): the camera-ready's appendix "Learned
+  viewing policies" (`supp:learned-policies`; its export `paper/exports/learned_policies.json` is not yet on this
+  branch) trains viewing policies with reinforcement learning, Q-learning and REINFORCE, on the frozen, released
+  CanViT-B and its frozen ADE20K probe (64² canvas); the reward is the relative reduction in segmentation
+  cross-entropy after a glimpse, with the discount factor at zero; the policy chooses each later glimpse among 512
+  candidate viewpoints; every rollout starts with the full-scene glimpse. 8 training runs per objective, each 8,000
+  steps of 16 images with 5 glimpses (640,000 glimpses), 74 to 91 minutes per run on one RTX 4090, validation
+  included; each run's best and last checkpoints are evaluated with the paper's protocol. The deck shows Q-learning's
+  best checkpoints: their means and 95% intervals are in `learned-policy.json`; C2F and EG-C2F come from the paper's
+  ADE20K export [read in the camera-ready's export, 2026-10-26].
 
 ## Bank
 
@@ -124,9 +128,12 @@ Training and inference cost, computed for the talk (`experiments/training_cost/`
   canvas); the ADE20K probe at the 64² canvas 0.16 EFLOPs (40,000 steps × 16 × 10 glimpses, CanViT-B frozen). The
   pretraining run averaged 87.9 TFLOP/s, 8.9% of an H100 SXM's dense bf16 peak (11.6% for a PCIe H100; which variant
   ran is not recorded).
-- Inference: CanViT-B 95.2 M active parameters, 15.48 GFLOPs per glimpse on ImageNet-1k; AdaptiveNN (DeiT-S) 2.15
-  GFLOPs for its first glimpse, 83.2 M parameters in all; GFNet (EfficientNet-B3) 0.86 GFLOPs, 39.1 M in all. CanViT
-  is not expected to lead on accuracy-efficiency in classification. Passive efficient segmenters for context
+- Inference: CanViT-B 15.48 GFLOPs per glimpse on ImageNet-1k; AdaptiveNN (DeiT-S) 2.15 GFLOPs for its first
+  glimpse; GFNet (EfficientNet-B3) 0.86. Parameters as the camera-ready's ImageNet-1k cost table counts them
+  (`supp:in1k-efficiency`: every module a model runs up to the glimpse evaluated, classifiers included; read
+  2026-10-26): CanViT-B 95.9 M at every glimpse (95.2 M without its classifier); AdaptiveNN 22.0 M at its first glimpse,
+  82.4 M at its fifth; GFNet (EfficientNet-B3) 12.2 M at its first, 37.4 M at its fourth. CanViT is not expected to
+  lead on accuracy-efficiency in classification. Passive efficient segmenters for context
   (single-scale, their own settings): EfficientViT-L2 51 M, 90 GFLOPs, 50.7 mIoU; FocalNet-B 126 M, 2384 GFLOPs, 50.5;
   CanViT-B 15.8 GFLOPs for 38.5 at t = 0, 464.1 GFLOPs for 45.89 at t = 20 (64² canvas). EG-C2F's viewpoint selection
   costs about 1–5 MFLOP, under 0.03% of a glimpse.
@@ -139,7 +146,8 @@ Measurements for the talk:
   its center), after the full-scene glimpse cell accuracy 77.9%, entropy tells wrong cells from right ones with an
   AUROC of 0.836 (mean 1.96 bits against 0.79), and accuracy falls from 99% in the surest tenth of cells to 37% in the
   least sure; after C2F's first five glimpses 80.1%, AUROC 0.841, 99% to 41%.
-- The VPE token helps at long horizons and fine canvases (+1.28 mIoU at t = 20, 64² canvas).
+- The VPE token helps at long horizons and fine canvases (+1.28 mIoU at t = 20 under EG-C2F, 64² canvas on 1024 px
+  scenes; the camera-ready's `supp:vpe-long-horizon`, read 2026-10-26).
 - Memory reset [2026-10-01, `../../data/talk/memory/overall-k1.json`]: every "thing" object covering 1–15% of an
   ADE20K validation scene (2,781 objects); one glimpse on the object (its box about half the glimpse), then three
   glimpses as far as possible, none containing the object's class; mean p(class) over the object's pixels after the

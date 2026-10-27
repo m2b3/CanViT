@@ -1,9 +1,9 @@
 """Glimpses of the cat photograph used throughout the CanViT project (canvit-pytorch/test_data/Cat03.jpg), taken as
 CanViT takes them: the photograph made a 512 px scene (canvit_pytorch.preprocess) and each glimpse sampled from it
-at its viewpoint (sample_at_viewpoint, 128 px). "vit" is the glimpse of "Processing a glimpse with a Vision
-Transformer", on the cat's head with background around it (chosen by eye among a few crops for how clearly the patch
-tokens separate the cat from the background, 2026-10-25), with DINOv3 ViT-B/16's patch tokens on it; "zoom" is the
-small glimpse on the cat's eye of the SR-RoPE slide (set by eye). Writes <out>/cat-glimpses.npz."""
+at its viewpoint (sample_at_viewpoint, 128 px). "vit" is the SR-RoPE slide's first glimpse, on the cat's head, with
+DINOv3 ViT-B/16's patch tokens on it (until 2026-10-27 also the glimpse of "Processing a glimpse with a Vision
+Transformer", which now shows an example of examples.py); "zoom" is the small glimpse on the cat's eye of the SR-RoPE
+slide (set by eye). Writes <out>/cat-glimpses.npz."""
 
 from dataclasses import dataclass
 from pathlib import Path

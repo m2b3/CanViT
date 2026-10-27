@@ -431,19 +431,19 @@
 
 <section id="vit-on-a-glimpse" data-status="draft">
   <h2>Processing a glimpse with a Vision Transformer (ViT)</h2>
-  <!-- vit-glimpse.js fills the images from experiments/vit_glimpse: DINOv3 ViT-B/16 on a 128 px glimpse of the cat photograph
-       used throughout the CanViT project, its tokens cycling through principal components 1-3, 4-6, ... as on #foundation
-       (pca-cycle.js). -->
+  <!-- vit-glimpse.js fills the images from experiments/vit_glimpse/examples.py: DINOv3 ViT-B/16 on a 128 px glimpse of an
+       ADE20K validation scene, on an object about as bright and colored as its surroundings, its tokens cycling through
+       principal components 1-3, 4-6, ... as on #foundation (pca-cycle.js). The example and its alternatives: TALK.md,
+       "#vit-on-a-glimpse". -->
   <div class="vit-flow">
-    <figure class="scene"><div class="frame"><img alt="A ginger cat looking at the camera"><span class="box"></span></div><figcaption>Scene</figcaption></figure>
+    <figure class="scene"><div class="frame"><img alt=""><span class="box"></span></div><figcaption>Scene</figcaption></figure>
     <span class="arrow to-glimpse"></span>
-    <figure class="glimpse"><img class="pixels" alt="The glimpse: the cat's head, 128 by 128 pixels"><figcaption>Glimpse</figcaption></figure>
+    <figure class="glimpse"><img class="pixels" alt=""><figcaption>Glimpse</figcaption></figure>
     <span class="arrow to-vit"></span>
     <div class="vit"><span>Vision<br>Transformer</span></div>
     <span class="arrow to-tokens"></span>
     <figure class="tokens"><img class="pixels features" alt="The glimpse's patch tokens as colors"><figcaption>Patch tokens</figcaption><p class="pca-label"></p><span class="pca-player" data-play></span></figure>
   </div>
-  <!-- Photo: Fir0002/Flagstaffotos, CC BY-NC 3.0 (credited on the links slide is an option if a visible credit is needed). -->
   <span class="fragment step-marker" data-shows="glimpse"></span>
   <span class="fragment step-marker" data-shows="vit"></span>
   <span class="fragment step-marker" data-shows="tokens"></span>
@@ -457,6 +457,7 @@
     <li>A Vision Transformer, like DINOv3, can process a glimpse</li>
     <li>[CLICK]</li>
     <li>into <b>patch tokens</b>, a high-dimensional vector per patch.</li>
+    <li>Here the lamp is the same white as the ceiling, yet its tokens <b>stand out</b>.</li>
     <li>They describe this glimpse <b>only</b>.</li>
   </ul></aside>
 </section>
@@ -539,7 +540,8 @@
 
 <section id="sr-rope" data-status="draft">
   <h2>Scene-Relative Rotary Position Embeddings (SR-RoPE)</h2>
-  <!-- The glimpse of #vit-on-a-glimpse, then, on "zoom", the glimpses on the way to a smaller one on the cat's eye (set
+  <!-- Photo: Fir0002/Flagstaffotos, CC BY-NC 3.0 (credited on the links slide is an option if a visible credit is needed). -->
+  <!-- The cat glimpse that #vit-on-a-glimpse showed until 2026-10-27 (TALK.md, "Open work"), then, on "zoom", the glimpses on the way to a smaller one on the cat's eye (set
        by eye to show the zoom), all 128 px glimpses sampled as the model samples them (experiments/vit_glimpse): its 8 x 8 patches as the backbone
        receives them, and where SR-RoPE places them in the scene; the canvas's 32 x 32 patches
        (RELEASED_CANVAS_GRID_SIZE) at fixed scene positions. Paper §4, "Scene-Relative Rotary Position Embeddings". -->
@@ -1215,8 +1217,9 @@
   await drawPolicyStages(document.querySelector("#c2f-and-f2c .stages"), ["../../data/street-c2f", "../../data/street-f2c"]);
   await drawPretrainingGrid(document.querySelector("#pretraining-policies .pretraining-grid"), "../../data/talk/pretraining", "truck", ["random", "full_then_random"]);
   await drawPcaCycle(document.querySelector("#foundation"), "../../data/talk/foundation/ADE_val_00001509", "maps.json");
-  await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), "../../data/talk/vit-glimpse");
-  await drawPcaCycle(document.querySelector("#vit-on-a-glimpse"), "../../data/talk/vit-glimpse", "meta.json");
+  const vitExample = "../../data/talk/vit-glimpse-examples/ADE_val_00001517-lamp";
+  await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), vitExample);
+  await drawPcaCycle(document.querySelector("#vit-on-a-glimpse"), vitExample, "meta.json");
   await drawSrRope(document.querySelector("#sr-rope"), "../../data/talk/vit-glimpse");
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");

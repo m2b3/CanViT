@@ -1,4 +1,5 @@
-"""The images of "Processing a glimpse with a Vision Transformer" and of the SR-RoPE slide, from export.py's npz, into
+"""The images of the SR-RoPE slide (and, until 2026-10-27, of "Processing a glimpse with a Vision Transformer", whose
+token views below no slide reads now), from export.py's npz, into
 <out>/: scene.png (the 512 px scene), glimpse-<name>.png (each 128 px glimpse, upscaled with nearest neighbor so its
 pixels show), tokens.png (the "vit" glimpse's patch tokens projected on their first three principal components as
 colors, each clipped to its 2nd and 98th percentiles, nearest neighbor; tokens-<first>.png for each triplet of
@@ -30,7 +31,7 @@ class Config:
 def main(cfg: Config) -> None:
     data = np.load(cfg.export)
     tokens = data["tokens"].astype(np.float64)
-    grid = int(round(len(tokens) ** 0.5))
+    grid = round(len(tokens) ** 0.5)
     assert grid * grid == len(tokens), f"{len(tokens)} tokens are not a square grid"
     cfg.out.mkdir(parents=True, exist_ok=True)
     Image.fromarray(data["scene"]).save(cfg.out / "scene.png")

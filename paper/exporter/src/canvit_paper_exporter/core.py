@@ -5,9 +5,9 @@ import subprocess
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from pathlib import Path, PosixPath
+from pathlib import Path
+from typing import Any
 
-import torch
 from matplotlib.figure import Figure as MplFigure
 
 from canvit_paper_exporter import paths
@@ -18,14 +18,27 @@ log = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class Dataset:
+    """compute() reads data/ through `inputs` only; its result is the export JSON."""
     name: str
     compute: Callable[[], dict]
+    inputs: tuple[paths.Inputs, ...] = ()
+
+    @property
+    def outputs(self) -> tuple[Path, ...]:
+        return (paths.export_json(self.name),)
 
 
 @dataclass(frozen=True)
 class Figure:
+    """plot() receives the exports of `datasets`, in order, and reads data/ through `inputs` only."""
     name: str
-    plot: Callable[[], MplFigure]
+    plot: Callable[..., MplFigure]
+    datasets: tuple[Dataset, ...] = ()
+    inputs: tuple[paths.Inputs, ...] = ()
+
+    @property
+    def outputs(self) -> tuple[Path, ...]:
+        return paths.export_svg(self.name), paths.export_pdf(self.name), paths.export_png(self.name)
 
 
 @dataclass(frozen=True)
@@ -36,21 +49,18 @@ class Diagram:
     prep: Callable[[], None]
     typst_source: Path
 
+    @property
+    def outputs(self) -> tuple[Path, ...]:
+        return paths.export_svg(self.name), paths.export_pdf(self.name)
+
 
 def write_json(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2) + "\n")
 
 
-def load_json(path: Path) -> dict:
+def load_json(path: Path) -> Any:
     return json.loads(path.read_text())
-
-
-# Evaluation results load without running pickled code. Their metadata records paths as
-# PosixPath, the one type they hold beyond tensors and builtins.
-def load_result(path: Path) -> dict:
-    with torch.serialization.safe_globals([PosixPath]):
-        return torch.load(path, map_location="cpu", weights_only=True)
 
 
 def _fmt_elapsed(seconds: float) -> str:
@@ -62,7 +72,7 @@ def _fmt_elapsed(seconds: float) -> str:
 
 
 def run_dataset(ds: Dataset) -> Path:
-    out = paths.export_json(ds.name)
+    (out,) = ds.outputs
     t0 = time.perf_counter()
     payload = ds.compute()
     dt_compute = time.perf_counter() - t0
@@ -89,22 +99,20 @@ def _check_fonts(pdf: Path) -> None:
 
 
 def run_figure(fig: Figure) -> Path:
-    svg = paths.export_svg(fig.name)
-    pdf = paths.export_pdf(fig.name)
-    png = svg.with_suffix(".png")
+    svg, pdf, png = fig.outputs
     svg.parent.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()
-    mpl_fig = fig.plot()
+    mpl_fig = fig.plot(*(load_json(out) for d in fig.datasets for out in d.outputs))
     dt_plot = time.perf_counter() - t0
     t1 = time.perf_counter()
     # `pad_inches=0` explicit because ultraplot's Figure.savefig ignores the
     # rcParam (see style.py for the matching rcParam set, which catches plain
     # matplotlib saves elsewhere). Without this, every save gets a 0.1-inch
     # white border that's wasted under typst/LaTeX.
-    # SVG goes to Typst; PDF goes to LaTeX (native matplotlib vector backend).
-    # PNG kept as a low-cost preview (200 dpi).
+    # SVG goes to Typst diagrams; PDF goes to LaTeX (native matplotlib vector backend).
+    # PNG kept as a low-cost preview (200 dpi). No dates, so identical inputs give identical files.
     mpl_fig.savefig(svg, bbox_inches="tight", pad_inches=0, metadata={"Date": None})
-    mpl_fig.savefig(pdf, bbox_inches="tight", pad_inches=0, metadata={"Date": None})
+    mpl_fig.savefig(pdf, bbox_inches="tight", pad_inches=0, metadata={"CreationDate": None})
     mpl_fig.savefig(png, bbox_inches="tight", pad_inches=0, dpi=200)
     _check_fonts(pdf)
     dt_save = time.perf_counter() - t1
@@ -114,8 +122,7 @@ def run_figure(fig: Figure) -> Path:
 
 
 def run_diagram(d: Diagram) -> Path:
-    svg = paths.export_svg(d.name)
-    pdf = paths.export_pdf(d.name)
+    svg, pdf = d.outputs
     svg.parent.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()
     d.prep()

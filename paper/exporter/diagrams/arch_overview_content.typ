@@ -16,8 +16,8 @@
   let fmt-vp(vp) = $(#vp.x, #vp.y, #vp.scale)$
 
   // --- IMAGES ---
-  let img(name, t) = img-dir + "/" + name + str(t) + ".png"
-  let glimpse-in-imgs = range(n-timesteps).map(t => img("glimpse_t", t))
+  let img(name, t, ext: "png") = img-dir + "/" + name + str(t) + "." + ext
+  let glimpse-in-imgs = range(n-timesteps).map(t => img("glimpse_t", t, ext: "jpg"))
   let glimpse-out-imgs = range(n-timesteps).map(t => img("local_out_t", t))
   let canvas-in-imgs = range(n-timesteps).map(t => if t == 0 { none } else { img("canvas_out_t", t - 1) })
   let canvas-out-imgs = range(n-timesteps).map(t => img("canvas_out_t", t))

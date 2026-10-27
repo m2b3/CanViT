@@ -229,19 +229,16 @@
   })
 }
 
-// Coords loaded from per-image metadata.json written by canvit_overview.py.
-// No hardcoded viewpoint coords — single source of truth is the Python script.
-// The intro figure uses Places365. Change this path to use a different scene.
+// The viewpoints come from the metadata.json that canvit_overview.py writes beside its images.
 #let _overview_scene = "Places365_IMG_9600"
 #let _overview_meta = json("outputs/canvit_overview/" + _overview_scene + "/metadata.json")
 
 // DIAGRAM
 #let canvit-overview-diagram(
-  scene-path: "outputs/canvas_evolution/Places365/scene.png",
+  scene-path: "outputs/canvit_overview/" + _overview_scene + "/scene.jpg",
   img-dir: "outputs/canvit_overview/" + _overview_scene + "/",
   coords-list: _overview_meta.glimpse_coords,
   glimpse-width: 1.8cm,
-  show-pixel-arrow: false,
 ) = {
   let n = coords-list.len()
   let glimpse_coords = parse-coords(coords-list)
@@ -271,34 +268,15 @@
         column-gutter: 2em,
         align: horizon,
         
-        // Row 1, Col 1: Pixel and [-1, +1] extents + panel label A
+        // Row 1, Col 1: the [-1, +1] extent + panel label A
         // offset_x aligns arrows with the scene image in Row 2, which is
         // preceded by the rotated "Scene" label (~14pt) + vertical axis box (14pt)
         // + stack spacing (-3pt) = ~25pt from the grid cell's left edge.
         box(height: 27pt, {
           let arrow1_height = 15.5pt
-          let dist_btw_arrows = 9pt
           let tick-positions = (0pt, scene_width)
           let tick-labels = ("-1", "1")
-
-          // Measurement line with end caps (1024px). Both elements are `place`d,
-          // so gating them does not shift anything else — the parent box has a
-          // fixed height and everything below is either placed or separately anchored.
           let offset_x = 17pt
-          if show-pixel-arrow {
-            place(top + left, dx: offset_x + scene_width / 2 - 8pt, dy: arrow1_height - dist_btw_arrows - 7pt,
-              text(font: default_font, size: 6pt, fill: C.stroke)[1024px])
-
-            place(top + left, dx: offset_x, dy: arrow1_height - dist_btw_arrows,
-              tiptoe.line(
-                start: (0pt, 0pt),
-                end: (scene_width, 0pt),
-                tip: tiptoe.combine(tiptoe.bar, arrow(C.stroke)),
-                toe: tiptoe.combine(tiptoe.bar, arrow(C.stroke)),
-                stroke: arrow_line_thickness + C.stroke,
-              )
-            )
-          }
           // Coordinate system [-1, +1]
           place(top + left, dx: offset_x, dy: arrow1_height,
             tiptoe.line(
@@ -368,14 +346,14 @@
           ..sequence-row("Canvas", C.spatial, n, img-dir, "canvas", glimpse-width, border_width: img_border_width),
           ..sequence-row([Canvas $Delta$], C.stroke, n, img-dir, "change", glimpse-width, border_width: img_border_width),
 
-        // Canvas arrows
+        // Canvas arrows. Helvetica has no arrow glyph; Libertinus Serif, which Typst bundles, draws it on every machine.
         grid.cell(colspan: n + 1)[
           #layout(size => {
             box(width: size.width, {
               for i in range(n - 1) {
                 let cx = (i + 1) * (glimpse-width + img_col_gutter) - 1.5pt
                 place(left + horizon, dx: cx, dy: -2*(img_row_gutter + glimpse-width),
-                  text(size: 12pt, fill: C.spatial)[→]
+                  text(font: "Libertinus Serif", size: 12pt, fill: C.spatial)[→]
                 )
               }
             })

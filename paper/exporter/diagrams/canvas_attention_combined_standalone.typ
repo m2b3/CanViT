@@ -17,6 +17,8 @@
 
 #let DEBUG = false
 
+// No creation date, so identical inputs give identical files.
+#set document(date: none)
 #set page(width: 5.5in, height: 3.0in, margin: (left: 0.4em, top: 0em, right: 0em, bottom: 0em))
 #set text(font: ("Helvetica", "Liberation Sans", "Nimbus Sans"), size: 11pt)
 

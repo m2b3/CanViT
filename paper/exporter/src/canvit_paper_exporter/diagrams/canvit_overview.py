@@ -24,9 +24,8 @@ from canvit_pytorch.preprocess import preprocess as make_preprocess
 from canvit_pytorch.viz.pca import fit_pca
 
 from canvit_paper_exporter.diagrams._common import DIAGRAMS_OUTPUTS, EXAMPLE_IMAGES, BaseConfig, load_canvit
-from canvit_paper_exporter.diagrams.io import denormalized_numpy, pca_colors
+from canvit_paper_exporter.diagrams.io import denormalized_numpy, pca_colors, save_photo
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
 log = logging.getLogger(__name__)
 
 # Viewpoints: (scale, center_y, center_x). Valid range: center +/- scale in [-1, 1].
@@ -123,7 +122,8 @@ def _extract_row(model: CanViT, out, glimpse: torch.Tensor, prev_canvas: np.ndar
 
 def run_example(model: CanViT, ex: dict, *, canvas_grid: int,
                 glimpse_px: int, inputs_dir: Path, device: torch.device,
-                transform):
+                transform) -> tuple[torch.Tensor, list[GlimpseRow]]:
+    """The scene as the model sees it, ImageNet-normalized [3, H, W], and a row per glimpse."""
     image = transform(Image.open(inputs_dir / ex["image"]).convert("RGB"))
     assert isinstance(image, torch.Tensor)
     image = image.unsqueeze(0).to(device)
@@ -141,7 +141,7 @@ def run_example(model: CanViT, ex: dict, *, canvas_grid: int,
             rows.append(GlimpseRow(g, loc, c, ch, label=rf"$t = {t}$"))
             prev_canvas = c
 
-    return rows
+    return image[0], rows
 
 
 def _save_with_vp_contours(path: Path, img, canvas_grid: int,
@@ -234,7 +234,7 @@ def main(cfg: Config) -> None:
     base_dir.mkdir(parents=True, exist_ok=True)
 
     log.info("Saving individual images...")
-    for rows, ex in all_examples:
+    for (scene, rows), ex in all_examples:
         img_stem = Path(ex["image"]).stem
         img_dir = base_dir / img_stem
         # Clean before writing: filenames encode viewpoint coords, so stale
@@ -242,6 +242,9 @@ def main(cfg: Config) -> None:
         if img_dir.exists():
             shutil.rmtree(img_dir)
         img_dir.mkdir(parents=True, exist_ok=True)
+        # At the model's input resolution; the diagram prints the scene about 2 in wide (about 510 ppi).
+        save_photo(scene, img_dir / "scene.jpg", scene.shape[-1])
+        log.info("  %s/scene.jpg", img_stem)
         canvas_pca = fit_pca(rows[-1].canvas)
         for ri, row in enumerate(rows):
             vp_center, vp_scale = ex["viewpoints"][ri]
@@ -270,4 +273,6 @@ def main(cfg: Config) -> None:
 
 if __name__ == "__main__":
     import tyro
+
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     main(tyro.cli(Config))

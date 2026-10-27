@@ -1,3 +1,7 @@
+"""How ADE20K IoU varies with mask size: per-mask IoU against mask area, smoothed by LOWESS with bootstrap
+intervals, for DINOv3 at each input resolution, for CanViT-B at each canvas resolution after its first glimpse, and for
+CanViT-B's change from its first glimpse to its last."""
+
 import logging
 import time
 from pathlib import Path
@@ -6,8 +10,9 @@ import numpy as np
 import polars as pl
 from statsmodels.nonparametric.smoothers_lowess import lowess as sm_lowess
 
-from canvit_paper_exporter import paths
 from canvit_paper_exporter.core import Dataset
+from canvit_paper_exporter.paths import Inputs
+from canvit_paper_exporter.stats import CONFIDENCE
 
 log = logging.getLogger(__name__)
 
@@ -16,7 +21,8 @@ FRAC = 0.25
 IT = 0
 N_BOOT = 1000
 N_GRID = 300
-CI = 0.95
+DV3_IOU, CANVIT_IOU = "dv3_iou.parquet", "canvit_iou.parquet"
+IOU_TABLES = Inputs("ade20k_obj", (DV3_IOU, CANVIT_IOU))
 
 
 def _lowess_ci(
@@ -46,7 +52,7 @@ def _group_curves(df: pl.DataFrame, group_col: str, x_grid: np.ndarray) -> list[
         t0 = time.perf_counter()
         smooth, lo, hi = _lowess_ci(
             sub["area"].to_numpy(), sub["iou"].to_numpy(), x_grid,
-            frac=FRAC, it=IT, n_boot=N_BOOT, ci=CI, seed=int(g),
+            frac=FRAC, it=IT, n_boot=N_BOOT, ci=CONFIDENCE, seed=int(g),
         )
         log.info("  lowess %s=%d (n=%d): %.1fs", group_col, g, len(sub), time.perf_counter() - t0)
         rows.append({
@@ -89,7 +95,7 @@ def _delta_curves(
         sub = paired.filter(pl.col(group_col) == g)
         smooth, lo, hi = _lowess_ci(
             sub["area"].to_numpy(), sub["delta_iou"].to_numpy(), x_grid,
-            frac=FRAC, it=IT, n_boot=N_BOOT, ci=CI, seed=int(g),
+            frac=FRAC, it=IT, n_boot=N_BOOT, ci=CONFIDENCE, seed=int(g),
         )
         rows.append({
             group_col: int(g),
@@ -118,14 +124,8 @@ def _load_obj_parquet(path: Path) -> pl.DataFrame:
 
 
 def compute() -> dict:
-    obj_dir = paths.eval_dir("ade20k_obj")
-    dv3_path = obj_dir / "dv3_iou.parquet"
-    canvit_path = obj_dir / "canvit_iou.parquet"
-    for p in (dv3_path, canvit_path):
-        assert p.exists(), f"Missing {p}"
-
-    dv3 = _load_obj_parquet(dv3_path)
-    canvit_all = _load_obj_parquet(canvit_path)
+    dv3 = _load_obj_parquet(IOU_TABLES.file(DV3_IOU))
+    canvit_all = _load_obj_parquet(IOU_TABLES.file(CANVIT_IOU))
 
     t_early = 0
     t_late = int(canvit_all["timestep"].max())
@@ -136,7 +136,7 @@ def compute() -> dict:
     x_grid = np.linspace(x_min, x_max, N_GRID)
 
     return {
-        "lowess": {"frac": FRAC, "it": IT, "n_boot": N_BOOT, "n_grid": N_GRID, "ci": CI},
+        "lowess": {"frac": FRAC, "it": IT, "n_boot": N_BOOT, "n_grid": N_GRID, "ci": CONFIDENCE},
         "plotting": {"t_delta_early": t_early, "t_delta_late": t_late},
         "x_grid": x_grid.tolist(),
         "dv3": _group_curves(dv3, "resolution", x_grid),
@@ -151,4 +151,4 @@ def compute() -> dict:
     }
 
 
-dataset = Dataset(name="ade20k_iou_vs_obj", compute=compute)
+dataset = Dataset(name="ade20k_iou_vs_obj", compute=compute, inputs=(IOU_TABLES,))

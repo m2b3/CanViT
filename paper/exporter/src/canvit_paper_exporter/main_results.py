@@ -1,22 +1,25 @@
 import logging
 
 import numpy as np
+from canvit_pytorch.hub.repos import RELEASED_CANVAS_GRID_SIZE, RELEASED_SCENE_SIZE_PX
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure as MplFigure
 from matplotlib.ticker import FuncFormatter
 
-from canvit_paper_exporter import paths
-from canvit_paper_exporter.core import Figure, load_json
+from canvit_paper_exporter import in1k
+from canvit_paper_exporter.ade20k import seg
+from canvit_paper_exporter.core import Figure
 from canvit_paper_exporter.style import (
-    CI_ALPHA, LABEL_SIZE, LEGEND_SIZE, LINE_ALPHA, LINE_WIDTH,
+    LABEL_SIZE, LEGEND_SIZE, LINE_ALPHA,
     POLICY_ORDER, POLICY_STYLES,
-    bottom_legend_with_header, inline_top_legend, linestyle_legend_handles,
+    bottom_legend_with_header, inline_top_legend, linestyle_legend_handles, mean_and_ci,
     si_flops_label, three_panel_figure,
 )
 
 log = logging.getLogger(__name__)
 
-PAPER_CONFIGS: set[tuple[int, int]] = {(512, 32), (512, 64)}
+# (scene, canvas grid) of the curves drawn: the released configuration and the 64² inference canvas.
+PAPER_CONFIGS = {(RELEASED_SCENE_SIZE_PX, RELEASED_CANVAS_GRID_SIZE), (RELEASED_SCENE_SIZE_PX, 64)}
 
 GRID_LINESTYLE = {32: "--", 64: "-"}
 GRID_LABEL     = {32: "32² canvas", 64: "64² canvas"}
@@ -26,28 +29,13 @@ MODE_LABEL     = {"frozen": "Frozen", "finetuned": "Finetuned"}
 
 FRONTIER_POLICIES = {"entropy_coarse_to_fine", "fine_to_coarse"}
 
-# Distinct shape + color per baseline so the three are immediately distinguishable
-# in panel A's boxed legend. Colors kept dark/neutral to avoid clashing with the
-# CanViT policy palette.
+# A marker shape per model family (the AME variants share one) and a color per baseline, apart from the policies' colors.
 BASELINE_STYLES: dict[str, dict] = {
-    # Both AME variants as triangles (same family, different init), different colors
-    # so you can tell them apart. AdaGlimpse as diamond (distinct family).
-    "AME (SETR)":  {"marker": "^", "color": "#7f2704"},  # triangle-up, dark red-brown
-    "AME (MAE)":   {"marker": "^", "color": "#00a4b8"},  # triangle-up, cyan
-    "AdaGlimpse":  {"marker": "D", "color": "#6a3d9a"},  # diamond,      deep purple (distinct from red-brown AME)
+    "AME (SETR)":  {"marker": "^", "color": "#7f2704"},
+    "AME (MAE)":   {"marker": "^", "color": "#00a4b8"},
+    "AdaGlimpse":  {"marker": "D", "color": "#6a3d9a"},
 }
 BASELINE_MARKER_SIZE = 28
-
-
-def _plot_mean_and_ci(ax: Axes, x, pts: list[dict], *, color: str, linestyle: str, n_runs: int) -> None:
-    """Plot mean%+CI for a per-timestep entry. Scales mean/ci_lo/ci_hi by 100
-    (every pipeline emits fractional values; paper renders as percent)."""
-    mean = np.array([p["mean"] for p in pts]) * 100
-    ax.plot(x, mean, color=color, linewidth=LINE_WIDTH, linestyle=linestyle, alpha=LINE_ALPHA)
-    if n_runs >= 2:
-        lo = np.array([p["ci_lo"] for p in pts]) * 100
-        hi = np.array([p["ci_hi"] for p in pts]) * 100
-        ax.fill_between(x, lo, hi, color=color, alpha=CI_ALPHA)
 
 
 def _panel_frontier(ax: Axes, ade20k: dict) -> None:
@@ -60,19 +48,16 @@ def _panel_frontier(ax: Axes, ade20k: dict) -> None:
         style = POLICY_STYLES[entry["policy"]]
         pts = entry["per_timestep"]
         flops = np.array([p["cum_gflops"] for p in pts]) * 1e9
-        _plot_mean_and_ci(ax, flops, pts, color=style["color"],
-                          linestyle=GRID_LINESTYLE[entry["canvas_grid"]],
-                          n_runs=entry["n_runs"])
+        mean_and_ci(ax, flops, pts, n_runs=entry["n_runs"], color=style["color"],
+                    linestyle=GRID_LINESTYLE[entry["canvas_grid"]], alpha=LINE_ALPHA)
         drawn += 1
     log.info("panel A: %d CanViT curves", drawn)
 
-    # All baseline markers drawn, one legend entry per distinct `name` (so
-    # AdaGlimpse T=4 + T=8 share one entry — matches the original layout).
-    # Each baseline family gets a distinct marker + color (see BASELINE_STYLES).
+    # A legend entry per baseline name: AdaGlimpse's two glimpse counts share one.
     seen_labels: set[str] = set()
     baseline_handles = []
-    for b in ade20k.get("baselines", []):
-        style = BASELINE_STYLES.get(b["name"], {"marker": "x", "color": "k"})
+    for b in ade20k["baselines"]:
+        style = BASELINE_STYLES[b["name"]]
         handle = ax.scatter(
             [b["gflops"] * 1e9], [b["miou_pct"]],
             marker=style["marker"], s=BASELINE_MARKER_SIZE, color=style["color"],
@@ -83,7 +68,7 @@ def _panel_frontier(ax: Axes, ade20k: dict) -> None:
             baseline_handles.append(handle)
             seen_labels.add(b["name"])
     log.info("panel A: %d baseline markers, %d distinct legend entries",
-             len(ade20k.get("baselines", [])), len(baseline_handles))
+             len(ade20k["baselines"]), len(baseline_handles))
 
     ax.set_xlabel("Cumulative FLOPs", fontsize=LABEL_SIZE)
     ax.set_ylabel("ADE20K mIoU", fontsize=LABEL_SIZE)
@@ -92,30 +77,26 @@ def _panel_frontier(ax: Axes, ade20k: dict) -> None:
     ax.xaxis.set_major_formatter(FuncFormatter(si_flops_label))
 
     inline_top_legend(ax, linestyle_legend_handles(GRID_LINESTYLE, GRID_LABEL))
-    if baseline_handles:
-        bl = ax.legend(
-            handles=baseline_handles, fontsize=LEGEND_SIZE,
-            loc="lower right", ncol=1, frameon=True,
-            handletextpad=0.4, borderpad=0.45, markerscale=0.9,
-        )
-        ax.add_artist(bl)
+    bl = ax.legend(
+        handles=baseline_handles, fontsize=LEGEND_SIZE,
+        loc="lower right", ncol=1, frameon=True,
+        handletextpad=0.4, borderpad=0.45, markerscale=0.9,
+    )
+    ax.add_artist(bl)
 
 
 def _panel_ade20k_policies(ax: Axes, ade20k: dict) -> None:
     max_t = 0
     drawn = 0
     for entry in ade20k["policy_curves"]:
-        if entry["policy"] not in POLICY_STYLES:
-            continue
         if (entry["scene_size"], entry["canvas_grid"]) not in PAPER_CONFIGS:
             continue
         style = POLICY_STYLES[entry["policy"]]
         pts = entry["per_timestep"]
         T = len(pts)
         max_t = max(max_t, T)
-        _plot_mean_and_ci(ax, np.arange(T), pts, color=style["color"],
-                          linestyle=GRID_LINESTYLE[entry["canvas_grid"]],
-                          n_runs=entry["n_runs"])
+        mean_and_ci(ax, np.arange(T), pts, n_runs=entry["n_runs"], color=style["color"],
+                    linestyle=GRID_LINESTYLE[entry["canvas_grid"]], alpha=LINE_ALPHA)
         drawn += 1
     log.info("panel B: %d curves across %d timesteps", drawn, max_t)
 
@@ -129,13 +110,11 @@ def _panel_ade20k_policies(ax: Axes, ade20k: dict) -> None:
 
 def _plot_in1k_mode(ax: Axes, data: dict, linestyle: str, mode_name: str) -> None:
     drawn = 0
-    for entry in data.get("configs", []):
-        style = POLICY_STYLES.get(entry["policy"])
-        if style is None:
-            continue
+    for entry in data["configs"]:
+        style = POLICY_STYLES[entry["policy"]]
         pts = entry["per_timestep"]
-        _plot_mean_and_ci(ax, np.arange(len(pts)), pts, color=style["color"],
-                          linestyle=linestyle, n_runs=entry["n_runs"])
+        mean_and_ci(ax, np.arange(len(pts)), pts, n_runs=entry["n_runs"], color=style["color"],
+                    linestyle=linestyle, alpha=LINE_ALPHA)
         drawn += 1
     log.info("panel C [%s]: %d curves", mode_name, drawn)
 
@@ -148,22 +127,17 @@ def _panel_in1k(ax: Axes, frozen: dict, finetuned: dict) -> None:
     ax.set_ylabel("Top-1 accuracy", fontsize=LABEL_SIZE)
     ax.set_ylim(bottom=74, top=87)
 
-    Ts = [len(c["per_timestep"]) for c in frozen.get("configs", [])]
-    Ts += [len(c["per_timestep"]) for c in finetuned.get("configs", [])]
-    if Ts:
-        ax.set_xticks(np.arange(0, max(Ts), step=5))
+    Ts = [len(c["per_timestep"]) for c in [*frozen["configs"], *finetuned["configs"]]]
+    ax.set_xticks(np.arange(0, max(Ts), step=5))
 
     inline_top_legend(ax, linestyle_legend_handles(MODE_LINESTYLE, MODE_LABEL))
 
 
-def plot() -> MplFigure:
-    ade20k = load_json(paths.export_json("ade20k_seg"))
-    frozen = load_json(paths.export_json("in1k_clf_frozen"))
-    finetuned = load_json(paths.export_json("in1k_clf_finetuned"))
+def plot(ade20k: dict, frozen: dict, finetuned: dict) -> MplFigure:
     log.info("ade20k_seg: %d policy_curves; in1k frozen=%d configs; in1k finetuned=%d configs",
              len(ade20k["policy_curves"]),
-             len(frozen.get("configs", [])),
-             len(finetuned.get("configs", [])))
+             len(frozen["configs"]),
+             len(finetuned["configs"]))
 
     fig, axs = three_panel_figure()
     _panel_frontier(axs[0], ade20k)
@@ -177,4 +151,6 @@ def plot() -> MplFigure:
     return fig
 
 
-figure = Figure(name="main_results", plot=plot)
+figure = Figure(
+    name="main_results", plot=plot, datasets=(seg.dataset, in1k.frozen_dataset, in1k.finetuned_dataset),
+)

@@ -1,6 +1,8 @@
 // Standalone architecture overview diagram - compiles to SVG/PDF
 #import "arch_overview_content.typ": arch-overview-diagram
 
+// No creation date, so identical inputs give identical files.
+#set document(date: none)
 #set page(width: auto, height: auto, margin: 0.5em)
 #set text(font: "Helvetica", size: 11pt)
 

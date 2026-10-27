@@ -8,7 +8,6 @@ Usage:
     uv run python -m canvit_paper_exporter.diagrams.canvas_attn --target-pair 0
 
 Outputs to: diagrams/outputs/canvas_attn/
-    - scene.png, glimpse_t0.png: context
     - glimpse_before_read.png, glimpse_after_read.png: local tokens around read
     - glimpse_before_write.png: local tokens entering write
     - canvas_in.png, canvas_after_write.png: canvas before/after write
@@ -25,9 +24,8 @@ from torch import Tensor
 from canvit_pytorch import CanViT, Viewpoint, sample_at_viewpoint
 
 from canvit_paper_exporter.diagrams._common import DIAGRAMS_OUTPUTS, BaseConfig, load_canvit
-from canvit_paper_exporter.diagrams.io import load_image, save_image, save_pca, save_tensor_rgb
+from canvit_paper_exporter.diagrams.io import load_image, save_pca
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
 log = logging.getLogger(__name__)
 
 FULL_SCENE_VP = (0.0, 0.0, 1.0)
@@ -119,9 +117,7 @@ def main(cfg: Config) -> None:
     model = load_canvit(cfg.model, device)
 
     log.info(f"Loading image: {cfg.image}")
-    image, pil_img = load_image(cfg.image, device)
-    save_image(pil_img, cfg.output_dir / "scene.png")
-    log.info("  scene.png")
+    image = load_image(cfg.image, device)
 
     assert 0 <= cfg.target_pair < len(model.read_after_blocks)
     cy, cx, sc = FULL_SCENE_VP
@@ -135,8 +131,6 @@ def main(cfg: Config) -> None:
     with torch.inference_mode():
         log.info(f"t=0: full-scene glimpse, capturing R/W pair {cfg.target_pair}...")
         glimpse = sample_at_viewpoint(spatial=image, viewpoint=vp, glimpse_size_px=cfg.glimpse_px)
-        save_tensor_rgb(glimpse[0], cfg.output_dir / "glimpse_t0.png")
-        log.info("  glimpse_t0.png")
 
         with IntermediateCapture(model, target_pair=cfg.target_pair) as cap:
             model(glimpse=glimpse, state=state, viewpoint=vp)
@@ -163,4 +157,6 @@ def main(cfg: Config) -> None:
 
 if __name__ == "__main__":
     import tyro
+
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     main(tyro.cli(Config))

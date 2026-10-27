@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 
 
@@ -15,19 +16,34 @@ DATA      = REPO_ROOT / "data"
 EXPORTS   = PAPER_ROOT / "exports"
 
 
-def eval_dir(dataset: str) -> Path:
-    """Directory holding one dataset's raw eval artifacts."""
-    return DATA / dataset
+@dataclass(frozen=True)
+class Inputs:
+    """The files of a data/ entry that a dataset or figure reads: those matching its glob patterns.
 
+    Datasets and figures reach data/ only through the Inputs they declare, so the declarations list what they read.
+    """
+    entry: str
+    patterns: tuple[str, ...]
 
-def hf_snapshot(name: str) -> Path:
-    """One captured HuggingFace config.json."""
-    return DATA / "hf" / f"{name}.json"
+    @property
+    def directory(self) -> Path:
+        return DATA / self.entry
 
+    def files(self) -> list[Path]:
+        """Every matching file, in path order; each pattern must match a file."""
+        found: set[Path] = set()
+        for pattern in self.patterns:
+            matches = {f for f in self.directory.glob(pattern) if f.is_file()}
+            assert matches, f"No files matching {pattern!r} in {self.directory}"
+            found |= matches
+        return sorted(found)
 
-def comet_curves() -> Path:
-    """Directory of captured Comet training-curve JSONs."""
-    return DATA / "comet"
+    def file(self, name: str) -> Path:
+        """A file this declares by name, relative to the entry."""
+        assert name in self.patterns, f"{name!r} is not declared in {self}"
+        path = self.directory / name
+        assert path.is_file(), f"Missing {path}"
+        return path
 
 
 def export_json(dataset: str) -> Path:
@@ -43,3 +59,8 @@ def export_svg(figure: str) -> Path:
 def export_pdf(figure: str) -> Path:
     """Path of a figure's output PDF (native vector — Typst uses SVG, LaTeX uses PDF)."""
     return EXPORTS / f"{figure}.pdf"
+
+
+def export_png(figure: str) -> Path:
+    """Path of a figure's preview PNG."""
+    return EXPORTS / f"{figure}.png"

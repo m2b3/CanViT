@@ -34,8 +34,8 @@ export function bestCanvit(data) {
 }
 
 // On #state-of-the-art (annotated), the rows are bracketed as active or passive models (SECTIONS), and those whose
-// backbone stays frozen (CanViT-B and DINOv3 read by linear probes, the DINOv3 7B backbone under Mask2Former) are drawn
-// hollow, against solid bars for models trained end to end.
+// backbone stays frozen (CanViT-B and DINOv3 read by linear probes, the DINOv3 7B backbone under Mask2Former) are
+// hatched, against solid bars for models trained end to end.
 const SECTIONS = [{ label: "Active", kinds: ["active", "canvit"] }, { label: "Passive", kinds: ["passive"] }];
 
 export async function drawGap(container, { paper, references, canvit = false, annotated = false }) {
@@ -59,6 +59,7 @@ export async function drawGap(container, { paper, references, canvit = false, an
   }
   drawBarRows(container, rows, { groups: ["active", "canvit", "passive"], sections: annotated ? SECTIONS : [], max: MAX,
                                  zoomMax: canvit ? MAX : ZOOM_MAX, ticks: [0, 10, 20, 30, 40, 50, 60, 70],
+                                 title: "ADE20K mean intersection over union (mIoU, %)",
                                  label: "ADE20K mIoU of passive and active models" });
 }
 
@@ -87,6 +88,6 @@ export async function drawIn1kGap(container, { macros, probes, references }) {
     { name: "DINOv3 ViT-B", value: dinov3Top1(dinov3.probes, "ViT-B/16"), kind: "passive", core: true, frozen: true },
   ];
   drawBarRows(container, rows, { groups: ["active", "canvit", "passive"], sections: SECTIONS, min: IN1K_MIN,
-                                 max: IN1K_MAX, ticks: [70, 75, 80, 85, 90],
+                                 max: IN1K_MAX, ticks: [70, 75, 80, 85, 90], title: "ImageNet-1k top-1 accuracy (%)",
                                  label: "ImageNet-1k top-1 accuracy of passive and active models" });
 }

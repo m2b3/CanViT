@@ -372,7 +372,9 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 #quickstart pre::before { top: calc(14px + (var(--line-from, 1) - 1) * 1lh); }
 #quickstart .result { position: absolute; right: var(--slide-pad-x); top: 136px; width: 226px; display: grid; gap: 8px; }
 #quickstart .result figure { margin: 0; opacity: 0; transition: opacity .5s ease; }
-#quickstart.shows-scene .result .scene, #quickstart.shows-first .result .map { opacity: 1; }
+#quickstart.shows-code .result .scene, #quickstart.shows-first .result .map { opacity: 1; }
+#quickstart.code-only .result { display: none; }
+#quickstart.code-only pre { left: 50%; transform: translateX(-50%); width: 960px; font-size: 15px; }
 #quickstart.shows-first .result .map { transition-delay: .8s; }
 #quickstart .result figcaption { margin-bottom: 4px; font-size: 16px; }
 #quickstart .result .frame { position: relative; width: 226px; height: 226px; }
@@ -491,7 +493,8 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 #gap.shows-map .wipe { clip-path: inset(0); }
 #gap .bar-chart { opacity: 0; transition: opacity .6s ease; }
 #gap.shows-bars .bar-chart { opacity: 1; }
-.bar-chart .axis-title { margin: 0 0 4px 30%; font-size: 17px; font-weight: 700; }
+.bar-chart .axis-title { font-size: 22px; font-weight: 700; fill: var(--ink); }
+.bar-chart :is(.spine, .tick-mark) { stroke: var(--ink); stroke-width: 2px; }
 .bar-chart svg { display: block; width: 100%; height: auto; font-family: var(--sans); }
 .bar-chart .grid { stroke: var(--rule); }
 .bar-chart .tick { font-size: 18px; fill: var(--ink); }
@@ -500,7 +503,10 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 .bar-chart .passive .bar { fill: var(--ink); }
 .bar-chart .active .bar { fill: #d97706; }
 .bar-chart .canvit .bar { fill: var(--canvas); }
-.bar-chart .frozen .bar { fill-opacity: .14; stroke-width: 3px; vector-effect: non-scaling-stroke; }
+.bar-chart .frozen .bar { stroke-width: 2px; vector-effect: non-scaling-stroke; }
+.bar-chart .hatch.passive rect { fill: var(--ink); }
+.bar-chart .hatch.active rect { fill: #d97706; }
+.bar-chart .hatch.canvit rect { fill: var(--canvas); }
 .bar-chart .frozen.passive .bar { stroke: var(--ink); }
 .bar-chart .frozen.active .bar { stroke: #d97706; }
 .bar-chart .frozen.canvit .bar { stroke: var(--canvas); }
@@ -628,7 +634,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #gap .bar-chart .name { font-size: 22px; }
 #gap .bar-chart .value { font-size: 26px; }
 #gap .bar-chart .tick { font-size: 24px; }
-#gap .bar-chart .axis-title { font-size: 20px; }
 
 /* Toward CanViT 2: CanViT's column centered, then it shifts left, the arrow draws and CanViT 2's column appears. CanViT's
    limits in red, CanViT 2's in green. */
@@ -724,12 +729,14 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #state-of-the-art .charts { display: grid; width: 1100px; margin: 10px auto 0; }
 #state-of-the-art .charts > .bar-chart { grid-area: 2 / 1; transition: opacity .6s ease; }
 #state-of-the-art .training-key { grid-area: 1 / 1; justify-self: end; display: flex; gap: 26px; margin: 0 0 -26px;
+                                  padding: 0 0 0 10px; background: var(--bg); position: relative; z-index: 1;
                                   font-size: 18px; font-weight: 700; }
 #state-of-the-art .training-key span { display: flex; align-items: center; gap: 9px; }
 #state-of-the-art .training-key span::before { content: ""; width: 30px; height: 18px; border-radius: 4px;
-                                               border: 3px solid var(--ink); box-sizing: border-box; }
+                                               border: 2px solid var(--ink); box-sizing: border-box; }
 #state-of-the-art .training-key .trained::before { background: var(--ink); }
-#state-of-the-art .training-key .frozen::before { background: color-mix(in srgb, var(--ink) 14%, transparent); }
+#state-of-the-art .training-key .frozen::before { background: repeating-linear-gradient(-45deg, var(--ink) 0 3.5px,
+                                                                                         transparent 3.5px 8.5px); }
 #state-of-the-art .bracket { transform-box: fill-box; transform-origin: top; transform: scaleY(var(--bracket-core));
                              transition: transform .8s ease; }
 #state-of-the-art.shows-canvit .ade20k .bracket, #state-of-the-art.shows-in1k-canvit .in1k .bracket { transform: none; }
@@ -747,7 +754,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #state-of-the-art .bar-chart .name { font-size: 22px; }
 #state-of-the-art .bar-chart .value { font-size: 26px; }
 #state-of-the-art .bar-chart .tick { font-size: 24px; }
-#state-of-the-art .bar-chart .axis-title { font-size: 20px; }
 #sr-rope .box .tag { position: absolute; left: 0; top: 100%; margin-top: 3px; padding: 1px 6px; border-radius: 4px;
                     background: var(--glimpse); color: #fff; font-size: 14px; font-weight: 650; white-space: nowrap;
                     font-variant-numeric: tabular-nums; }

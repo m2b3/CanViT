@@ -651,9 +651,12 @@ removed.
   most important; the gaps must show although accuracies saturate near the top): top-1 accuracy, never error (Y), as
   bars on an axis from 70% (dots rejected, Y), the prior active models as the paper's Table 1 prints them
   (`site/check_paper_numbers.py` holds them to it) and DINOv3 ViT-S and ViT-B read by the paper's probes, then
-  CanViT-B frozen and fine-tuned. Both of the slide's charts bracket "Active" and "Passive" models and draw frozen
-  backbones hollow under a key ("Trained end to end", "Frozen backbone"), since the prior active models are trained end
-  to end (Y: delineate active from passive, and frozen from fine-tuned); `#gap` keeps its plain bars.
+  CanViT-B frozen and fine-tuned. Both of the slide's charts bracket "Active" and "Passive" models and hatch frozen
+  backbones in slanted lines under a key reading "End-to-end" and "Frozen" (Y: delineate active from passive, and
+  frozen from fine-tuned; the hollow style rejected; less text). Every bar chart (`#gap` too) now has left and bottom
+  spines with its axis title under the tick labels (Y). `#quickstart` has three clicks (the code with the model and
+  scene, the first glimpse, the second) and hides its scene and maps by default: the section's class `code-only`
+  switches them off (Y: less overloaded, easy to turn back on).
   `#paper`'s notes: the work was supervised by Audrey Durand and Suresh Krishna (Y), not "joint work".
 - (Y, 2026-10-27) A full pass over the deck after a full read of the camera-ready: logical flow, order, the support
   on screen for each point; what is missing, with when, where and at what length; weak backup slides may go, new

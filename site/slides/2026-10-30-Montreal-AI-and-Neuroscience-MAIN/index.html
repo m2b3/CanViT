@@ -213,7 +213,7 @@
         <figcaption>ADE20K semantic segmentation<small>pixel-level</small></figcaption>
       </figure>
     </div>
-    <div class="bar-chart"><p class="axis-title">ADE20K mean intersection over union (mIoU, %)</p><div class="bars"></div></div>
+    <div class="bar-chart"><div class="bars"></div></div>
   </div>
   <span class="fragment step-marker" data-shows="map"></span>
   <span class="fragment step-marker" data-shows="bars"></span>
@@ -795,12 +795,12 @@
        ImageNet-1k takes its place as top-1 accuracy on an axis from 70%, since accuracies that crowd near the top look
        alike from 0 (Y, 2026-10-27: the quantity is accuracy, only the scale changes): the prior active models and
        DINOv3's probes first, CanViT-B frozen and fine-tuned on "in1k-canvit" (gap.js, drawIn1kGap). Both charts bracket
-       active and passive models and draw frozen backbones hollow (Y: delineate active from passive, and frozen from
-       trained end to end). -->
+       active and passive models and hatch frozen backbones (Y: delineate active from passive, and frozen from trained
+       end to end). -->
   <div class="charts">
-    <p class="training-key"><span class="trained">Trained end to end</span><span class="frozen">Frozen backbone</span></p>
-    <div class="bar-chart ade20k"><p class="axis-title">ADE20K mIoU (%)</p><div class="bars"></div></div>
-    <div class="bar-chart in1k"><p class="axis-title">ImageNet-1k top-1 accuracy (%)</p><div class="bars"></div></div>
+    <p class="training-key"><span class="trained">End-to-end</span><span class="frozen">Frozen</span></p>
+    <div class="bar-chart ade20k"><div class="bars"></div></div>
+    <div class="bar-chart in1k"><div class="bars"></div></div>
   </div>
   <span class="fragment step-marker" data-shows="canvit"></span>
   <span class="fragment step-marker" data-shows="in1k"></span>
@@ -809,7 +809,7 @@
     <li>[AI draft: not the authors' text]</li>
     <li>Let's go back to the <b>gap</b> we started from, on ADE20K segmentation:</li>
     <li>prior active models on top, passive models below.</li>
-    <li>Hollow bars are <b>frozen</b> backbones; solid bars were trained end to end.</li>
+    <li>Hatched bars are <b>frozen</b> backbones; solid bars were trained end to end.</li>
     <li>[CLICK]</li>
     <li>Frozen, with a linear readout, CanViT-B reaches <span data-macro="adeBestMiou">45.9</span>% mIoU,</li>
     <li>up from <span data-macro="adeBestPriorMiou">27.6</span>% for the best prior active model.</li>
@@ -987,13 +987,15 @@
   </ul></aside>
 </section>
 
-<section id="quickstart" data-status="draft">
+<!-- code-only hides the scene and maps beside the code (Y, 2026-10-27: less on the slide); remove it to show them. -->
+<section id="quickstart" class="code-only" data-status="draft">
   <h2>Open-source and easy to use</h2>
   <p class="install"><code>uv add canvit-pytorch</code></p>
   <!-- quickstart.py runs as shown: experiments/quickstart/export.py executes it on a bus on a seafront street
        (ADE_val_00000996, 512 px) and saves what each model call returned; plot.py draws the boxes, the maps and the class
        names. Scene and second viewpoint chosen among experiments/quickstart/sweep.py's candidates by eye. -->
-  <pre class="fragment" data-shows="code"><code class="language-python" data-src="quickstart.py"></code></pre>
+  <!-- Three clicks (Y, 2026-10-27): the code with the model and the scene, the first glimpse, the second. -->
+  <pre class="fragment" data-shows="code" data-lines="6-12"><code class="language-python" data-src="quickstart.py"></code></pre>
   <div class="result">
     <figure class="scene"><figcaption><code>scene.jpg</code></figcaption><div class="frame">
       <img src="../../data/talk/quickstart/scene.png" alt="A seafront street with a bus">
@@ -1005,9 +1007,6 @@
       <img class="pixels second" src="../../data/talk/quickstart/map-2.png" alt="The segmentation after the second glimpse: the bus, which was car, is now bus">
       <div class="names second" data-src="../../data/talk/quickstart/names-2.json"></div></div></figure>
   </div>
-  <!-- Line ranges of quickstart.py: the model, the scene and state, the first glimpse, the second. -->
-  <span class="fragment step-marker" data-lines="6-10"></span>
-  <span class="fragment step-marker" data-shows="scene" data-lines="11-12"></span>
   <span class="fragment step-marker" data-shows="first" data-lines="14-17"></span>
   <span class="fragment step-marker" data-shows="second" data-lines="19-22"></span>
   <aside class="notes"><ul>
@@ -1015,15 +1014,12 @@
     <li>CanViT is <b>open source</b>, with its pretrained models and linear readouts.</li>
     <li>It installs with uv add canvit-pytorch.</li>
     <li>[CLICK]</li>
-    <li>Here is a complete example.</li>
+    <li>Here is a complete example: we load the model with its ADE20K readout, a scene, and a fresh canvas.</li>
     <li>[CLICK]</li>
-    <li>Load the pretrained model and its ADE20K segmentation readout.</li>
+    <li>We process a first glimpse of the whole scene,</li>
     <li>[CLICK]</li>
-    <li>Load a scene, and initialize a fresh canvas.</li>
-    <li>[CLICK]</li>
-    <li>A first glimpse of the whole scene reads the bus as a <b>car</b>.</li>
-    <li>[CLICK]</li>
-    <li>A second glimpse, zoomed in on the bus, corrects it to <b>bus</b>.</li>
+    <li>then a second, zoomed in on the bus.</li>
+    <li>(With the scene and maps shown: the first glimpse reads the bus as a <b>car</b>, the second corrects it to <b>bus</b>.)</li>
   </ul></aside>
 </section>
 

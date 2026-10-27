@@ -649,8 +649,11 @@ removed.
   original stays). On `#gap` and `#state-of-the-art`, the bars show names and values only (Y: the line under each
   was too much detail). `#state-of-the-art` then shows ImageNet-1k in the ADE20K chart's place (Y: after ADE20K, the
   most important; the gaps must show although accuracies saturate near the top): top-1 accuracy, never error (Y), as
-  dots on an axis from 70%, the prior active models as the paper's Table 1 prints them (`site/check_paper_numbers.py`
-  holds them to it) and DINOv3 ViT-S and ViT-B read by the paper's probes, then CanViT-B frozen and fine-tuned.
+  bars on an axis from 70% (dots rejected, Y), the prior active models as the paper's Table 1 prints them
+  (`site/check_paper_numbers.py` holds them to it) and DINOv3 ViT-S and ViT-B read by the paper's probes, then
+  CanViT-B frozen and fine-tuned. Both of the slide's charts bracket "Active" and "Passive" models and draw frozen
+  backbones hollow under a key ("Trained end to end", "Frozen backbone"), since the prior active models are trained end
+  to end (Y: delineate active from passive, and frozen from fine-tuned); `#gap` keeps its plain bars.
   `#paper`'s notes: the work was supervised by Audrey Durand and Suresh Krishna (Y), not "joint work".
 - (Y, 2026-10-27) A full pass over the deck after a full read of the camera-ready: logical flow, order, the support
   on screen for each point; what is missing, with when, where and at what length; weak backup slides may go, new

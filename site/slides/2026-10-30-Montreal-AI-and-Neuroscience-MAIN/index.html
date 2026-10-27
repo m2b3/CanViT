@@ -792,12 +792,14 @@
   <!-- A callback to #gap as it ended: the same rows, from the same export and references (gap.js); then, on "canvit",
        CanViT-B's best result, frozen with a linear readout (the export's best point: C2F, 64 x 64 canvas, glimpse 21),
        in its own row between the active and passive models. The paper's Table 1 as bars (TALK.md). On "in1k",
-       ImageNet-1k takes its place as top-1 accuracy, each model a dot on an axis from 70%, since accuracies that crowd
-       near the top look alike as bars from 0 (Y, 2026-10-27: the quantity is accuracy, only the scale changes): the
-       prior active models and DINOv3's probes first, CanViT-B frozen and fine-tuned on "in1k-canvit" (gap.js,
-       drawIn1kGap). -->
+       ImageNet-1k takes its place as top-1 accuracy on an axis from 70%, since accuracies that crowd near the top look
+       alike from 0 (Y, 2026-10-27: the quantity is accuracy, only the scale changes): the prior active models and
+       DINOv3's probes first, CanViT-B frozen and fine-tuned on "in1k-canvit" (gap.js, drawIn1kGap). Both charts bracket
+       active and passive models and draw frozen backbones hollow (Y: delineate active from passive, and frozen from
+       trained end to end). -->
   <div class="charts">
-    <div class="bar-chart ade20k"><p class="axis-title">ADE20K mean intersection over union (mIoU, %)</p><div class="bars"></div></div>
+    <p class="training-key"><span class="trained">Trained end to end</span><span class="frozen">Frozen backbone</span></p>
+    <div class="bar-chart ade20k"><p class="axis-title">ADE20K mIoU (%)</p><div class="bars"></div></div>
     <div class="bar-chart in1k"><p class="axis-title">ImageNet-1k top-1 accuracy (%)</p><div class="bars"></div></div>
   </div>
   <span class="fragment step-marker" data-shows="canvit"></span>
@@ -807,6 +809,7 @@
     <li>[AI draft: not the authors' text]</li>
     <li>Let's go back to the <b>gap</b> we started from, on ADE20K segmentation:</li>
     <li>prior active models on top, passive models below.</li>
+    <li>Hollow bars are <b>frozen</b> backbones; solid bars were trained end to end.</li>
     <li>[CLICK]</li>
     <li>Frozen, with a linear readout, CanViT-B reaches <span data-macro="adeBestMiou">45.9</span>% mIoU,</li>
     <li>up from <span data-macro="adeBestPriorMiou">27.6</span>% for the best prior active model.</li>
@@ -1222,7 +1225,7 @@
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
-  await drawGap(document.querySelector("#state-of-the-art .ade20k .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json", canvit: true });
+  await drawGap(document.querySelector("#state-of-the-art .ade20k .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json", canvit: true, annotated: true });
   await drawIn1kGap(document.querySelector("#state-of-the-art .in1k .bars"), { macros: "../../assets/paper/data_macros.json", probes: "../../assets/paper/dinov3_probe_data.json", references: "sources/in1k-active-references.json" });
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const egc2f = document.querySelector("#eg-c2f");

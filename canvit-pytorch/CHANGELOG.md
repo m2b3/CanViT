@@ -19,7 +19,7 @@ order, each before or after it as the entry says, because released versions load
 - `canvit_pytorch.episode.take_glimpse`: CanViT's step on the glimpse at a viewpoint.
 - `hub.repos.resolve`: where a Hub id of the organization loads from, a local mirror when
   `CANVIT_HUB_ROOT` names one.
-- `hub.repos.Q_REGRESSION_POLICIES` and `POLICY_GRADIENT_POLICIES`, the published scorers;
+- `hub.repos.Q_LEARNING_POLICIES` and `REINFORCE_POLICIES`, the published scorers;
   `hub.repos.released_segmenter`, the flagship and its released ADE20K probe for a scene size and
   canvas grid; `hub.loading.checkpoint_record`, the Hub commit and weights hash that identify a
   checkpoint.

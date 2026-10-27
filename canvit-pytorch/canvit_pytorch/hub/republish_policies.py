@@ -34,13 +34,14 @@ from canvit_pytorch.hub.repos import HUB_ROOT
 from canvit_pytorch.project import HUB_ORGANIZATION
 from canvit_pytorch.rl import ViewpointScorer
 from canvit_pytorch.rl.candidates import CandidateViewpoints
+from canvit_pytorch.rl.features import FEATURE_GROUPS
 from canvit_pytorch.rl.observer import flagship_observer
 
 log = logging.getLogger(__name__)
 
 ORIGINAL_FORMAT_REVISION = "original-format"
 ORIGINAL_FEATURE_GROUPS = ["ent", "ent_delta", "cos_prev", "cos_init", "ln_feat", "feat_delta"]
-ORIGINAL_OBJECTIVES = {"q": "QRegression", "pg": "PolicyGradient"}
+ORIGINAL_OBJECTIVES = {"q": "QLearning", "pg": "Reinforce"}
 ORIGINAL_FORMAT_NOTE = f"""
 ## Original format
 
@@ -97,8 +98,8 @@ def converted_scorer(config: dict[str, Any], manifest: dict[str, Any], weights: 
     assert config.pop("dueling") == (manifest["kind"] == "q"), manifest["kind"]
     candidates = CandidateViewpoints(tuple(config.pop("scales")), config.pop("centers_per_axis"))
     scorer = ViewpointScorer(
-        observer=observer, canvas_dim=config.pop("canvas_dim"), candidates=candidates, width=config.pop("width"),
-        blocks_per_stage=config.pop("block_layers"), dueling=manifest["kind"] == "q",
+        observer=observer, canvas_dim=config.pop("canvas_dim"), feature_groups=FEATURE_GROUPS, candidates=candidates,
+        width=config.pop("width"), blocks_per_stage=config.pop("block_layers"), dueling=manifest["kind"] == "q",
     )
     assert not config, f"unconverted config keys {config}"
     assert torch.equal(weights.pop("sb_grids"), scorer.candidate_centers_xy), "the stored centers are the candidates'"

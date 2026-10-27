@@ -12,7 +12,7 @@ from canvit_pytorch.benchmarks.ade20k.dataset import Split
 from canvit_pytorch.rl import Observer, ViewpointScorer
 from canvit_pytorch.rl.candidates import CandidateViewpoints
 from canvit_pytorch.rl.train import PolicyTraining
-from canvit_pytorch.rl.train.objectives import PolicyGradient
+from canvit_pytorch.rl.train.objectives import Reinforce
 from canvit_pytorch.rl.train.reward import RunningStandardizer
 from tests.model.tiny import GLIMPSE_PX, TINY
 
@@ -40,7 +40,8 @@ def tiny_observer(directory: Path) -> Observer:
 
 def test_training_selects_and_saves_a_scorer(tmp_path: Path) -> None:
     training = TinyTraining(
-        out_dir=tmp_path / "run", observer=tiny_observer(tmp_path), candidates=CandidateViewpoints((0.5, 0.25), 4),
+        out_dir=tmp_path / "run", observer=tiny_observer(tmp_path), feature_groups=("entropy", "patches"),
+        candidates=CandidateViewpoints((0.5, 0.25), 4),
         width=8, blocks_per_stage=1, batch_size=2, glimpse_budget=30, reward_resolution_px=32, validation_interval=2,
         device="cpu", amp=False, num_workers=0,
     )
@@ -51,7 +52,9 @@ def test_training_selects_and_saves_a_scorer(tmp_path: Path) -> None:
     assert all(len(values) == training.num_glimpses for values in cross_entropy.values())
     after_first_glimpse = {step: sum(values[1:]) for step, values in cross_entropy.items()}
     assert record["selected_step"] == min(after_first_glimpse, key=after_first_glimpse.__getitem__)
-    assert ViewpointScorer.from_pretrained(str(scorer_dir)).observer == training.observer
+    for directory in (scorer_dir, tmp_path / "run" / "last_step_scorer"):
+        scorer = ViewpointScorer.from_pretrained(str(directory))
+        assert (scorer.observer, scorer.feature_groups) == (training.observer, training.feature_groups)
 
 
 def test_running_standardizer_is_unit_scale_from_the_first_batch() -> None:
@@ -68,7 +71,7 @@ def test_entropy_bonus_holds_a_collapsing_policy_at_the_floor() -> None:
     torch.manual_seed(0)
     logits = torch.zeros(16, requires_grad=True)
     optimizer = torch.optim.Adam([logits], lr=1e-2)
-    objective = PolicyGradient(entropy_weight_rate=0.1)
+    objective = Reinforce(entropy_weight_rate=0.1)
     learner = objective.learner()
     entropies = []
     for _ in range(3000):

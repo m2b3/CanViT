@@ -25,11 +25,12 @@ from canvit_pytorch.benchmarks.ade20k.dataset import Split
 from canvit_pytorch.progress import progress
 from canvit_pytorch.provenance import provenance
 from canvit_pytorch.rl.candidates import CandidateViewpoints
+from canvit_pytorch.rl.features import FEATURE_GROUPS, FeatureGroup
 from canvit_pytorch.rl.observer import Observer, flagship_observer
 from canvit_pytorch.rl.policy import LearnedPolicy
 from canvit_pytorch.rl.scorer import ViewpointScorer
 from canvit_pytorch.rl.train.exploration import explore
-from canvit_pytorch.rl.train.objectives import Objective, QRegression
+from canvit_pytorch.rl.train.objectives import Objective, QLearning
 from canvit_pytorch.rl.train.reward import RunningStandardizer
 from canvit_pytorch.rl.train.validation import cross_entropy_by_glimpse
 
@@ -38,14 +39,17 @@ log = logging.getLogger(__name__)
 
 @dataclass(frozen=True, kw_only=True)
 class PolicyTraining:
-    """Train a learned viewing policy on ADE20K. The defaults are the recipe of hub.repos.Q_REGRESSION_POLICIES,
-    one run per seed; with the PolicyGradient objective's defaults, that of hub.repos.POLICY_GRADIENT_POLICIES."""
+    """Train a learned viewing policy on ADE20K. The defaults are the recipe of hub.repos.Q_LEARNING_POLICIES,
+    one run per seed; with the Reinforce objective's defaults, that of hub.repos.REINFORCE_POLICIES."""
 
     out_dir: Path
-    """Created by the run: the selected scorer (scorer/, for ViewpointScorer.from_pretrained) and record.json."""
-    objective: Objective = QRegression()
+    """Created by the run: the selected scorer (scorer/) and that of the last step (last_step_scorer/), both for
+    ViewpointScorer.from_pretrained, and record.json."""
+    objective: Objective = QLearning()
     seed: int = 0
     observer: Observer = flagship_observer(canvas_grid_size=64)
+    feature_groups: tuple[FeatureGroup, ...] = FEATURE_GROUPS
+    """The scorer's input (rl.features)."""
     candidates: CandidateViewpoints = CandidateViewpoints(scales=(0.5, 0.25), centers_per_axis=16)
     width: int = 128
     """Channels of the scorer's U-Net."""
@@ -94,8 +98,9 @@ class PolicyTraining:
         torch.manual_seed(self.seed)
         model = self.observer.load(device)
         scorer = ViewpointScorer(
-            observer=self.observer, canvas_dim=model.canvit.canvas_dim, candidates=self.candidates, width=self.width,
-            blocks_per_stage=self.blocks_per_stage, dueling=self.objective.dueling,
+            observer=self.observer, canvas_dim=model.canvit.canvas_dim, feature_groups=self.feature_groups,
+            candidates=self.candidates, width=self.width, blocks_per_stage=self.blocks_per_stage,
+            dueling=self.objective.dueling,
         ).to(device)
         policy = LearnedPolicy(scorer=scorer, model=model)
         learner = self.objective.learner()
@@ -161,4 +166,5 @@ class PolicyTraining:
             log.info("step %d: training loss %.4f; validation cross-entropy by glimpse %s, mean after the chosen "
                      "glimpses %.4f%s", step, training_loss, " ".join(f"{v:.4f}" for v in cross_entropy),
                      selection_value, " (selected)" if selected else "")
+        scorer.save_pretrained(self.out_dir / "last_step_scorer")
         return self.out_dir / "scorer"

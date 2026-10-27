@@ -38,7 +38,7 @@ class LearnedPolicy:
         with torch.autocast(canvas.device.type, enabled=False):
             reading = read_canvas(self.model, canvas)
             if t == 0:
-                self.episode_features = EpisodeFeatures(reading)
+                self.episode_features = EpisodeFeatures(reading, self.scorer.feature_groups)
                 return Viewpoint.full_scene(batch_size=canvas.shape[0], device=canvas.device)
             assert self.episode_features is not None, "an episode starts at t = 0"
             scores = self.scorer(self.episode_features(reading))

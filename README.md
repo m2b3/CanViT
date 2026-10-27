@@ -5,12 +5,12 @@
 <h1 align="center">CanViT: Toward Active-Vision Foundation Models (NeurIPS 2026)</h1>
 
 <p align="center">
-  <a href="https://yberreby.com">Yohaï-Eliel Berreby</a><sup>1,2</sup> ·
-  <a href="https://mila.quebec/en/directory/sabrina-du">Sabrina Du</a><sup>1,2</sup> ·
+  <a href="https://yberreby.com">Yohaï-Eliel Berreby</a><sup>1,2,4</sup> ·
+  <a href="https://mila.quebec/en/directory/sabrina-du">Sabrina Du</a><sup>1,2,4</sup> ·
   <a href="https://audrey-durand.fsg.ulaval.ca/en">Audrey Durand</a><sup>2,3</sup> ·
   <a href="https://m2b3.github.io/">B. Suresh Krishna</a><sup>1</sup>
   <br>
-  <sup>1</sup>McGill University · <sup>2</sup>Mila – Quebec AI Institute · <sup>3</sup>Université Laval
+  <sup>1</sup>McGill University · <sup>2</sup>Mila – Quebec AI Institute · <sup>3</sup>Université Laval · <sup>4</sup>Lamarck Labs
 </p>
 
 <p align="center">

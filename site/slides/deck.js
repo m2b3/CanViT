@@ -26,7 +26,7 @@ import RevealHighlight from "./node_modules/reveal.js/dist/plugin/highlight.mjs"
 
 const STATUSES = {
   ready: "ready",
-  draft: "draft: content in place, visuals or wording to finish",
+  draft: "draft",
   aspirational: "aspirational: shows what we want; the data or code behind it does not exist yet",
 };
 

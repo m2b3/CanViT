@@ -1,7 +1,9 @@
-// A score per model as a bar from 0, one row each, the model's name on the left and its score at the bar's end. Rows are
-// grouped by kind in the order given, each group sorted by value; kinds "active", "passive" and "canvit" take their
-// colors from talk.css (.bar-chart). With zoomMax, the rows marked core are first drawn alone on an axis zoomed to
-// zoomMax; the slide's CSS then brings in the others and rescales to max (#gap).
+// A score per model, one row each, the model's name on the left: a bar from 0 with the score at its end (mark "bar"),
+// or a dot on an axis from min to max with the score beside it (mark "dot": a dot encodes position, not length, so its
+// axis need not start at 0, and scores that crowd near the top of the scale stay apart). Rows are grouped by kind in
+// the order given, each group sorted by value; kinds "active", "passive" and "canvit" take their colors from talk.css
+// (.bar-chart). With zoomMax (bars only), the rows marked core are first drawn alone on an axis zoomed to zoomMax; the
+// slide's CSS then brings in the others and rescales to max (#gap).
 
 const SVG = "http://www.w3.org/2000/svg";
 const WIDTH = 1000, ROW = 46, LABEL_W = 330, BAR_W = 560, TOP = 10, GROUP_GAP = 24;
@@ -19,9 +21,11 @@ function text(content, attributes, parent) {
   return node;
 }
 
-/** rows: [{name, value, kind, core}]; groups: the kinds, in order; ticks: the axis values, from 0 to max. */
-export function drawBarRows(container, rows, { groups, max, ticks, zoomMax = max, label }) {
-  if (rows.some((r) => r.value < 0 || r.value > max)) throw new Error(`bar-rows: a value lies outside the axis 0-${max}`);
+/** rows: [{name, value, kind, core}]; groups: the kinds, in order; ticks: the axis values, from min to max. */
+export function drawBarRows(container, rows, { groups, min = 0, max, ticks, zoomMax = max, label, mark = "bar" }) {
+  if (mark === "bar" && min !== 0) throw new Error('bar-rows: bars start at 0; use mark "dot" for an axis from another value');
+  if (mark === "dot" && zoomMax !== max) throw new Error("bar-rows: zoomMax is for bars");
+  if (rows.some((r) => r.value < min || r.value > max)) throw new Error(`bar-rows: a value lies outside the axis ${min}-${max}`);
   if (rows.some((r) => !groups.includes(r.kind))) throw new Error(`bar-rows: a row's kind is not one of ${groups.join(", ")}`);
   if (rows.some((r) => r.core && r.value > zoomMax)) throw new Error(`bar-rows: a core row exceeds the zoomed axis (${zoomMax})`);
   const order = (subset) => {
@@ -35,7 +39,7 @@ export function drawBarRows(container, rows, { groups, max, ticks, zoomMax = max
     return { placed, height: y };
   };
   const all = order(rows), core = order(rows.filter((r) => r.core));
-  const x = (v) => LABEL_W + (v / max) * BAR_W;
+  const x = (v) => LABEL_W + ((v - min) / (max - min)) * BAR_W;
   const svg = el("svg", { viewBox: `0 0 ${WIDTH} ${all.height + 40}`, role: "img", "aria-label": label });
   // Zoomed, every horizontal position from the axis origin is stretched by max / zoomMax.
   const stretch = max / zoomMax;
@@ -51,6 +55,12 @@ export function drawBarRows(container, rows, { groups, max, ticks, zoomMax = max
     group.style.setProperty("--y-all", `${all.placed.get(row)}px`);
     group.style.setProperty("--y-core", `${row.core ? core.placed.get(row) : all.placed.get(row)}px`);
     text(row.name, { x: LABEL_W - 14, y: 29, "text-anchor": "end", class: "name" }, group);
+    if (mark === "dot") {
+      el("line", { x1: x(min), x2: x(max), y1: ROW / 2 - 2, y2: ROW / 2 - 2, class: "guide" }, group);
+      el("circle", { cx: x(row.value), cy: ROW / 2 - 2, r: 11, class: "dot" }, group);
+      text(row.value.toFixed(1), { x: x(row.value) + 20, y: 28, class: "value" }, group);
+      continue;
+    }
     el("rect", { x: x(0), y: 4, width: x(row.value) - x(0), height: ROW - 12, rx: 5, class: "bar" }, group)
       .style.setProperty("--zoom", `scaleX(${stretch})`);
     text(row.value.toFixed(1), { x: x(row.value) + 10, y: 28, class: "value" }, group)

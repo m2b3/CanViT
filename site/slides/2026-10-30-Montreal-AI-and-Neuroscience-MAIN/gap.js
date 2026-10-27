@@ -53,3 +53,32 @@ export async function drawGap(container, { paper, references, canvit = false }) 
   drawBarRows(container, rows, { groups: ["active", "canvit", "passive"], max: MAX, zoomMax: canvit ? MAX : ZOOM_MAX,
                                  ticks: [0, 10, 20, 30, 40, 50, 60, 70], label: "ADE20K mIoU of passive and active models" });
 }
+
+// ImageNet-1k in its place (#state-of-the-art), as top-1 accuracy. The models' accuracies crowd between 75 and 85%,
+// where bars from 0 would look alike, so each is a dot on an axis from IN1K_MIN to IN1K_MAX (bar-rows.js, mark "dot").
+// The paper's macros supply CanViT-B's results (frozen with a linear probe, and fine-tuned), its export of the DINOv3
+// probes (dinov3_probe_data.json) DINOv3 ViT-S/16 and ViT-B/16 read by those probes, and
+// sources/in1k-active-references.json the prior active models as the paper's Table 1 prints them
+// (site/check_paper_numbers.py holds them to it). The prior active and passive models come first; CanViT-B's two rows
+// wait for their own state.
+
+const IN1K_MIN = 70, IN1K_MAX = 90;
+
+function dinov3Top1(probes, model) {
+  const probe = probes.find((p) => p.model === model);
+  if (!probe) throw new Error(`gap: no DINOv3 ImageNet-1k probe for ${model}`);
+  return probe.in1k_top1;
+}
+
+export async function drawIn1kGap(container, { macros, probes, references }) {
+  const [paper, dinov3, refs] = await Promise.all([fetchJson(macros), fetchJson(probes), fetchJson(references)]);
+  const rows = [
+    ...refs.references.map((r) => ({ name: r.name, value: r.top1, kind: "active", core: true })),
+    { name: "CanViT-B, frozen", value: Number(paper.inkFrozenBest), kind: "canvit", core: false },
+    { name: "CanViT-B, fine-tuned", value: Number(paper.inkFinetunedBest), kind: "canvit", core: false },
+    { name: "DINOv3 ViT-S", value: dinov3Top1(dinov3.probes, "ViT-S/16"), kind: "passive", core: true },
+    { name: "DINOv3 ViT-B", value: dinov3Top1(dinov3.probes, "ViT-B/16"), kind: "passive", core: true },
+  ];
+  drawBarRows(container, rows, { groups: ["active", "canvit", "passive"], mark: "dot", min: IN1K_MIN, max: IN1K_MAX,
+                                 ticks: [70, 75, 80, 85, 90], label: "ImageNet-1k top-1 accuracy of passive and active models" });
+}

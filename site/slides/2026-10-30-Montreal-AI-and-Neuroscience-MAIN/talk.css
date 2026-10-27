@@ -500,6 +500,10 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 .bar-chart .passive .bar { fill: var(--ink); }
 .bar-chart .active .bar { fill: #d97706; }
 .bar-chart .canvit .bar { fill: var(--canvas); }
+.bar-chart .guide { stroke: var(--rule); stroke-width: 1; }
+.bar-chart .passive .dot { fill: var(--ink); }
+.bar-chart .active .dot { fill: #d97706; }
+.bar-chart .canvit .dot { fill: var(--canvas); }
 
 /* Yes/no comparison: the families of models against what an active-vision foundation model needs. */
 .compare-wrap { display: flex; justify-content: center; margin-top: 26px; }
@@ -713,14 +717,20 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope.shows-canvas .canvas-key { opacity: 1; }
 
 /* A new active-vision state of the art: #gap's chart as it ended, at the same sizes, then on "canvit" every row glides to
-   make room and CanViT-B's bar grows between the active and passive models, in canvas red (gap.js). */
-#state-of-the-art .bar-chart { width: 980px; margin: 14px auto 0; }
+   make room and CanViT-B's bar grows between the active and passive models, in canvas red (gap.js). On "in1k" the
+   ImageNet-1k chart takes the same place, and on "in1k-canvit" its rows make room for CanViT-B's two dots. */
+#state-of-the-art .charts { display: grid; width: 980px; margin: 14px auto 0; }
+#state-of-the-art .charts > .bar-chart { grid-area: 1 / 1; transition: opacity .6s ease; }
+#state-of-the-art .bar-chart.in1k, #state-of-the-art.shows-in1k .bar-chart.ade20k { opacity: 0; }
+#state-of-the-art.shows-in1k .bar-chart.in1k { opacity: 1; }
 #state-of-the-art .bar-chart .row { transform: translateY(var(--y-core)); transition: transform .8s ease, opacity .6s ease; }
 #state-of-the-art .bar-chart .row:not(.core) { opacity: 0; }
-#state-of-the-art.shows-canvit .bar-chart .row { transform: translateY(var(--y-all)); opacity: 1; }
+#state-of-the-art.shows-canvit .ade20k .row, #state-of-the-art.shows-in1k-canvit .in1k .row {
+  transform: translateY(var(--y-all)); opacity: 1; }
 #state-of-the-art .bar-chart .canvit .bar { transform: scaleX(0); transform-box: fill-box; transform-origin: left center;
                                             transition: transform .9s ease .4s; }
 #state-of-the-art.shows-canvit .bar-chart .canvit .bar { transform: none; }
+#state-of-the-art .in1k .row:not(.core) { transition: transform .8s ease, opacity .6s ease .4s; }
 #state-of-the-art .bar-chart .canvit :is(.name, .value) { fill: var(--canvas); }
 #state-of-the-art .bar-chart .name { font-size: 22px; }
 #state-of-the-art .bar-chart .value { font-size: 26px; }

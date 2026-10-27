@@ -162,6 +162,9 @@ Screenshots are review material and are never committed (`site/.screens/` is ign
 `../stress.py` skips through a talk quickly, forward, back and at random, and checks that each slide lands in the state
 a settled visit gives it, with nothing playing off its slide [Yohaï, 2026-10-01].
 
+The published deck has no Backup slides (`../published_deck.py` cuts them), so the page's script reaches a Backup slide
+only through `drawIfPresent`; the cut refuses a deck that looks one up directly, which would not start.
+
 After a deploy, `../check_published.py` walks the project page and a talk locally, every click and every scene of its
 episodes, and requests each file they loaded from the published site [Yohaï, 2026-10-01]. Do not edit `site/` while
 `../shoot.py`, `../stress.py` or `../check_published.py` runs: the dev server reloads open pages on every change, which breaks

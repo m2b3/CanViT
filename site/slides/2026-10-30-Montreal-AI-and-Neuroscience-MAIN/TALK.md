@@ -483,7 +483,9 @@ drafts until Yohaï words them.
 - `#sr-rope`: scene-relative positions bind the retinotopic backbone and the spatiotopic canvas (§4, SR-RoPE); the
   spacing of positions encodes zoom; it answers the problem slide's "where was each glimpse taken?". About 40 s.
 - `#canvas-attention`: asymmetric cross-attention, projections on the glimpse side only, so the canvas can be large
-  without the quadratic cost of self-attention (§4); Fig. 3B. About 35 s.
+  without the quadratic cost of self-attention (§4). Panel A, then panel B alone across the slide, rebuilt as a chart
+  from the paper's computation (`experiments/canvas_attention`); panel C is hidden by the section's class `hide-c`
+  (removing it shows C beside B). About 35 s.
 - `#outline-pretraining`. A few seconds.
 - `#how-to-see-first` (A, 2026-10-27, after Yohaï's correction): the pretraining's problem and its principle. How to
   pretrain the observer, when prior models often learned how to see together with where to look, the policy through

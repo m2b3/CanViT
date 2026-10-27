@@ -116,6 +116,11 @@ training_cost() {
   uv run --project ../../../paper/exporter python -u -m experiments.training_cost.export
 }
 
+# The cost panels of the paper's Canvas Attention figure, from the paper's own computation, for #canvas-attention.
+canvas_attention() {
+  uv run --project ../../../paper/exporter python -u -m experiments.canvas_attention.export
+}
+
 # The street of the recorded bundles under R-IID (seed 0), as site/record_bundles.sh records street-riid, with the
 # canvas after each Canvas Attention Write, for the architecture slide.
 architecture() {
@@ -148,7 +153,7 @@ canvit_rollout() {
 }
 
 all=(table_corners vit_glimpse looking_closer memory distillation foundation metacognition pretraining quickstart
-     whole_scene_baseline history_examples training_cost architecture title_teaser canvit_rollout canvas_updates)
+     whole_scene_baseline history_examples training_cost canvas_attention architecture title_teaser canvit_rollout canvas_updates)
 chosen=("$@")
 [[ $# -gt 0 ]] || chosen=("${all[@]}")
 for experiment in "${chosen[@]}"; do

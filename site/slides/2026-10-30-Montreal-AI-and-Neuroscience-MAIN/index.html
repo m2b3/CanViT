@@ -566,19 +566,24 @@
   </ul></aside>
 </section>
 
-<section id="canvas-attention" data-status="draft">
+<section id="canvas-attention" class="hide-c" data-status="draft">
   <h2>Canvas Attention</h2>
-  <!-- The paper's Figure 3: panel A alone and centered first, then (shows-payoff) panels B and C, what the asymmetry
-       buys: total FLOPs against the output patch grid, and the cost of canvas-side projections. -->
-  <svg class="figure" viewBox="0 0 396 216" role="img" aria-label="Canvas Attention: a read–write pair with learned projections on the glimpse side only, then its cost against the output patch grid">
-    <image href="../../assets/paper/canvas_attention_combined.svg" width="396" height="216"/>
-    <g class="fragment rings">
-      <ellipse cx="84.5" cy="65" rx="8" ry="6"/><ellipse cx="84.5" cy="76" rx="8" ry="6"/>
-      <ellipse cx="84" cy="148" rx="8" ry="6"/><ellipse cx="142.6" cy="120.5" rx="8" ry="6"/>
-    </g>
-    <rect class="fragment canvas-side" x="158" y="60" width="58" height="102" rx="6"/>
-    <rect class="cover" x="250" y="0" width="146" height="216"/>
-  </svg>
+  <!-- The paper's Figure 3: panel A alone (cropped from the paper's figure), then (shows-payoff) what the asymmetry buys
+       in place of A, the whole slide: panel B, total inference FLOPs against the output patch grid, rebuilt as a chart
+       from the paper's computation (experiments/canvas_attention, flops-chart.js). Panel C, the cost of canvas-side
+       projections, joins B side by side when the section's class hide-c is removed. -->
+  <div class="stage">
+    <svg class="figure" viewBox="0 0 253 216" role="img" aria-label="Canvas Attention: a read–write pair with learned projections on the glimpse side only">
+      <image href="../../assets/paper/canvas_attention_combined.svg" width="396" height="216"/>
+      <g class="fragment rings">
+        <ellipse cx="84.5" cy="65" rx="8" ry="6"/><ellipse cx="84.5" cy="76" rx="8" ry="6"/>
+        <ellipse cx="84" cy="148" rx="8" ry="6"/><ellipse cx="142.6" cy="120.5" rx="8" ry="6"/>
+      </g>
+      <rect class="fragment canvas-side" x="158" y="60" width="58" height="102" rx="6"/>
+    </svg>
+    <div class="cost b-only"><div class="flops-chart total"></div></div>
+    <div class="cost with-c"><div class="flops-chart total"></div><div class="flops-chart ratio"></div></div>
+  </div>
   <span class="fragment step-marker" data-shows="payoff"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
@@ -591,8 +596,10 @@
     <li>with no MLP and no self-attention.</li>
     <li>With so little computation per canvas token, the canvas can be much larger than the glimpse.</li>
     <li>[CLICK]</li>
-    <li><b>As a result</b>, CanViT supports fine-grained canvases</li>
-    <li>without incurring the quadratic cost of self-attention.</li>
+    <li>Here is the total inference cost against the resolution of the output.</li>
+    <li>A ViT on the whole scene, dashed, grows <b>quadratically</b>.</li>
+    <li>CanViT-B grows slowly, <b>even</b> over 21 glimpses,</li>
+    <li><b>so</b> it supports fine-grained canvases without the quadratic cost of self-attention.</li>
   </ul></aside>
 </section>
 
@@ -1228,6 +1235,8 @@
   import "./title-teaser.js";
   import { placeTableAnswers } from "./table.js";
   import { drawGap, drawIn1kGap } from "./gap.js";
+  import { totalFlops, projectionRatio } from "./flops-chart.js";
+  import { fetchJson } from "./bar-rows.js";
   import { POLICIES } from "../../js/canvit/policies.js";
   import { insertPaperFigures } from "../paper-figures.js";
   import { startDeck } from "../deck.js";
@@ -1261,6 +1270,12 @@
   await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
   await drawGap(document.querySelector("#state-of-the-art .ade20k .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json", canvit: true, annotated: true });
   await drawIn1kGap(document.querySelector("#state-of-the-art .in1k .bars"), { macros: "../../assets/paper/data_macros.json", probes: "../../assets/paper/dinov3_probe_data.json", references: "sources/in1k-active-references.json" });
+  {
+    const slide = document.querySelector("#canvas-attention"), flops = await fetchJson("../../data/talk/canvas-attention/flops.json");
+    totalFlops(slide.querySelector(".b-only .total"), flops, { width: 1100, height: 540, labels: 280 });
+    totalFlops(slide.querySelector(".with-c .total"), flops, { width: 640, height: 540, labels: 280 });
+    projectionRatio(slide.querySelector(".with-c .ratio"), flops, { width: 500, height: 540, labels: 90 });
+  }
   await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
   const egc2f = document.querySelector("#eg-c2f");
   await drawUncertainty(egc2f, "../../data/talk/metacognition/street");

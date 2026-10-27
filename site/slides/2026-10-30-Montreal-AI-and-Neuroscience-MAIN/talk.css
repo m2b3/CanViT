@@ -235,11 +235,17 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #architecture .relabel .viewpoint { font-size: 25px; font-variant-numeric: tabular-nums; }
 #architecture .relabel .glimpse-count { font-size: 42px; font-weight: 700; }
 
-#canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden;
-                               transform: translateX(185px); transition: transform .8s ease; }
-#canvas-attention .cover { fill: var(--bg); transition: opacity .6s ease .4s; }
-#canvas-attention.shows-payoff svg.figure { transform: none; }
-#canvas-attention.shows-payoff .cover { opacity: 0; }
+/* Panel A centered, then the cost charts in its place across the slide (shows-payoff); C beside B unless hide-c. */
+#canvas-attention .stage { display: grid; place-items: center; height: 560px; margin-top: -6px; }
+#canvas-attention .stage > * { grid-area: 1 / 1; transition: opacity .6s ease; }
+#canvas-attention svg.figure { display: block; height: 540px; width: auto; }
+#canvas-attention .cost { display: flex; gap: 12px; opacity: 0; }
+#canvas-attention .b-only .flops-chart.total { width: 1100px; }
+#canvas-attention .with-c .flops-chart.total { width: 640px; }
+#canvas-attention .with-c .flops-chart.ratio { width: 500px; }
+#canvas-attention.hide-c .cost.with-c, #canvas-attention:not(.hide-c) .cost.b-only { display: none; }
+#canvas-attention.shows-payoff svg.figure { opacity: 0; }
+#canvas-attention.shows-payoff .cost { opacity: 1; transition-delay: .3s; }
 #canvas-attention .rings ellipse { fill: none; stroke: var(--glimpse); stroke-width: 1.4; }
 #canvas-attention .canvas-side { fill: none; stroke: var(--canvas); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
 
@@ -514,6 +520,27 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 .bar-chart .brand stop:last-child { stop-color: var(--glimpse); }
 .bar-chart .section-label { font-size: 21px; font-weight: 800; fill: var(--ink); }
 .bar-chart .bracket { stroke: var(--ink); stroke-width: 3px; stroke-linecap: round; }
+
+/* The cost charts of #canvas-attention (flops-chart.js), in the bar charts' text sizes. */
+.flops-chart svg { display: block; width: 100%; height: auto; font-family: var(--sans); overflow: visible; }
+.flops-chart .grid line { stroke: var(--rule); }
+.flops-chart :is(.spine, .tick-mark) { stroke: var(--ink); stroke-width: 2px; }
+.flops-chart .tick { font-size: 24px; fill: var(--ink); }
+.flops-chart .axis-title { font-size: 24px; font-weight: 700; fill: var(--ink); }
+.flops-chart .curve { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.flops-chart .curve.dinov3 { stroke: var(--ink); stroke-dasharray: 14 9; }
+.flops-chart .curve.thick { stroke-width: 7px; }
+.flops-chart .curve.thin { stroke-width: 3px; }
+.flops-chart .end-label { font-size: 24px; font-weight: 800; fill: var(--ink); }
+.flops-chart .key-title { font-size: 22px; font-weight: 750; fill: var(--ink); }
+.flops-chart .brand stop:first-child { stop-color: var(--canvas); }
+.flops-chart .brand stop:last-child { stop-color: var(--glimpse); }
+.flops-chart .ratio .curve { stroke: currentColor; stroke-width: 4px; }
+.flops-chart .ratio circle { fill: currentColor; }
+.flops-chart .ratio.end-label { fill: currentColor; }
+.flops-chart .shade-0 { color: var(--glimpse); }
+.flops-chart .shade-1 { color: color-mix(in oklab, var(--glimpse) 62%, var(--bg)); }
+.flops-chart .shade-2 { color: color-mix(in oklab, var(--glimpse) 35%, var(--bg)); }
 
 /* Yes/no comparison: the families of models against what an active-vision foundation model needs. */
 .compare-wrap { display: flex; justify-content: center; margin-top: 26px; }

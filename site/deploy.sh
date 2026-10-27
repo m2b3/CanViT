@@ -12,7 +12,7 @@ set -euo pipefail
 site=$(cd "$(dirname "$0")" && pwd)
 cd "$site/.."
 
-python3 site/check_paper_numbers.py
+uv run --no-project python site/check_paper_numbers.py
 [ -z "$(git status --porcelain -- site)" ] || { echo "site/ has uncommitted changes: commit them first" >&2; exit 1; }
 # The bundles the pages and talks load, as they name them; other recorded bundles stay local. data/talk is the talks'
 # own data, not a bundle.

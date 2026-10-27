@@ -38,6 +38,18 @@ class ProbeEntry:
     canvas_grid_size: int
 
 
+@dataclass(frozen=True)
+class DetectorEntry:
+    """A CanViTForObjectDetection in canvit-nnx's format, with the records its card and provenance are made of."""
+
+    artifact: Path  # config.json and model.safetensors
+    target_repo: str
+    # pretrained, checkpoint_step, total_steps, scene_size_px, glimpse_size_px, recipe (detect.train.Recipe)
+    training: dict[str, Any]
+    evaluation: dict[str, Any]  # split, images, policy, repeats, glimpses, statistics: {"<stat>_t<glimpse>": {mean, ci95}}
+    validation: dict[str, Any]  # the converted detector against the implementation that trained it
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text())
     if not isinstance(value, dict):
@@ -147,6 +159,29 @@ glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_p
 logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)  # [1, {entry.canvas_grid_size}, {entry.canvas_grid_size}, {num_classes}]{evaluation}'''
 
 
+def _detector_usage(*, repo: str, scene_size_px: int, glimpse_size_px: int, canvas_grid_size: int, num_glimpses: int) -> str:
+    return f'''import flax.nnx as nnx
+import jax
+import jax.numpy as jnp
+import numpy as np
+from PIL import Image
+
+from canvit_nnx import sample_at_viewpoint
+from canvit_nnx.detect.data import normalize
+from canvit_nnx.detect.decode import decode
+from canvit_nnx.detect.model import CanViTForObjectDetection
+from canvit_nnx.policies import coarse_to_fine
+
+image = Image.open("scene.jpg").convert("RGB").resize(({scene_size_px}, {scene_size_px}), Image.Resampling.BILINEAR)
+scene = normalize(jnp.asarray(np.asarray(image))[None])
+model = nnx.view(CanViTForObjectDetection.from_pretrained("{repo}"), use_running_average=True)
+state = model.init_state(batch_size=1, canvas_grid_size={canvas_grid_size})
+for viewpoint in coarse_to_fine(jax.random.key(0), batch_size=1, num_glimpses={num_glimpses}):
+    glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px={glimpse_size_px})
+    maps, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)
+    detections = decode(maps)  # normalized (ymin, xmin, ymax, xmax) boxes, scores and COCO class indices'''
+
+
 def _details(rows: list[tuple[str, str]]) -> str:
     return "| | |\n|---|---|\n" + "\n".join(f"| {name} | {value} |" for name, value in rows)
 
@@ -238,6 +273,84 @@ def _probe_card(entry: ProbeEntry) -> tuple[str, dict[str, Any]]:
     return body, _provenance(entry, record, conversion)
 
 
+def _detector_card(entry: "DetectorEntry") -> tuple[str, dict[str, Any]]:
+    record = _read_json(entry.artifact / "config.json")
+    if record.get("format") != FORMAT:
+        raise ValueError(f"{entry.artifact}: unexpected format {record.get('format')!r}")
+    assert record["backend"] == "nnx" and record["model"] == "CanViTForObjectDetection", record
+    training, evaluation = entry.training, entry.evaluation
+    recipe, statistics = training["recipe"], evaluation["statistics"]
+    glimpses = range(evaluation["glimpses"])
+
+    def cell(name: str, glimpse: int) -> str:
+        value = statistics[f"{name}_t{glimpse}"]
+        interval = value.get("ci95")
+        varies = interval is not None and interval[0] < interval[1]
+        return f"{value['mean']:.4f}" + (f" [{interval[0]:.4f}, {interval[1]:.4f}]" if varies else "")
+
+    results = "| Glimpse | AP | AP50 | AP75 |\n|---|---|---|---|\n" + "\n".join(
+        f"| {glimpse} | {cell('AP', glimpse)} | {cell('AP50', glimpse)} | {cell('AP75', glimpse)} |" for glimpse in glimpses
+    )
+    rows = [
+        ("Backend", _backend_label("nnx")),
+        ("Model class", "`CanViTForObjectDetection`"),
+        ("Starting checkpoint", training["pretrained"]),
+        ("Training", (
+            f"step {training['checkpoint_step']} of {training['total_steps']}, {recipe['batch_size']} COCO "
+            f"train2017 scenes per step, {recipe['num_glimpses']} glimpses per rollout; the recipe is in "
+            "provenance.json"
+        )),
+        ("Geometry", (
+            f"{training['scene_size_px']} px scenes, {training['glimpse_size_px']} px glimpses, "
+            f"{recipe['canvas_grid_size']} × {recipe['canvas_grid_size']} canvas"
+        )),
+        ("Classes", str(record["config"]["num_classes"])),
+    ]
+    frontmatter: dict[str, str | list[str]] = {
+        "library_name": _package_name("nnx"),
+        "pipeline_tag": "object-detection",
+        "tags": ["canvit", "active-vision", "vision-transformer", "coco", "centernet", "nnx"],
+        "license": "mit",
+    }
+    usage = _detector_usage(
+        repo=entry.target_repo,
+        scene_size_px=training["scene_size_px"],
+        glimpse_size_px=training["glimpse_size_px"],
+        canvas_grid_size=recipe["canvas_grid_size"],
+        num_glimpses=evaluation["glimpses"],
+    )
+    body = "\n\n".join((
+        _frontmatter(frontmatter),
+        "# CanViT COCO detector (JAX / Flax NNX)",
+        (
+            "CanViT-B with a CenterNet head on its canvas, trained end to end for COCO 2017 object detection; it "
+            "predicts boxes after every glimpse."
+        ),
+        project.DESCRIPTION,
+        f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
+        "## Install\n\n```bash\n" + _install("nnx") + "\n```",
+        "## Usage\n\n```python\n" + usage + "\n```",
+        f"## Results\n\nCOCO {evaluation['split']} ({evaluation['images']} images), {evaluation['policy']} viewpoints: "
+        f"means over {evaluation['repeats']} independent viewpoint draws, with 95% bootstrap intervals over the draws "
+        "where they vary.\n\n" + results,
+        "## Details\n\n" + _details(rows),
+        "## Citation\n\n```bibtex\n" + project.BIBTEX + "\n```",
+    )) + "\n"
+    provenance = {
+        "target": {
+            "backend": record["backend"],
+            "model": record["model"],
+            "format": record["format"],
+            "config_sha256": _sha256(entry.artifact / "config.json"),
+            "weights_sha256": _sha256(entry.artifact / "model.safetensors"),
+        },
+        "training": training,
+        "evaluation": evaluation,
+        "validation": entry.validation,
+    }
+    return body, provenance
+
+
 def _provenance(entry: ModelEntry | ProbeEntry, record: dict[str, Any], conversion: dict[str, Any]) -> dict[str, Any]:
     source: dict[str, Any] = {"repo": entry.source_repo, "revision": entry.source_revision}
     source_sidecar = entry.artifact / "source.json"
@@ -289,4 +402,9 @@ def stage_probe(entry: ProbeEntry, destination_root: Path) -> Path:
     return _stage(entry.artifact, destination_root / entry.target_repo.rsplit("/", 1)[-1], card, provenance)
 
 
-__all__ = ["ModelEntry", "ProbeEntry", "stage_model", "stage_probe"]
+def stage_detector(entry: "DetectorEntry", destination_root: Path) -> Path:
+    card, provenance = _detector_card(entry)
+    return _stage(entry.artifact, destination_root / entry.target_repo.rsplit("/", 1)[-1], card, provenance)
+
+
+__all__ = ["DetectorEntry", "ModelEntry", "ProbeEntry", "stage_detector", "stage_model", "stage_probe"]

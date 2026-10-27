@@ -178,7 +178,7 @@ the page's `<canvit-live>`), then published, as `canvit-pytorch/docs/viz.md`
 exports in `paper/exports/`; `deploy.sh` publishes the files they point to.
 Every result number on the page sits in
 `<span data-macro="name">…</span>`, as is every number in the repository README's abstract, and
-`uv run --project canvit-pytorch python site/check_paper_numbers.py`,
+`uv run --no-project python site/check_paper_numbers.py`,
 which `deploy.sh` runs first, fails when one differs from the paper's value
 or when the ADE20K export's claims disagree with the macros.
 `copy_paper_figures.sh` copies the architecture diagram (`arch_overview.svg`)

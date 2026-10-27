@@ -25,6 +25,9 @@ and operate software.
   fine-tuning on Cloud TPU (exact torch/torch_xla pins).
 - `canvit-mlx/` and `canvit-nnx/`: native model packages with the same public
   model concepts and channels-last images. Each has its own uv environment.
+  `canvit-nnx` also trains: ImageNet-1k fine-tuning (`canvit_nnx.specialize`)
+  and COCO detection (`canvit_nnx.detect`), on the code they share in
+  `canvit_nnx.training`.
 - `canvit-core/`: framework-independent architecture definitions and shared
   checkpoint and preprocessing code. Backend packages depend on it.
 - `canvit/`: the PyPI placeholder linking to the backend packages and homepage.
@@ -38,6 +41,12 @@ and operate software.
 - `paper/`: the NeurIPS 2026 paper. `paper/latex/` holds its sources, `paper/exports/` the figures and data
   they read, `paper/exporter/` the pipeline that writes them from evaluation results (a uv project that
   depends on `canvit-pytorch/`). `paper/AGENTS.md` holds the paper's conventions.
+- `baselines/`: the paper's baselines, each its own uv project and never
+  published: `adaglimpse-nnx/` (AdaGlimpse's architecture in JAX/Flax NNX,
+  tested against AdaGlimpse's own code) and `gfnet-adaptivenn/` (GFNet's and
+  AdaptiveNN's released models measured with their code). Nothing outside
+  `baselines/` imports from it; third-party code and checkpoints are fetched,
+  pinned by commit and checksum, never copied in.
 - `.github/workflows/release.yml`: PyPI releases use
   `<package>-v<version>` tags matching the package's `pyproject.toml`.
 
@@ -150,6 +159,12 @@ spelling.
 - Each fact has one authoritative home. Deduplicate concepts as well as text;
   finding differently worded copies requires reading, not only searching. A
   routine change should not require synchronized edits across the tree.
+- Docs, cards and comments name a value by pointing to its owner (a config,
+  a recorded result, a generated table) or are generated from it with a check
+  that fails when they diverge; hand-typed copies go stale.
+- Never refer to anything by its position: not "item 5", "step 3" or "the
+  second option", and not a paper's rendered section, table or figure number,
+  which shifts when one is added. Name the thing, or cite its LaTeX label.
 - Delete ceremony, redundant wrappers, obsolete paths and unnecessary
   comments. Comments explain a non-obvious reason, invariant or limitation.
   If an explanation needs many caveats, reconsider the design first.
@@ -184,15 +199,14 @@ spelling.
   narratives.
 - Record a rule in a guide as it was given, with no examples or extensions
   of your own; a guide records what is true, no more specific than it has
-  to be [Yohaï, 2026-10-01].
+  to be.
 - This repository is public, and what is pushed stays in its history. Guides,
   plans and notes state rules and decisions in clean words, never as pasted
-  quotes of the authors' messages, and carry nothing from private sources
-  [Yohaï, 2026-10-23].
+  quotes of the authors' messages, and carry nothing from private sources.
 - `AGENTS.md` files hold rules that stay true for anyone working here.
   Anything personal, specific to one event or person, likely to change or go
   stale, or unfit as a general rule stays out of them, in an agent's private
-  memory [Yohaï, 2026-10-23].
+  memory.
 - Test interfaces as a user meets them: a fresh process, the installed
   package outside this checkout, released checkpoints from the Hub.
 - Usage examples load pretrained checkpoints from Hugging Face.
@@ -216,22 +230,31 @@ spelling.
   small it looks: a vague name, a comment that narrates or misleads, a
   docstring that restates the signature, dead code. If that means rewriting
   the file, rewrite it.
-- The code is clean for the users to come, and people already use the model:
-  where an existing user would hit a break, fail fast with an error that says
-  why things broke, and keep compatibility code off the main path. That code
+- People use the released packages. Each version on PyPI loads the Hub repos
+  it names at their `main` revision, so at every moment every live release
+  must load what the Hub serves, and no release may ship that cannot. Plan the
+  order before changing either side: a new checkpoint format goes to new
+  repos, or to an existing repo's `main` only once a release that reads it is
+  out and a tag marks the old revision for older releases (the card says
+  which versions read which revision).
+- A change that reaches package users lands with its entry under
+  "Unreleased" in that package's `CHANGELOG.md`: breaking changes marked, and
+  the Hub steps the release must be followed by, in order.
+- The code is clean for the users to come. Where an existing user would hit
+  a break, fail fast with an error that says why and what to do; that code
   lives in `canvit_pytorch.legacy`, reached only when a load or lookup fails.
-  Checkpoints are republished on the Hub as needed; each republished
-  checkpoint is verified by
-  loading it and comparing outputs with the old code.
-- Republish NNX and MLX checkpoints as needed; avoid unnecessary backward
-  compatibility code in the libraries, especially their main code paths.
+  One-time migration code (format converters, republish scripts) is deleted
+  once its migration is done; Git keeps it. The libraries carry no other
+  backward compatibility.
+- Republish checkpoints of any backend (PyTorch, NNX, MLX) as needed, under
+  the ordering above; each republished checkpoint is verified by loading it
+  and comparing outputs with the old code.
 - Hub model cards and everything else published are deduplicated and
   consistent. They are generated from the modules that
   own their facts; a card is never edited by hand on the Hub. The main pages
   (website, READMEs, pyproject) say that CanViT means Canvas Vision
   Transformer.
-- CanViT and its probes are published separately, never fused in one graph
-  [Yohaï, 2026-10-01].
+- CanViT and its probes are published separately, never fused in one graph.
 - Judge everything by leverage per line, tests included. A test earns its place by catching a plausible defect that
   nothing else would: a paper invariant, a numerical equivalence, a released
   checkpoint that must keep loading. Vacuous tests (restating the code) and
@@ -263,7 +286,7 @@ uv run just            # lint, typecheck, test
 - Never read out the raw canvas; always the layer-normalized canvas.
 - The canvas never acts: it is memory. A policy chooses viewpoints; EG-C2F chooses the tile where the segmentation
   read out from the canvas is least certain, so the canvas guides that choice (the paper's "guide viewpoint
-  selection"). Never write that the canvas picks, chooses, looks or decides [Yohaï, 2026-10-01].
+  selection"). Never write that the canvas picks, chooses, looks or decides.
 - `torch.compile`: call `model(x)`, never `model.forward(x)`, which bypasses
   the compiled wrapper.
 - Numbers reported anywhere (README, site, papers) come from saved evaluation
@@ -274,3 +297,10 @@ uv run just            # lint, typecheck, test
 
 Never `git add -A` or `git add .`; stage files by name and read the staged
 diff before committing.
+
+A commit message is public and permanent. Its subject is one line of at most
+72 characters saying what changed, prefixed by its area when that helps
+(`rl:`, `exporter:`, `canvit-nnx:`). A body is for a reason the diff cannot
+show, in a few plain sentences. A message never lists every edit, recounts how
+the change was made, quotes or credits a person, names a private repository,
+host or run, or refers to anything by its position.

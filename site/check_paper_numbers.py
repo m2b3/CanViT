@@ -1,7 +1,7 @@
 """Every number marked data-macro="name", in the site's pages and talks or in the repository README, must read exactly
 as the paper's macro of that name.
 
-    python3 site/check_paper_numbers.py
+    uv run --no-project python site/check_paper_numbers.py
 
 assets/paper/data_macros.json links to the paper's generated macros (see README.md, "Paper numbers").
 """

@@ -57,6 +57,7 @@ def _recipe(manifests: list[dict]) -> dict:
         "batch_size": shared["batch_size"], "glimpse_budget": shared["budget_forwards"],
         "steps": steps, "lr": shared["lr"], "weight_decay": shared["weight_decay"],
         "warmup_steps": int(shared["warmup_frac"] * steps), "validation_interval": shared["eval_every"],
+        "adam_betas": [shared["adam_beta1"], shared["adam_beta2"]], "grad_clip": shared["grad_clip"],
         # The July code took the scorer's choice with probability prime_on_policy, a random candidate otherwise.
         "q_regression_epsilon": 1 - prime_on_policy, "policy_gradient_entropy_floor": pg_objective["entropy_target"],
     }

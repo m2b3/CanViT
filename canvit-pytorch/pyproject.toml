@@ -84,6 +84,7 @@ viz = [
 rl = [
     "pillow>=10.0.0",
     "tyro>=1.0.0",
+    "tqdm>=4.60.0",
 ]
 evaluate = [
     "pillow>=10.0.0",
@@ -131,6 +132,7 @@ python_files = ["test.py", "test_*.py"]
 markers = [
     "slow: marks tests as slow (deselect with '-m not slow')",
     "network: marks tests that require network access (HF Hub downloads, etc.)",
+    "gated(repo_id): needs read access to the gated Hugging Face repo repo_id; skipped, with the reason, without it",
 ]
 addopts = "-m 'not slow'"
 filterwarnings = ["ignore:Failed to initialize NumPy:UserWarning"]

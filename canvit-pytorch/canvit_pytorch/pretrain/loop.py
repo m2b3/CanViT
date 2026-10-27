@@ -162,7 +162,7 @@ def _train_job(config: PretrainingConfig, run_dir: Path) -> None:
         nonlocal save_requested
         save_requested = True
 
-    signal.signal(signal.SIGUSR1, request_save)  # SLURM sends it before a time limit or preemption
+    signal.signal(signal.SIGUSR1, request_save)  # SLURM sends it before the time limit (train.sbatch's --signal)
 
     if config.compile:
         model.canvit.compile()

@@ -136,6 +136,7 @@ requires-dist = [
     { name = "torchvision", marker = "sys_platform != 'linux'", specifier = ">=0.22.0" },
     { name = "torchvision", marker = "sys_platform == 'linux'", specifier = ">=0.22.0", index = "https://download.pytorch.org/whl/cu128" },
     { name = "tqdm", marker = "extra == 'evaluate'", specifier = ">=4.60.0" },
+    { name = "tqdm", marker = "extra == 'rl'", specifier = ">=4.60.0" },
     { name = "tqdm", marker = "extra == 'specialize'", specifier = ">=4.60.0" },
     { name = "transformers", marker = "extra == 'evaluate'", specifier = ">=4.50.0" },
     { name = "transformers", marker = "extra == 'pretrain'", specifier = ">=4.50.0" },

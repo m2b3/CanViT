@@ -2,6 +2,7 @@ default: lint typecheck test
 
 lint:
     uv run ruff check .
+    bash ../tools/check_locks.sh
 
 typecheck:
     uv run --all-extras basedpyright canvit_nnx tests ../canvit-core/canvit_core

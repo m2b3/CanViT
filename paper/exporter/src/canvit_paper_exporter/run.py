@@ -13,8 +13,8 @@ import sys
 import time
 
 from canvit_paper_exporter import (
-    ablations, ade20k, architecture_control, bench, coco_detection, dataset_scale, diagrams, flops, hf, in1k,
-    in1k_efficiency, learned_policies, main_results, policy_styles,
+    ablations, ade20k, architecture_control, bench, coco_detection, compute_reporting, dataset_scale, diagrams, flops,
+    hf, in1k, in1k_efficiency, learned_policies, main_results, policy_styles,
 )
 from canvit_paper_exporter.core import (
     Dataset, Diagram, Figure, _fmt_elapsed, run_dataset, run_diagram, run_figure,
@@ -39,6 +39,7 @@ DATASETS: list[Dataset] = [
     in1k_efficiency.dataset,
     learned_policies.dataset,
     policy_styles.dataset,
+    compute_reporting.dataset,
 ]
 
 FIGURES: list[Figure] = [

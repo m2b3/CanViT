@@ -135,9 +135,11 @@ def test_the_numbers_printed_in_the_paper():
 
 
 @pytest.mark.network
-@pytest.mark.parametrize("variant", list(EXPORTER_DINOV3))
+@pytest.mark.parametrize("variant", [
+    pytest.param(variant, marks=pytest.mark.gated(DINOV3_REPOS[variant])) for variant in EXPORTER_DINOV3
+])
 def test_dinov3_from_its_hub_config_matches_the_paper_exporter(variant: DINOv3Variant):
-    config = AutoConfig.from_pretrained(DINOV3_REPOS[variant])  # gated: a token that accepted DINOv3's license
+    config = AutoConfig.from_pretrained(DINOV3_REPOS[variant])
     assert isinstance(config, DINOv3ViTConfig)
     for input_size_px, expected in EXPORTER_DINOV3[variant].items():
         assert dinov3_flops(config, input_size_px=input_size_px) == expected

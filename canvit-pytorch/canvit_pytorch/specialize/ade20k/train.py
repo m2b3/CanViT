@@ -19,11 +19,11 @@ import torch.nn.functional as F
 from dinov3.eval.segmentation.schedulers import WarmupOneCycleLR
 from torch import Tensor
 from torch.utils.data import DataLoader
-from tqdm import tqdm
 
 from canvit_pytorch.benchmarks.ade20k import IGNORE_LABEL, NUM_CLASSES, MeanIoU
 from canvit_pytorch.benchmarks.ade20k.dataset import Split
 from canvit_pytorch.probes import SegmentationProbe
+from canvit_pytorch.progress import progress
 from canvit_pytorch.provenance import provenance
 from canvit_pytorch.specialize.ade20k import data
 from canvit_pytorch.specialize.ade20k.config import ProbeTrainingConfig
@@ -219,7 +219,7 @@ def train_probe(setup: ProbeSetup) -> Path:
 
     window = TrainingWindow(device)
     validation_batch: LabeledMaps | None = None
-    for step in tqdm(range(config.num_steps), desc=setup.run_name):
+    for step in progress(range(config.num_steps), description=setup.run_name):
         images, labels = (tensor.to(device) for tensor in next(training_batches))
         if step % config.validate_every == 0:
             validation_batch = validate_and_record(step)

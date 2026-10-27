@@ -210,8 +210,8 @@ spelling.
 - `AGENTS.md` files hold rules that stay true for anyone working here.
   Anything personal, specific to one event or person, likely to change or go
   stale, or unfit as a general rule stays out of them, in an agent's private
-  memory. A directory that belongs to one event, such as a
-  talk's, has its own `AGENTS.md` for that event's guidance.
+  memory. A directory that belongs to one event, such as a talk's, has its own
+  `AGENTS.md` for that event's guidance.
 - Test interfaces as a user meets them: a fresh process, the installed
   package outside this checkout, released checkpoints from the Hub.
 - Usage examples load pretrained checkpoints from Hugging Face.

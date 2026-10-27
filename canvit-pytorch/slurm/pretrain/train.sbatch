@@ -7,10 +7,13 @@
 #SBATCH --mem=64G
 #SBATCH --output=logs/pretrain-%A_%a.out
 #SBATCH --error=logs/pretrain-%A_%a.err
+#SBATCH --signal=B:USR1@300
 
 # CanViT pretraining as a chain of array tasks, one at a time: each trains 4,992
 # steps and saves; the next resumes from that checkpoint. 401 tasks cover the
-# paper's 2M steps; tasks after the last step exit at once. Run from canvit-pytorch/.
+# paper's 2M steps; tasks after the last step exit at once. Five minutes before the
+# time limit, SLURM sends SIGUSR1 (through uv to Python), and the task saves the step it
+# has reached, so a slow task still advances the chain. Run from canvit-pytorch/.
 #
 #   sbatch slurm/pretrain/train.sbatch                           CanViT-B on ImageNet-21k
 #   DATASET=in1k IMAGES_DIR=/path/to/in1k/train sbatch slurm/pretrain/train.sbatch

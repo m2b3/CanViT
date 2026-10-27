@@ -22,6 +22,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from canvit_pytorch.benchmarks.ade20k import ADE20kDataset, dataset_root, evaluation_transform
 from canvit_pytorch.benchmarks.ade20k.dataset import Split
+from canvit_pytorch.progress import progress
 from canvit_pytorch.provenance import provenance
 from canvit_pytorch.rl.candidates import CandidateViewpoints
 from canvit_pytorch.rl.observer import Observer, flagship_observer
@@ -117,7 +118,7 @@ class PolicyTraining:
         best = math.inf
         loss_sum, num_losses = torch.zeros((), device=device), 0
         log.info("%d steps of %d scenes; selected scorer and record in %s", num_steps, self.batch_size, self.out_dir)
-        for step in range(1, num_steps + 1):
+        for step in progress(range(1, num_steps + 1), description="Training steps"):
             images, labels = (x.to(device, non_blocking=True) for x in next(training_batches))
             scorer.eval()
             decisions = explore(

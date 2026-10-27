@@ -234,12 +234,15 @@ uv run --extra demo python demos/classify.py --classifier frozen  # frozen CanVi
 uv run --extra demo python demos/basic.py
 ```
 
+The demos run on the accelerator torch finds (CUDA, or MPS on Apple silicon), else on the CPU; `--device` chooses.
+
 ## Supported platforms
 
 - **CPU**
 - **CUDA** (tested on RTX 4090, H100 SXM 80GB)
 - **Apple Silicon** via MPS (inference, tested with torch 2.14)
-- **TPU** via [torch_xla](https://github.com/pytorch/xla) 2.9.0 (tested on TPU v6e)
+- **TPU**: [`canvit-nnx`](canvit-nnx/) for training and inference. `canvit-pytorch` runs inference under
+  [TorchTPU](https://github.com/google-pytorch/torch_tpu) 0.2.0 (tested on TPU v5p); training under it is not supported yet.
 
 We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/docs/stable/user_guide/torch_compiler/export.html) and [ONNX Runtime](https://onnxruntime.ai/). Please [file an issue](https://github.com/m2b3/CanViT/issues) if you encounter problems.
 

@@ -24,13 +24,15 @@ republished in this package's format with the first release that contains `canvi
 import torch
 from PIL import Image
 
+from canvit_pytorch.device import accelerator_or_cpu
 from canvit_pytorch.hub.repos import Q_REGRESSION_POLICIES
 from canvit_pytorch.preprocess import preprocess
 from canvit_pytorch.rl import LearnedPolicy
 
-policy = LearnedPolicy.from_pretrained(Q_REGRESSION_POLICIES[0], torch.device("cpu"))
+device = accelerator_or_cpu()
+policy = LearnedPolicy.from_pretrained(Q_REGRESSION_POLICIES[0], device)
 scene_size_px = policy.scorer.observer.scene_size_px
-scene = preprocess(scene_size_px)(Image.open("scene.jpg").convert("RGB")).unsqueeze(0)
+scene = preprocess(scene_size_px)(Image.open("scene.jpg").convert("RGB")).unsqueeze(0).to(device)
 
 with torch.inference_mode():
     steps = policy.rollout(scene, num_glimpses=5)

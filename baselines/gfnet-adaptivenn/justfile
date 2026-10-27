@@ -1,0 +1,11 @@
+default: lint typecheck
+
+lint:
+    uv run ruff check .
+
+typecheck:
+    uv run basedpyright gfnet_adaptivenn tests
+
+# The tests read the pinned checkpoints: give the root `python -m gfnet_adaptivenn.sources` wrote.
+test sources:
+    GFNET_ADAPTIVENN_SOURCES={{sources}} uv run pytest tests

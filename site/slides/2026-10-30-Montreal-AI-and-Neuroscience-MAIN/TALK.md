@@ -633,6 +633,11 @@ removed.
 
 ## Open work
 
+- (Y, 2026-10-27, in progress) `#vit-on-a-glimpse`: align scene, glimpse, ViT box, patch-token grid and arrows on one
+  centre line with captions on one baseline; replace the cat with a scene whose glimpse is a clearly zoomed crop on an
+  object that is low-contrast in pixels yet stands out in the patch tokens' principal components ("good examples
+  matter"). An agent searches ADE20K validation for it on branch `talk-vit-glimpse`; merged only after its render is
+  checked.
 - (A, 2026-10-27) From a co-author's review of Part I, checked against the sources (Yamins et al. 2014; Khaligh-Razavi
   & Kriegeskorte 2014; Raugel et al., whose ICLR version scopes its claims to DINOv3; Yarbus's later replications):
   two notes fixes, each marked as an AI draft for the speakers to reword. `#tradition`: the deep networks that first

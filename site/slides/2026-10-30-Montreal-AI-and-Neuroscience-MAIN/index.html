@@ -1359,6 +1359,7 @@
   import { placeTableAnswers } from "./table.js";
   import { drawGap } from "./gap.js";
   import { POLICIES } from "../../js/canvit/policies.js";
+  import { insertPaperFigures } from "../paper-figures.js";
   import { startDeck } from "../deck.js";
   // The published deck has no Backup slides (site/deploy.sh cuts them): a Backup slide is drawn only when present.
   const drawIfPresent = (selector, draw) => { const slide = document.querySelector(selector); return slide && draw(slide); };
@@ -1392,6 +1393,8 @@
   const egc2f = document.querySelector("#eg-c2f");
   await drawUncertainty(egc2f, "../../data/talk/metacognition/street");
   egc2f.style.setProperty("--canvit-glimpse", POLICIES.entropy_coarse_to_fine.color);
+  // The paper's figures and tables enabled in sources/paper-figures.json (AGENTS.md, "Paper figures").
+  await insertPaperFigures("sources/paper-figures.json");
   await startDeck();
 </script>
 </body>

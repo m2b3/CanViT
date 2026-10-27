@@ -16,17 +16,12 @@ from typing import Any
 
 from canvit_pytorch.hub import cards
 from canvit_pytorch.hub.publish import upload
-from canvit_pytorch.hub.repos import LIVE_CANVIT, LIVE_PROBE
-from canvit_pytorch.project import HUB_ORGANIZATION
+from canvit_pytorch.hub.repos import LIVE_CANVIT, LIVE_PROBE, hub_id
 from canvit_pytorch.viz.live.export import CANVIT_DIR, PROBE_DIR, read_manifests, sha256_hex
 from canvit_pytorch.viz.live.parity import COMPARED, MAX_REL_L2, MIN_ARGMAX_AGREEMENT
 from canvit_pytorch.viz.released_model import hub_identity
 
 log = logging.getLogger(__name__)
-
-
-def hub_name(repo: str) -> str:
-    return f"{HUB_ORGANIZATION}/{repo.rsplit('/', 1)[-1]}"
 
 
 def stage(source: Path, manifest: dict[str, Any], files: list[dict[str, Any]], card: str, staged: Path) -> None:
@@ -65,8 +60,8 @@ class Publish:
             assert current["revision"] == record["revision"], (
                 f"{record['repo']} exported at {record['revision']}, the Hub is at {current['revision']}: export again")
 
-        canvit_repo, probe_repo = hub_name(LIVE_CANVIT), hub_name(LIVE_PROBE)
-        staged = {repo: self.out_dir / repo.rsplit("/", 1)[-1] for repo in (canvit_repo, probe_repo)}
+        canvit_repo, probe_repo = hub_id(LIVE_CANVIT), hub_id(LIVE_PROBE)
+        staged = {repo: self.out_dir / Path(repo).name for repo in (canvit_repo, probe_repo)}
         stage(self.model_dir / CANVIT_DIR, canvit, [canvit["graph"], canvit["initial_state"]],
               cards.live_canvit_card(repo=canvit_repo, probe_repo=probe_repo, manifest=canvit, parity=parity),
               staged[canvit_repo])

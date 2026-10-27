@@ -1,9 +1,10 @@
-"""ImageNet-1k fine-tuning of CanViT-B on a Cloud TPU v6e slice with PyTorch/XLA SPMD (paper, Appendix D.4).
+"""ImageNet-1k fine-tuning of CanViT-B on a Cloud TPU v6e slice with PyTorch/XLA SPMD (paper, appendix
+"Task: ImageNet-1k classification").
 
-LP-FT: a pretrained CanViT (by default the flagship, pretrained on ImageNet-21k), its CLS readout fused with DINOv3 ViT-B/16's linear ImageNet-1k probe
-(CanViTForImageClassification.from_pretrained_with_probe), then every parameter trained. Each scene is seen
-through F-IID glimpses, with a cross-entropy loss after every glimpse and backpropagation through time truncated
-to chunks of glimpses.
+LP-FT: a pretrained CanViT (by default the flagship, pretrained on ImageNet-21k), its CLS readout fused with
+DINOv3 ViT-B/16's linear ImageNet-1k probe (CanViTForImageClassification.from_pretrained_with_probe), then every
+parameter trained. Each scene is seen through F-IID glimpses, with a cross-entropy loss after every glimpse and
+backpropagation through time truncated to chunks of glimpses.
 """
 # pyright: reportMissingImports=false
 # (torch_xla is installed only in the tpu/ environment.)
@@ -22,8 +23,6 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import torch_xla
-import torch_xla.backends as xla_backends
-import torch_xla.debug.metrics as xla_metrics
 import torch_xla.distributed.spmd as xs
 import torch_xla.runtime as xr
 import tyro
@@ -33,7 +32,13 @@ from torch_xla.distributed.spmd import Mesh
 
 from canvit_pytorch import CanViTForImageClassification, RecurrentState, Viewpoint
 from canvit_pytorch.benchmarks.imagenet import NUM_TRAIN_IMAGES, NUM_VALIDATION_IMAGES
-from canvit_pytorch.hub.repos import DINOV3_VITB16_IN1K_PROBE, PRETRAINED, RELEASED_GLIMPSE_SIZE_PX, PretrainingDataset
+from canvit_pytorch.hub.repos import (
+    DINOV3_VITB16_IN1K_PROBE,
+    PRETRAINED,
+    RELEASED_CANVAS_GRID_SIZE,
+    RELEASED_GLIMPSE_SIZE_PX,
+    PretrainingDataset,
+)
 from canvit_pytorch.policies import POLICIES, PolicyName
 from canvit_pytorch.specialize.in1k_tpu.checkpoint import (
     LATEST,
@@ -44,22 +49,15 @@ from canvit_pytorch.specialize.in1k_tpu.checkpoint import (
     save_checkpoint,
 )
 from canvit_pytorch.specialize.in1k_tpu.data import GlimpseBatch, GlimpseCollate, ShardSplit, glimpse_loader
+from canvit_pytorch.specialize.in1k_tpu.diagnostics import CompileCounter, log_environment, log_sharding_once
 from canvit_pytorch.specialize.in1k_tpu.figures import log_validation_predictions
 
 log = logging.getLogger(__name__)
 
-CANVAS_GRID_SIZE = 32
 TRAINING_POLICY: PolicyName = "full_then_random"
 VALIDATION_POLICY: PolicyName = "full_then_random"
 """Selects the best checkpoint and early stopping; eval_c2f adds a C2F validation."""
 NUM_LOGGED_SAMPLES = 8
-
-# Logged as environment diagnostics, except names containing a SECRET_SUBSTRINGS entry.
-DIAGNOSTIC_ENV_PREFIXES = (
-    "XLA_", "LIBTPU", "PJRT_", "PT_XLA", "TPU_", "OMP_", "MKL_", "TF_CPP", "SKYPILOT_", "PYTORCH_", "NEURON_", "GRPC_",
-)
-SECRET_SUBSTRINGS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL")
-
 
 @dataclass(frozen=True)
 class FineTuningConfig:
@@ -119,62 +117,6 @@ class StepStatistics(NamedTuple):
     loss_last: Tensor
 
 
-class CompileCounter:
-    """Warns when XLA compiled a graph since the previous check: steady-state training compiles none."""
-
-    def __init__(self) -> None:
-        self.total = 0
-
-    def check(self, step: int) -> None:
-        data = xla_metrics.metric_data("CompileTime")
-        if data is None:
-            return
-        new = data[0] - self.total
-        self.total = data[0]
-        if new:
-            log.warning("xla_recompile step=%d compiles_since_last_log=%d total_compiles=%d", step, new, self.total)
-
-
-_SHARDINGS_LOGGED: set[str] = set()
-
-
-def log_sharding_once(tensor: Tensor, name: str) -> None:
-    if name in _SHARDINGS_LOGGED:
-        return
-    _SHARDINGS_LOGGED.add(name)
-    try:
-        spec = torch_xla._XLAC._get_xla_sharding_spec(tensor)
-    except Exception as error:  # noqa: BLE001  diagnostics only
-        spec = f"<error: {error}>"
-    log.info("sharding[%s] shape=%s dtype=%s spec=%s", name, tuple(tensor.shape), tensor.dtype, spec)
-
-
-def log_environment() -> None:
-    """Versions, precision, allowlisted environment variables with secrets redacted, device count."""
-    import torchvision
-
-    log.info("─── environment diagnostics ───")
-    log.info("torch        = %s  (%s)", torch.__version__, torch.__file__)
-    log.info("torchvision  = %s", torchvision.__version__)
-    log.info("torch_xla    = %s  (%s)", torch_xla.__version__, torch_xla.__file__)
-    try:
-        import libtpu
-
-        log.info("libtpu       = %s", getattr(libtpu, "__version__", "?"))
-    except Exception as error:  # noqa: BLE001  diagnostics only
-        log.info("libtpu       = (import failed: %s)", error)
-    log.info("mat_mul_prec = %s (torch_xla)", xla_backends.get_mat_mul_precision())
-    log.info("f32 matmul   = %s (torch core)", torch.get_float32_matmul_precision())
-    log.info("CPU count    = %s", os.cpu_count())
-    log.info("device count = %d (xr.global_runtime_device_count)", xr.global_runtime_device_count())
-    log.info("─── env vars (allowlisted) ───")
-    for name in sorted(os.environ):
-        if name.startswith(DIAGNOSTIC_ENV_PREFIXES):
-            redacted = any(secret in name.upper() for secret in SECRET_SUBSTRINGS)
-            log.info("  %s = %s", name, "<redacted>" if redacted else os.environ[name])
-    log.info("─── end diagnostics ───")
-
-
 def load_classifier(device: torch.device, pretraining_dataset: PretrainingDataset) -> CanViTForImageClassification:
     start = time.perf_counter()
     classifier = CanViTForImageClassification.from_pretrained_with_probe(
@@ -186,7 +128,7 @@ def load_classifier(device: torch.device, pretraining_dataset: PretrainingDatase
 
 
 def initial_state(classifier: CanViTForImageClassification, batch_size: int, mesh: Mesh | None) -> RecurrentState:
-    state = classifier.init_state(batch_size=batch_size, canvas_grid_size=CANVAS_GRID_SIZE)
+    state = classifier.init_state(batch_size=batch_size, canvas_grid_size=RELEASED_CANVAS_GRID_SIZE)
     if mesh is not None:
         xs.mark_sharding(state.canvas, mesh, ("data", None, None))
         xs.mark_sharding(state.recurrent_cls, mesh, ("data", None, None))
@@ -378,7 +320,7 @@ def train(config: FineTuningConfig) -> float:
     def loader(split: ShardSplit, policy: PolicyName, num_glimpses: int) -> DataLoader[Any]:
         collate = GlimpseCollate(
             policy=policy, num_glimpses=num_glimpses, glimpse_size_px=config.glimpse_size_px,
-            canvas_grid_size=CANVAS_GRID_SIZE,
+            canvas_grid_size=RELEASED_CANVAS_GRID_SIZE,
         )
         return glimpse_loader(
             data_dir=config.data_dir, split=split, collate=collate, batch_size=config.batch_size,

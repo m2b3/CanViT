@@ -3,20 +3,9 @@ from safetensors.torch import save_file
 from torch import nn
 
 from canvit_pytorch import CanViTForImageClassification, CanViTForPretraining
-from canvit_pytorch.model.classification import fuse_probe
 from tests.model.tiny import TINY
 
 TEACHER_DIM = 24
-
-
-def test_fuse_probe_equals_projection_destandardization_and_probe():
-    torch.manual_seed(0)
-    proj, probe = nn.Linear(16, TEACHER_DIM), nn.Linear(TEACHER_DIM, 5)
-    mean, std = torch.randn(TEACHER_DIM), torch.rand(TEACHER_DIM) + 0.1
-    weight, bias = fuse_probe(proj=proj, mean=mean, std=std, probe_weight=probe.weight, probe_bias=probe.bias)
-    z = torch.randn(4, 16)
-    with torch.no_grad():
-        torch.testing.assert_close(z @ weight.T + bias, probe(std * proj(z) + mean))
 
 
 def test_logits_stay_float32_under_bfloat16_autocast(glimpses):

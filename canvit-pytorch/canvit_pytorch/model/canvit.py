@@ -5,11 +5,11 @@ from dataclasses import dataclass
 
 import torch
 from canvit_core.attention import canvas_attention_schedule
+from canvit_core.config import CanViTConfig
 from torch import Tensor, nn
 
 from canvit_pytorch.model.attention import CANVAS_ATTENTION_CLASSES
 from canvit_pytorch.model.backbone import ViTBackbone
-from canvit_pytorch.model.config import CanViTConfig
 from canvit_pytorch.model.rope import compute_2d_rope, make_rope_periods
 from canvit_pytorch.model.vpe import ViewpointEncoding
 from canvit_pytorch.viewpoint import Viewpoint, grid_coords, viewpoint_grid_coords

@@ -44,8 +44,8 @@ coordinates in `[-1, 1]`; each scale is the crop's half-side.
 
 The example uses the [ImageNet-21k CanViT-B checkpoint](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02-mlx)
 and the [ADE20K probe](https://huggingface.co/canvit/probe-ade20k-40k-s512-c64-in21k-mlx).
-The [MLX collection](https://huggingface.co/collections/canvit/canvit-mlx)
-also contains native fine-tuned classifiers and other published exports.
+The Hub lists [every MLX checkpoint](https://huggingface.co/models?other=mlx&author=canvit)
+by its `mlx` tag.
 
 ## Develop from a checkout
 

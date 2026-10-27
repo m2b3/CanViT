@@ -81,6 +81,10 @@ viz = [
     "pillow>=10.0.0",
     "tyro>=1.0.0",
 ]
+rl = [
+    "pillow>=10.0.0",
+    "tyro>=1.0.0",
+]
 evaluate = [
     "pillow>=10.0.0",
     "tyro>=1.0.0",
@@ -115,7 +119,7 @@ explicit = true
 
 [tool.uv.sources]
 dinov3 = { git = "https://github.com/facebookresearch/dinov3.git", rev = "54694f7627fd815f62a5dcc82944ffa6153bbb76" }
-# Linux GPU hosts take CUDA 12.8 wheels (crockett's driver predates CUDA 13);
+# Linux GPU hosts take CUDA 12.8 wheels (the drivers in use predate CUDA 13);
 # macOS takes PyPI wheels (MPS).
 torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
 torchvision = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]

@@ -85,3 +85,8 @@ class ADE20kDataset(Dataset[tuple[Tensor, Tensor]]):
         image_tensor, labels = self.transform(image, label_map)
         assert labels.dtype == torch.long, labels.dtype
         return image_tensor, labels
+
+
+def validation_set(*, size_px: int) -> ADE20kDataset:
+    """The validation images under $ADE20K_ROOT and their labels, resized to size_px × size_px as the paper evaluates."""
+    return ADE20kDataset(root=dataset_root(), split="validation", transform=evaluation_transform(size_px))

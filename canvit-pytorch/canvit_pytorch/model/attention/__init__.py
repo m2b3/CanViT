@@ -17,4 +17,4 @@ CANVAS_ATTENTION_CLASSES: dict[CanvasProjections, tuple[type[CanvasAttention], t
     "qkvo": (CanvasAttentionReadQKVO, CanvasAttentionWriteQKVO),
 }
 
-__all__ = ["CANVAS_ATTENTION_CLASSES", "CanvasAttention", "CanvasProjections", "CanvasAttentionRead", "CanvasAttentionWrite"]
+__all__ = ["CANVAS_ATTENTION_CLASSES", "CanvasAttention", "CanvasAttentionRead", "CanvasAttentionWrite"]

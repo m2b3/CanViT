@@ -7,11 +7,11 @@ CLS token into the teacher's CLS token, both in per-position standardized space.
 
 import math
 
+from canvit_core.config import CanViTConfig
 from torch import Tensor, nn
 
 from canvit_pytorch.hub.loading import HubMixin
 from canvit_pytorch.model.canvit import CanViT, CanViTOutput, RecurrentState
-from canvit_pytorch.model.config import CanViTConfig
 from canvit_pytorch.model.readout import LinearReadout
 from canvit_pytorch.model.standardizer import PositionAwareStandardizer
 from canvit_pytorch.viewpoint import Viewpoint

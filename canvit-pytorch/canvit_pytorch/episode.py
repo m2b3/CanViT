@@ -20,6 +20,14 @@ class EpisodeStep:
         return self.output.state
 
 
+def take_glimpse(
+    *, canvit: CanViT, images: Tensor, state: RecurrentState, viewpoint: Viewpoint, glimpse_size_px: int,
+) -> CanViTOutput:
+    """CanViT's step on the glimpse of ImageNet-normalized images [B, 3, H, W] at viewpoint."""
+    glimpse = sample_at_viewpoint(spatial=images, viewpoint=viewpoint, glimpse_size_px=glimpse_size_px)
+    return canvit(glimpse=glimpse, state=state, viewpoint=viewpoint)
+
+
 def run_episode(
     *,
     canvit: CanViT,
@@ -34,8 +42,7 @@ def run_episode(
     state = initial_state
     for t in range(num_glimpses):
         viewpoint = policy.step(t, state)
-        glimpse = sample_at_viewpoint(spatial=images, viewpoint=viewpoint, glimpse_size_px=glimpse_size_px)
-        output = canvit(glimpse=glimpse, state=state, viewpoint=viewpoint)
+        output = take_glimpse(canvit=canvit, images=images, state=state, viewpoint=viewpoint, glimpse_size_px=glimpse_size_px)
         steps.append(EpisodeStep(t=t, viewpoint=viewpoint, output=output))
         state = output.state
     return steps

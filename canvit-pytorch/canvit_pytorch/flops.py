@@ -8,8 +8,8 @@ Normalization, softmax, RoPE, activations and residual additions are left out.
 
 from typing import TYPE_CHECKING, assert_never
 
-from canvit_pytorch.model.canvit import canvas_attention_schedule
-from canvit_pytorch.model.config import CanViTConfig
+from canvit_core.attention import canvas_attention_schedule
+from canvit_core.config import CanViTConfig
 
 if TYPE_CHECKING:
     from transformers import DINOv3ViTConfig

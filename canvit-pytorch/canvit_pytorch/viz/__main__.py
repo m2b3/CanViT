@@ -15,9 +15,8 @@ import tyro
 from PIL import Image
 
 from canvit_pytorch.benchmarks.ade20k import decode_annotation
-from canvit_pytorch.model.segmentation import CanViTForSemanticSegmentation
 from canvit_pytorch.policies import POLICIES, PolicyName, make_policy
-from canvit_pytorch.preprocess import imagenet_denormalize, preprocess, preprocess_labels
+from canvit_pytorch.preprocess import imagenet_denormalize_uint8, preprocess, preprocess_labels
 from canvit_pytorch.provenance import provenance
 from canvit_pytorch.viz.path import closed_bezier, sample_path
 from canvit_pytorch.viz.path_bundle import record_path, write_path_bundle
@@ -26,6 +25,7 @@ from canvit_pytorch.viz.released_model import (
     CANVAS_GRID_SIZE,
     GLIMPSE_SIZE_PX,
     SCENE_SIZE_PX,
+    ReleasedSegmenter,
     load_released_segmenter,
 )
 from canvit_pytorch.viz.web import PCAProtocol, write_bundle
@@ -50,8 +50,8 @@ class Scene:
     device: str = "cpu"
 
 
-def _load(scene: Scene) -> tuple[CanViTForSemanticSegmentation, torch.Tensor, torch.Tensor | None, dict[str, Any], dict[str, Any]]:
-    """(model, [1, 3, S, S] image, [S, S] annotation, model and readout records for the manifest)."""
+def _load(scene: Scene) -> tuple[ReleasedSegmenter, torch.Tensor, torch.Tensor | None]:
+    """(the released model with its manifest records, [1, 3, S, S] image, [S, S] annotation)."""
     device = torch.device(scene.device)
     released = load_released_segmenter(
         scene_size_px=scene.scene_size_px, canvas_grid_size=scene.canvas_grid_size, device=device,
@@ -63,7 +63,7 @@ def _load(scene: Scene) -> tuple[CanViTForSemanticSegmentation, torch.Tensor, to
         pixels = preprocess_labels(scene.scene_size_px)(Image.open(scene.annotation))
         assert isinstance(pixels, torch.Tensor)
         annotation = decode_annotation(pixels[0])
-    return released.model, image.unsqueeze(0).to(device), annotation, released.model_record, released.readout_record
+    return released, image.unsqueeze(0).to(device), annotation
 
 
 def _scene_record(scene: Scene) -> dict[str, Any]:
@@ -83,7 +83,8 @@ class Rollout:
     seed: int = 0
 
     def run(self) -> Path:
-        model, image, annotation, model_record, readout_record = _load(self.scene)
+        released, image, annotation = _load(self.scene)
+        model = released.model
         torch.manual_seed(self.seed)
         policy = make_policy(
             self.policy, batch_size=1, device=image.device, num_glimpses=self.num_glimpses,
@@ -96,7 +97,7 @@ class Rollout:
         spec = POLICIES[self.policy]
         return write_bundle(
             rollout, self.scene.out, title=self.scene.title, scene=_scene_record(self.scene),
-            model=model_record, readout=readout_record,
+            model=released.model_record, readout=released.readout_record,
             policy={"name": self.policy, "paper_name": spec.paper_name, "description": spec.description,
                     "deterministic": spec.deterministic, "seed": self.seed},
             pca_protocol=self.pca_protocol,
@@ -116,21 +117,20 @@ class SmoothPath:
     duration_ms: int = 5000
 
     def run(self) -> Path:
-        model, image, annotation, model_record, readout_record = _load(self.scene)
+        released, image, annotation = _load(self.scene)
         segments = closed_bezier(list(self.keypoints))
         viewpoints = sample_path(segments, self.num_samples)
         annotation_array = None if annotation is None else annotation.numpy().astype(np.int64)
         conditions, crops = record_path(
-            model, image, viewpoints, canvas_grid_size=self.scene.canvas_grid_size,
+            released.model, image, viewpoints, canvas_grid_size=self.scene.canvas_grid_size,
             glimpse_size_px=self.scene.glimpse_size_px, annotation=annotation_array,
         )
-        scene_pixels = imagenet_denormalize(image[0].cpu()).permute(1, 2, 0).numpy()
         return write_path_bundle(
-            self.scene.out, title=self.scene.title, scene=(scene_pixels * 255).round().astype(np.uint8),
+            self.scene.out, title=self.scene.title, scene=imagenet_denormalize_uint8(image[0]),
             scene_meta=_scene_record(self.scene), annotation=annotation_array,
             keypoints=list(self.keypoints), segments=segments, viewpoints=viewpoints, duration_ms=self.duration_ms,
             conditions=conditions, crops=crops, canvas_grid_size=self.scene.canvas_grid_size,
-            model=model_record, readout=readout_record,
+            model=released.model_record, readout=released.readout_record,
             provenance={**provenance(image.device), "precision": "float32"},
         )
 

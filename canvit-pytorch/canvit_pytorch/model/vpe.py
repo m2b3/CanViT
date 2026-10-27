@@ -1,7 +1,7 @@
 """Viewpoint Encoding (VPE): the viewpoint as one glimpse-stream token.
 
 (row, col, scale) becomes (row/scale, col/scale, log scale), whose Euclidean
-distances are invariant to rescaling the scene (paper, Appendix B), then random
+distances are invariant to rescaling the scene (paper, appendix "Viewpoint Encoding (VPE)"), then random
 Fourier features and a LayerNorm lift it to the backbone width.
 """
 

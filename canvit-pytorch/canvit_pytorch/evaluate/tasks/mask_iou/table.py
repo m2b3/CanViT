@@ -54,7 +54,7 @@ def log_mean_iou(*, intersection: Tensor, union: Tensor, label: str) -> None:
 
 
 def check_image_count(num_images: int) -> None:
-    """Figure 5 covers the whole validation set; a partial dataset would silently change it."""
+    """The paper's per-mask IoU figure covers the whole validation set; a partial dataset would silently change it."""
     assert num_images == ade20k.NUM_VALIDATION_IMAGES, (
         f"ADE20K validation has {ade20k.NUM_VALIDATION_IMAGES} images, the dataset holds {num_images}"
     )

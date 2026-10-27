@@ -1,8 +1,9 @@
-"""The distillation objective (paper, Section 5.1) and how close the predictions come to the teacher.
+"""The distillation objective and how close the predictions come to the teacher.
 
-After every glimpse, CanViT predicts the teacher's features of the whole scene:
-its patch features from the canvas and its CLS token from the recurrent CLS
-token, both standardized per position.
+After every glimpse, CanViT predicts the teacher's features of the whole scene
+(paper, "Passive-to-active dense distillation"): its patch features from the
+canvas and its CLS token from the recurrent CLS token, both standardized per
+position.
 """
 
 from dataclasses import dataclass

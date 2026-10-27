@@ -81,7 +81,7 @@ def main(demo: Demo) -> None:
     num_glimpses = len(next(iter(ORDERS.values())))
     fig, axes = plt.subplots(2 * len(ORDERS), num_glimpses + 1, figsize=(2.6 * (num_glimpses + 1), 5.4 * len(ORDERS)),
                              gridspec_kw={"hspace": 0.12, "wspace": 0.06})
-    scene = imagenet_denormalize(image[0]).permute(1, 2, 0).clamp(0, 1).numpy()
+    scene = imagenet_denormalize(image[0]).permute(1, 2, 0).numpy()
     for row, (name, keypoints) in enumerate(ORDERS.items()):
         top, bottom = axes[2 * row], axes[2 * row + 1]
         bottom[0].remove()
@@ -93,7 +93,7 @@ def main(demo: Demo) -> None:
             top[0].text(x0 + 4, y0 + 18, f"t={t}", color="white", fontsize=9, fontweight="bold",
                         bbox={"facecolor": GLIMPSE_COLOR, "linewidth": 0, "pad": 1.5})
             glimpse = sample_at_viewpoint(spatial=image, viewpoint=viewpoint(keypoint), glimpse_size_px=demo.glimpse_size_px)
-            top[t + 1].imshow(imagenet_denormalize(glimpse[0]).permute(1, 2, 0).clamp(0, 1).numpy())
+            top[t + 1].imshow(imagenet_denormalize(glimpse[0]).permute(1, 2, 0).numpy())
             top[t + 1].set_title(f"glimpse t={t}", fontsize=9)
             bottom[t + 1].imshow(to_rgb(project(basis, canvases[name][t]), limits).reshape(grid, grid, 3), interpolation="nearest")
             bottom[t + 1].set_title(f"canvas after t={t}", fontsize=9)

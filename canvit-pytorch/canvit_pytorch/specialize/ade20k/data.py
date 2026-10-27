@@ -9,7 +9,7 @@ from PIL import Image
 from torch import Tensor
 from torch.utils.data import DataLoader
 
-from canvit_pytorch.benchmarks.ade20k import IGNORE_LABEL, ADE20kDataset, dataset_root, evaluation_transform
+from canvit_pytorch.benchmarks.ade20k import IGNORE_LABEL, ADE20kDataset, dataset_root, validation_set
 from canvit_pytorch.specialize.ade20k.config import ProbeTrainingConfig
 
 assert IGNORE_LABEL == 255, "DINOv3's training transforms mark ignored and padded pixels with 255"
@@ -45,11 +45,8 @@ def training_batches(config: ProbeTrainingConfig) -> Iterator[tuple[Tensor, Tens
 
 
 def validation_loader(config: ProbeTrainingConfig) -> DataLoader[tuple[Tensor, Tensor]]:
-    dataset = ADE20kDataset(
-        root=dataset_root(), split="validation", transform=evaluation_transform(config.scene_size_px),
-    )
     return DataLoader(
-        dataset, batch_size=config.validation_batch_size,
+        validation_set(size_px=config.scene_size_px), batch_size=config.validation_batch_size,
         num_workers=config.num_workers, pin_memory=_pin_memory(config),
     )
 

@@ -12,10 +12,10 @@ from pathlib import Path
 from typing import Any, TypedDict
 
 import torch
+from canvit_core.config import CanViTConfig
 from torch import Tensor
 
 from canvit_pytorch import legacy
-from canvit_pytorch.model.config import CanViTConfig
 from canvit_pytorch.model.pretraining import CanViTForPretraining
 
 log = logging.getLogger(__name__)

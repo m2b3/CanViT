@@ -25,7 +25,7 @@ from PIL import Image
 from canvit_pytorch.policies import make_policy
 from canvit_pytorch.policies.entropy import predictive_entropy
 from canvit_pytorch.policies.random import random_viewpoints
-from canvit_pytorch.preprocess import imagenet_denormalize, imagenet_normalize, preprocess
+from canvit_pytorch.preprocess import imagenet_denormalize_uint8, imagenet_normalize, preprocess
 from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
 from canvit_pytorch.viz.live.export import CANVIT_DIR, EG_C2F, PROBE_DIR, initial_state, read_manifests
 from canvit_pytorch.viz.live.step import ReadoutInputs, ReadoutOutputs, StepInputs, StepOutputs
@@ -104,7 +104,7 @@ class Parity:
         assert isinstance(scene, torch.Tensor)
         scene = scene.unsqueeze(0).contiguous()
         # The page normalizes 8-bit pixels itself; the scene's 8-bit form reproduces this tensor.
-        pixels = (imagenet_denormalize(scene[0]).permute(1, 2, 0).numpy() * 255).round().astype(np.uint8)
+        pixels = imagenet_denormalize_uint8(scene[0])
         renormalized = imagenet_normalize(torch.from_numpy(pixels).permute(2, 0, 1).float() / 255)
         assert torch.allclose(renormalized, scene[0], atol=1e-5), "scene.png would not reproduce the scene"
         Image.fromarray(pixels).save(out_dir / "scene.png")

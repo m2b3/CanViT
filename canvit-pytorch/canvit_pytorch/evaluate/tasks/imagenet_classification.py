@@ -14,7 +14,7 @@ import torch
 import tyro
 
 from canvit_pytorch.benchmarks import imagenet
-from canvit_pytorch.evaluate.config import SCENE_SIZE_PX, EpisodeConfig
+from canvit_pytorch.evaluate.config import EpisodeConfig
 from canvit_pytorch.evaluate.tasks.task import Task
 from canvit_pytorch.hub import repos
 from canvit_pytorch.model import CanViTForImageClassification
@@ -60,7 +60,7 @@ class ImageNetClassification(Task):
 
     classifier: Classifier = FineTuned()
     episode: EpisodeConfig = EpisodeConfig()
-    scene_size_px: int = SCENE_SIZE_PX
+    scene_size_px: int = repos.RELEASED_SCENE_SIZE_PX
     """Images are resized on the short side and center-cropped to a square scene of this side."""
     output: Path = Path("results/in1k_clf.pt")
     batch_size: int = 64

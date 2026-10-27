@@ -1,4 +1,4 @@
-"""One pretraining step (paper, Section 5.2): rollouts over a batch of scenes, trained with truncated BPTT.
+"""One pretraining step (paper, "Policy agnosticism"): rollouts over a batch of scenes, trained with truncated BPTT.
 
 Each rollout starts from a fresh canvas and takes its viewpoints from a viewing
 policy (F-IID and R-IID by default). Its length is random: whole chunks of K

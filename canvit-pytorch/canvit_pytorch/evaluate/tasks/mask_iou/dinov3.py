@@ -5,8 +5,7 @@ from pathlib import Path
 import pandas as pd
 import torch
 
-from canvit_pytorch.evaluate.config import SCENE_SIZE_PX
-from canvit_pytorch.evaluate.tasks.ade20k_segmentation import ade20k_validation_set, dinov3_patch_grid, probe_logits
+from canvit_pytorch.benchmarks import ade20k
 from canvit_pytorch.evaluate.tasks.mask_iou import table
 from canvit_pytorch.evaluate.tasks.task import Task
 from canvit_pytorch.hub import repos
@@ -28,14 +27,14 @@ class MaskIoUDINOv3(Task):
     """Per-mask ADE20K IoU of CanViT-B's teacher, DINOv3 ViT-B/16, with its linear probe at each input size."""
 
     input_sizes_px: tuple[int, ...] = (128,)
-    scene_size_px: int = SCENE_SIZE_PX
+    scene_size_px: int = repos.RELEASED_SCENE_SIZE_PX
     output: Path = Path("results/ade20k_obj/dv3_iou.parquet")
     batch_size: int = 32
 
     @torch.inference_mode()
     def run(self) -> Path:
         device = self.torch_device
-        dataset = ade20k_validation_set(self.scene_size_px)
+        dataset = ade20k.validation_set(size_px=self.scene_size_px)
         table.check_image_count(len(dataset))
         teacher = load_teacher(DINOV3_REPOS[VARIANT], device)
         frames: list[pd.DataFrame] = []
@@ -44,8 +43,8 @@ class MaskIoUDINOv3(Task):
             counts: list[torch.Tensor] = []
             for images, labels in self.batches(dataset, description=f"DINOv3 at {input_size_px} px"):
                 with self.autocast():
-                    features = dinov3_patch_grid(teacher, images.to(device), input_size_px=input_size_px)
-                counts.append(table.per_image_counts(probe_logits(probe, features), labels.to(device)))
+                    features = teacher.patch_grid(images.to(device), input_size_px=input_size_px)
+                counts.append(table.per_image_counts(probe(features), labels.to(device)))
             intersection, union, label_area = torch.cat(counts, dim=1)
             table.log_mean_iou(intersection=intersection, union=union, label=f"DINOv3 at {input_size_px} px")
             frames.append(table.per_mask_rows(

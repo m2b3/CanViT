@@ -1,4 +1,5 @@
-"""The paper's ADE20K probe-training protocol (Appendix D.3) and a training run's bookkeeping."""
+"""The paper's ADE20K probe-training protocol (appendix "Task: ADE20K segmentation") and a training run's
+bookkeeping."""
 
 from dataclasses import dataclass
 from pathlib import Path

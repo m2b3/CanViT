@@ -1,4 +1,4 @@
-"""The quadtree of viewpoints behind the C2F, F2C and EG-C2F policies (paper, Appendix D.1).
+"""The quadtree of viewpoints behind the C2F, F2C and EG-C2F policies (paper, appendix "Viewing policies").
 
 Level ℓ tiles the scene with a 2^ℓ × 2^ℓ grid of non-overlapping crops of scale 2^-ℓ.
 """

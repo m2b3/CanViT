@@ -43,7 +43,8 @@ class Task:
 
     def metadata(self, **entries: object) -> dict[str, object]:
         """What produced a result: this configuration, the code and runtime that ran it, and entries."""
-        return {"config": dataclasses.asdict(self), "provenance": provenance(self.torch_device), **entries}
+        entries = {"config": dataclasses.asdict(self), "provenance": provenance(self.torch_device), **entries}
+        return {key: _plain(value) for key, value in entries.items()}
 
     def save(self, result: dict[str, object], **metadata_entries: object) -> Path:
         """torch.save result, with a "metadata" entry, to self.output."""
@@ -51,3 +52,20 @@ class Task:
         torch.save({**result, "metadata": self.metadata(**metadata_entries)}, self.output)
         log.info("Saved %s", self.output)
         return self.output
+
+
+def _plain(value: object) -> object:
+    """value with builtins only: every Path and str subclass (such as torch.__version__) as a str, every list or
+    tuple subclass as a list or tuple. A pickled class is named by its module, which can move (pathlib's did in
+    Python 3.13); with builtins and tensors only, a result loads with torch.load(weights_only=True) on any Python."""
+    match value:
+        case Path() | str():
+            return str(value)
+        case dict():
+            return {key: _plain(item) for key, item in value.items()}
+        case list():
+            return [_plain(item) for item in value]
+        case tuple():
+            return tuple(_plain(item) for item in value)
+        case _:
+            return value

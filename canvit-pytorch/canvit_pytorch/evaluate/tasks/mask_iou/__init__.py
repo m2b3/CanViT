@@ -1,4 +1,5 @@
-"""Per-mask IoU on ADE20K: the data behind the paper's Figure 5A-B (methodology in Appendix D.5).
+"""Per-mask IoU on ADE20K: the data behind panels A and B of the paper's figure
+"Effects of canvas resolution and ground-truth mask area" and its methodology appendix.
 
 Each (validation image, class) pair gets its intersection, union and ground-truth area in pixels,
 so the paper can plot IoU against mask area. The DINOv3 stage covers the passive teacher at

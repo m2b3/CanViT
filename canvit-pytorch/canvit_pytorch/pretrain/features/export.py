@@ -65,11 +65,8 @@ class IndexedImages(Dataset[tuple[Tensor, int, bool, str]]):
 
 
 def file_sha256_prefix(path: Path) -> str:
-    digest = hashlib.sha256()
-    with open(path, "rb") as f:
-        while chunk := f.read(1 << 16):
-            digest.update(chunk)
-    return digest.hexdigest()[:16]
+    with path.open("rb") as f:
+        return hashlib.file_digest(f, "sha256").hexdigest()[:16]
 
 
 @dataclass(frozen=True)

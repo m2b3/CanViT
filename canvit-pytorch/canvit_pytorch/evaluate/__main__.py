@@ -7,7 +7,11 @@ from canvit_pytorch.evaluate.latency.matrix import LatencyMatrix
 from canvit_pytorch.evaluate.latency.measure import LatencyMeasurement
 from canvit_pytorch.evaluate.latency.summary import LatencySummary
 from canvit_pytorch.evaluate.processes import configure_logging
-from canvit_pytorch.evaluate.tasks.ade20k_segmentation import ADE20kSegmentationCanViT, ADE20kSegmentationDINOv3
+from canvit_pytorch.evaluate.tasks.ade20k_segmentation import (
+    ADE20kSegmentationCanViT,
+    ADE20kSegmentationDINOv3,
+    ADE20kSegmentationLearnedPolicy,
+)
 from canvit_pytorch.evaluate.tasks.imagenet_classification import ImageNetClassification
 from canvit_pytorch.evaluate.tasks.mask_iou.canvit import MaskIoUCanViT
 from canvit_pytorch.evaluate.tasks.mask_iou.dinov3 import MaskIoUDINOv3
@@ -21,6 +25,7 @@ class Command(Protocol):
 COMMANDS: dict[str, type[Command]] = {
     "ade20k-segmentation-canvit": ADE20kSegmentationCanViT,
     "ade20k-segmentation-dinov3": ADE20kSegmentationDINOv3,
+    "ade20k-segmentation-learned-policy": ADE20kSegmentationLearnedPolicy,
     "imagenet-classification": ImageNetClassification,
     "reconstruction": Reconstruction,
     "mask-iou-dinov3": MaskIoUDINOv3,

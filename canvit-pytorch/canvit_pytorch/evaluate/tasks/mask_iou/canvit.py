@@ -6,8 +6,7 @@ import pandas as pd
 import torch
 
 from canvit_pytorch.benchmarks import ade20k
-from canvit_pytorch.evaluate.config import GLIMPSE_SIZE_PX, NUM_GLIMPSES, SCENE_SIZE_PX, EpisodeConfig
-from canvit_pytorch.evaluate.tasks.ade20k_segmentation import ade20k_validation_set
+from canvit_pytorch.evaluate.config import NUM_GLIMPSES, EpisodeConfig
 from canvit_pytorch.evaluate.tasks.mask_iou import table
 from canvit_pytorch.evaluate.tasks.task import Task
 from canvit_pytorch.hub import repos
@@ -29,8 +28,8 @@ class MaskIoUCanViT(Task):
     """Which pretrained CanViT-B, with the ADE20K probes trained on its canvas."""
     policy: PolicyName = "entropy_coarse_to_fine"
     num_glimpses: int = NUM_GLIMPSES
-    glimpse_size_px: int = GLIMPSE_SIZE_PX
-    scene_size_px: int = SCENE_SIZE_PX
+    glimpse_size_px: int = repos.RELEASED_GLIMPSE_SIZE_PX
+    scene_size_px: int = repos.RELEASED_SCENE_SIZE_PX
     output: Path = Path("results/ade20k_obj/canvit_iou.parquet")
     batch_size: int = 8
 
@@ -54,7 +53,7 @@ class MaskIoUCanViT(Task):
         )
 
     def run(self) -> Path:
-        dataset = ade20k_validation_set(self.scene_size_px)
+        dataset = ade20k.validation_set(size_px=self.scene_size_px)
         table.check_image_count(len(dataset))
         for canvas_grid_size in self.canvas_grid_sizes:
             rows = self.evaluate(canvas_grid_size, dataset)

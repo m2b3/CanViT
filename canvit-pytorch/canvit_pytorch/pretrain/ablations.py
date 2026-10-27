@@ -1,4 +1,4 @@
-"""The paper's pretraining ablations (Appendix E, Table 5): short runs that each change one design choice.
+"""The paper's pretraining ablations: short runs that each change one design choice.
 
 Every ablation, the baseline included, trains 214,656 steps (43 jobs of 4,992; the paper's
 "approximately 215k") with a 20k-step warmup:

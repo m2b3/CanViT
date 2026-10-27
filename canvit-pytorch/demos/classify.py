@@ -51,8 +51,8 @@ def load(classifier: Literal["finetuned", "frozen"]) -> CanViTForImageClassifica
 
 @torch.inference_mode()
 def main(demo: Demo) -> None:
-    torch.manual_seed(demo.seed)
     model = load(demo.classifier).eval()
+    torch.manual_seed(demo.seed)  # after loading, which draws from the RNG differently for each classifier
     image = preprocess(demo.scene_size_px)(Image.open(demo.image).convert("RGB"))
     assert isinstance(image, torch.Tensor)
     image = image.unsqueeze(0)

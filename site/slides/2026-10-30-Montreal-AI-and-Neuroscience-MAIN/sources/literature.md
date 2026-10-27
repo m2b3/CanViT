@@ -885,8 +885,9 @@ the m2b3 fork at 9b3b72d), so its output after the last glimpse does not depend 
   IFS); the layer hierarchy maps onto cortex (spatial r = 0.38) and onto MEG latency (temporal score R = 0.96 in
   the text; the Fig. 2D caption gives r = 0.84).
   (2) Size, training amount and image type each matter, and interact; "the largest DINOv3 models trained with the
-  most human-centric images reach the highest brain-similarity". The size effect is small in absolute terms:
-  voxel-averaged encoding R of .096 (Small), .101 (Base), .105 (Large), .107 (Giant), significant at p < 1e−3.
+  most human-centric images reach the highest brain-similarity". Size: voxel-averaged encoding R of .096 (Small),
+  .101 (Base), .105 (Large), .107 (Giant), each step significant at p < 1e−3, the increase mostly in higher-level
+  cortex (BA45, IFS).
   Human-centric images beat satellite and cell images even in V1. The findings "generalize across seven additional
   models".
   (3) A training chronology: the encoding score reaches half its final value at about 2% of training (about 800
@@ -909,6 +910,29 @@ the m2b3 fork at 9b3b72d), so its output after the last glimpse does not depend 
   convergence, and it never relates brain similarity to benchmark accuracy. Figures: Fig. 3 (the three
   scores over training), Fig. 4 (half time per region against distance from V1), Fig. 7 (half time against
   cortical properties).
+  (5) The ICLR version against arXiv v1 (both read in full, 2026-10-27; the ICLR PDF is the Zotero copy above,
+  sha256 31a5aea5…, also saved by Yohaï as `~/Downloads/12743_Disentangling_the_Factor.pdf`). Figures renumbered:
+  v1's Fig. 1 is the unnumbered Method Figure, v1's Fig. 5 is Fig. 4 (the deck's half-time panel, v1 Fig. 5E, is
+  ICLR Fig. 4E). Region-wise half times are of the last layer's encoding score (§3.2: "lower half times of the last
+  layer"; Fig. 4A's caption says "layer 1"). Added: seven other trained models (ResNet-50, ConvNeXt-Large, ViT-MAE,
+  supervised ViT-L/16, CLIP, SigLIP2, OWL-ViT) with untrained controls: once trained they score "similar" on all
+  three metrics, and trained models beat untrained ones (Figs. S1–S5); the spatial score along the Margulies
+  sensory-to-transmodal gradient rises from −0.32 to 0.13 over training (S6); distillation (S8) and Gram anchoring
+  (S9) leave the scores' behaviour unchanged. Discussion scoped: "the model–brain similarity increases consistently
+  with larger DINOv3 architectures"; the developmental trajectories "have not been tested in other models", only
+  conjectured to generalize.
+  (6) Its review (OpenReview forum i99ccgfad8, read 2026-10-27 from the page as Yohaï pasted it and through the
+  API). Accept (Poster), 26 Jan 2026. Ratings 8, 6, 4, 2. The meta-review: the main concerns were "only for a single
+  model (DINOv3) with a new performance metric that may be tailed for this model and that similar results have
+  already been shown"; the seven added models address the first, and disentangling the factors sets the work apart;
+  the AC expected the 2 and the 4 to rise to 6. Reviewers' points worth knowing: the title was too general (hence
+  "…and DINOv3"); the human-centric advantage may come from the brain datasets' images (NSD, THINGS) resembling the
+  training images, which the authors cannot check and now state as a limitation; larger models aligning better
+  "substantially replicates" Huh et al. 2024 (Platonic Representation Hypothesis); the temporal score may owe much to
+  architecture. The authors' answers: representations are the average of patch tokens (the CLS token encoded worse;
+  registers unused); "small models trained longer still perform worse than larger models trained for fewer steps";
+  RSA was too costly at this scale (70k × 70k), decoding not comparable across models. No reviewer questioned the
+  size of the effects.
 - **Raugel J. et al. 2026. Misalignment Between Backpropagation and the Hierarchy of Brain Responses to Images.**
   arXiv:2605.28693 (preprint). https://arxiv.org/abs/2605.28693. Zotero:
   `Raugel et al. - 2026 - Misalignment Between Backpropagation and the Hierarchy of Brain Responses to Images.pdf`.
@@ -1102,8 +1126,8 @@ the m2b3 fork at 9b3b72d), so its output after the last glimpse does not depend 
    2018 already saw it weaken above 70% top-1; Fel 2022, Linsley 2023 and Linsley, Feng, Serre 2025 report it
    reversing for ImageNet models; Gokce and Schrimpf 2025 find neural alignment saturating while behavioural
    alignment keeps scaling; Conwell 2024 finds no relation among trained models. Within one controlled family,
-   Raugel et al. find that larger, longer-trained DINOv3 models on human-centric images are more brain-like, with
-   small absolute differences. These studies use different data (macaque electrophysiology, human fMRI and MEG),
+   Raugel et al. find that larger, longer-trained DINOv3 models on human-centric images are more brain-like,
+   consistently and significantly, a claim their ICLR version scopes to DINOv3. These studies use different data (macaque electrophysiology, human fMRI and MEG),
    metrics and model sets, so they do not contradict one another directly; together they say that benchmark
    accuracy is a weak proxy for brain similarity at today's performance levels, and that data and objective
    matter more than architecture (Conwell 2024, Muttenthaler 2023, Geirhos 2021).

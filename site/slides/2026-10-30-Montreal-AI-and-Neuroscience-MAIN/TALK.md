@@ -635,13 +635,14 @@ removed.
 
 - (A, 2026-10-27) From a co-author's review of Part I, checked against the sources (Yamins et al. 2014; Khaligh-Razavi
   & Kriegeskorte 2014; Raugel et al., whose ICLR version scopes its claims to DINOv3; Yarbus's later replications):
-  three notes fixes, each marked as an AI draft for the speakers to reword. `#tradition`: the deep networks that first
+  two notes fixes, each marked as an AI draft for the speakers to reword. `#tradition`: the deep networks that first
   predicted the ventral stream well were supervised (earlier models were not, so "originally explored in the context of
   supervised learning" was wrong), and Yamins et al.'s link holds "among the networks they tested".
-  `#dinov3-and-the-brain`: "In DINOv3, capturing higher-order neural responses took training at scale", in place of a
-  general call to scale. `#task-dependent-scanpaths`: Yarbus shows where we look depends on the task, not which policy
-  is right. And on `#gap` and `#state-of-the-art`, the bars show names and values only (Y: the line under each was too
-  much detail).
+  `#dinov3-and-the-brain`: the scaling point framed as what Raugel et al.'s finding suggests for self-supervised
+  foundation models like DINOv3 (Y: scoped to DINOv3 alone it lost the point); the authors themselves conjecture
+  that their results generalize. A change to `#task-dependent-scanpaths` was reverted (Y: no one had flagged it; the
+  original stays). On `#gap` and `#state-of-the-art`, the bars show names and values only (Y: the line under each
+  was too much detail).
 - (Y, 2026-10-27) A full pass over the deck after a full read of the camera-ready: logical flow, order, the support
   on screen for each point; what is missing, with when, where and at what length; weak backup slides may go, new
   backups and additions to Part II may come. Then, during the pass: eliminate weak AI-written backups and reexamine

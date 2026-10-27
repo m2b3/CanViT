@@ -493,6 +493,10 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 #gap.shows-map .wipe { clip-path: inset(0); }
 #gap .bar-chart { opacity: 0; transition: opacity .6s ease; }
 #gap.shows-bars .bar-chart { opacity: 1; }
+/* An arrow between the steps of a pipeline drawn left to right (#vit-on-a-glimpse, #canvas-updates): a line and an open
+   head, stroked like #next's arrow. */
+.flow-arrow { width: 44px; height: 20px; overflow: visible; }
+.flow-arrow path { fill: none; stroke: var(--muted); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
 .bar-chart .axis-title { font-size: 22px; font-weight: 700; fill: var(--ink); }
 .bar-chart :is(.spine, .tick-mark) { stroke: var(--ink); stroke-width: 2px; }
 .bar-chart svg { display: block; width: 100%; height: auto; font-family: var(--sans); }
@@ -546,9 +550,9 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
    pictures and the backbone share one height and one grid whose rows every figure shares (subgrid): pictures, box and
    arrows centered on one line, the captions on one baseline right below, the token view's label under its caption. */
 #vit-on-a-glimpse { --picture: 256px; }
-#vit-on-a-glimpse .vit-flow { display: grid; grid-template-columns: repeat(3, auto 36px) auto; grid-template-rows: auto auto auto;
+#vit-on-a-glimpse .vit-flow { display: grid; grid-template-columns: repeat(3, auto 44px) auto; grid-template-rows: auto auto auto;
                               justify-content: center; align-items: center; column-gap: 20px; margin-top: 90px; }
-#vit-on-a-glimpse :is(.arrow, .vit) { grid-row: 1; }
+#vit-on-a-glimpse :is(.flow-arrow, .vit) { grid-row: 1; }
 #vit-on-a-glimpse figure { display: grid; grid-row: 1 / span 3; grid-template-rows: subgrid; place-items: center; }
 #vit-on-a-glimpse figcaption { grid-row: 2; align-self: start; margin-top: 12px; font-size: 22px; font-weight: 750; }
 #vit-on-a-glimpse :is(.pca-label, .pca-player) { grid-row: 3; align-self: start; }
@@ -561,8 +565,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #vit-on-a-glimpse .glimpse figcaption { color: var(--glimpse); }
 #vit-on-a-glimpse .vit { display: grid; place-items: center; width: 150px; height: var(--picture); box-sizing: border-box; border-radius: 14px;
                          background: #d8b4e2; border: 2px solid #a879b8; color: #5b2a73; font-size: 20px; font-weight: 800; text-align: center; }
-#vit-on-a-glimpse .arrow { width: 36px; height: 3px; background: var(--muted); position: relative; }
-#vit-on-a-glimpse .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }
 #vit-on-a-glimpse :is(.to-glimpse, .glimpse, .to-vit, .vit, .to-tokens, .tokens) { opacity: 0; transition: opacity .5s ease; }
 #vit-on-a-glimpse.shows-glimpse :is(.box, .to-glimpse, .glimpse) { opacity: 1; }
 #vit-on-a-glimpse.shows-vit :is(.to-vit, .vit) { opacity: 1; }
@@ -811,27 +813,26 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #canvit-rollout .s0, #canvit-rollout.shows-g1 .s1, #canvit-rollout.shows-g2 .s2, #canvit-rollout.shows-g3 .s3,
 #canvit-rollout.shows-g4 .s4 { opacity: 1; }
 
-/* Canvas updates within a glimpse: the scene above the glimpse on the left, then what each of the glimpse's three Writes
-   adds to the canvas, large, side by side, each on its click with the arrow on the first (canvas-updates.js). */
-#canvas-updates { --picture: 200px; --map: 268px; }
-#canvas-updates .updates { display: grid; grid-template-columns: auto 40px repeat(3, auto); grid-template-rows: auto auto;
-                           gap: 14px 18px; justify-content: center; align-items: center; margin-top: 24px; }
-#canvas-updates figure { display: flex; flex-direction: column; align-items: center; margin: 0; }
-#canvas-updates figcaption { margin-top: 8px; font-size: 20px; font-weight: 750; text-align: center; }
-#canvas-updates .scene { grid-area: 1 / 1; }
-#canvas-updates .glimpse { grid-area: 2 / 1; }
+/* Canvas updates within a glimpse, in one row: the scene, the glimpse, then what each of the glimpse's three Canvas
+   Attention Writes adds to the canvas (its residual), large, each on its click, the arrow and the label with the first.
+   As on #vit-on-a-glimpse, every figure shares the grid's rows (subgrid): pictures centered on one line, captions on one
+   baseline (canvas-updates.js). */
+#canvas-updates { --picture: 190px; --map: 222px; }
+#canvas-updates .updates { display: grid; grid-template-columns: auto auto 44px repeat(3, auto);
+                           grid-template-rows: auto var(--map) auto; column-gap: 12px; justify-content: center;
+                           margin-top: 70px; }
+#canvas-updates figure { display: grid; grid-row: 2 / span 2; grid-template-rows: subgrid; place-items: center; margin: 0; }
+#canvas-updates figcaption { align-self: start; margin-top: 12px; font-size: 22px; font-weight: 750; }
+#canvas-updates .writes-label { grid-area: 1 / 4 / 2 / 7; justify-self: center; margin: 0 0 12px; font-size: 22px;
+                                font-weight: 750; }
 #canvas-updates .glimpse figcaption { color: var(--glimpse); }
-#canvas-updates .write { grid-row: 1 / span 2; }
-#canvas-updates .write figcaption { font-size: 24px; }
-#canvas-updates .arrow { grid-area: 1 / 2 / span 2; width: 40px; height: 3px; background: var(--muted); position: relative; }
-#canvas-updates .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent;
-                                border-left: 10px solid var(--muted); border-right: 0; }
+#canvas-updates .flow-arrow { grid-area: 2 / 3; align-self: center; }
 #canvas-updates .frame { position: relative; width: var(--picture); height: var(--picture); }
 #canvas-updates .write .frame { width: var(--map); height: var(--map); }
 #canvas-updates .frame img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 8px; }
 #canvas-updates .glimpse img { display: block; width: var(--picture); height: var(--picture); border-radius: 8px;
                                box-shadow: 0 0 0 3px var(--glimpse); }
 #canvas-updates .box { position: absolute; box-sizing: border-box; border: 3px solid var(--glimpse); border-radius: 3px; }
-#canvas-updates :is(.arrow, .write) { opacity: 0; transition: opacity .5s ease; }
-#canvas-updates.shows-write-1 :is(.arrow, [data-write="1"]), #canvas-updates.shows-write-2 [data-write="2"],
+#canvas-updates :is(.flow-arrow, .writes-label, .write) { opacity: 0; transition: opacity .5s ease; }
+#canvas-updates.shows-write-1 :is(.flow-arrow, .writes-label, [data-write="1"]), #canvas-updates.shows-write-2 [data-write="2"],
 #canvas-updates.shows-write-3 [data-write="3"] { opacity: 1; }

@@ -634,7 +634,7 @@ removed.
 
 ## Open work
 
-- (A, 2026-10-27) `#canvas-updates` ("Within a glimpse, from patches to objects to the scene"), after `#learned-policy` for
+- (A, 2026-10-27) `#canvas-updates` ("An emergent hierarchy within each glimpse"; the first draft's "Within a glimpse, from patches to objects to the scene" rejected, Y; one row, the maps labelled "Canvas Attention Write residuals", Y), after `#learned-policy` for
   now (Y: the paper's canvas-updates figure, toward the end, briefly; placement and wording open): the paper's figure
   "Canvas updates within and across glimpses" rebuilt from its generator (`experiments/canvas_updates/export.py`
   reuses paper/exporter's `WriteCapture` and PCA colors): the paper's cat at its first glimpse, the scene above the

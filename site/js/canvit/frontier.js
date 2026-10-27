@@ -7,7 +7,8 @@
 // narrow screens; hovering names the nearest point. series, for a talk's step-by-step build, names what to draw:
 // policy-canvas keys (f2c-32, f2c-64, egc2f-32, egc2f-64), prior (the prior active models) and dinov3 (the passive
 // teacher over input resolutions, as in show="prior"); each curve is then
-// labeled at its end (the legend and the best-prior reference line are then left out), the cost axis fits what is shown, and a change of series first
+// labeled at its end, or where another curve crosses that place, above the curve just before its end (the legend and
+// the best-prior reference line are then left out), the cost axis fits what is shown, and a change of series first
 // glides the axis to its new range, then draws the new curves in. height (px) fixes the chart's height.
 // --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text sizes (13.5, 14.5 and 13.5 px by
 // default). x-scale="log" spaces the cost axis logarithmically, so the low budgets get room; y-range="LO HI" (mIoU, %) narrows
@@ -97,6 +98,24 @@ function arrow(from, leave, to, arrive, parent) {
   const d = `M${from} C${c1} ${c2} ${to}`;
   el("path", { class: "arrow-halo", d }, parent);
   el("path", { class: "arrow", d, "marker-end": "url(#arrowhead)" }, parent);
+}
+
+/** Whether the polyline through points passes through the box (Liang–Barsky clipping of each segment). */
+function crosses({ x: left, y: top, width, height }, points) {
+  return points.slice(1).some(([x1, y1], i) => {
+    const [x0, y0] = points[i];
+    let [t0, t1] = [0, 1];
+    for (const [p, q] of [[x0 - x1, x0 - left], [x1 - x0, left + width - x0], [y0 - y1, y0 - top], [y1 - y0, top + height - y0]]) {
+      if (p === 0) {
+        if (q < 0) return false;
+        continue;
+      }
+      if (p < 0) t0 = Math.max(t0, q / p);
+      else t1 = Math.min(t1, q / p);
+      if (t0 > t1) return false;
+    }
+    return true;
+  });
 }
 
 function marker(shape, x, y, size, color, parent) {
@@ -335,6 +354,7 @@ class CanvitFrontier extends HTMLElement {
     el("rect", { class: "reveal", x: 0, y: clipTop, width: this.#shown || staged ? width : 0, height: clipHeight }, clip);
     const drawn = el("g", { "clip-path": "url(#reveal)" }, svg);
     this.#points = [];
+    const endLabels = [];
     // Both views share the axes (curves are measured for the x range even when hidden), so they can follow each other.
     if (view === "prior" || series.has("dinov3")) this.#drawPassive(drawn, x, y, entering.has("dinov3") ? " enter-fade" : "");
     if (view !== "prior") for (const curve of curves) {
@@ -354,15 +374,33 @@ class CanvitFrontier extends HTMLElement {
         line.removeAttribute("pathLength");
         line.setAttribute("stroke-dasharray", canvas.dash);
       });
-      if (staged) {
-        const last = pts.at(-1);
-        el("text", { class: `end-label halo${enter ? " enter-fade" : ""}`, x: x(last.cum_gflops) + 8, y: y(100 * last.mean) + 5, fill: color }, drawn)
-          .textContent = `${label}, ${curve.canvas_grid}²`;
-      }
+      if (staged) endLabels.push({ points: pts.map((p) => [x(p.cum_gflops), y(100 * p.mean)]), text: `${label}, ${curve.canvas_grid}²`, color, enter });
       for (const p of pts) {
         this.#points.push({ x: x(p.cum_gflops), y: y(100 * p.mean), color,
           html: `<b>CanViT-B</b>, ${label}, ${canvas.label}<br>${p.t + 1} glimpse${p.t ? "s" : ""}: ${(100 * p.mean).toFixed(1)}% mIoU, ${p.cum_gflops.toFixed(1)} GFLOPs` });
       }
+    }
+
+    // Each label goes right of its curve's end, or else above the curve, ending at its end or at one of the points just
+    // before it, wherever no curve crosses it first: any curve the chart can show, so that a label keeps its place as
+    // the build adds curves. Crossed everywhere, it stays at the end.
+    const paths = allCurves.map((c) => c.per_timestep.map((p) => [x(p.cum_gflops), y(100 * p.mean)]));
+    const clear = (label) => {
+      const box = label.getBBox(), pad = 2;
+      const padded = { x: box.x - pad, y: box.y - pad, width: box.width + 2 * pad, height: box.height + 2 * pad };
+      return !paths.some((path) => crosses(padded, path));
+    };
+    for (const { points, text, color, enter } of endLabels) {
+      const [ex, ey] = points.at(-1);
+      const places = [[ex + 8, ey + 5, "start"], ...points.slice(-4).reverse().map(([px, py]) => [px - 6, py - 10, "end"])];
+      const label = el("text", { class: `end-label halo${enter ? " enter-fade" : ""}`, fill: color }, drawn);
+      label.textContent = text;
+      const place = ([px, py, anchor]) => {
+        label.setAttribute("x", String(px));
+        label.setAttribute("y", String(py));
+        label.setAttribute("text-anchor", anchor);
+      };
+      place(places.find((candidate) => (place(candidate), clear(label))) ?? places[0]);
     }
 
     // Where the F2C order, worse than random, first beats the best prior model (the exported claim). Its note sits

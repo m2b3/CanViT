@@ -234,10 +234,6 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #architecture .relabel text { text-anchor: middle; fill: var(--ink); font-family: var(--sans, Inter, sans-serif); }
 #architecture .relabel .viewpoint { font-size: 25px; font-variant-numeric: tabular-nums; }
 #architecture .relabel .glimpse-count { font-size: 42px; font-weight: 700; }
-#architecture .marks.cls { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s ease; }
-#architecture .marks.cls .ring { fill: none; stroke: var(--ink); stroke-width: 7; }
-#architecture .marks.cls .halo { fill: none; stroke: var(--bg); stroke-width: 15; }
-#architecture.shows-cls .marks.cls { opacity: 1; }
 
 #canvas-attention svg.figure { display: block; height: 540px; width: auto; margin: -10px auto 0; overflow: hidden;
                                transform: translateX(185px); transition: transform .8s ease; }
@@ -356,6 +352,9 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-chart-title: 18px; --canvit-chart-label: 19px;
                                          --canvit-muted: var(--ink); }
 #policy-accuracy canvit-policy-curves { --canvit-chart-aspect: .9; }
+/* Once the second set joins (fine-tuned beside frozen, the 64² canvas beside 32²), the first, dashed, recedes. */
+#policy-accuracy canvit-policy-curves[show="both"]::part(dashed) { opacity: .35; animation: policy-recede .6s ease; }
+@keyframes policy-recede { from { opacity: 1; } }
 #policy-accuracy figcaption { margin-bottom: 6px; font-size: 22px; font-weight: 750; }
 #policy-accuracy .ade20k { opacity: 0; }
 
@@ -462,7 +461,7 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 #learned-policy .budget .who { grid-row: 1 / 3; margin: 0; font-size: 22px; font-weight: 750; text-align: right; }
 #learned-policy .budget .track { height: 28px; }
 #learned-policy .budget .bar { display: block; height: 100%; border-radius: 6px; }
-#learned-policy .budget .pretraining .bar { width: 100%; background: var(--canvas); }
+#learned-policy .budget .pretraining .bar { width: 100%; background: var(--brand); }
 #learned-policy .budget .policy .bar { width: max(4px, calc(100% * 640e3 / 1e9)); background: var(--policy); }
 #learned-policy .budget .n { margin: 4px 0 0; font-size: 19px; font-weight: 700; }
 /* Next: two directions, each in its own panel. */
@@ -504,16 +503,15 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 .bar-chart .tick { font-size: 18px; fill: var(--ink); }
 .bar-chart .name { font-size: 26px; font-weight: 800; fill: var(--ink); }
 .bar-chart .value { font-size: 26px; font-weight: 800; fill: var(--ink); }
-.bar-chart .passive .bar { fill: var(--ink); }
-.bar-chart .active .bar { fill: #d97706; }
-.bar-chart .canvit .bar { fill: var(--canvas); }
-.bar-chart .frozen .bar { stroke-width: 2px; vector-effect: non-scaling-stroke; }
-.bar-chart .hatch.passive rect { fill: var(--ink); }
-.bar-chart .hatch.active rect { fill: #d97706; }
-.bar-chart .hatch.canvit rect { fill: var(--canvas); }
-.bar-chart .frozen.passive .bar { stroke: var(--ink); }
-.bar-chart .frozen.active .bar { stroke: #d97706; }
-.bar-chart .frozen.canvit .bar { stroke: var(--canvas); }
+/* Each kind's color fills its bars and draws a frozen bar's outline; CanViT's bars take the brand's gradient instead
+   (bar-rows.js sets it on them), whose stops are colored here. */
+.bar-chart .passive { color: var(--ink); }
+.bar-chart .active { color: #d97706; }
+.bar-chart .canvit { color: var(--canvas); }
+.bar-chart .bar { fill: currentColor; }
+.bar-chart .bar.outline { fill: none; stroke: currentColor; stroke-width: 2px; vector-effect: non-scaling-stroke; }
+.bar-chart .brand stop:first-child { stop-color: var(--canvas); }
+.bar-chart .brand stop:last-child { stop-color: var(--glimpse); }
 .bar-chart .section-label { font-size: 21px; font-weight: 800; fill: var(--ink); }
 .bar-chart .bracket { stroke: var(--ink); stroke-width: 3px; stroke-linecap: round; }
 
@@ -716,24 +714,21 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
                 left: calc(100% * var(--left)); top: calc(100% * var(--top)); width: calc(100% * var(--size)); height: calc(100% * var(--size)); }
 #sr-rope .box::after { content: ""; position: absolute; inset: 0; border: 3px solid var(--glimpse); border-radius: 3px; }
 /* The canvas's 32 x 32 patches: their cells, and a dot at the center of each. */
-#sr-rope .canvas-cells { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease; border-radius: 8px; --n: 32;
-                         --line: rgb(224 72 62 / .25); }
+#sr-rope .canvas-cells { position: absolute; inset: 0; border-radius: 8px; --n: 32; --line: rgb(224 72 62 / .25); }
 #sr-rope .canvas-cells::after { content: ""; position: absolute; inset: 0;
                                 background: radial-gradient(circle, var(--canvas) 1.7px, transparent 2.3px) 0 0 / calc(100% / 32) calc(100% / 32); }
-#sr-rope.shows-canvas .canvas-cells { opacity: 1; }
 #sr-rope .arrow { height: 3px; background: var(--muted); position: relative; margin: 0 26px 40px 0; }
 #sr-rope .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }
 #sr-rope .legend { grid-column: 3; display: flex; justify-content: center; gap: 26px; margin: 8px 0 0; font-size: 17px; font-weight: 650; }
 #sr-rope .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; vertical-align: 1px; }
 #sr-rope .glimpse-key { color: var(--glimpse); }
 #sr-rope .glimpse-key::before { background: var(--glimpse); }
-#sr-rope .canvas-key { color: var(--canvas); opacity: 0; transition: opacity .6s ease; }
+#sr-rope .canvas-key { color: var(--canvas); }
 #sr-rope .canvas-key::before { background: var(--canvas); }
-#sr-rope.shows-canvas .canvas-key { opacity: 1; }
 
 /* A new active-vision state of the art: #gap's chart as it ended, at the same sizes, then on "canvit" every row glides to
-   make room and CanViT-B's bar grows between the active and passive models, in canvas red (gap.js). On "in1k" the
-   ImageNet-1k chart takes the same place, and on "in1k-canvit" its rows make room for CanViT-B's two dots. */
+   make room and CanViT-B's bar grows between the active and passive models, in the brand's gradient (gap.js). On "in1k" the
+   ImageNet-1k chart takes the same place, and on "in1k-canvit" its rows make room for CanViT-B's two bars. */
 #state-of-the-art .charts { display: grid; width: 1100px; margin: 10px auto 0; }
 #state-of-the-art .charts > .bar-chart { grid-area: 2 / 1; transition: opacity .6s ease; }
 #state-of-the-art .training-key { grid-area: 1 / 1; justify-self: end; display: flex; gap: 26px; margin: 0 0 -26px;
@@ -790,7 +785,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #pretraining .track { display: flex; align-items: center; gap: 16px; height: 52px; }
 #pretraining .bar { height: 100%; border-radius: 6px; }
 #pretraining .bar.dinov3 { width: 70%; background: #94a3b8; }
-#pretraining .bar.canvit { width: calc(70% * 174 / 61440); min-width: 4px; background: var(--canvas); }
+#pretraining .bar.canvit { width: calc(70% * 174 / 61440); min-width: 4px; background: var(--brand); }
 #pretraining .n { font-size: 28px; font-weight: 700; color: var(--ink); white-space: nowrap; }
 
 /* The diagram spreads out over the slide. */

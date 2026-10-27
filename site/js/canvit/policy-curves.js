@@ -15,7 +15,8 @@
 // lists prior models of src's baselines, comma-separated by name ("AME (SETR), AdaGlimpse"); each one's best result is
 // a marker at the glimpse count it was measured at, named beside it, drawn when inside the axes. The chart's height is
 // its width times --canvit-chart-aspect (default 0.78). show="dashed-only" draws only the dashed set, still dashed, its
-// policies named at its heads (a slide's step before both, so no curve changes style between steps);
+// policies named at its heads (a slide's step before both, so no curve changes style between steps); the dashed curves
+// are the shadow part "dashed", so that a slide can set them back once both sets show;
 // --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text sizes (14, 15 and 16 px by default).
 
 import { POLICIES } from "./policies.js";
@@ -66,6 +67,21 @@ function el(name, attributes, parent) {
   for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, String(value));
   parent.append(node);
   return node;
+}
+
+/** Label heights for targets given top to bottom: each at its target, except that labels closer than gap form a run,
+ * gap apart and centered on its targets' mean, runs merging until none come closer than gap. */
+function spread(targets, gap) {
+  const runs = [];
+  for (const target of targets) {
+    let run = { targets: [target], top: target };
+    while (runs.length && runs.at(-1).top + gap * runs.at(-1).targets.length > run.top) {
+      const merged = [...runs.pop().targets, ...run.targets];
+      run = { targets: merged, top: merged.reduce((a, b) => a + b) / merged.length - (gap * (merged.length - 1)) / 2 };
+    }
+    runs.push(run);
+  }
+  return runs.flatMap((run) => run.targets.map((_, i) => run.top + gap * i));
 }
 
 function required(element, name) {
@@ -213,8 +229,8 @@ class CanvitPolicyCurves extends HTMLElement {
       });
     }
     // Policies rank by their end value (to 0.1 point; a tie goes to the higher mean over the glimpses shown). The
-    // higher-ranked curve and head are drawn over the others, and heads are labeled in rank order, each label at least
-    // LABEL_GAP below the one above, so close lines stay legible.
+    // higher-ranked curve and head are drawn over the others, and heads are labeled in rank order, at least LABEL_GAP
+    // apart, a group of close heads labeled around them (spread), so close lines stay legible.
     const addedGroup = this.#added && el("g", { class: "added", part: "added" }, svg);
     const rank = (curve, extra) => {
       const shownPoints = curve.per_timestep.slice(0, shown);
@@ -228,7 +244,8 @@ class CanvitPolicyCurves extends HTMLElement {
     ].sort((a, b) => b.end - a.end || b.mean - a.mean);
     for (const { points, color, style, group } of [...ranked].reverse()) {
       if (group !== svg) continue;
-      el("polyline", { class: `curve ${style}`, points: points.map((p) => p.join(",")).join(" "), stroke: color }, lines);
+      el("polyline", { class: `curve ${style}`, points: points.map((p) => p.join(",")).join(" "), stroke: color,
+                       ...(style === "dashed" ? { part: "dashed" } : {}) }, lines);
     }
     if (this.#added) {
       const band = this.#added.per_timestep.slice(0, shown);
@@ -244,13 +261,10 @@ class CanvitPolicyCurves extends HTMLElement {
       const [hx, hy] = points.at(-1);
       el("circle", { class: "head", cx: hx, cy: hy, r: 5.5, fill: color }, group);
     }
-    let floor = -Infinity;
-    for (const { points, label, color, group } of heads) {
-      const [hx, hy] = points.at(-1);
-      const ly = Math.max(hy + 5, floor + LABEL_GAP);
-      floor = ly;
-      el("text", { class: "label", x: hx + 10, y: ly, fill: color }, group).textContent = label;
-    }
+    const heights = spread(heads.map(({ points }) => points.at(-1)[1] + 5), LABEL_GAP);
+    heads.forEach(({ points, label, color, group }, i) => {
+      el("text", { class: "label", x: points.at(-1)[0] + 10, y: heights[i], fill: color }, group).textContent = label;
+    });
   }
 }
 

@@ -1,7 +1,8 @@
 // A score per model as a bar from the axis origin (min, 0 unless scores crowd near the top of the scale), one row each,
 // the model's name on the left and its score at the bar's end. Rows are grouped by kind in the order given, each group
-// sorted by value; kinds "active", "passive" and "canvit" take their colors from talk.css (.bar-chart), and a row
-// marked frozen (a frozen backbone, against one trained end to end) is hatched in its color. With sections, consecutive groups are
+// sorted by value; kinds "active", "passive" and "canvit" take their colors from talk.css (.bar-chart), CanViT's bars
+// the brand's gradient, canvas red to glimpse blue along each bar. A row marked frozen (a frozen backbone, against one
+// trained end to end) is hatched: its fill shows through slanted stripes, inside an outline. With sections, consecutive groups are
 // bracketed under a label in a gutter on the left ("Active", "Passive"), set further apart than groups within a
 // section. The axis runs along the bottom, with spines on its left and bottom, its tick labels and then its title
 // under it. With zoomMax, the rows marked core are first drawn alone on an axis zoomed to zoomMax; the slide's CSS then
@@ -10,7 +11,7 @@
 const SVG = "http://www.w3.org/2000/svg";
 const WIDTH = 1000, ROW = 46, LABEL_W = 330, BAR_W = 560, TOP = 10, GROUP_GAP = 24;
 const SECTION_W = 140, SECTION_GAP = 40, GROUP_GAP_IN_SECTION = 12;
-let charts = 0; // pattern ids stay unique when several charts share a page
+let charts = 0; // ids in <defs> stay unique when several charts share a page
 
 function el(name, attributes, parent) {
   const node = document.createElementNS(SVG, name);
@@ -56,14 +57,16 @@ export function drawBarRows(container, rows, { groups, sections = [], min = 0, m
   const x = (v) => left + LABEL_W + ((v - min) / (max - min)) * BAR_W;
   const bottom = all.height;
   const svg = el("svg", { viewBox: `0 0 ${left + WIDTH} ${bottom + 84}`, role: "img", "aria-label": label });
-  // A hatch per kind: slanted stripes in the kind's color (talk.css, .hatch).
+  // The hatch, a mask of slanted stripes, so that a gradient shows through it as a flat color does; and the brand's
+  // gradient, its stops colored by talk.css (.brand).
   const chart = ++charts, defs = el("defs", {}, svg);
-  const hatch = (kind) => `bar-rows-${chart}-hatch-${kind}`;
-  for (const kind of groups) {
-    const pattern = el("pattern", { id: hatch(kind), class: `hatch ${kind}`, patternUnits: "userSpaceOnUse", width: 12,
-                                    height: 12, patternTransform: "rotate(45)" }, defs);
-    el("rect", { width: 5, height: 12 }, pattern);
-  }
+  const id = (name) => `bar-rows-${chart}-${name}`;
+  const stripes = el("pattern", { id: id("stripes"), patternUnits: "userSpaceOnUse", width: 12, height: 12,
+                                  patternTransform: "rotate(45)" }, defs);
+  el("rect", { width: 5, height: 12, fill: "#fff" }, stripes);
+  el("rect", { width: "100%", height: "100%", fill: `url(#${id("stripes")})` }, el("mask", { id: id("hatch") }, defs));
+  const brand = el("linearGradient", { id: id("brand"), class: "brand" }, defs);
+  for (const offset of [0, 1]) el("stop", { offset }, brand);
   // Zoomed, every horizontal position from the axis origin is stretched by (max - min) / (zoomMax - min).
   const stretch = (max - min) / (zoomMax - min);
   const shift = (px) => `translateX(${(stretch - 1) * px}px)`;
@@ -93,9 +96,17 @@ export function drawBarRows(container, rows, { groups, sections = [], min = 0, m
     group.style.setProperty("--y-all", `${all.placed.get(row)}px`);
     group.style.setProperty("--y-core", `${row.core ? core.placed.get(row) : all.placed.get(row)}px`);
     text(row.name, { x: left + LABEL_W - 14, y: 29, "text-anchor": "end", class: "name" }, group);
-    const bar = el("rect", { x: x(min), y: 4, width: x(row.value) - x(min), height: ROW - 12, rx: 5, class: "bar" }, group);
-    bar.style.setProperty("--zoom", `scaleX(${stretch})`);
-    if (row.frozen) bar.style.fill = `url(#${hatch(row.kind)})`;
+    // A frozen row's outline is a second, unmasked bar, which scales and grows with the first (talk.css, .bar).
+    const shape = { x: x(min), y: 4, width: x(row.value) - x(min), height: ROW - 12, rx: 5 };
+    const bars = [el("rect", { ...shape, class: "bar" }, group)];
+    if (row.frozen) {
+      bars[0].setAttribute("mask", `url(#${id("hatch")})`);
+      bars.push(el("rect", { ...shape, class: "bar outline" }, group));
+    }
+    for (const bar of bars) {
+      bar.style.setProperty("--zoom", `scaleX(${stretch})`);
+      if (row.kind === "canvit") bar.style.setProperty(bar === bars[0] ? "fill" : "stroke", `url(#${id("brand")})`);
+    }
     text(row.value.toFixed(1), { x: x(row.value) + 10, y: 28, class: "value" }, group)
       .style.setProperty("--zoom", shift(x(row.value) - x(min)));
   }

@@ -340,7 +340,8 @@ authors to confirm.
   - The architecture: the canvas has no moment of its own (it appears in the paper's figure on `#architecture`, now
     600 px wide). Built 2026-10-25, for the authors to review: `#sr-rope` after `#architecture` (a glimpse's 8 x 8
     cells and their scene positions, the canvas's 32 x 32 cells, a smaller glimpse whose cells pack together), and a
-    click on `#architecture` ringing the recurrent CLS token where it leaves one glimpse and enters the next.
+    click on `#architecture` ringing the recurrent CLS token where it leaves one glimpse and enters the next (removed
+    2026-10-27: the CLS token is said, with the second glimpse).
   - The pretraining: why not pretrain the observer with its own policy is not argued on screen; the notes of
     `#pretraining-desiderata` carry it (AI draft). Rebuilt 2026-10-25 after Yohaï's review, then `#pretraining-desiderata` moved to Backup (Y: it says little; said aloud instead, a model that understands the world and works with any policy): was `#pretraining-desiderata`
     (robust to any viewing policy; rich knowledge of the visual world without enormous compute; the answers on a click),
@@ -524,8 +525,8 @@ drafts until Yohaï words them.
 - `#policy-accuracy`: Figs. 3B and 3C as one view; curves keep their style across steps (Y, 2026-10-25). Since
   2026-10-27 its notes compare policies only (C2F ends three points above F2C on the same viewpoints), and give
   ImageNet-1k's fine-tuned peak against the best prior active model's 82.2 at the click that shows it. About 35 s.
-- `#frontier` (A, 2026-10-27, promoted from Backup; its build is Yohaï's of 2026-10-01): F2C at 32 x 32, then 64 x 64,
-  then the prior models, then EG-C2F.
+- `#frontier` (A, 2026-10-27, promoted from Backup; its build is Yohaï's of 2026-10-01): F2C at 32 x 32 beside the
+  prior models from the start (since 2026-10-27 evening), then F2C at 64 x 64, then EG-C2F.
   - Must understand: even a worse-than-random viewing order beats the prior models, for less compute, so perception,
     not viewpoint selection, was the bottleneck; and a single glimpse costs 20 times less than AME's best for a higher
     score. Part I's "No policy can make up for a poor observer" returns here as evidence.
@@ -633,6 +634,16 @@ removed.
   the paper. `paper_figures.py try` then `accept` refreshes them.
 
 ## Open work
+
+- (A, 2026-10-27 evening) Done, for review: `#integrating-information-across-viewpoints` is titled as a question,
+  "Integrating visual information across viewpoints?", the problem that `#table-callback` answers under the same title;
+  `#architecture` lost its CLS rings and their click; `#sr-rope` shows the canvas patches from the start (one click,
+  the zoom); CanViT's bars on `#state-of-the-art`, `#pretraining` and `#learned-policy` are in the brand's gradient
+  (red to blue along each bar; a frozen bar's hatching is now a stripe mask, so the gradient shows through it);
+  `#frontier` shows the prior models from the start, and a curve's label moves above the curve where another crosses
+  its place at the end (F2C, 32²); on `#policy-accuracy` the first set (frozen; 32²) recedes to 35% opacity once the
+  second joins, and close labels center on their heads instead of stacking below the top one (C2F and F-IID on
+  ImageNet-1k).
 
 - (A, 2026-10-27) `#canvas-updates` ("An emergent hierarchy within each glimpse"; the first draft's "Within a glimpse,
   from patches to objects to the scene" rejected, Y), after `#learned-policy` and before `#quickstart` (Y: the paper's

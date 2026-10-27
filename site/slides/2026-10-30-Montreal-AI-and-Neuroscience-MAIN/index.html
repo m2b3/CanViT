@@ -464,7 +464,8 @@
 </section>
 
 <section id="integrating-information-across-viewpoints" data-status="draft">
-  <h2>Integrating visual information across viewpoints</h2>
+  <!-- A question: the problem, which #table-callback answers under the same title without the question mark. -->
+  <h2>Integrating visual information across viewpoints?</h2>
   <div class="table-demo">
     <figure class="photo">
       <img src="../../data/talk/table-clean/ADE_val_00001271-table/scene.png" alt="A conference room with a long table">
@@ -515,10 +516,8 @@
        CLS token and the canvas carried over; the third. #vit-on-a-glimpse already showed the backbone alone. -->
   <figure class="arch-reveal"><img src="../../assets/paper/arch_overview.svg" alt="CanViT's architecture over three glimpses: for each, a ViT backbone (purple blocks) processes the glimpse (blue) beside the canvas (red), reading from it and writing to it between blocks; the canvas and a recurrent CLS token (green) carry over to the next glimpse."><!-- The figure's timestep labels count glimpses from 0 (t = 0, and v with subscript t); the talk counts from 1. White
        patches over them (positions located in the paper's PDF rendered at 2000 px wide) carry "Glimpse n" and the bare
-       viewpoint (x, y, s). --><svg class="relabel" viewBox="0 0 2000 1825" preserveAspectRatio="none" aria-hidden="true"><rect x="7" y="1600" width="289" height="44"/><text class="viewpoint" x="152" y="1634">x=−0.7, y=−0.7, s=0.2</text><rect x="739" y="1600" width="248" height="44"/><text class="viewpoint" x="863" y="1634">x=0.3, y=0.3, s=0.5</text><rect x="1488" y="1600" width="294" height="44"/><text class="viewpoint" x="1635" y="1634">x=0.25, y=−0.8, s=0.15</text><rect x="206" y="1651" width="147" height="51"/><text class="glimpse-count" x="280" y="1694">Glimpse 1</text><rect x="955" y="1651" width="145" height="51"/><text class="glimpse-count" x="1028" y="1694">Glimpse 2</text><rect x="1691" y="1651" width="146" height="51"/><text class="glimpse-count" x="1764" y="1694">Glimpse 3</text></svg><!-- The recurrent CLS token where it leaves the first glimpse and where it enters the second (fractions of the
-       figure, located by color in the paper's PDF). --><svg class="marks cls" viewBox="0 0 2000 1825" preserveAspectRatio="none"><ellipse class="halo" cx="152" cy="62" rx="52" ry="40"/><ellipse class="ring" cx="152" cy="62" rx="52" ry="40"/><ellipse class="halo" cx="815" cy="1373" rx="52" ry="40"/><ellipse class="ring" cx="815" cy="1373" rx="52" ry="40"/></svg><span class="mask"></span></figure>
+       viewpoint (x, y, s). --><svg class="relabel" viewBox="0 0 2000 1825" preserveAspectRatio="none" aria-hidden="true"><rect x="7" y="1600" width="289" height="44"/><text class="viewpoint" x="152" y="1634">x=−0.7, y=−0.7, s=0.2</text><rect x="739" y="1600" width="248" height="44"/><text class="viewpoint" x="863" y="1634">x=0.3, y=0.3, s=0.5</text><rect x="1488" y="1600" width="294" height="44"/><text class="viewpoint" x="1635" y="1634">x=0.25, y=−0.8, s=0.15</text><rect x="206" y="1651" width="147" height="51"/><text class="glimpse-count" x="280" y="1694">Glimpse 1</text><rect x="955" y="1651" width="145" height="51"/><text class="glimpse-count" x="1028" y="1694">Glimpse 2</text><rect x="1691" y="1651" width="146" height="51"/><text class="glimpse-count" x="1764" y="1694">Glimpse 3</text></svg><span class="mask"></span></figure>
   <span class="fragment step-marker" data-shows="next"></span>
-  <span class="fragment step-marker" data-shows="cls"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
@@ -532,7 +531,6 @@
     <li>The glimpse's tokens are discarded after each glimpse, <b>since</b> the next glimpse may be anywhere, at any zoom.</li>
     <li>The canvas <b>persists</b>,</li>
     <li><b>so</b> each glimpse is processed in the context of what was seen before.</li>
-    <li>[CLICK]</li>
     <li>A recurrent <b>CLS token</b> also carries over, a global summary that we read out for classification.</li>
     <li>[CLICK]</li>
     <li>At every glimpse, the canvas can be decoded into <b>dense predictions</b>, like segmentation.</li>
@@ -554,13 +552,11 @@
       <svg class="axes" viewBox="0 0 420 420" aria-hidden="true"><path d="M0,-16 H412 M405,-21 L414,-16 L405,-11"/><path d="M-16,0 V412 M-21,405 L-16,414 L-11,405"/><text x="0" y="-24" text-anchor="middle">−1</text><text x="420" y="-24" text-anchor="middle">1</text><text class="name" x="210" y="-24" text-anchor="middle">x</text><text x="-24" y="5" text-anchor="end">−1</text><text x="-24" y="420" text-anchor="end">1</text><text class="name" x="-24" y="215" text-anchor="end">y</text></svg><div class="dots"></div></div><figcaption>Scene</figcaption></figure>
     <p class="legend"><span class="glimpse-key">Glimpse patches</span><span class="canvas-key">Canvas patches</span></p>
   </div>
-  <span class="fragment step-marker" data-shows="canvas"></span>
   <span class="fragment step-marker" data-shows="zoom"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>The backbone sees a glimpse as an 8 by 8 grid of patches.</li>
     <li><b>Scene-Relative RoPE</b> gives each patch its position in the <b>scene</b>, computed from the glimpse's viewpoint.</li>
-    <li>[CLICK]</li>
     <li>Canvas patches have fixed positions in the <b>same</b> scene coordinates.</li>
     <li>Scene-relative positions bind the <b>retinotopic</b> backbone and the <b>spatiotopic</b> canvas with a shared reference frame.</li>
     <li><b>So</b> CanViT knows where each glimpse was taken, which a passive model on a crop does not.</li>
@@ -839,7 +835,8 @@
   <div class="stages"></div>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
-    <li>To test how CanViT generalizes across policies, we also use policies it never saw in pretraining.</li>
+    <li>These two policies are for <b>evaluation</b>: CanViT never saw them in pretraining,</li>
+    <li><b>so</b> they test how it generalizes across policies.</li>
     <li><b>Coarse-to-Fine</b> sees the whole scene, then its four quadrants, then sixteen tiles,</li>
     <li>in random order within each level.</li>
     <li><b>Fine-to-Coarse</b> visits the same viewpoints in <b>reverse</b> order.</li>
@@ -930,23 +927,21 @@
 
 <section id="frontier" data-status="draft">
   <h2>ADE20K accuracy against inference compute</h2>
-  <!-- The paper's Figure 3A, built step by step: the worst policy at a 32² canvas, then at 64², then the prior active
-       models, then the best policy at both resolutions (the frontier's series attribute, set by the fragments; the cost
+  <!-- The paper's Figure 3A, built step by step: the prior active models and the worst policy at a 32² canvas, then at
+       64², then the best policy at both resolutions (the frontier's series attribute, set by the fragments; the cost
        axis glides to fit what is shown). Best policy: EG-C2F, the frontier policy of the paper's Figure 3A. Fine-to-Coarse
        passes AME (SETR)'s 27.6 at its fifth glimpse, 79 GFLOPs with a 32² canvas against AME's 312 (ade20k_seg.json). -->
-  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="f2c-32" height="480"></canvit-frontier></div>
-  <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64"></span>
+  <div class="card chart"><canvit-frontier src="../../assets/paper/ade20k_seg.json" series="f2c-32 prior" height="480"></canvit-frontier></div>
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
   <aside class="notes"><ul>
     <li>[AI draft: not the authors' text]</li>
     <li>Now the <b>cost</b>: mIoU against the compute spent so far, glimpse by glimpse.</li>
+    <li>The prior active models, each at its best published result.</li>
     <li>This is Fine-to-Coarse, a <b>worse-than-random</b> viewing order, with a 32 by 32 canvas.</li>
+    <li><b>Even</b> Fine-to-Coarse beats them, for less compute.</li>
     <li>[CLICK]</li>
     <li>And with a 64 by 64 canvas.</li>
-    <li>[CLICK]</li>
-    <li>The prior active models, each at its best published result.</li>
-    <li><b>Even</b> Fine-to-Coarse beats them, for less compute.</li>
     <li><b>So</b> perception, not viewpoint selection, was the bottleneck here:</li>
     <li>no policy can make up for a poor observer.</li>
     <li>[CLICK]</li>

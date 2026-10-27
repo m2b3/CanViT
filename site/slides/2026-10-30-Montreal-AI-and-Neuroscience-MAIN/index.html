@@ -951,42 +951,6 @@
   </ul></aside>
 </section>
 
-<section id="canvas-updates" data-status="draft">
-  <h2>An emergent hierarchy within each glimpse</h2>
-  <!-- The paper's figure "Canvas updates within and across glimpses" (fig:canvas-evolution) rebuilt for a slide by
-       experiments/canvas_updates/export.py from the paper's generator (paper/exporter's
-       diagrams/canvas_write_evolution.py): the paper's cat, its first glimpse, and what each of the glimpse's three
-       Canvas Attention Writes adds to the canvas (its residual), each colored by a PCA fitted on itself, as in the
-       paper; one Write per click (canvas-updates.js). The writes count from 1 here, from 0 in the paper. The
-       glimpse's box is drawn on every map. Placed after #learned-policy for now (Y, 2026-10-27: toward the end,
-       briefly); the example and its alternatives: TALK.md, "#canvas-updates". -->
-  <div class="updates">
-    <figure class="scene"><div class="frame"><img alt="The paper's cat, with the glimpse's box"><span class="box"></span></div><figcaption>Scene</figcaption></figure>
-    <figure class="glimpse"><img class="pixels" alt="The glimpse, with its 8 by 8 patches"><figcaption>Glimpse</figcaption></figure>
-    <svg class="flow-arrow to-writes" viewBox="0 0 44 20" aria-hidden="true"><path d="M2,10 H41 M32,2 L42,10 L32,18"/></svg>
-    <p class="writes-label">Canvas Attention Write residuals</p>
-    <figure class="write" data-write="1"><div class="frame"><img class="pixels" alt="What the first write adds: the glimpse's grid of patches"><span class="box"></span></div><figcaption>Write 1</figcaption></figure>
-    <figure class="write" data-write="2"><div class="frame"><img class="pixels" alt="What the second write adds: the objects inside the glimpse"><span class="box"></span></div><figcaption>Write 2</figcaption></figure>
-    <figure class="write" data-write="3"><div class="frame"><img class="pixels" alt="What the third write adds: the scene beyond the glimpse"><span class="box"></span></div><figcaption>Write 3</figcaption></figure>
-  </div>
-  <span class="fragment step-marker" data-shows="write-1"></span>
-  <span class="fragment step-marker" data-shows="write-2"></span>
-  <span class="fragment step-marker" data-shows="write-3"></span>
-  <aside class="notes"><ul>
-    <li>[From Yohaï's run-through of 2026-10-27, false starts removed] The recording ends during this slide; the lines marked AI draft continue it in his manner.</li>
-    <li>One more thing that I'd like to tell you about is what we saw when we looked inside the model.</li>
-    <li>It has multiple Canvas Attention layers within a single glimpse,</li>
-    <li>and we observed an interesting progression across depth within each glimpse, in the Canvas Attention write residuals that get sent to the canvas.</li>
-    <li>[CLICK]</li>
-    <li>The first Canvas Attention write seems to deal with essentially only what is contained within the glimpse, and doesn't represent much that is interpretable in human terms.</li>
-    <li>[CLICK]</li>
-    <li>[AI draft: not the authors' text] The second write starts to reflect the structure of the objects within the glimpse.</li>
-    <li>[CLICK]</li>
-    <li>[AI draft: not the authors' text] And the third one actually extrapolates beyond the confines of the glimpse, and delineates sharper object boundaries.</li>
-    <li>[AI draft: not the authors' text] So this progression is emergent: we never trained the model for it, but it reads like a processing hierarchy, going from local, feature-level content to scene-wide, semantically grounded content.</li>
-  </ul></aside>
-</section>
-
 <!-- code-only hides the scene and maps beside the code (Y, 2026-10-27: less on the slide); remove it to show them. -->
 <section id="quickstart" class="code-only" data-status="draft">
   <h2>Open-source and easy to use</h2>
@@ -1076,6 +1040,42 @@
 
 <section id="backup" data-status="ready">
   <p class="divider">Backup</p>
+</section>
+
+<section id="canvas-updates" data-status="draft">
+  <h2>An emergent hierarchy within each glimpse</h2>
+  <!-- The paper's figure "Canvas updates within and across glimpses" (fig:canvas-evolution) rebuilt for a slide by
+       experiments/canvas_updates/export.py from the paper's generator (paper/exporter's
+       diagrams/canvas_write_evolution.py): the paper's cat, its first glimpse, and what each of the glimpse's three
+       Canvas Attention Writes adds to the canvas (its residual), each colored by a PCA fitted on itself, as in the
+       paper; one Write per click (canvas-updates.js). The writes count from 1 here, from 0 in the paper. The
+       glimpse's box is drawn on every map. In Backup since 2026-10-27 (it was after #learned-policy); the example and its
+       alternatives: TALK.md, "#canvas-updates". -->
+  <div class="updates">
+    <figure class="scene"><div class="frame"><img alt="The paper's cat, with the glimpse's box"><span class="box"></span></div><figcaption>Scene</figcaption></figure>
+    <figure class="glimpse"><img class="pixels" alt="The glimpse, with its 8 by 8 patches"><figcaption>Glimpse</figcaption></figure>
+    <svg class="flow-arrow to-writes" viewBox="0 0 44 20" aria-hidden="true"><path d="M2,10 H41 M32,2 L42,10 L32,18"/></svg>
+    <p class="writes-label">Canvas Attention Write residuals</p>
+    <figure class="write" data-write="1"><div class="frame"><img class="pixels" alt="What the first write adds: the glimpse's grid of patches"><span class="box"></span></div><figcaption>Write 1</figcaption></figure>
+    <figure class="write" data-write="2"><div class="frame"><img class="pixels" alt="What the second write adds: the objects inside the glimpse"><span class="box"></span></div><figcaption>Write 2</figcaption></figure>
+    <figure class="write" data-write="3"><div class="frame"><img class="pixels" alt="What the third write adds: the scene beyond the glimpse"><span class="box"></span></div><figcaption>Write 3</figcaption></figure>
+  </div>
+  <span class="fragment step-marker" data-shows="write-1"></span>
+  <span class="fragment step-marker" data-shows="write-2"></span>
+  <span class="fragment step-marker" data-shows="write-3"></span>
+  <aside class="notes"><ul>
+    <li>[From Yohaï's run-through of 2026-10-27, false starts removed] The recording ends during this slide; the lines marked AI draft continue it in his manner.</li>
+    <li>One more thing that I'd like to tell you about is what we saw when we looked inside the model.</li>
+    <li>It has multiple Canvas Attention layers within a single glimpse,</li>
+    <li>and we observed an interesting progression across depth within each glimpse, in the Canvas Attention write residuals that get sent to the canvas.</li>
+    <li>[CLICK]</li>
+    <li>The first Canvas Attention write seems to deal with essentially only what is contained within the glimpse, and doesn't represent much that is interpretable in human terms.</li>
+    <li>[CLICK]</li>
+    <li>[AI draft: not the authors' text] The second write starts to reflect the structure of the objects within the glimpse.</li>
+    <li>[CLICK]</li>
+    <li>[AI draft: not the authors' text] And the third one actually extrapolates beyond the confines of the glimpse, and delineates sharper object boundaries.</li>
+    <li>[AI draft: not the authors' text] So this progression is emergent: we never trained the model for it, but it reads like a processing hierarchy, going from local, feature-level content to scene-wide, semantically grounded content.</li>
+  </ul></aside>
 </section>
 
 <section id="brain-score" data-status="draft">

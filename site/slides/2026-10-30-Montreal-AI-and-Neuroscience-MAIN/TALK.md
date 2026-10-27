@@ -552,7 +552,8 @@ drafts until Yohaï words them.
 Part II's notes total about 12 minutes at Part I's rate; Part I's run-through took about 6:15 (rehearsal timings,
 below).
 
-Backup since 2026-10-27, each slide for a question the room may ask: `#free-viewing` (neuro-AI datasets; its argument
+Backup since 2026-10-27, each slide for a question the room may ask: `#canvas-updates` (the emergent hierarchy within
+a glimpse, moved from the main flow on 2026-10-27 evening), `#brain-score` (Schrimpf et al. 2018's figure), `#free-viewing` (neuro-AI datasets; its argument
 is open), `#rollout` (the live model, for a demonstration), `#extrapolation` (how far the canvas extrapolates, with
 its measured overshoot), `#detail` (why zoom: a television only a zoomed glimpse finds); then the paper's figures and
 tables, each with the question it answers in its notes (`sources/paper-figures.json`): Fig. 4, the ablations'
@@ -660,7 +661,8 @@ removed.
   ImageNet-1k).
 
 - (A, 2026-10-27) `#canvas-updates` ("An emergent hierarchy within each glimpse"; the first draft's "Within a glimpse,
-  from patches to objects to the scene" rejected, Y), after `#learned-policy` and before `#quickstart` (Y: the paper's
+  from patches to objects to the scene" rejected, Y), in Backup since 2026-10-27 evening, first after the divider (it was
+  after `#learned-policy`, before `#quickstart`; Y: the paper's
   canvas-updates figure, toward the end, briefly, called emergent and compared with nothing in the brain; wording
   open): the paper's figure "Canvas updates within and across glimpses" rebuilt from its generator
   (`experiments/canvas_updates/export.py` reuses paper/exporter's `WriteCapture` and PCA colors). In one row, the

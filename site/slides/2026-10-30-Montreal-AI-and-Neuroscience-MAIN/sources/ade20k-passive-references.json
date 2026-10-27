@@ -1,5 +1,5 @@
 {
- "_about": "Passive ADE20K semantic segmentation results shown beside the paper's own numbers on the gap slide (#gap), each read in its source on 2026-10-25 by a Claude Code session. value: mIoU (%) on ADE20K val as the source prints it; inference: single-scale unless noted. The paper's export (assets/paper/ade20k_seg.json) supplies DINOv3 ViT-S/16 and ViT-B/16 with the paper's linear probe at 512 px, and the active models. note: how it was evaluated, drawn after the word passive; shown: whether the gap slide draws it (a few for perspective, Y 2026-10-25); the others stay recorded.",
+ "_about": "Passive ADE20K semantic segmentation results shown beside the paper's own numbers on the gap slide (#gap), each read in its source on 2026-10-25 by a Claude Code session. value: mIoU (%) on ADE20K val as the source prints it; inference: single-scale unless noted. The paper's export (assets/paper/ade20k_seg.json) supplies DINOv3 ViT-S/16 and ViT-B/16 with the paper's linear probe at 512 px, and the active models. note: how it was evaluated (recorded, not drawn); shown: whether the gap slide draws it (a few for perspective, Y 2026-10-25); the others stay recorded.",
  "references": [
   {
    "name": "DeepLabV3 R-101",

@@ -37,20 +37,18 @@ export async function drawGap(container, { paper, references, canvit = false }) 
   const [data, refs] = await Promise.all([fetchJson(paper), fetchJson(references)]);
   const prior = (name, label) => {
     const run = bestPrior(data.baselines, name);
-    return { name: label, note: `${run.num_glimpses} glimpses`, value: run.miou_pct, kind: "active", core: true };
+    return { name: label, value: run.miou_pct, kind: "active", core: true };
   };
   const rows = [
     prior("AME (MAE)", "AME (MAE ViT-L)"),
     prior("AdaGlimpse", "AdaGlimpse"),
     prior("AME (SETR)", "AME (SETR ViT-L)"),
-    { name: "DINOv3 ViT-S", note: "frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-S/16"), kind: "passive", core: canvit },
-    { name: "DINOv3 ViT-B", note: "frozen, linear", value: probe(data.probe_table, "DINOv3 ViT-B/16"), kind: "passive", core: canvit },
-    ...refs.references.filter((r) => r.shown).map((r) => ({ name: r.name, note: r.note, value: r.value, kind: "passive", core: canvit })),
+    { name: "DINOv3 ViT-S", value: probe(data.probe_table, "DINOv3 ViT-S/16"), kind: "passive", core: canvit },
+    { name: "DINOv3 ViT-B", value: probe(data.probe_table, "DINOv3 ViT-B/16"), kind: "passive", core: canvit },
+    ...refs.references.filter((r) => r.shown).map((r) => ({ name: r.name, value: r.value, kind: "passive", core: canvit })),
   ];
   if (canvit) {
-    const best = bestCanvit(data);
-    rows.push({ name: "CanViT-B", note: `frozen, linear, ${best.t + 1} glimpses`, value: 100 * best.mean, kind: "canvit",
-                kindLabel: "active", core: false });
+    rows.push({ name: "CanViT-B", value: 100 * bestCanvit(data).mean, kind: "canvit", core: false });
   }
   drawBarRows(container, rows, { groups: ["active", "canvit", "passive"], max: MAX, zoomMax: canvit ? MAX : ZOOM_MAX,
                                  ticks: [0, 10, 20, 30, 40, 50, 60, 70], label: "ADE20K mIoU of passive and active models" });

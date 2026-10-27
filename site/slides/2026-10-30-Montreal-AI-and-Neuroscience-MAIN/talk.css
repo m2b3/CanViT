@@ -496,11 +496,9 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 .bar-chart .grid { stroke: var(--rule); }
 .bar-chart .tick { font-size: 18px; fill: var(--ink); }
 .bar-chart .name { font-size: 26px; font-weight: 800; fill: var(--ink); }
-.bar-chart .note { font-size: 17px; fill: var(--ink); }
 .bar-chart .value { font-size: 26px; font-weight: 800; fill: var(--ink); }
 .bar-chart .passive .bar { fill: var(--ink); }
 .bar-chart .active .bar { fill: #d97706; }
-.bar-chart .active .note .kind { fill: #d97706; font-weight: 700; }
 .bar-chart .canvit .bar { fill: var(--canvas); }
 
 /* Yes/no comparison: the families of models against what an active-vision foundation model needs. */
@@ -622,7 +620,6 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #gap .bar-chart .row:not(.core) { opacity: 0; }
 #gap.shows-more .bar-chart .row { transform: translateY(var(--y-all)); opacity: 1; }
 #gap .bar-chart .name { font-size: 22px; }
-#gap .bar-chart .note { font-size: 17px; }
 #gap .bar-chart .value { font-size: 26px; }
 #gap .bar-chart .tick { font-size: 24px; }
 #gap .bar-chart .axis-title { font-size: 20px; }
@@ -724,10 +721,8 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #state-of-the-art .bar-chart .canvit .bar { transform: scaleX(0); transform-box: fill-box; transform-origin: left center;
                                             transition: transform .9s ease .4s; }
 #state-of-the-art.shows-canvit .bar-chart .canvit .bar { transform: none; }
-#state-of-the-art .bar-chart .canvit :is(.name, .value, .note .kind) { fill: var(--canvas); }
-#state-of-the-art .bar-chart .canvit .note .kind { font-weight: 700; }
+#state-of-the-art .bar-chart .canvit :is(.name, .value) { fill: var(--canvas); }
 #state-of-the-art .bar-chart .name { font-size: 22px; }
-#state-of-the-art .bar-chart .note { font-size: 17px; }
 #state-of-the-art .bar-chart .value { font-size: 26px; }
 #state-of-the-art .bar-chart .tick { font-size: 24px; }
 #state-of-the-art .bar-chart .axis-title { font-size: 20px; }

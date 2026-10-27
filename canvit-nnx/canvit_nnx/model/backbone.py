@@ -8,13 +8,14 @@ import jax.numpy as jnp
 from canvit_core.backbone import ViTSpec
 
 from canvit_nnx.model.initialization import DINO_LINEAR_KERNEL, symmetric_uniform
+from canvit_nnx.model.multihead import attention
 from canvit_nnx.model.rope import RoPE, apply_2d_rope
 
 Array = jax.Array
 
 
 class PatchEmbed(nnx.Module):
-    def __init__(self, *, patch_size: int, embed_dim: int, rngs: nnx.Rngs) -> None:
+    def __init__(self, *, patch_size: int, embed_dim: int, dtype: jnp.dtype, rngs: nnx.Rngs) -> None:
         bound = math.sqrt(1.0 / (3 * patch_size**2))
         self.proj = nnx.Conv(
             in_features=3,
@@ -24,6 +25,7 @@ class PatchEmbed(nnx.Module):
             padding="VALID",
             kernel_init=symmetric_uniform(bound=bound),
             bias_init=symmetric_uniform(bound=bound),
+            dtype=dtype,
             rngs=rngs,
         )
 
@@ -38,53 +40,42 @@ class LayerScale(nnx.Module):
         self.gamma = nnx.Param(jnp.full((dim,), init_value, dtype=jnp.float32))
 
     def __call__(self, x: Array) -> Array:
-        return x * self.gamma[...]
+        return x * self.gamma[...].astype(x.dtype)
+
+
+def _dino_linear(*, in_features: int, out_features: int, dtype: jnp.dtype, rngs: nnx.Rngs) -> nnx.Linear:
+    return nnx.Linear(
+        in_features=in_features,
+        out_features=out_features,
+        kernel_init=DINO_LINEAR_KERNEL,
+        bias_init=jax.nn.initializers.zeros,
+        dtype=dtype,
+        rngs=rngs,
+    )
 
 
 class MLP(nnx.Module):
-    def __init__(self, *, dim: int, hidden_dim: int, rngs: nnx.Rngs) -> None:
-        self.fc1 = nnx.Linear(
-            in_features=dim,
-            out_features=hidden_dim,
-            kernel_init=DINO_LINEAR_KERNEL,
-            bias_init=jax.nn.initializers.zeros,
-            rngs=rngs,
-        )
-        self.fc2 = nnx.Linear(
-            in_features=hidden_dim,
-            out_features=dim,
-            kernel_init=DINO_LINEAR_KERNEL,
-            bias_init=jax.nn.initializers.zeros,
-            rngs=rngs,
-        )
+    def __init__(self, *, dim: int, hidden_dim: int, dtype: jnp.dtype, rngs: nnx.Rngs) -> None:
+        self.fc1 = _dino_linear(in_features=dim, out_features=hidden_dim, dtype=dtype, rngs=rngs)
+        self.fc2 = _dino_linear(in_features=hidden_dim, out_features=dim, dtype=dtype, rngs=rngs)
 
     def __call__(self, x: Array) -> Array:
         return self.fc2(jax.nn.gelu(self.fc1(x), approximate=False))
 
 
 class SelfAttention(nnx.Module):
-    def __init__(self, *, dim: int, num_heads: int, rngs: nnx.Rngs) -> None:
+    def __init__(self, *, dim: int, num_heads: int, dtype: jnp.dtype, rngs: nnx.Rngs) -> None:
         assert dim % num_heads == 0, (dim, num_heads)
         self.num_heads = num_heads
         self.head_dim = dim // num_heads
-        self.qkv = nnx.Linear(
-            in_features=dim,
-            out_features=3 * dim,
-            kernel_init=DINO_LINEAR_KERNEL,
-            bias_init=jax.nn.initializers.zeros,
-            rngs=rngs,
-        )
-        self.proj = nnx.Linear(
-            in_features=dim,
-            out_features=dim,
-            kernel_init=DINO_LINEAR_KERNEL,
-            bias_init=jax.nn.initializers.zeros,
-            rngs=rngs,
-        )
+        self.dtype = dtype
+        self.qkv = _dino_linear(in_features=dim, out_features=3 * dim, dtype=dtype, rngs=rngs)
+        self.proj = _dino_linear(in_features=dim, out_features=dim, dtype=dtype, rngs=rngs)
 
     def __call__(self, x: Array, rope: RoPE) -> Array:
         batch_size, tokens, dim = x.shape
         assert self.qkv.bias is not None
+        # DINOv3 has no key bias: the key slice of the fused bias is masked.
         bias_mask = jnp.concatenate(
             (
                 jnp.ones((dim,), dtype=jnp.float32),
@@ -92,28 +83,27 @@ class SelfAttention(nnx.Module):
                 jnp.ones((dim,), dtype=jnp.float32),
             )
         )
-        qkv = x @ self.qkv.kernel[...] + self.qkv.bias[...] * bias_mask
+        qkv = x.astype(self.dtype) @ self.qkv.kernel[...].astype(self.dtype) + (
+            self.qkv.bias[...] * bias_mask
+        ).astype(self.dtype)
         qkv = qkv.reshape(batch_size, tokens, 3, self.num_heads, self.head_dim)
         query, key, value = (qkv[:, :, index] for index in range(3))
-        query = apply_2d_rope(query, rope)
-        key = apply_2d_rope(key, rope)
-        output = jax.nn.dot_product_attention(
-            query,
-            key,
-            value,
-            scale=self.head_dim**-0.5,
+        # The probabilities enter the weighted sum in float32: rounded to bfloat16, they inflated the gradient
+        # norms of backpropagation through glimpses in the bfloat16 fine-tuning.
+        output = attention(
+            apply_2d_rope(query, rope), apply_2d_rope(key, rope), value, probability_dtype=jnp.dtype(jnp.float32)
         )
         return self.proj(output.reshape(batch_size, tokens, dim))
 
 
 class ViTBlock(nnx.Module):
-    def __init__(self, *, spec: ViTSpec, rngs: nnx.Rngs) -> None:
+    def __init__(self, *, spec: ViTSpec, dtype: jnp.dtype, rngs: nnx.Rngs) -> None:
         dim = spec.embed_dim
         self.norm1 = nnx.LayerNorm(dim, epsilon=1e-5, use_fast_variance=False, rngs=rngs)
-        self.attn = SelfAttention(dim=dim, num_heads=spec.num_heads, rngs=rngs)
+        self.attn = SelfAttention(dim=dim, num_heads=spec.num_heads, dtype=dtype, rngs=rngs)
         self.ls1 = LayerScale(dim=dim, init_value=spec.layerscale_init)
         self.norm2 = nnx.LayerNorm(dim, epsilon=1e-5, use_fast_variance=False, rngs=rngs)
-        self.mlp = MLP(dim=dim, hidden_dim=spec.mlp_hidden_dim, rngs=rngs)
+        self.mlp = MLP(dim=dim, hidden_dim=spec.mlp_hidden_dim, dtype=dtype, rngs=rngs)
         self.ls2 = LayerScale(dim=dim, init_value=spec.layerscale_init)
 
     def __call__(self, x: Array, rope: RoPE) -> Array:
@@ -122,10 +112,10 @@ class ViTBlock(nnx.Module):
 
 
 class ViTBackbone(nnx.Module):
-    def __init__(self, *, spec: ViTSpec, rngs: nnx.Rngs) -> None:
+    def __init__(self, *, spec: ViTSpec, dtype: jnp.dtype, rngs: nnx.Rngs) -> None:
         self.spec = spec
-        self.patch_embed = PatchEmbed(patch_size=spec.patch_size, embed_dim=spec.embed_dim, rngs=rngs)
-        self.blocks = nnx.List([ViTBlock(spec=spec, rngs=rngs) for _ in range(spec.num_blocks)])
+        self.patch_embed = PatchEmbed(patch_size=spec.patch_size, embed_dim=spec.embed_dim, dtype=dtype, rngs=rngs)
+        self.blocks = nnx.List([ViTBlock(spec=spec, dtype=dtype, rngs=rngs) for _ in range(spec.num_blocks)])
 
 
 __all__ = ["PatchEmbed", "ViTBackbone", "ViTBlock", "ViTSpec"]

@@ -62,12 +62,25 @@ def crop_box_px(viewpoint: Viewpoint, *, image_size_px: int) -> Array:
     return (corners + 1.0) * (image_size_px / 2.0)
 
 
+def _interpolation_weights(positions: Array, *, size: int) -> Array:
+    """[..., size] bilinear weights of scene positions [...] over the pixels of an axis of that size.
+
+    Pixel coordinates use the ``align_corners=False`` mapping of
+    ``torch.nn.functional.grid_sample``; a sample position draws on at most two
+    pixels, and pixels outside the axis are absent, which zero-pads.
+    """
+    pixels = (positions + 1.0) * (size / 2.0) - 0.5
+    return jnp.maximum(0.0, 1.0 - jnp.abs(pixels[..., None] - jnp.arange(size, dtype=jnp.float32)))
+
+
 def sample_at_viewpoint(*, spatial: Array, viewpoint: Viewpoint, glimpse_size_px: int) -> Array:
     """Sample zero-padded bilinear crops from an NHWC image or feature map.
 
     Pixel coordinates use the ``align_corners=False`` mapping used by
-    ``torch.nn.functional.grid_sample``. Computation is float32 and the input
-    dtype is restored on return.
+    ``torch.nn.functional.grid_sample``. The interpolation is separable, a
+    product with row weights then with column weights, in the input dtype
+    with float32 accumulation: matrix products instead of the per-pixel
+    gathers that TPUs execute slowly. Returns the input dtype.
     """
     assert spatial.ndim == 4, spatial.shape
     batch_size, height, width, _ = spatial.shape
@@ -76,31 +89,15 @@ def sample_at_viewpoint(*, spatial: Array, viewpoint: Viewpoint, glimpse_size_px
     _validate_viewpoint(viewpoint)
     assert batch_size == viewpoint.scales.shape[0], (spatial.shape, viewpoint.scales.shape)
 
-    scene_positions = viewpoint_grid_coords(viewpoint, size=glimpse_size_px)
-    image_size = jnp.asarray((height, width), dtype=jnp.float32)
-    pixels = (scene_positions + 1.0) * image_size / 2.0 - 0.5
-    lower = jnp.floor(pixels).astype(jnp.int32)
-    fraction = pixels - lower.astype(jnp.float32)
-
-    row, col = lower[..., 0], lower[..., 1]
-    row_fraction = fraction[..., 0, None]
-    col_fraction = fraction[..., 1, None]
-    spatial_float = spatial.astype(jnp.float32)
-    batch_indices = jnp.arange(batch_size, dtype=jnp.int32)[:, None, None]
-
-    def gather(row_index: Array, col_index: Array) -> Array:
-        valid = (row_index >= 0) & (row_index < height) & (col_index >= 0) & (col_index < width)
-        values = spatial_float[
-            batch_indices,
-            jnp.clip(row_index, 0, height - 1),
-            jnp.clip(col_index, 0, width - 1),
-        ]
-        return jnp.where(valid[..., None], values, 0.0)
-
-    sampled = (
-        gather(row, col) * (1.0 - row_fraction) * (1.0 - col_fraction)
-        + gather(row, col + 1) * (1.0 - row_fraction) * col_fraction
-        + gather(row + 1, col) * row_fraction * (1.0 - col_fraction)
-        + gather(row + 1, col + 1) * row_fraction * col_fraction
+    offsets = grid_coords(size=glimpse_size_px)[:, 0, 0]
+    rows = viewpoint.centers[:, 0, None] + viewpoint.scales[:, None] * offsets
+    cols = viewpoint.centers[:, 1, None] + viewpoint.scales[:, None] * offsets
+    sampled = jnp.einsum(
+        "byh,bhwc,bxw->byxc",
+        _interpolation_weights(rows, size=height).astype(spatial.dtype),
+        spatial,
+        _interpolation_weights(cols, size=width).astype(spatial.dtype),
+        preferred_element_type=jnp.float32,
+        precision=jax.lax.Precision.HIGHEST,
     )
     return sampled.astype(spatial.dtype)

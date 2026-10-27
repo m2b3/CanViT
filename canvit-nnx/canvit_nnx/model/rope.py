@@ -29,6 +29,12 @@ def compute_2d_rope(*, positions: Array, periods: Array) -> RoPE:
     return RoPE(sin=jnp.sin(angles)[:, :, None, :], cos=jnp.cos(angles)[:, :, None, :])
 
 
+def rotate_half(x: Array) -> Array:
+    """(first, second) halves of the last axis -> (-second, first): RoPE's quarter turn."""
+    half = x.shape[-1] // 2
+    return jnp.concatenate((-x[..., half:], x[..., :half]), axis=-1)
+
+
 def apply_2d_rope(x: Array, rope: RoPE) -> Array:
     """Rotate spatial tokens in ``[batch, tokens, heads, head_dim]`` arrays."""
     assert x.ndim == 4, x.shape
@@ -38,9 +44,7 @@ def apply_2d_rope(x: Array, rope: RoPE) -> Array:
     assert prefix >= 0, (x.shape, rope.sin.shape)
     assert rope.sin.shape[-1] == x.shape[-1], (x.shape, rope.sin.shape)
     spatial = x[:, prefix:].astype(jnp.float32)
-    half = spatial.shape[-1] // 2
-    first, second = spatial[..., :half], spatial[..., half:]
-    rotated = spatial * rope.cos + jnp.concatenate((-second, first), axis=-1) * rope.sin
+    rotated = spatial * rope.cos + rotate_half(spatial) * rope.sin
     if prefix == 0:
         return rotated.astype(x.dtype)
     return jnp.concatenate((x[:, :prefix], rotated.astype(x.dtype)), axis=1)

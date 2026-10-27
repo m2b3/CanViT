@@ -13,6 +13,7 @@ from safetensors.numpy import load_file
 
 from canvit_nnx.hub import HubMixin
 from canvit_nnx.model.canvit import CanViT, RecurrentState
+from canvit_nnx.model.config import ComputeDtype
 from canvit_nnx.model.pretraining import CanViTForPretraining
 from canvit_nnx.model.readout import LinearReadout
 from canvit_nnx.viewpoint import Viewpoint
@@ -27,9 +28,10 @@ class CanViTForImageClassification(nnx.Module, HubMixin):
         canvit_config: CanViTConfig,
         n_classes: int,
         rngs: nnx.Rngs,
+        compute_dtype: ComputeDtype = "float32",
     ) -> None:
         assert n_classes > 0, n_classes
-        self.canvit = CanViT(canvit_config, rngs=rngs)
+        self.canvit = CanViT(canvit_config, rngs=rngs, compute_dtype=compute_dtype)
         self.readout = LinearReadout(
             in_dim=self.canvit.backbone_dim,
             out_dim=n_classes,
@@ -63,7 +65,9 @@ class CanViTForImageClassification(nnx.Module, HubMixin):
         *,
         pretrained_repo: str,
         probe_repo: str,
+        compute_dtype: ComputeDtype = "float32",
     ) -> "CanViTForImageClassification":
+        """A pretrained CanViT whose CLS readout is fused with a linear probe trained on the teacher's CLS token."""
         pretrained = CanViTForPretraining.from_pretrained(pretrained_repo)
         probe = load_file(hub_file(probe_repo, "model.safetensors"))
         projection = pretrained.teacher_cls_readout.proj
@@ -80,9 +84,10 @@ class CanViTForImageClassification(nnx.Module, HubMixin):
             canvit_config=pretrained.canvit.config,
             n_classes=weight.shape[0],
             rngs=nnx.Rngs(0),
+            compute_dtype=compute_dtype,
         )
-        model.canvit = pretrained.canvit
-        model.readout.norm = pretrained.teacher_cls_readout.norm
+        nnx.update(model.canvit, nnx.state(pretrained.canvit))
+        nnx.update(model.readout.norm, nnx.state(pretrained.teacher_cls_readout.norm))
         model.readout.proj.kernel[...] = jnp.asarray(weight).T
         assert model.readout.proj.bias is not None
         model.readout.proj.bias[...] = jnp.asarray(bias)

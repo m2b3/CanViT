@@ -65,6 +65,15 @@ order, each before or after it as the entry says, because released versions load
   bfloat16 unless the caller disabled autocast; float32 callers get bitwise the same logits.
 - The TPU fine-tuning's environment, sharding and compilation logging moved from
   `specialize.in1k_tpu.train` to `specialize.in1k_tpu.diagnostics`.
+- Hub cards (`hub.cards`) carry a License section, which names DINOv3, CanViT's pretraining
+  teacher, and links the DINOv3 License. Probe cards state DINOv3's segmentation augmentation and
+  the step of the released weights (`ProbeTraining` gains `selected_step`, `crop_size_px` and
+  `flip_probability`; `crop_scale_range` is now `scale_jitter_range`). Cards link the Hub datasets
+  `ILSVRC/imagenet-1k` and `zhoubolei/scene_parse_150`, and none for ImageNet-21k, which has no
+  official Hub dataset (`DATASET_HUB_IDS` is now `PRETRAINING_DATASET_HUB_IDS`).
+- `hub.cards.classifier_card` and `hub.cards.dinov3_classification_probe_card` write the cards of
+  the fine-tuned classifiers and of the DINOv3 ImageNet-1k probes, with the results the paper
+  reports; `hub.publish.probe_card` builds a probe's card from its training record.
 
 ### Removed
 

@@ -1,4 +1,9 @@
-"""Generate concise native CanViT model cards and sanitized staging records."""
+"""Model cards and staging records of native CanViT checkpoints (canvit-nnx, canvit-mlx): converted pretraining
+checkpoints and classifiers, probes, and canvit-nnx's COCO detectors.
+
+A card is rendered from what its checkpoint's records state: the staging functions read a conversion's output
+directory, tools.refresh_cards reads a published repo's config.json and provenance.json.
+"""
 
 import hashlib
 import json
@@ -9,9 +14,65 @@ from typing import Any, Literal
 
 from canvit_core.checkpoint import FORMAT
 from canvit_pytorch import project
+from canvit_pytorch.hub.cards import details_table
 
 Backend = Literal["mlx", "nnx"]
 ARCHIVE_TAG = f"before-format-{FORMAT[:8]}"
+TAGS = ["canvit", "active-vision", "vision-transformer"]
+
+
+@dataclass(frozen=True)
+class Geometry:
+    scene_size_px: int
+    glimpse_size_px: int
+    canvas_grid_size: int
+
+
+@dataclass(frozen=True)
+class Source:
+    """The published checkpoint a native one was converted from, at the revision converted."""
+
+    repo: str
+    revision: str
+
+
+@dataclass(frozen=True)
+class NativeTraining:
+    """What the card of a checkpoint trained outside canvit-pytorch states, since no PyTorch repo states it."""
+
+    title: str
+    summary: str
+    rows: list[tuple[str, str]]
+    results: str | None = None
+    base_model: str | None = None
+    """The checkpoint it was trained from, when there is one."""
+    datasets: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class NativeModel:
+    """A pretraining or classification checkpoint in a native format, as its card states it."""
+
+    repo: str
+    backend: Backend
+    record: dict[str, Any]
+    """Its config.json."""
+    geometry: Geometry
+    """Of the usage example; for a conversion, where it was checked against its source."""
+    source: Source | None
+    training: NativeTraining | None = None
+
+
+@dataclass(frozen=True)
+class NativeProbe:
+    repo: str
+    backend: Backend
+    record: dict[str, Any]
+    pretrained_native_repo: str
+    geometry: Geometry
+    """The geometry of the usage example: the probe's training geometry."""
+    source: Source | None
+    training: NativeTraining | None = None
 
 
 @dataclass(frozen=True)
@@ -99,6 +160,30 @@ def _install(backend: Backend) -> str:
     return f"uv add {_package_name(backend)}"
 
 
+def _checked_record(record: dict[str, Any], backend: Backend, models: set[str], where: object) -> str:
+    if record.get("format") != FORMAT:
+        raise ValueError(f"{where}: unexpected format {record.get('format')!r}")
+    assert record["backend"] == backend and record["model"] in models, (where, record["backend"], record["model"])
+    return record["model"]
+
+
+def _card(*, frontmatter: dict[str, str | list[str]], title: str, summary: str, backend: Backend, usage: str,
+          rows: list[tuple[str, str]], results: str | None = None) -> str:
+    return "\n\n".join((
+        _frontmatter(frontmatter),
+        f"# {title}",
+        summary,
+        project.DESCRIPTION,
+        f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
+        "## Install\n\n```bash\n" + _install(backend) + "\n```",
+        "## Usage\n\n```python\n" + usage + "\n```",
+        *([f"## Results\n\n{results}"] if results is not None else []),
+        "## Details\n\n" + details_table(rows),
+        f"## License\n\n{project.CHECKPOINT_LICENSE}",
+        "## Citation\n\n```bibtex\n" + project.BIBTEX + "\n```",
+    )) + "\n"
+
+
 def _backend_fragments(backend: Backend) -> tuple[str, str, str, str]:
     if backend == "nnx":
         return (
@@ -115,48 +200,47 @@ def _backend_fragments(backend: Backend) -> tuple[str, str, str, str]:
     )
 
 
-def _model_usage(*, backend: Backend, repo: str, model_name: str, scene_size_px: int, glimpse_size_px: int, canvas_grid_size: int) -> str:
+def _model_usage(*, backend: Backend, repo: str, model_name: str, geometry: Geometry) -> str:
     imports, preprocess_import, array_constructor, module_name = _backend_fragments(backend)
     if model_name == "CanViTForPretraining":
-        model_import = "CanViTForPretraining"
         result = "output = model(glimpse=glimpse, state=state, viewpoint=viewpoint)\nstate = output.state"
     else:
-        model_import = "CanViTForImageClassification"
         result = "logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)"
     return f'''{imports}
 from PIL import Image
 
-from {module_name} import {model_import}, Viewpoint, sample_at_viewpoint
+from {module_name} import {model_name}, Viewpoint, sample_at_viewpoint
 {preprocess_import}
 
-scene = {array_constructor}(preprocess({scene_size_px})(Image.open("scene.jpg").convert("RGB")))[None]
-model = {model_import}.from_pretrained("{repo}")
+scene = {array_constructor}(preprocess({geometry.scene_size_px})(Image.open("scene.jpg").convert("RGB")))[None]
+model = {model_name}.from_pretrained("{repo}")
 model.eval()
-state = model.init_state(batch_size=1, canvas_grid_size={canvas_grid_size})
+state = model.init_state(batch_size=1, canvas_grid_size={geometry.canvas_grid_size})
 viewpoint = Viewpoint.full_scene(batch_size=1)
-glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px={glimpse_size_px})
+glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px={geometry.glimpse_size_px})
 {result}'''
 
 
-def _probe_usage(entry: ProbeEntry, *, num_classes: int) -> str:
-    imports, preprocess_import, array_constructor, module_name = _backend_fragments(entry.backend)
-    evaluation = "\nmx.eval(logits)" if entry.backend == "mlx" else ""
+def _probe_usage(probe: NativeProbe, *, num_classes: int) -> str:
+    imports, preprocess_import, array_constructor, module_name = _backend_fragments(probe.backend)
+    evaluation = "\nmx.eval(logits)" if probe.backend == "mlx" else ""
+    g = probe.geometry
     return f'''{imports}
 from PIL import Image
 
 from {module_name} import CanViTForSemanticSegmentation, Viewpoint, sample_at_viewpoint
 {preprocess_import}
 
-scene = {array_constructor}(preprocess({entry.scene_size_px})(Image.open("scene.jpg").convert("RGB")))[None]
+scene = {array_constructor}(preprocess({g.scene_size_px})(Image.open("scene.jpg").convert("RGB")))[None]
 model = CanViTForSemanticSegmentation.from_pretrained_with_probe(
-    pretrained_repo="{entry.pretrained_native_repo}",
-    probe_repo="{entry.target_repo}",
+    pretrained_repo="{probe.pretrained_native_repo}",
+    probe_repo="{probe.repo}",
 )
 model.eval()
-state = model.init_state(batch_size=1, canvas_grid_size={entry.canvas_grid_size})
+state = model.init_state(batch_size=1, canvas_grid_size={g.canvas_grid_size})
 viewpoint = Viewpoint.full_scene(batch_size=1)
-glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px={entry.glimpse_size_px})
-logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)  # [1, {entry.canvas_grid_size}, {entry.canvas_grid_size}, {num_classes}]{evaluation}'''
+glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px={g.glimpse_size_px})
+logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)  # [1, {g.canvas_grid_size}, {g.canvas_grid_size}, {num_classes}]{evaluation}'''
 
 
 def _detector_usage(*, repo: str, scene_size_px: int, glimpse_size_px: int, canvas_grid_size: int, num_glimpses: int) -> str:
@@ -182,102 +266,81 @@ for viewpoint in coarse_to_fine(jax.random.key(0), batch_size=1, num_glimpses={n
     detections = decode(maps)  # normalized (ymin, xmin, ymax, xmax) boxes, scores and COCO class indices'''
 
 
-def _details(rows: list[tuple[str, str]]) -> str:
-    return "| | |\n|---|---|\n" + "\n".join(f"| {name} | {value} |" for name, value in rows)
+def _geometry_text(g: Geometry) -> str:
+    return f"{g.scene_size_px} px scenes, {g.glimpse_size_px} px glimpses, {g.canvas_grid_size} × {g.canvas_grid_size} canvas"
 
 
-def _model_card(entry: ModelEntry) -> tuple[str, dict[str, Any]]:
-    record = _read_json(entry.artifact / "config.json")
-    conversion = _read_json(entry.artifact / "conversion.json")
-    if record.get("format") != FORMAT:
-        raise ValueError(f"{entry.artifact}: unexpected format {record.get('format')!r}")
-    assert record["backend"] == entry.backend, (record["backend"], entry.backend)
-    model_name = record["model"]
-    assert model_name in {"CanViTForPretraining", "CanViTForImageClassification"}, model_name
-    label = _backend_label(entry.backend)
+def _conversion_rows(source: Source | None, checked_at: Geometry | None) -> list[tuple[str, str]]:
+    if source is None:
+        return []
+    rows = [("Converted from", _hub_link(source.repo, source.revision))]
+    return rows + ([("Conversion checked at", _geometry_text(checked_at))] if checked_at is not None else [])
+
+
+def _training_frontmatter(training: NativeTraining | None, source: Source | None) -> dict[str, str | list[str]]:
+    base = training.base_model if training is not None and training.base_model else (source.repo if source else None)
+    fields: dict[str, str | list[str]] = {"base_model": base} if base else {}
+    if training is not None and training.datasets:
+        fields["datasets"] = list(training.datasets)
+    return fields
+
+
+def model_card(model: NativeModel) -> str:
+    model_name = _checked_record(model.record, model.backend, {"CanViTForPretraining", "CanViTForImageClassification"},
+                                 model.repo)
+    label, package = _backend_label(model.backend), _package_name(model.backend)
     is_pretraining = model_name == "CanViTForPretraining"
-    scene_size_px = int(conversion["scene_size_px"])
-    glimpse_size_px = int(conversion["glimpse_size_px"])
-    canvas_grid_size = int(conversion["canvas_grid_size"])
-    title = f"CanViT {'pretraining checkpoint' if is_pretraining else 'classifier'} ({label})"
-    summary = f"CanViT {'pretraining weights' if is_pretraining else 'image classifier'} for {label}."
-    usage = _model_usage(
-        backend=entry.backend,
-        repo=entry.target_repo,
-        model_name=model_name,
-        scene_size_px=scene_size_px,
-        glimpse_size_px=glimpse_size_px,
-        canvas_grid_size=canvas_grid_size,
-    )
-    rows = [
-        ("Backend", label),
-        ("Model class", f"`{model_name}`"),
-        ("Source checkpoint", _hub_link(entry.source_repo, entry.source_revision)),
-        ("Validation geometry", f"{scene_size_px} px scenes, {glimpse_size_px} px glimpses, {canvas_grid_size} × {canvas_grid_size} canvas"),
-    ]
-    task_config = record["config"]
-    if "n_classes" in task_config:
-        rows.append(("Classes", str(task_config["n_classes"])))
+    rows = [("Backend", label), ("Model class", f"`{model_name}`"), *_conversion_rows(model.source, model.geometry)]
+    if "n_classes" in model.record["config"]:
+        rows.append(("Classes", str(model.record["config"]["n_classes"])))
+    rows += model.training.rows if model.training is not None else []
     frontmatter: dict[str, str | list[str]] = {
-        "library_name": _package_name(entry.backend),
+        "library_name": package,
         "pipeline_tag": "image-feature-extraction" if is_pretraining else "image-classification",
-        "tags": ["canvit", "active-vision", "vision-transformer", entry.backend],
+        "tags": [*TAGS, model.backend],
         "license": "mit",
+        **_training_frontmatter(model.training, model.source),
     }
-    body = "\n\n".join((
-        _frontmatter(frontmatter),
-        f"# {title}",
-        summary,
-        project.DESCRIPTION,
-        f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
-        "## Install\n\n```bash\n" + _install(entry.backend) + "\n```",
-        "## Usage\n\n```python\n" + usage + "\n```",
-        "## Details\n\n" + _details(rows),
-        "## Citation\n\n```bibtex\n" + project.BIBTEX + "\n```",
-    )) + "\n"
-    return body, _provenance(entry, record, conversion)
+    if (training := model.training) is None:
+        assert model.source is not None, model.repo
+        title = f"CanViT {'pretraining checkpoint' if is_pretraining else 'classifier'} ({label})"
+        summary = f"{_hub_link(model.source.repo)} in the checkpoint format of {package}, for {label}."
+    else:
+        title, summary = f"{training.title} ({label})", training.summary
+    usage = _model_usage(backend=model.backend, repo=model.repo, model_name=model_name, geometry=model.geometry)
+    return _card(frontmatter=frontmatter, title=title, summary=summary, backend=model.backend, usage=usage, rows=rows,
+                 results=training.results if training else None)
 
 
-def _probe_card(entry: ProbeEntry) -> tuple[str, dict[str, Any]]:
-    record = _read_json(entry.artifact / "config.json")
-    conversion = _read_json(entry.artifact / "conversion.json")
-    if record.get("format") != FORMAT:
-        raise ValueError(f"{entry.artifact}: unexpected format {record.get('format')!r}")
-    label = _backend_label(entry.backend)
-    assert record["backend"] == entry.backend and record["model"] == "SegmentationProbe", record
+def probe_card(probe: NativeProbe) -> str:
+    _checked_record(probe.record, probe.backend, {"SegmentationProbe"}, probe.repo)
+    label, package = _backend_label(probe.backend), _package_name(probe.backend)
+    rows = [("Backend", label), ("Model class", "`SegmentationProbe`"), *_conversion_rows(probe.source, None),
+            ("CanViT checkpoint", _hub_link(probe.pretrained_native_repo)),
+            ("Classes", str(probe.record["config"]["num_classes"]))]
+    rows += probe.training.rows if probe.training is not None else [("Example geometry", _geometry_text(probe.geometry))]
     frontmatter: dict[str, str | list[str]] = {
-        "library_name": _package_name(entry.backend),
+        "library_name": package,
         "pipeline_tag": "image-segmentation",
-        "tags": ["canvit", "active-vision", "vision-transformer", "ade20k", "linear-probe", entry.backend],
+        "tags": [*TAGS, "ade20k", "linear-probe", probe.backend],
         "license": "mit",
+        **_training_frontmatter(probe.training, probe.source),
     }
-    rows = [
-        ("Backend", label),
-        ("Model class", "`SegmentationProbe`"),
-        ("Source probe", _hub_link(entry.source_repo, entry.source_revision)),
-        ("CanViT checkpoint", _hub_link(entry.pretrained_native_repo)),
-        ("Classes", str(record["config"]["num_classes"])),
-        ("Example geometry", f"{entry.scene_size_px} px scenes, {entry.glimpse_size_px} px glimpses, {entry.canvas_grid_size} × {entry.canvas_grid_size} canvas"),
-    ]
-    body = "\n\n".join((
-        _frontmatter(frontmatter),
-        f"# ADE20K probe on CanViT's canvas ({label})",
-        f"ADE20K segmentation probe for CanViT canvas features, implemented in {label}. Load it alongside the separately published CanViT checkpoint.",
-        project.DESCRIPTION,
-        f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
-        "## Install\n\n```bash\n" + _install(entry.backend) + "\n```",
-        "## Usage\n\n```python\n" + _probe_usage(entry, num_classes=record["config"]["num_classes"]) + "\n```",
-        "## Details\n\n" + _details(rows),
-        "## Citation\n\n```bibtex\n" + project.BIBTEX + "\n```",
-    )) + "\n"
-    return body, _provenance(entry, record, conversion)
+    if (training := probe.training) is None:
+        assert probe.source is not None, probe.repo
+        title = f"ADE20K probe on CanViT's canvas ({label})"
+        summary = (f"{_hub_link(probe.source.repo)} in the checkpoint format of {package}: an ADE20K segmentation "
+                   "probe for CanViT's canvas, loaded alongside the separately published CanViT checkpoint.")
+    else:
+        title, summary = f"{training.title} ({label})", training.summary
+    return _card(frontmatter=frontmatter, title=title, summary=summary, backend=probe.backend,
+                 usage=_probe_usage(probe, num_classes=probe.record["config"]["num_classes"]), rows=rows,
+                 results=training.results if training else None)
 
 
 def _detector_card(entry: "DetectorEntry") -> tuple[str, dict[str, Any]]:
     record = _read_json(entry.artifact / "config.json")
-    if record.get("format") != FORMAT:
-        raise ValueError(f"{entry.artifact}: unexpected format {record.get('format')!r}")
-    assert record["backend"] == "nnx" and record["model"] == "CanViTForObjectDetection", record
+    _checked_record(record, "nnx", {"CanViTForObjectDetection"}, entry.artifact)
     training, evaluation = entry.training, entry.evaluation
     recipe, statistics = training["recipe"], evaluation["statistics"]
     glimpses = range(evaluation["glimpses"])
@@ -285,11 +348,17 @@ def _detector_card(entry: "DetectorEntry") -> tuple[str, dict[str, Any]]:
     def cell(name: str, glimpse: int) -> str:
         value = statistics[f"{name}_t{glimpse}"]
         interval = value.get("ci95")
-        varies = interval is not None and interval[0] < interval[1]
-        return f"{value['mean']:.4f}" + (f" [{interval[0]:.4f}, {interval[1]:.4f}]" if varies else "")
+        if interval is None or interval[0] >= interval[1]:
+            return f"{value['mean']:.4f}"
+        return f"{value['mean']:.4f} [{interval[0]:.4f}, {interval[1]:.4f}]"
 
-    results = "| Glimpse | AP | AP50 | AP75 |\n|---|---|---|---|\n" + "\n".join(
-        f"| {glimpse} | {cell('AP', glimpse)} | {cell('AP50', glimpse)} | {cell('AP75', glimpse)} |" for glimpse in glimpses
+    results = (
+        f"COCO {evaluation['split']} ({evaluation['images']} images), {evaluation['policy']} viewpoints: means over "
+        f"{evaluation['repeats']} independent viewpoint draws, with 95% bootstrap intervals over the draws where they "
+        "vary.\n\n| Glimpse | AP | AP50 | AP75 |\n|---|---|---|---|\n" + "\n".join(
+            f"| {glimpse} | {cell('AP', glimpse)} | {cell('AP50', glimpse)} | {cell('AP75', glimpse)} |"
+            for glimpse in glimpses
+        )
     )
     rows = [
         ("Backend", _backend_label("nnx")),
@@ -309,7 +378,7 @@ def _detector_card(entry: "DetectorEntry") -> tuple[str, dict[str, Any]]:
     frontmatter: dict[str, str | list[str]] = {
         "library_name": _package_name("nnx"),
         "pipeline_tag": "object-detection",
-        "tags": ["canvit", "active-vision", "vision-transformer", "coco", "centernet", "nnx"],
+        "tags": [*TAGS, "coco", "centernet", "nnx"],
         "license": "mit",
     }
     usage = _detector_usage(
@@ -319,36 +388,27 @@ def _detector_card(entry: "DetectorEntry") -> tuple[str, dict[str, Any]]:
         canvas_grid_size=recipe["canvas_grid_size"],
         num_glimpses=evaluation["glimpses"],
     )
-    body = "\n\n".join((
-        _frontmatter(frontmatter),
-        "# CanViT COCO detector (JAX / Flax NNX)",
-        (
-            "CanViT-B with a CenterNet head on its canvas, trained end to end for COCO 2017 object detection; it "
-            "predicts boxes after every glimpse."
-        ),
-        project.DESCRIPTION,
-        f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
-        "## Install\n\n```bash\n" + _install("nnx") + "\n```",
-        "## Usage\n\n```python\n" + usage + "\n```",
-        f"## Results\n\nCOCO {evaluation['split']} ({evaluation['images']} images), {evaluation['policy']} viewpoints: "
-        f"means over {evaluation['repeats']} independent viewpoint draws, with 95% bootstrap intervals over the draws "
-        "where they vary.\n\n" + results,
-        "## Details\n\n" + _details(rows),
-        "## Citation\n\n```bibtex\n" + project.BIBTEX + "\n```",
-    )) + "\n"
+    summary = ("CanViT-B with a CenterNet head on its canvas, trained end to end for COCO 2017 object detection; it "
+               "predicts boxes after every glimpse.")
+    body = _card(frontmatter=frontmatter, title="CanViT COCO detector (JAX / Flax NNX)", summary=summary,
+                 backend="nnx", usage=usage, rows=rows, results=results)
     provenance = {
-        "target": {
-            "backend": record["backend"],
-            "model": record["model"],
-            "format": record["format"],
-            "config_sha256": _sha256(entry.artifact / "config.json"),
-            "weights_sha256": _sha256(entry.artifact / "model.safetensors"),
-        },
+        "target": _target(entry.artifact, record),
         "training": training,
         "evaluation": evaluation,
         "validation": entry.validation,
     }
     return body, provenance
+
+
+def _target(artifact: Path, record: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "backend": record["backend"],
+        "model": record["model"],
+        "format": record["format"],
+        "config_sha256": _sha256(artifact / "config.json"),
+        "weights_sha256": _sha256(artifact / "model.safetensors"),
+    }
 
 
 def _provenance(entry: ModelEntry | ProbeEntry, record: dict[str, Any], conversion: dict[str, Any]) -> dict[str, Any]:
@@ -363,17 +423,7 @@ def _provenance(entry: ModelEntry | ProbeEntry, record: dict[str, Any], conversi
     for key in ("canvas_grid_size", "glimpse_size_px", "scene_size_px", "steps", "verification_image_sha256"):
         if key in conversion:
             validation[key] = conversion[key]
-    result: dict[str, Any] = {
-        "source": source,
-        "target": {
-            "backend": record["backend"],
-            "model": record["model"],
-            "format": record["format"],
-            "config_sha256": _sha256(entry.artifact / "config.json"),
-            "weights_sha256": _sha256(entry.artifact / "model.safetensors"),
-        },
-        "validation": validation,
-    }
+    result: dict[str, Any] = {"source": source, "target": _target(entry.artifact, record), "validation": validation}
     if isinstance(entry, ModelEntry) and entry.old_repo is not None:
         result["old_format_archive"] = {"repo": entry.old_repo, "revision": entry.old_revision, "tag": ARCHIVE_TAG}
     if isinstance(entry, ProbeEntry):
@@ -393,13 +443,26 @@ def _stage(artifact: Path, destination: Path, card: str, provenance: dict[str, A
 
 
 def stage_model(entry: ModelEntry, destination_root: Path) -> Path:
-    card, provenance = _model_card(entry)
-    return _stage(entry.artifact, destination_root / entry.target_repo.rsplit("/", 1)[-1], card, provenance)
+    record = _read_json(entry.artifact / "config.json")
+    conversion = _read_json(entry.artifact / "conversion.json")
+    geometry = Geometry(scene_size_px=int(conversion["scene_size_px"]), glimpse_size_px=int(conversion["glimpse_size_px"]),
+                        canvas_grid_size=int(conversion["canvas_grid_size"]))
+    card = model_card(NativeModel(repo=entry.target_repo, backend=entry.backend, record=record, geometry=geometry,
+                                  source=Source(entry.source_repo, entry.source_revision)))
+    return _stage(entry.artifact, destination_root / entry.target_repo.rsplit("/", 1)[-1], card,
+                  _provenance(entry, record, conversion))
 
 
 def stage_probe(entry: ProbeEntry, destination_root: Path) -> Path:
-    card, provenance = _probe_card(entry)
-    return _stage(entry.artifact, destination_root / entry.target_repo.rsplit("/", 1)[-1], card, provenance)
+    record = _read_json(entry.artifact / "config.json")
+    conversion = _read_json(entry.artifact / "conversion.json")
+    card = probe_card(NativeProbe(
+        repo=entry.target_repo, backend=entry.backend, record=record, pretrained_native_repo=entry.pretrained_native_repo,
+        geometry=Geometry(entry.scene_size_px, entry.glimpse_size_px, entry.canvas_grid_size),
+        source=Source(entry.source_repo, entry.source_revision),
+    ))
+    return _stage(entry.artifact, destination_root / entry.target_repo.rsplit("/", 1)[-1], card,
+                  _provenance(entry, record, conversion))
 
 
 def stage_detector(entry: "DetectorEntry", destination_root: Path) -> Path:
@@ -407,4 +470,7 @@ def stage_detector(entry: "DetectorEntry", destination_root: Path) -> Path:
     return _stage(entry.artifact, destination_root / entry.target_repo.rsplit("/", 1)[-1], card, provenance)
 
 
-__all__ = ["DetectorEntry", "ModelEntry", "ProbeEntry", "stage_detector", "stage_model", "stage_probe"]
+__all__ = [
+    "DetectorEntry", "Geometry", "ModelEntry", "NativeModel", "NativeProbe", "NativeTraining", "ProbeEntry", "Source",
+    "model_card", "probe_card", "stage_detector", "stage_model", "stage_probe",
+]

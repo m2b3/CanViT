@@ -318,4 +318,6 @@ Open an issue in this repository or email me@yberreby.com.
 
 ## License
 
-MIT. See [LICENSE](LICENSE) for details.
+MIT. See [LICENSE](LICENSE) for details. CanViT is pretrained by distillation from
+[DINOv3](https://github.com/facebookresearch/dinov3), which is released under the
+[DINOv3 License](https://github.com/facebookresearch/dinov3/blob/main/LICENSE.md).

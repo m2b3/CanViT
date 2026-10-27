@@ -94,6 +94,12 @@ def objects(image_id: str, labels: np.ndarray) -> list[tuple[Candidate, np.ndarr
     return found
 
 
+def patch_mean(x: np.ndarray) -> np.ndarray:
+    """[GLIMPSE_PX, GLIMPSE_PX, C] to each patch's mean, [patches, C]."""
+    grid = GLIMPSE_PX // PATCH_PX
+    return x.reshape(grid, PATCH_PX, grid, PATCH_PX, -1).mean(axis=(1, 3)).reshape(grid * grid, -1)
+
+
 def srgb_to_lab(rgb: np.ndarray) -> np.ndarray:
     """[..., 3] uint8 sRGB to CIELAB (D65)."""
     c = rgb / 255.0
@@ -127,8 +133,6 @@ def measure(teacher, batch: list[tuple[Candidate, np.ndarray, torch.Tensor]], de
                                 glimpse_size_px=GLIMPSE_PX)
     with torch.inference_mode():
         tokens = teacher(crops[:, :3]).patches.float().cpu().numpy()
-    grid = GLIMPSE_PX // PATCH_PX
-    patch_mean = lambda x: x.reshape(grid, PATCH_PX, grid, PATCH_PX, -1).mean(axis=(1, 3)).reshape(grid * grid, -1)
     rows = []
     for i, (candidate, _, _) in enumerate(batch):
         share = patch_mean(crops[i, 3].cpu().numpy()[..., None])[:, 0]

@@ -229,6 +229,7 @@ not worth highlighting); a fixed opening order.
 
 ## Agent inferences and proposals
 
+- (A) Proposals that follow from the camera-ready's additions (2026-10-26) are in `PROPOSALS.md`, for the authors.
 - (A) A summary of the talk, which Yohaï judged a fair start (2026-10-24): active vision has long promised vision
   that is more efficient and closer to biology but lagged far behind passive models; separating seeing from choosing
   where to look, and building a general observer the way foundation models are built, is a way forward; CanViT is a

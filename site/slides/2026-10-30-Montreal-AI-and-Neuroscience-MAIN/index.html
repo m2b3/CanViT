@@ -1234,7 +1234,7 @@
   await drawPcaCycle(document.querySelector("#vit-on-a-glimpse"), vitExample, "meta.json");
   // The paper's cat first; the alternatives under data/talk/canvas-updates/ (TALK.md, "#canvas-updates").
   const canvasUpdatesExample = "../../data/talk/canvas-updates/cat";
-  await drawCanvasUpdates(document.querySelector("#canvas-updates"), canvasUpdatesExample);
+  await drawIfPresent("#canvas-updates", (slide) => drawCanvasUpdates(slide, canvasUpdatesExample));
   await drawSrRope(document.querySelector("#sr-rope"), "../../data/talk/vit-glimpse");
   await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
   await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");

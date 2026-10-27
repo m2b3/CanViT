@@ -40,15 +40,20 @@ def test_per_image_confusion_matches_bincount(shape: tuple[int, ...], num_classe
         assert np.array_equal(counts.long().numpy(), reference), name
 
 
-def test_mean_iou_sums_per_image_counts_over_updates() -> None:
-    miou = MeanIoU(device=torch.device("cpu"))
+ACCELERATORS = [device for device, available in (("cuda", torch.cuda.is_available()),
+                                                  ("mps", torch.backends.mps.is_available())) if available]
+
+
+@pytest.mark.parametrize("device", ["cpu", *ACCELERATORS])
+def test_mean_iou_sums_per_image_counts_over_updates(device: str) -> None:
+    miou = MeanIoU(device=torch.device(device))
     batches = [random_labels((3, 64, 64), NUM_CLASSES, ignored_fraction=0.1, seed=seed) for seed in (1, 2)]
     for predictions, labels in batches:
-        miou.update(predictions, labels)
+        miou.update(predictions.to(device), labels.to(device))
     per_batch = [per_image_confusion(predictions, labels, NUM_CLASSES) for predictions, labels in batches]
     intersection, union, _ = (torch.cat(counts) for counts in zip(*per_batch, strict=True))
-    assert torch.equal(miou.intersection, intersection.sum(dim=0))
-    assert torch.equal(miou.union, union.sum(dim=0))
+    assert torch.equal(miou.intersection.cpu(), intersection.sum(dim=0))
+    assert torch.equal(miou.union.cpu(), union.sum(dim=0))
     present = miou.union > 0
     assert miou.compute() == pytest.approx((miou.intersection[present] / miou.union[present]).mean().item())
 

@@ -6,7 +6,13 @@ from typing import TypedDict
 import torch
 from torch import Tensor
 
+from canvit_pytorch.teacher import DINOV3_REPOS
+
 STORAGE_DTYPE = torch.float16
+
+# The paper's ImageNet-21k shards (exported 2026-01-11) name their teacher by DINOv3's own checkpoint, as
+# teacher_model, instead of teacher_repo_id; the Hub repo holds the same model.
+TEACHER_REPOS_BY_MODEL = {"dinov3_vitb16": DINOV3_REPOS["vitb16"]}
 
 # Fields that must agree across the shards of one tree.
 COMPATIBILITY_FIELDS = ("parquet_sha256", "teacher_repo_id", "image_size", "shard_size", "dtype", "embed_dim", "n_patches")
@@ -41,4 +47,9 @@ def shard_path(shards_dir: Path, shard_id: int) -> Path:
 
 def load_shard(path: Path) -> FeatureShard:
     """Memory-mapped: a tensor row is read from disk when it is indexed."""
-    return torch.load(path, map_location="cpu", weights_only=False, mmap=True)
+    shard = torch.load(path, map_location="cpu", weights_only=False, mmap=True)
+    if "teacher_repo_id" not in shard:
+        model = shard["teacher_model"]
+        assert model in TEACHER_REPOS_BY_MODEL, f"{path}: teacher {model!r} has no known Hub repo"
+        shard["teacher_repo_id"] = TEACHER_REPOS_BY_MODEL[model]
+    return shard

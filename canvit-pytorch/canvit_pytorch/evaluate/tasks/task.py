@@ -7,8 +7,8 @@ from typing import Any
 
 import torch
 from torch.utils.data import DataLoader, Dataset
-from tqdm import tqdm
 
+from canvit_pytorch.progress import progress
 from canvit_pytorch.provenance import provenance
 
 log = logging.getLogger(__name__)
@@ -34,12 +34,12 @@ class Task:
         return torch.autocast(device_type=self.torch_device.type, dtype=torch.bfloat16, enabled=self.amp)
 
     def batches(self, dataset: Dataset, *, description: str) -> Iterable[Any]:
-        """The dataset in order, batched, with a progress bar when stderr is a terminal."""
+        """The dataset in order, batched, reporting progress."""
         loader = DataLoader(
             dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers,
             pin_memory=self.torch_device.type == "cuda",
         )
-        return tqdm(loader, desc=description, disable=None)
+        return progress(loader, description=description)
 
     def metadata(self, **entries: object) -> dict[str, object]:
         """What produced a result: this configuration, the code and runtime that ran it, and entries."""

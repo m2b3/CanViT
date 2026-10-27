@@ -5,7 +5,7 @@ saw and its canvas, colored by the paper's PCA protocol with one basis and one
 color range for every canvas in the figure.
 
     uv run --extra demo python demos/basic.py
-    uv run --extra demo python demos/basic.py --image path/to/image.jpg
+    uv run --extra demo python demos/basic.py --image path/to/image.jpg --device cpu
 """
 
 from dataclasses import dataclass
@@ -19,6 +19,7 @@ from matplotlib.patches import Rectangle
 from PIL import Image
 
 from canvit_pytorch import CanViTForPretraining, Viewpoint
+from canvit_pytorch.device import accelerator_or_cpu
 from canvit_pytorch.episode import run_episode
 from canvit_pytorch.hub.repos import (
     FLAGSHIP,
@@ -48,30 +49,34 @@ class Demo:
     canvas_grid_size: int = RELEASED_CANVAS_GRID_SIZE
     glimpse_size_px: int = RELEASED_GLIMPSE_SIZE_PX
     output: Path = Path("outputs/demo.png")
+    device: str = str(accelerator_or_cpu())
+    """Torch device that runs CanViT; this machine's accelerator by default, else the CPU."""
 
 
-def viewpoint(keypoint: Keypoint) -> Viewpoint:
+def viewpoint(keypoint: Keypoint, *, device: torch.device) -> Viewpoint:
     row, col, scale = keypoint
-    return Viewpoint(centers=torch.tensor([[row, col]]), scales=torch.tensor([scale]))
+    return Viewpoint(centers=torch.tensor([[row, col]], device=device), scales=torch.tensor([scale], device=device))
 
 
 @torch.inference_mode()
 def canvases_along(model: CanViTForPretraining, image: torch.Tensor, keypoints: list[Keypoint], demo: Demo) -> list[np.ndarray]:
-    """[G*G, canvas_dim] canvas patches after each glimpse."""
+    """[G*G, canvas_dim] canvas patches after each glimpse of image [1, 3, S, S], on the model's device."""
     steps = run_episode(
-        canvit=model.canvit, images=image, policy=FixedSequence([viewpoint(k) for k in keypoints]),
+        canvit=model.canvit, images=image,
+        policy=FixedSequence([viewpoint(k, device=image.device) for k in keypoints]),
         num_glimpses=len(keypoints), glimpse_size_px=demo.glimpse_size_px,
         initial_state=model.init_state(batch_size=1, canvas_grid_size=demo.canvas_grid_size),
     )
-    return [model.canvit.canvas_patches(step.state.canvas)[0].float().numpy() for step in steps]
+    return [model.canvit.canvas_patches(step.state.canvas)[0].float().cpu().numpy() for step in steps]
 
 
 def main(demo: Demo) -> None:
-    model = CanViTForPretraining.from_pretrained(demo.model_repo).eval()
+    device = torch.device(demo.device)
+    model = CanViTForPretraining.from_pretrained(demo.model_repo).to(device).eval()
     image = preprocess(demo.scene_size_px)(Image.open(demo.image).convert("RGB"))
     assert isinstance(image, torch.Tensor)
     image = image.unsqueeze(0)
-    canvases = {name: canvases_along(model, image, keypoints, demo) for name, keypoints in ORDERS.items()}
+    canvases = {name: canvases_along(model, image.to(device), keypoints, demo) for name, keypoints in ORDERS.items()}
 
     everything = [c for rows in canvases.values() for c in rows]
     basis = fit_pca(*everything)
@@ -88,11 +93,12 @@ def main(demo: Demo) -> None:
         top[0].imshow(scene)
         top[0].set_title(name, fontweight="bold")
         for t, keypoint in enumerate(keypoints):
-            y0, x0, y1, x1 = crop_box_px(viewpoint(keypoint), image_size_px=demo.scene_size_px)[0].tolist()
+            glimpse_viewpoint = viewpoint(keypoint, device=image.device)
+            y0, x0, y1, x1 = crop_box_px(glimpse_viewpoint, image_size_px=demo.scene_size_px)[0].tolist()
             top[0].add_patch(Rectangle((x0, y0), x1 - x0, y1 - y0, fill=False, edgecolor=GLIMPSE_COLOR, linewidth=2))
             top[0].text(x0 + 4, y0 + 18, f"t={t}", color="white", fontsize=9, fontweight="bold",
                         bbox={"facecolor": GLIMPSE_COLOR, "linewidth": 0, "pad": 1.5})
-            glimpse = sample_at_viewpoint(spatial=image, viewpoint=viewpoint(keypoint), glimpse_size_px=demo.glimpse_size_px)
+            glimpse = sample_at_viewpoint(spatial=image, viewpoint=glimpse_viewpoint, glimpse_size_px=demo.glimpse_size_px)
             top[t + 1].imshow(imagenet_denormalize(glimpse[0]).permute(1, 2, 0).numpy())
             top[t + 1].set_title(f"glimpse t={t}", fontsize=9)
             bottom[t + 1].imshow(to_rgb(project(basis, canvases[name][t]), limits).reshape(grid, grid, 3), interpolation="nearest")

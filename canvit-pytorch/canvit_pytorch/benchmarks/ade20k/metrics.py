@@ -5,12 +5,13 @@ from torch import Tensor
 
 from canvit_pytorch.benchmarks.ade20k.classes import IGNORE_LABEL, NUM_CLASSES
 
+FLOAT32_EXACT_COUNT = 2**24
+"""Pixels counted at once: float32 holds every integer up to 2^24 exactly."""
+
 
 class MeanIoU:
-    """Dataset-level mean IoU: intersections and unions summed over all images, then averaged over classes.
-
-    Accumulates on the device without synchronizing until compute().
-    """
+    """Dataset-level mean IoU: intersections and unions summed over all images on the device, then averaged over
+    classes."""
 
     def __init__(self, *, device: torch.device, num_classes: int = NUM_CLASSES, ignore_label: int = IGNORE_LABEL) -> None:
         self.num_classes = num_classes
@@ -24,7 +25,13 @@ class MeanIoU:
         n = self.num_classes
         predicted, true = predictions.flatten().long(), labels.flatten().long()
         keep = true != self.ignore_label
-        confusion = torch.bincount(true[keep] * n + predicted[keep], minlength=n * n).view(n, n)
+        pairs = true[keep] * n + predicted[keep]
+        # Counting by float32 weights: on MPS, an unweighted bincount takes seconds for a batch of 512² label maps,
+        # a weighted one milliseconds.
+        confusion = torch.stack([
+            torch.bincount(chunk, weights=torch.ones_like(chunk, dtype=torch.float32), minlength=n * n).long()
+            for chunk in pairs.split(FLOAT32_EXACT_COUNT)
+        ]).sum(dim=0).view(n, n)
         diagonal = confusion.diag()
         self.intersection += diagonal
         self.union += confusion.sum(dim=1) + confusion.sum(dim=0) - diagonal

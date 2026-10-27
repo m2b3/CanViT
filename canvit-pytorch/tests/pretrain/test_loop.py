@@ -52,6 +52,7 @@ def _write_shards(root: Path, rng: np.random.Generator) -> tuple[Path, Path]:
 
 @pytest.mark.slow
 @pytest.mark.network
+@pytest.mark.gated(TEACHER_REPO)
 def test_two_jobs_resume(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("COMET_START_ONLINE", "false")
     monkeypatch.setenv("COMET_OFFLINE_DIRECTORY", str(tmp_path / "comet"))

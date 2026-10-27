@@ -61,7 +61,7 @@ CanViT episode tasks accept `--episode.policy`,
 `--episode.glimpse-size-px`. The default episode is 21 coarse-to-fine glimpses
 of 128 px onto a 32×32 canvas. Reconstruction defaults to 10 random-IID
 glimpses. Dataset tasks use bfloat16 autocast by default; pass `--no-amp` to
-disable it. `--device` defaults to `cuda`.
+disable it. `--device` defaults to `cuda`; pass `--device mps` on Apple silicon.
 
 The ADE20K CanViT command requires a probe trained for the selected checkpoint,
 scene size and canvas grid:

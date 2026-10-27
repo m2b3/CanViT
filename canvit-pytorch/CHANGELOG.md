@@ -28,6 +28,13 @@ order, each before or after it as the entry says, because released versions load
   repo given by its id, its name or its local-mirror directory), `preprocess.imagenet_denormalize_uint8`,
   `teacher.DINOv3Teacher.patch_grid` (patch features of images resized to an input size) and
   `benchmarks.ade20k.validation_set`.
+- `canvit_pytorch.progress.progress`: how far a loop is, as a tqdm bar when stderr is a terminal and
+  otherwise as a log line at the start, at most every `LOG_INTERVAL_SECONDS` and at the end. The
+  evaluations, probe training and policy training report their progress with it, so their logs
+  written to a file show how far they are; policy training had no progress report before.
+- `canvit_pytorch.device.accelerator_or_cpu`: the accelerator torch can use on this machine (CUDA, or
+  MPS on Apple silicon), else the CPU. The repository's demos run on it by default and take
+  `--device`.
 
 ### Hub
 
@@ -84,3 +91,13 @@ order, each before or after it as the entry says, because released versions load
   (`hub.repos.RELEASED_*`); `evaluate.tasks.ade20k_segmentation.dinov3_patch_grid`, `probe_logits`
   and `ade20k_validation_set` (`DINOv3Teacher.patch_grid`, `SegmentationProbe` itself,
   `benchmarks.ade20k.validation_set`); `viz.live.publish.hub_name` (`hub.repos.hub_id`).
+
+### Fixed
+
+- Pretraining reads feature shards that name their teacher by `teacher_model` (DINOv3's own checkpoint)
+  instead of `teacher_repo_id`, as the paper's ImageNet-21k shards do; before, it stopped with a `KeyError`.
+- `slurm/pretrain/train.sbatch` asks SLURM for SIGUSR1 five minutes before the time limit, so a task that
+  reaches the limit saves its step; before, it saved nothing and the next task repeated its work.
+- `benchmarks.ade20k.MeanIoU` counts its confusion matrix with float32 weights. On MPS, the unweighted count took
+  seconds for every batch of label maps, so an ADE20K evaluation on a Mac ran for hours; the counts, and every mIoU,
+  are unchanged.

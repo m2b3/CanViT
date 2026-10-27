@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import pyarrow.parquet as pq
 import pytest
+import torch
 from PIL import Image
 
 from canvit_pytorch.pretrain.data import TrainingBatches
@@ -18,6 +19,7 @@ CLASSES, IMAGES_PER_CLASS, SHARD_SIZE = 2, 5, 4
 
 @pytest.mark.slow
 @pytest.mark.network
+@pytest.mark.gated(TEACHER_REPO)
 def test_index_export_check_read(tmp_path: Path) -> None:
     rng = np.random.default_rng(0)
     image_root = tmp_path / "images"
@@ -53,3 +55,12 @@ def test_index_export_check_read(tmp_path: Path) -> None:
     assert images.shape == (2, 3, SCENE_PX, SCENE_PX) and patches.shape == (2, 16, 768) and cls.shape == (2, 768)
     first = load_shard(out_dir / "shards" / "00000.pt")
     assert (patches == first["patches"][2:4]).all(), "step 1 resumes at the second batch of the first shard"
+
+
+def test_shards_that_name_their_teacher_by_model_load_with_its_repo(tmp_path):
+    path = tmp_path / "00000.pt"
+    torch.save({"teacher_model": "dinov3_vitb16", "teacher_ckpt": "dinov3_vitb16_pretrain_lvd1689m.pth"}, path)
+    assert load_shard(path)["teacher_repo_id"] == TEACHER_REPO
+    torch.save({"teacher_model": "dinov3_vitl16"}, path)
+    with pytest.raises(AssertionError, match="no known Hub repo"):
+        load_shard(path)

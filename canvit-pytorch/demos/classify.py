@@ -5,7 +5,7 @@ ImageNet-1k, and the frozen pretrained model whose CLS readout is fused with a
 linear probe fitted on its DINOv3 teacher.
 
     uv run --extra demo python demos/classify.py
-    uv run --extra demo python demos/classify.py --image path/to/image.jpg --classifier frozen
+    uv run --extra demo python demos/classify.py --image path/to/image.jpg --classifier frozen --device cpu
 """
 
 from dataclasses import dataclass
@@ -18,6 +18,7 @@ from PIL import Image
 
 from canvit_pytorch import CanViTForImageClassification
 from canvit_pytorch.benchmarks.imagenet import CLASS_NAMES
+from canvit_pytorch.device import accelerator_or_cpu
 from canvit_pytorch.hub.repos import (
     DINOV3_VITB16_IN1K_PROBE,
     FINETUNED_IN1K,
@@ -41,6 +42,8 @@ class Demo:
     canvas_grid_size: int = RELEASED_CANVAS_GRID_SIZE
     glimpse_size_px: int = RELEASED_GLIMPSE_SIZE_PX
     seed: int = 0
+    device: str = str(accelerator_or_cpu())
+    """Torch device that runs CanViT; this machine's accelerator by default, else the CPU."""
 
 
 def load(classifier: Literal["finetuned", "frozen"]) -> CanViTForImageClassification:
@@ -51,11 +54,11 @@ def load(classifier: Literal["finetuned", "frozen"]) -> CanViTForImageClassifica
 
 @torch.inference_mode()
 def main(demo: Demo) -> None:
-    model = load(demo.classifier).eval()
+    model = load(demo.classifier).to(demo.device).eval()
     torch.manual_seed(demo.seed)  # after loading, which draws from the RNG differently for each classifier
     image = preprocess(demo.scene_size_px)(Image.open(demo.image).convert("RGB"))
     assert isinstance(image, torch.Tensor)
-    image = image.unsqueeze(0)
+    image = image.unsqueeze(0).to(demo.device)
     policy = make_policy(demo.policy, batch_size=1, device=image.device, num_glimpses=demo.num_glimpses,
                          canvas_grid_size=demo.canvas_grid_size)
     state = model.init_state(batch_size=1, canvas_grid_size=demo.canvas_grid_size)

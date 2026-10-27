@@ -742,6 +742,12 @@ removed.
     repetitions (the cleaned notes for the same span have 2,165 words against the 2,616 spoken) and 3.2 minutes of
     silence between utterances. The cleaned notes at the recorded pace, pauses included, take about 16.9 minutes for
     that span, so about 19 for Part II and 25 for the talk; read with no pauses at all (152 words per minute), 14.3.
+  - Since 2026-10-27 evening every presented slide carries its budget (`data-seconds`), and the deck shows each slide's
+    range of the talk's clock, from 00:00, at the top of its speaker notes and, outside `?present`, as a corner badge.
+    Part I: the per-slide times of 2026-10-25, scaled to that run's 6:15. Part II: each slide's time in the run-through
+    of 2026-10-27, scaled by its notes' words over the words spoken on it (the false starts removed; `#canvas-updates`
+    is in Backup); `#quickstart`, `#next` and `#links` from their notes at the run-through's 128 words per minute.
+    Rounded to 5 s: 24:20 in all (Part I 6:05, Part II 18:15).
 - Yohaï's feedback on Sabrina's run-through of Part I (2026-10-25), not yet applied (to be worked through with her):
   - Title: the contrast with passive computer vision models is said too loosely.
   - `#tradition`: "a new class of models" is questionable (new?); spell out IT; say where the better categorization

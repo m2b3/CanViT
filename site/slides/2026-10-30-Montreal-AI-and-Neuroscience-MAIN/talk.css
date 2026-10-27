@@ -277,8 +277,10 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #distillation .ellipsis { grid-column: 5; grid-row: 1; font-size: 22px; font-weight: 700; color: var(--glimpse); }
 /* Straight connectors: glimpse to model to prediction (ink), the canvas carried from one model to the next (canvas
    red). */
-#distillation .down { position: relative; width: 3px; height: 100%; background: var(--ink); }
-#distillation .down::after { content: ""; position: absolute; left: -5px; bottom: -2px;
+/* Every CSS arrow's shaft ends 2px inside its head's base, where the head is far wider than the shaft, so that no
+   rounding of either lets the shaft show beside the head; each head is centered on its shaft. */
+#distillation .down { position: relative; width: 3px; height: calc(100% - 4px); align-self: start; background: var(--ink); }
+#distillation .down::after { content: ""; position: absolute; left: -5px; bottom: -6px;
   border: 6.5px solid transparent; border-top: 8px solid var(--ink); border-bottom: 0; }
 #distillation .carry { position: relative; justify-self: start; height: 3px; background: var(--canvas);
   width: calc(var(--gap) + var(--col) - var(--logo) - 8px); margin-left: calc(var(--logo) / 2 - var(--col) / 2 - var(--gap)); }
@@ -348,8 +350,8 @@ foveated-scene .fixation { position: absolute; left: var(--fx); top: var(--fy); 
 #c2f-and-f2c rect.halo { stroke: #fff; stroke-width: calc((var(--stroke) + 2.5) * 1px); }
 #c2f-and-f2c rect.box { stroke: var(--policy-color); stroke-width: calc(var(--stroke) * 1px); }
 #c2f-and-f2c figcaption { font-size: 18px; font-weight: 700; color: var(--policy-color); }
-#c2f-and-f2c .arrow { justify-self: center; width: 34px; height: 4px; margin-bottom: 30px; background: var(--muted); position: relative; }
-#c2f-and-f2c .arrow::after { content: ""; position: absolute; right: -4px; top: -7px; border: 9px solid transparent; border-left: 12px solid var(--muted); border-right: 0; }
+#c2f-and-f2c .arrow { justify-self: center; translate: -3px 0; width: 28px; height: 4px; margin-bottom: 30px; background: var(--muted); position: relative; }
+#c2f-and-f2c .arrow::after { content: ""; position: absolute; right: -10px; top: -7px; border: 9px solid transparent; border-left: 12px solid var(--muted); border-right: 0; }
 
 /* Accuracy by viewing policy: ImageNet-1k, then ADE20K beside it. */
 #policy-accuracy .charts { display: grid; grid-template-columns: repeat(2, 540px); gap: 48px; justify-content: center; }
@@ -745,7 +747,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .canvas-cells::after { content: ""; position: absolute; inset: 0;
                                 background: radial-gradient(circle, var(--canvas) 1.7px, transparent 2.3px) 0 0 / calc(100% / 32) calc(100% / 32); }
 #sr-rope .arrow { height: 3px; background: var(--muted); position: relative; margin: 0 26px 40px 0; }
-#sr-rope .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }
+#sr-rope .arrow::after { content: ""; position: absolute; right: -8px; top: -5.5px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }
 #sr-rope .legend { grid-column: 3; display: flex; justify-content: center; gap: 26px; margin: 8px 0 0; font-size: 17px; font-weight: 650; }
 #sr-rope .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; vertical-align: 1px; }
 #sr-rope .glimpse-key { color: var(--glimpse); }

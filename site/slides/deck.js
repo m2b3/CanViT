@@ -13,6 +13,9 @@
 //   data-shows="NAME"            on a fragment: while it is shown, its slide has the class shows-NAME, so the slide's CSS
 //                                builds a diagram click by click, keyed on named states
 //   <section data-status="…">    how far the slide is from presentable: shown as a corner badge unless ?present
+//   <section data-seconds="N">   the slide's share of the talk's time: the slides that have one run back to back from
+//                                00:00, and each shows its range (00:42–01:30) at the top of its speaker notes and, unless
+//                                ?present, as a corner badge
 //   data-load-near               on an element that loads something heavy when given `autoload` (<canvit-live>): the
 //                                attribute is added once its slide is the current one or the next, never at page load
 //   <code data-src="FILE">       filled with the file's text before reveal.js highlights it (class="language-…"), so
@@ -150,6 +153,26 @@ function statusBadges(slides) {
   }
 }
 
+/** Each timed slide's range of the talk's clock, the slides back to back from 00:00 in document order. */
+function timeRanges(slides) {
+  const clock = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  let start = 0;
+  for (const section of slides.querySelectorAll("section[data-seconds]")) {
+    const seconds = Number(section.dataset.seconds);
+    if (!(Number.isInteger(seconds) && seconds > 0)) throw new Error(`#${section.id}: data-seconds="${section.dataset.seconds}"`);
+    const range = `${clock(start)}–${clock(start + seconds)}`;
+    start += seconds;
+    const note = document.createElement("p");
+    note.textContent = `⏱ ${range} (${seconds} s)`;
+    section.querySelector("aside.notes")?.prepend(note);
+    if (presenting || printing) continue;
+    const badge = document.createElement("div");
+    badge.className = "time-badge";
+    badge.textContent = range;
+    section.append(badge);
+  }
+}
+
 /** A button that starts the current slide over: fragments hidden, animations from the beginning. */
 function replayButton(deck) {
   const button = document.createElement("button");
@@ -177,6 +200,7 @@ function replayButton(deck) {
 export async function startDeck(options = {}) {
   const slides = document.querySelector(".reveal .slides");
   statusBadges(slides);
+  timeRanges(slides);
   await fillCode(slides);
   const deck = new Reveal({
     width: 1280,

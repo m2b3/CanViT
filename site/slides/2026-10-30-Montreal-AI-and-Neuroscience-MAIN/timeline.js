@@ -17,6 +17,7 @@ const ENDS = { before: 2025.95, after: 2026.4 }; // the year at the axis's end, 
 const SHORT = { end: 2015.4, right: 470 }; // the short axis the slide opens on, beside the pioneer's figures
 const ROW_OFFSET = { "-3": -235, "-2": -150, "-1": -60, 1: 60, 2: 150 };
 const LINE = 25;
+const HEAD_ROOM = 34; // the axis runs past its last year, so the arrowhead clears the last marker
 
 function el(name, attributes, parent) {
   const node = document.createElementNS(SVG, name);
@@ -64,9 +65,9 @@ export async function drawTimeline(container, { src = "sources/active-vision-tim
   const { models, neuro_ai: neuroAi, canvit } = await response.json();
   const svg = el("svg", { viewBox: `0 0 ${WIDTH} ${HEIGHT}`, role: "img", "aria-label": "Deep active vision models from 2014 to 2025" });
 
-  const end = RIGHT + 18;
+  const end = RIGHT + HEAD_ROOM;
   const years = []; // [year, x, shown before CanViT], labeled after the entries so their leaders pass behind
-  svg.style.setProperty("--axis-k", `${(SHORT.right + 18 - LEFT) / (end - LEFT)}`);
+  svg.style.setProperty("--axis-k", `${(SHORT.right + HEAD_ROOM - LEFT) / (end - LEFT)}`);
   svg.style.setProperty("--head-dx", `${SHORT.right - RIGHT}px`);
   el("path", { d: `M${LEFT},${AXIS_Y}H${end}`, class: "axis axis-line" }, svg);
   el("path", { d: `M${end - 12},${AXIS_Y - 9}L${end},${AXIS_Y}L${end - 12},${AXIS_Y + 9}`, class: "axis axis-head" }, svg);

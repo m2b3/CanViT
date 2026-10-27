@@ -728,6 +728,15 @@ removed.
   - 2026-10-25: `#task-dependent-scanpaths` about 35 s.
   - 2026-10-25: `#compare` 45–50 s.
   - 2026-10-25: first full run-through of Part I, from `#title` to `#compare`: about 6:15.
+  - 2026-10-27, 16:37 session: Yohaï's run-through of Part II from `#paper` to the first Write of `#canvas-updates`,
+    where the recording stops: 20:26, measured from the recording's utterance timestamps (128 words per minute, pauses
+    included). Per slide, in seconds: `#paper` 29, `#canvit-rollout` 76, `#outline-architecture` 18, `#vit-on-a-glimpse`
+    36, `#integrating-information-across-viewpoints` 50, `#architecture` 98, `#sr-rope` 70, `#canvas-attention` 95,
+    `#outline-pretraining` and `#how-to-see-first` 29, `#pretraining-policies` 43, `#distillation` 78, `#pretraining` 58,
+    `#table-callback` 19, `#state-of-the-art` 41, `#c2f-and-f2c` 72, `#eg-c2f` 90, `#policy-accuracy` 142, `#frontier`
+    74, `#learned-policy` 65, `#canvas-updates` to its first Write 45. The rest (`#canvas-updates`' other Writes,
+    `#quickstart`, `#next`, `#links`), estimated from their notes at the same rate: about 2:10. With Part I's 6:15,
+    the talk comes to about 29 minutes, for a 25-minute slot.
 - Yohaï's feedback on Sabrina's run-through of Part I (2026-10-25), not yet applied (to be worked through with her):
   - Title: the contrast with passive computer vision models is said too loosely.
   - `#tradition`: "a new class of models" is questionable (new?); spell out IT; say where the better categorization

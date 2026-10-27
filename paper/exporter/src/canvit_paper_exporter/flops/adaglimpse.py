@@ -11,7 +11,7 @@ class AdaGlimpseConfig:
 
     Encoder/decoder dims from the paper (§4). The CNN head is the
     `VisionTransformerUpHead` defined in `architectures/mae_utils.py:278-308`
-    of `github.com/apardyl/AdaGlimpse @ 9b3b72d`: six Conv2d ops separated by
+    of `github.com/apardyl/AdaGlimpse @ e5f37fd`: six Conv2d ops separated by
     four bilinear `nn.Upsample` stages (Upsample produces no matmul FLOPs).
     Each `cnn_layers` row is (H, W, c_in, c_out, kernel) of one Conv2d call,
     in code order: input projection at 14×14, four post-upsample 3×3 convs
@@ -50,7 +50,8 @@ ADAGLIMPSE = AdaGlimpseConfig()
 def adaglimpse_flops(num_glimpses: int, cfg: AdaGlimpseConfig = ADAGLIMPSE) -> int:
     """Total AdaGlimpse FLOPs across `num_glimpses` glimpses.
 
-    Single forward loop, no zero-step init. Decoder transformer operates on
+    Single forward loop, no zero-step init. The decoder projects the encoder's output tokens (`decoder_embed`,
+    `architectures/mae.py:198`), then its transformer operates on
     `(visible_tokens + 1 CLS + total_patches mask_tokens)` — NOT a constant
     `total_patches + 1`, because forward_decoder concatenates encoder output
     with ALL mask positions. CNN upsample head cost is constant per call.
@@ -63,6 +64,7 @@ def adaglimpse_flops(num_glimpses: int, cfg: AdaGlimpseConfig = ADAGLIMPSE) -> i
         total_enc += P.patch_embed(n, cfg.patch_size, cfg.enc_dim)
         total_enc += cfg.enc_depth * P.vit_block(n + 1, cfg.enc_dim, FFN_RATIO)
         dec_seq = n + 1 + cfg.total_patches
+        total_dec += P.linear(n + 1, cfg.enc_dim, cfg.dec_dim)
         total_dec += cfg.dec_depth * P.vit_block(dec_seq, cfg.dec_dim, FFN_RATIO)
         total_dec += dec_cnn_per_call
     return total_enc + total_dec

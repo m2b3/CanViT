@@ -178,6 +178,10 @@ spelling.
 - Name things by what they are, without counting: a scene is "A ferry", not
   "A ferry, one smooth path". Write "a" or "the", not "one", and give a
   number only when the number is the point.
+- Never write counted parallelism (a counted tricolon): phrases set side by
+  side, each built on a count, such as "one X, one Y, seven Z" or "two A, one
+  B". It is a slogan device that replaces a description; say what the thing
+  is or shows.
 - Flag doubts and unresolved issues with a localized `XXX`, `TODO` or `FIXME`
   beside the relevant code, saying what the concern is.
 
@@ -206,7 +210,8 @@ spelling.
 - `AGENTS.md` files hold rules that stay true for anyone working here.
   Anything personal, specific to one event or person, likely to change or go
   stale, or unfit as a general rule stays out of them, in an agent's private
-  memory.
+  memory. A directory that belongs to one event, such as a talk's, has its own
+  `AGENTS.md` for that event's guidance.
 - Test interfaces as a user meets them: a fresh process, the installed
   package outside this checkout, released checkpoints from the Hub.
 - Usage examples load pretrained checkpoints from Hugging Face.
@@ -287,6 +292,11 @@ uv run just            # lint, typecheck, test
 - The canvas never acts: it is memory. A policy chooses viewpoints; EG-C2F chooses the tile where the segmentation
   read out from the canvas is least certain, so the canvas guides that choice (the paper's "guide viewpoint
   selection"). Never write that the canvas picks, chooses, looks or decides.
+- An active-vision model's observer (instantaneous vision and memory) and its policy (action selection: where and at
+  what zoom to look next) are distinct; CanViT is an observer, pretrained without a policy. "Action" means action
+  selection, nothing broader.
+- Policy-agnostic pretraining is not opposed to training observer and policy jointly: a policy-agnostic observer can
+  initialize joint training.
 - `torch.compile`: call `model(x)`, never `model.forward(x)`, which bypasses
   the compiled wrapper.
 - Numbers reported anywhere (README, site, papers) come from saved evaluation

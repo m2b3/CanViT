@@ -75,7 +75,7 @@
   // Viewpoint text
 }
 
-#let draw-saccades(centers) = {
+#let draw-saccades(centers, first-index: 0) = {
   let circle-r = 6pt
 
   // Numbered circles
@@ -87,7 +87,7 @@
     place(top + left, dx: px - circle-r, dy: py - circle-r,
       box(width: 2 * circle-r, height: 2 * circle-r,
         inset: (top: 4pt, left: 4.2pt),
-        text(font: default_font, size: 6pt, fill: white)[$#str(i)$]
+        text(font: default_font, size: 6pt, fill: white)[$#str(i + first-index)$]
       )
     )
   }
@@ -108,7 +108,7 @@
   }
 }
   
-#let scene-panel(path, panel-height, panel-width, glimpses: ()) = {
+#let scene-panel(path, panel-height, panel-width, glimpses: (), first-index: 0) = {
   box(
     width: panel-width,
     height: panel-height,
@@ -117,7 +117,7 @@
       let centers = compute_centers(glimpses, panel-width, panel-height)
       image(path, width: panel-width, height: panel-height, fit: "cover")
       draw_g_boxes(glimpses, panel-width, panel-height)
-      if centers.len() > 0 { draw-saccades(centers) }
+      if centers.len() > 0 { draw-saccades(centers, first-index: first-index) }
     }
   )
 }
@@ -128,8 +128,12 @@
   arrow-w,
   coord_box_width: 45pt,
   label-dist: 10pt,
+  shown: none,
+  first-index: 0,
+  time-label: "t",
 ) = {
   let n = glimpse-coords.len()
+  let shown = if shown == none { n } else { shown }
   let arrow-y = 10pt
   let slot-w = arrow-w / n
   let arrow_w_offset = 6pt
@@ -144,11 +148,14 @@
         stroke: arrow_line_thickness + C.stroke,
       )
     )
-    // "t" label
-    place(left + top, dx: arrow-w - arrow_w_offset + 2pt, dy: arrow-y - 6pt,
-      text(font: default_font, size: 11pt, fill: C.stroke)[t])
+    // Time label
+    if time-label != none {
+      place(left + top, dx: arrow-w - arrow_w_offset + 2pt, dy: arrow-y - 6pt,
+        text(font: default_font, size: 11pt, fill: C.stroke)[#time-label])
+    }
 
-    for i in range(n) {
+    for i in range(shown) {
+      let k = str(i + first-index)
       let cx = (i + 0.6) * slot-w  // center of each slot
       let (s, y, x) = glimpse-coords.at(i)
 
@@ -158,7 +165,7 @@
 
       // Timestep index
       place(left + top, dx: cx - 2pt, dy: arrow-y - 10pt,
-        text(font: default_font, size: 6pt, fill: C.stroke)[#str(i)])
+        text(font: default_font, size: 6pt, fill: C.stroke)[#k])
 
       // Coord box
       let coords_pos = i * (slot-w + 0.375pt) + label-dist
@@ -170,7 +177,7 @@
           inset: (x: 2pt, y: 3pt),
           align(center,
             text(font: default_font, size: 4.6pt, fill: white)[
-              *$v_#str(i) = (x_#str(i), y_#str(i), s_#str(i))$
+              *$v_#k = (x_#k, y_#k, s_#k)$
               #v(-0.06cm)
               $(#str(x), #str(y), #str(s))$*
             ]
@@ -192,27 +199,29 @@
   coords-list: (),
   arrows: false,
   border_width: 3.5pt,
+  shown: none,
 ) = {
+  let shown = if shown == none { n-steps } else { shown }
   let items = ()
   let label-color = if color == none { C.stroke } else { color }
   let img-stroke = if color == none { none } else { border_width + color }
 
   // Labels
-  items.push(rotate(-90deg, reflow: true)[
+  let label-cell = rotate(-90deg, reflow: true)[
       #text(font: default_font, weight: "bold", fill: label-color, size: 10pt)[#label]
-  ])
+  ]
+  items.push(if shown > 0 { label-cell } else { hide(label-cell) })
   
   // Images
   for i in range(n-steps) {
     let suffix = if stage == "glimpse" and coords-list.len() > i { "_" + coords-list.at(i) } else { "" }
     let img-path = img-dir + "g" + str(i) + "_" + stage + suffix + ".png"
     
-    items.push(
-      box(
-        stroke: img-stroke,
-        image(img-path, width: glimpse-width)
-      )
+    let cell = box(
+      stroke: img-stroke,
+      image(img-path, width: glimpse-width)
     )
+    items.push(if i < shown { cell } else { hide(cell) })
   }
   
   return items
@@ -239,8 +248,13 @@
   img-dir: "outputs/canvit_overview/" + _overview_scene + "/",
   coords-list: _overview_meta.glimpse_coords,
   glimpse-width: 1.8cm,
+  shown: none,
+  panel-labels: true,
+  first-index: 0,
+  time-label: "t",
 ) = {
   let n = coords-list.len()
+  let shown = if shown == none { n } else { shown }
   let glimpse_coords = parse-coords(coords-list)
   let label_dist = 5pt
   let img_col_gutter = 15.59pt
@@ -261,8 +275,10 @@
     let col1-width = (available-width - gutter) * (1 / 2.5)
     let col2-x = col1-width + gutter
     block(width: available-width)[
-      #place(top + left, dx: 0.02cm, dy: label-dy, panel-label("A"))
-      #place(top + left, dx: col2-x - 0.07cm, dy: label-dy, panel-label("B"))
+      #if panel-labels {
+        place(top + left, dx: 0.02cm, dy: label-dy, panel-label("A"))
+        place(top + left, dx: col2-x - 0.07cm, dy: label-dy, panel-label("B"))
+      }
       #grid(
         columns: (1fr, 1.5fr),
         column-gutter: 2em,
@@ -293,14 +309,20 @@
         }),
 
         // Row 1, Col 2: Timeline + panel label B
-        box({
-          timeline(
-            glimpse_coords,
-            n * (glimpse-width + img_border_width) + (n - 1) * img_col_gutter,
-            coord_box_width: glimpse-width + img_border_width,
-            label-dist: label_dist + 6.8pt
-          )
-        }),
+        {
+          let line = box({
+            timeline(
+              glimpse_coords,
+              n * (glimpse-width + img_border_width) + (n - 1) * img_col_gutter,
+              coord_box_width: glimpse-width + img_border_width,
+              label-dist: label_dist + 6.8pt,
+              shown: shown,
+              first-index: first-index,
+              time-label: time-label,
+            )
+          })
+          if shown > 0 { line } else { hide(line) }
+        },
 
         // Row 2, Col 1: Full Scene
         move(
@@ -328,7 +350,8 @@
             }),
             scene-panel(
               scene-path, scene_width, scene_width,
-              glimpses: glimpse_coords
+              glimpses: glimpse_coords.slice(0, shown),
+              first-index: first-index,
             )
           )
         ),
@@ -342,15 +365,15 @@
           align: center + horizon,
           
           // Rows 1-3: Change, Canvas, Glimpse (top to bottom)
-          ..sequence-row("Glimpse", C.patches, n, img-dir, "glimpse", glimpse-width, coords-list: coords-list, border_width: img_border_width),
-          ..sequence-row("Canvas", C.spatial, n, img-dir, "canvas", glimpse-width, border_width: img_border_width),
-          ..sequence-row([Canvas $Delta$], C.stroke, n, img-dir, "change", glimpse-width, border_width: img_border_width),
+          ..sequence-row("Glimpse", C.patches, n, img-dir, "glimpse", glimpse-width, coords-list: coords-list, border_width: img_border_width, shown: shown),
+          ..sequence-row("Canvas", C.spatial, n, img-dir, "canvas", glimpse-width, border_width: img_border_width, shown: shown),
+          ..sequence-row([Canvas $Delta$], C.stroke, n, img-dir, "change", glimpse-width, border_width: img_border_width, shown: shown),
 
         // Canvas arrows. Helvetica has no arrow glyph; Libertinus Serif, which Typst bundles, draws it on every machine.
         grid.cell(colspan: n + 1)[
           #layout(size => {
             box(width: size.width, {
-              for i in range(n - 1) {
+              for i in range(calc.max(shown - 1, 0)) {
                 let cx = (i + 1) * (glimpse-width + img_col_gutter) - 1.5pt
                 place(left + horizon, dx: cx, dy: -2*(img_row_gutter + glimpse-width),
                   text(font: "Libertinus Serif", size: 12pt, fill: C.spatial)[→]

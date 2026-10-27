@@ -1,7 +1,7 @@
 {
  "_about": "The paper's figures and tables this talk may show, by the paper's names: a figure by its export (paper/exports/NAME.pdf), a table by its LaTeX label. An enabled entry is a slide after the slide its `where` names, or at the end of the Backup slides for \"backup\"; `title` (HTML) heads it, `notes` (HTML) are its speaker notes, `status` is its data-status (draft unless given). `accepted` records the render the talk ships. site/slides/paper_figures.py writes this file; the talk's AGENTS.md, \"Paper figures\", says how to use it.",
  "figures": [
-  {"id": "canvit_overview", "kind": "figure", "enabled": false, "where": "backup", "title": "", "accepted": {"file": "assets/paper-figures/canvit_overview.svg", "sha256": "65640b85bc8c60523ba54dab434e0f2d26d749be8993966cb0275f421f7e0226", "commit": "8924d4170c979015ee05ae3febcd5f88b79be45d", "source": "paper/exports/canvit_overview.pdf", "renderer": "pdftocairo version 26.09.0", "date": "2026-10-27"}},
+  {"id": "canvit_overview", "kind": "figure", "enabled": false, "where": "backup", "title": ""},
   {"id": "arch_overview", "kind": "figure", "enabled": false, "where": "backup", "title": ""},
   {"id": "canvas_attention_combined", "kind": "figure", "enabled": false, "where": "backup", "title": ""},
   {"id": "main_results", "kind": "figure", "enabled": false, "where": "backup", "title": ""},

@@ -131,6 +131,16 @@ Stated 2026-10-25 late, on the open threads:
 - (Y) No softening of "Rich world knowledge" for prior models for now. CanViT's red bars: low priority. AME's two
   names: does not matter. Segmentation palettes: unify if it can be done meaningfully.
 
+Stated 2026-10-27, reviewing the pass of that day:
+- (Y) "Before knowing where to look, we should know how to see" is the philosophy of policy-agnostic pretraining as a
+  whole; it is not a lead-in to the learned policy.
+- (Y) Part II answers two problems, the architecture's and the pretraining's; neither is "the" problem.
+- (Y) The paper's Figure 1 goes at the start of the CanViT part, before the architecture, without a title (a title
+  starting with "A" read as the figure's panel A). It builds up from its own code (the scene, then each glimpse and its
+  column); nothing is drawn over a render of the figure.
+- (Y) Signposts stay a few words: the reasoning they mark is said, not written on them.
+- (Y) A review thinks through the argument; rearranging slides is not a review.
+
 Stated 2026-10-24, in a discussion between the speakers:
 - (Y) Say "observer", never "vision encoder": an encoder covers instantaneous vision only and leaves out memory.
 - (Y) Use the terms policy-specific and policy-agnostic pretraining. Training observer and policy at the same time
@@ -446,39 +456,46 @@ drafts until Yohaï words them.
 
 - `#paper`: hands over; names CanViT as the first task- and policy-agnostic AVFM (abstract), the team, NeurIPS 2026.
   About 15 s.
-- `#vit-on-a-glimpse`: defines a glimpse and its viewpoint (Preliminaries: a fixed-resolution crop at a viewpoint;
-  zoom trades coverage for detail) and shows a ViT turning one glimpse into patch tokens that describe it alone.
-  Introduces: glimpse, viewpoint. Scoped to CanViT's setting (128 px). About 30 s.
-- `#integrating-information-across-viewpoints`: a passive model on separate glimpses cannot fill the gap between them
-  and does not know where each glimpse was; the need to integrate across viewpoints (Preliminaries, "glimpses need
-  not align with the scene"). About 45 s.
-- `#canvit-rollout` (A, 2026-10-27, at Yohaï's request: the paper's Figure 1 before the architecture): panel A (the
-  scene and its numbered viewpoints), then panel B a row per click: glimpses, canvas, canvas updates.
-  - Must understand: CanViT turns a sequence of glimpses into one canvas for the whole scene, which each glimpse
-    updates; this answers the previous slide's need before any mechanism. The first bullet says what is shown.
-  - Knows: viewpoint and glimpse (`#vit-on-a-glimpse`), PCA (`#foundation`). Introduces the canvas as "a
-    representation of the whole scene"; `#architecture` gives its mechanism.
-  - Paper: Figure 1's caption ("integrates broad context and fine detail from variable-scale glimpses"). The caption's
-    "extrapolates to unobserved regions" is left to `#table-callback`, which shows it.
-  - Checked on the figure: after the first glimpse, each canvas update concentrates where the glimpse looked.
-  - Open: the figure counts timesteps from 0, the talk counts glimpses from 1 (`#architecture` relabels its copy).
-  - About 75 words, 35 s.
-- `#outline-architecture`: moved after `#canvit-rollout` on 2026-10-27: the demonstration raises "how?", and the
-  outline answers with the two contributions (Introduction, "Contributions"), then experiments. About 10 s.
-- `#architecture`: backbone and canvas, reads and writes (§4: "pull information from the canvas and send updates to
-  it"), the canvas persisting while glimpse tokens are discarded, the recurrent CLS token, dense decoding at every
-  glimpse. Introduces: backbone, Canvas Attention, CLS token. About 55 s.
+- `#canvit-rollout` (A, 2026-10-27, at Yohaï's request): the paper's Figure 1, built from its own code a glimpse at a
+  time: the scene alone, then each glimpse's viewpoint on the scene with its column (glimpse, canvas, canvas change).
+  No title. Glimpses counted from 1.
+  - Must understand: what CanViT does, before how: each glimpse, wherever it is taken, updates one canvas for the whole
+    scene. The first bullet says what is shown.
+  - Knows: glimpses from Part I (`#timeline`), PCA (`#foundation`). Introduces viewpoint and canvas.
+  - Paper: Figure 1's caption ("integrates broad context and fine detail from variable-scale glimpses"); the paper
+    opens on this figure too. Its "extrapolates to unobserved regions" is left to `#table-callback`.
+  - Checked on the figure: after the first glimpse, each canvas change concentrates where the glimpse looked.
+  - About 70 words, 35 s.
+- `#outline-architecture`: the two problems that building an Active-Vision Foundation Model raises, said over the
+  three names: an architecture that gives the observer instantaneous vision and memory, and a pretraining that gives it
+  visuospatial intelligence (the paper's Related work) for any task and any viewing policy; then experiments. About 20 s.
+- `#vit-on-a-glimpse`: the architecture's problem, first half: a glimpse (a crop at a viewpoint, 128 px whatever the
+  zoom) turned by a ViT into patch tokens that describe it alone. About 30 s.
+- `#integrating-information-across-viewpoints`: the architecture's problem, second half: a passive model on separate
+  glimpses cannot fill the gap between them and does not know where each glimpse was; what is needed is integration
+  across viewpoints (Preliminaries, "glimpses need not align with the scene"). About 45 s.
+- `#architecture`: the answer to the integration problem: backbone (instantaneous vision) and canvas (memory), reads
+  and writes (§4: "pull information from the canvas and send updates to it"), the canvas persisting while glimpse tokens
+  are discarded, the recurrent CLS token, dense decoding at every glimpse. Introduces: backbone, Canvas Attention, CLS
+  token. About 60 s.
 - `#sr-rope`: scene-relative positions bind the retinotopic backbone and the spatiotopic canvas (§4, SR-RoPE); the
-  spacing of positions encodes zoom. About 35 s.
+  spacing of positions encodes zoom; it answers the problem slide's "where was each glimpse taken?". About 40 s.
 - `#canvas-attention`: asymmetric cross-attention, projections on the glimpse side only, so the canvas can be large
   without the quadratic cost of self-attention (§4); Fig. 3B. About 35 s.
 - `#outline-pretraining`. A few seconds.
-- `#distillation`: the question of §5 (teach CanViT to see, task-agnostic, label-free, robust to the policy); why
-  no policy in pretraining (specificity; policy gradients' instability, Y 2026-10-24); dense latent distillation
-  from DINOv3 ("a passive teacher's visual world knowledge to teach an active student", Related work); label-free at
-  both levels (Y). The slide's word is "prediction". About 75 s, the longest of Part II.
-- `#pretraining-policies`: R-IID and F-IID (§5.2), static, each policy's sequence of boxes then its glimpses (Y,
-  2026-10-24); the other test policies never seen in pretraining. About 35 s.
+- `#how-to-see-first` (A, 2026-10-27, after Yohaï's correction): the pretraining's problem and its principle. How to
+  pretrain the observer, when prior models often learned how to see together with where to look, the policy through
+  RL: "Before knowing where to look, we should know how to see" (Y, 2026-10-24), so the observer is pretrained on its
+  own, without a policy, as representation learning (paper, Introduction: it "disentangles 'how to see in an
+  active-vision setting' from 'where to look'"). Reasons said: an observer trained with one policy adapts to it, ours
+  must work with any since where we look depends on the task (Yarbus, a callback); RL's noisy gradients. About 35 s.
+- `#pretraining-policies`: the principle in practice, answer 1 of Yohaï's plan (2026-10-25): R-IID and F-IID (§5.2),
+  static, each policy's sequence of boxes then its glimpses; the policies tested later never seen in pretraining.
+  About 35 s.
+- `#distillation`: answer 2 and both together. What to learn from random glimpses: predict the whole scene after every
+  glimpse, unseen regions included, which requires understanding its spatial and semantic structure (§5.1); in DINOv3's
+  features, not pixels, a passive teacher's knowledge of the visual world, learned without labels at great cost
+  (Related work; `#dinov3-and-the-brain`, a callback); label-free at both levels (Y). About 70 s.
 - `#pretraining`: the run (§6) and DINOv3 7B's cost, to scale; building on DINOv3 rather than repeating it (Y,
   2026-10-24: the hours chart is not wrong). Since 2026-10-27 the notes add the camera-ready's "Precomputation of
   teacher features is entirely optional, and is a tradeoff between storage and compute cost" (`subsec:distillation`),
@@ -519,18 +536,16 @@ drafts until Yohaï words them.
   - Checked (`ade20k_seg.json`): F2C passes AME (SETR)'s 27.6 at its fifth glimpse, 79 GFLOPs with a 32 x 32 canvas and
     110 with 64 x 64, against AME's 312 at eight glimpses.
   - About 95 words, 45 s.
-- `#how-to-see-first` (A, 2026-10-27, promoted from Backup): Yohaï's "Before knowing where to look, we should know how
-  to see" (2026-10-24), as a signpost between the evidence that the observer was the bottleneck and the learned policy.
-  About 5 s.
 - `#learned-policy`: the camera-ready's values since 2026-10-27 (Q-learning, best checkpoint of each of 8 runs, 95%
   intervals); a policy learned with RL on the frozen observer beats EG-C2F, at 640 thousand glimpses of policy learning
   against a billion of pretraining (Y, 2026-10-24); the LLM parallel said aloud (Y, 2026-10-25); "they'll be in the
-  camera-ready version". About 40 s.
+  camera-ready version". Its first line calls back the principle: now that CanViT knows how to see, it can learn where
+  to look. About 40 s.
 - `#quickstart`: the code walked through, a bus read as car, then bus. About 30 s.
 - `#next`: CanViT 2 in broad strokes only. About 10 s.
 - `#links`: stays up during questions.
 
-Part II's notes total about 11 minutes at Part I's rate; Part I's run-through took about 6:15 (rehearsal timings,
+Part II's notes total about 12 minutes at Part I's rate; Part I's run-through took about 6:15 (rehearsal timings,
 below).
 
 Backup since 2026-10-27, each slide for a question the room may ask: `#free-viewing` (neuro-AI datasets; its argument
@@ -564,54 +579,55 @@ Removed on 2026-10-24 after Yohaï's review (git history has them): `#compare-ca
 ## The pass of 2026-10-27 (A)
 
 At Yohaï's request: a full pass over the deck after a full read of the camera-ready (its source at commit
-`8924d417`), with the whole flow in mind. Every slide was rendered and read on screen; the changes are for the
-authors' review.
+`8924d417`), with the whole argument in mind. A first version (`bf09c295`) rearranged slides without re-deriving the
+argument; Yohaï's corrections that day (Positions) rebuilt it as below. Every slide was rendered and read on screen.
 
-**The flow, as the questions Part II answers in turn.** Part I ends on what an Active-Vision Foundation Model must
-have; `#paper` names CanViT as the first.
-- What is the problem? `#vit-on-a-glimpse` and `#integrating-information-across-viewpoints`: a glimpse is a crop at a
-  viewpoint; a passive model answers for each glimpse alone, without knowing where it was, and leaves the rest of the
-  scene blank. What is needed is integration across viewpoints into one representation of the scene.
-- What does CanViT do about it? `#canvit-rollout`, the paper's Figure 1: each glimpse updates one canvas for the whole
-  scene. The audience sees the canvas work before its parts are named. The problem slide stays before it: the figure
-  is its answer, and after it the problem would come as a postscript; before `#paper` it would cut Part I's handover.
-- How is it built? `#outline-architecture`, then `#architecture`, `#sr-rope`, `#canvas-attention`.
-- How does it learn? `#outline-pretraining`, then `#distillation`, `#pretraining-policies`, `#pretraining`; and the
-  payoff on the problem slide's own table, `#table-callback`: it fills the middle, because it learned to predict the
-  whole scene.
-- What does it achieve? `#outline-experiments`, then `#state-of-the-art` first: the answer to Part I's gap, on the
-  gap's own chart.
-- Does it work with any policy? `#c2f-and-f2c`, `#eg-c2f`, `#policy-accuracy`.
-- What do the policies say about the observer? `#frontier`: even a worse-than-random order beats the prior models for
-  less compute, so perception was the bottleneck; Part I's claim returns as evidence.
-- Where does the policy come back in? `#how-to-see-first`, then `#learned-policy` as the closing touch: with an
-  observer that sees well, learning where to look is cheap.
-- Then `#quickstart`, `#next`, `#links`.
+**Part II's argument.** Part I ends on what an Active-Vision Foundation Model must have; `#paper` names CanViT as the
+first. `#canvit-rollout` shows what it does, as the paper's Figure 1 does at its start: each glimpse updates one canvas
+for the whole scene. Building such a model raises two problems, which the paper's two contributions answer
+(`#outline-architecture`, said over the three names).
+- The architecture's problem: a standard backbone turns a glimpse into tokens about that glimpse alone
+  (`#vit-on-a-glimpse`), so separate glimpses leave the scene unintegrated and unplaced
+  (`#integrating-information-across-viewpoints`). The answer: the backbone and the canvas (`#architecture`), placed in
+  one frame (`#sr-rope`, which answers "where was each glimpse taken?"), affordable at fine canvases
+  (`#canvas-attention`).
+- The pretraining's problem: how to train the observer at all, when prior models learned how to see together with
+  where to look. The principle (`#how-to-see-first`): before knowing where to look, we should know how to see, so the
+  observer is pretrained without a policy. In practice, random glimpses (`#pretraining-policies`); as the target, the
+  whole scene in DINOv3's features (`#distillation`); its cost against DINOv3's own training (`#pretraining`); its payoff
+  on the problem slide's table (`#table-callback`).
+- The experiments: the gap of Part I, closed on its own chart (`#state-of-the-art`); the policies (`#c2f-and-f2c`,
+  `#eg-c2f`, `#policy-accuracy`); what they show about the observer, that even a worse-than-random order beats the prior
+  models for less compute (`#frontier`: Part I's "No policy can make up for a poor observer" as evidence); then, the
+  observer able to see, learning where to look (`#learned-policy`, whose first line calls back the principle).
 
 Each result appears once: the peak on `#state-of-the-art`, the policy differences on `#policy-accuracy`, the single
 glimpse and the bottleneck on `#frontier`, the learned policy on `#learned-policy`.
 
-**Built.** `#canvit-rollout` (new); `#outline-architecture` after it; `#state-of-the-art` rebuilt as the callback to
-`#gap` (the paper's Table 1 as bars, Y 2026-10-25) and moved first among the results; `#frontier` and
-`#how-to-see-first` promoted from Backup; `#policy-accuracy`'s and `#pretraining`'s notes; `#learned-policy` on the
-camera-ready's values (merged from the branch `talk-part2-camera-ready`); eight of the paper's figures and tables as
-Backup slides through `paper_figures.py` (merged from `talk-paper-figures`); nine Backup slides removed (above). The
-stylesheet had lost the selectors of several rules in an earlier edit; the dangling fragments are gone.
+**Built.** `#canvit-rollout` from the paper's Figure 1 code (`experiments/canvit_rollout/`, built by
+`build_deck_data.sh canvit_rollout`; the paper's composition gained parameters for the glimpses shown, the panel
+letters, the first index and the time label, whose defaults leave the paper's figure byte-identical); the outline's
+notes posing the two problems; `#how-to-see-first` opening the pretraining; `#pretraining-policies` before
+`#distillation`, whose notes now separate the pretext task (the whole scene) from the target (DINOv3's features);
+`#state-of-the-art` rebuilt as the callback to `#gap` (the paper's Table 1 as bars, Y 2026-10-25) and first among the
+results; `#frontier` promoted from Backup; `#learned-policy` on the camera-ready's values (merged from
+`talk-part2-camera-ready`); eight of the paper's figures and tables as Backup slides through `paper_figures.py` (merged
+from `talk-paper-figures`); nine Backup slides removed (above); dangling stylesheet fragments from an earlier edit
+removed.
 
-**Proposed, not built.**
-- `#canvit-rollout`'s timestep labels (0 to 3) against the talk's glimpse count (1 to 21): relabel the copy as
-  `#architecture` does, or accept the paper's t.
+**Open for the authors.**
 - The canvas updates within a glimpse (the paper's emergent progression from the glimpse's patch grid to scene-wide
-  content, Write 0 to Write 2): about 20 s after `#canvas-attention`, for the neuroscientists (retinotopic input
-  becoming spatiotopic memory, inside one glimpse). In Backup now.
+  content): about 20 s after `#canvas-attention` would speak to the neuroscientists. In Backup now.
 - The input/output dissociation (Fig. 4A: from the same 128 px glimpse, a finer canvas beats the input-matched teacher):
-  about 15 s as a last click on `#frontier`, or Backup only (as now).
-- `#learned-policy` shows Q-learning alone; the paper shows Q-learning and REINFORCE, both above EG-C2F. Showing both
-  would make the point about the observer rather than one algorithm; it needs `<canvit-policy-curves>` to take several
-  added curves. The paper's figure is in Backup.
-- The learned curve's color: the deck's policy teal, or the paper's Q-learning purple (`#9467bd`) under the rule that
-  viewing policies keep the paper's colors.
+  Backup only, or a last click on `#frontier`.
+- `#learned-policy` shows Q-learning alone; the paper shows Q-learning and REINFORCE, both above EG-C2F. Both on the
+  slide would make the point about the observer rather than one algorithm (needs `<canvit-policy-curves>` to take
+  several added curves); the paper's figure is in Backup. The learned curve's color: the deck's policy teal or the
+  paper's Q-learning purple.
 - Lamarck Labs among `#paper`'s affiliations, as in the camera-ready and on `#title`.
+- Part I (Sabrina's): `#active-vision-model`'s second line, "A general-purpose observer lets you use any policy", says
+  more than the paper, whose claim is that with perfect instantaneous vision and memory, naive and strategic policies
+  should reach the same accuracy after enough glimpses of a static scene.
 - The Backup tables are the camera-ready's at `8924d417`; the dataset-scale table's values are still being decided for
   the paper. `paper_figures.py try` then `accept` refreshes them.
 

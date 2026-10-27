@@ -47,6 +47,8 @@ Each thing has one home; everything else points to it.
 - Think a causal claim through before stating it, and do not invent objections an expert would not raise.
 - Take nothing at face value, including the authors' and agents' earlier statements; read and understand material
   fully before presenting it [Yohaï, 2026-10-01].
+- A review re-derives the argument: what problem each section answers, what each slide must establish and why it comes
+  where it does. Moving slides follows from that; it is not the review [Yohaï, 2026-10-27].
 
 ## Files and tools
 
@@ -102,9 +104,8 @@ uv run site/slides/paper_figures.py reject --talk $TALK learned_policies_miou
   its top rule to its bottom rule.
 - Accepting publishes. `accept` moves the trial render into `assets/paper-figures/` and records its commit, source,
   renderer and checksum in the entry; commit the render and the manifest together. The branch is public; the authors
-  accept the camera-ready's figures and tables on it. A slide built by hand around a render (`#canvit-rollout`, to
-  reveal it part by part) uses an accepted entry left disabled, so that the render keeps its record without a second
-  slide.
+  accept the camera-ready's figures and tables on it. A figure that must build up click by click is made from its own
+  code instead, never by drawing over a render (`#canvit-rollout`: `experiments/canvit_rollout/`).
 - Rejecting leaves no trace. `reject` deletes the entry's renders, trial and accepted, and resets its line as `sync`
   wrote it. Setting `"enabled": false` only hides the slide.
 - `deploy.sh` runs `paper_figures.py check`, which refuses an enabled entry that is not accepted, an accepted render
@@ -273,7 +274,8 @@ corner badge; `?present` hides the badges. An aspirational slide describes its m
 - Do not smuggle information [Yohaï, 2026-10-24]: every concept, term or claim the argument relies on gets its own
   visible moment, on screen and said, never slipped into a caption, a heading, a thumbnail or the notes.
 - Short signposting slides make each move of the argument explicit: a few words, a few arrows, 5 to 10 seconds,
-  highlighting what matters [Yohaï, 2026-10-24].
+  highlighting what matters [Yohaï, 2026-10-24]. The reasoning a signpost marks is said, never added to it as text
+  [Yohaï, 2026-10-27].
 - Demonstrate, then name [Yohaï, 2026-10-01]. The first idea for any claim is how to show it happening, on a real
   image, with the real model or the real baseline. A claim shown only as text or a diagram is a placeholder until
   such a demonstration exists or is ruled out.

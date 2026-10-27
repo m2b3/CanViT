@@ -776,8 +776,8 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #dinov3-and-the-brain.shows-scaling .method { opacity: 0; }
 #dinov3-and-the-brain.shows-scaling .scaling { opacity: 1; }
 
-/* A CanViT rollout: the paper's Figure 1 at the full content width; panel B's rows under covers until their click. */
-#canvit-rollout svg.figure { display: block; width: 1152px; height: auto; margin: 16px auto 0; }
-#canvit-rollout .cover { fill: var(--bg); transition: opacity .6s ease; }
-#canvit-rollout.shows-glimpses .cover.glimpses, #canvit-rollout.shows-canvas .cover.canvas,
-#canvit-rollout.shows-delta .cover.delta { opacity: 0; }
+/* A CanViT rollout: the paper's Figure 1 at the full content width, a stage per glimpse, each over the last. */
+#canvit-rollout .stages { position: relative; width: 1152px; aspect-ratio: 396 / 178.58; margin: 40px auto 0; }
+#canvit-rollout .stage { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s ease; }
+#canvit-rollout .s0, #canvit-rollout.shows-g1 .s1, #canvit-rollout.shows-g2 .s2, #canvit-rollout.shows-g3 .s3,
+#canvit-rollout.shows-g4 .s4 { opacity: 1; }

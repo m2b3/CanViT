@@ -470,7 +470,8 @@ drafts until Yohaï words them.
   three names: an architecture that gives the observer instantaneous vision and memory, and a pretraining that gives it
   visuospatial intelligence (the paper's Related work) for any task and any viewing policy; then experiments. About 20 s.
 - `#vit-on-a-glimpse`: the architecture's problem, first half: a glimpse (a crop at a viewpoint, 128 px whatever the
-  zoom) turned by a ViT into patch tokens that describe it alone. About 30 s.
+  zoom) turned by a ViT into patch tokens that describe it alone. About 30 s. Its example, a lamp as white as its
+  ceiling, and how it was chosen: "Open work", 2026-10-27.
 - `#integrating-information-across-viewpoints`: the architecture's problem, second half: a passive model on separate
   glimpses cannot fill the gap between them and does not know where each glimpse was; what is needed is integration
   across viewpoints (Preliminaries, "glimpses need not align with the scene"). About 45 s.
@@ -633,6 +634,21 @@ removed.
 
 ## Open work
 
+- (A, 2026-10-27) `#vit-on-a-glimpse` shows a lamp hanging from a white ceiling (ADE20K validation
+  `ADE_val_00001517`, a glimpse of scale 0.29 at the top of the room) instead of the cat, whose glimpse covered most of
+  its scene; the authors asked for a zoomed glimpse on an object that its pixels barely set apart and its patch tokens
+  do, and for the slide's alignment fixed. `experiments/vit_glimpse/sweep.py` frames every object of ADE20K validation
+  that a glimpse of scale 0.2 to 0.4 can center on (its side 1.7 times the object's) and measures, over the glimpse's
+  8 x 8 patches, how well the patches' mean colors separate object from surroundings and how well the patch tokens'
+  colors as shown (PCs 1-3) do. From its best candidates, eleven were chosen by eye (`examples.py`, `EXAMPLES`, the
+  slide's first): the lamp has the ceiling's mean color (`measures.delta_e` in its `meta.json`, far below a visible
+  difference), and its tokens set it apart from every patch of ceiling. The alternatives, in that order: a white plush
+  dog on white crib bedding, a white settee against a white wall, a gold chandelier against gold paneling, a wooden
+  door in a wooden wall, a white hatch on a white wall, wooden cabinet doors in wooden paneling, cream cushions on a
+  cream bed, a white frame on a white wall, a bicycle in shade, a white nightstand; `vitExample` in `index.html` picks
+  one. The pictures now share one size and one grid, so they sit on one center line with the captions on one baseline.
+  Open: `#sr-rope` still shows the cat (`data/talk/vit-glimpse`), though its first glimpse was meant as
+  `#vit-on-a-glimpse`'s; whether it follows the lamp is for the authors.
 - (A, 2026-10-27) From a co-author's review of Part I, checked against the sources (Yamins et al. 2014; Khaligh-Razavi
   & Kriegeskorte 2014; Raugel et al., whose ICLR version scopes its claims to DINOv3; Yarbus's later replications):
   two notes fixes, each marked as an AI draft for the speakers to reword. `#tradition`: the deep networks that first

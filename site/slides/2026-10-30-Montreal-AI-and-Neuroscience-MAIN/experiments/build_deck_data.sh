@@ -28,8 +28,11 @@ table_corners() {
 }
 
 vit_glimpse() {
+  ade20k
   run vit_glimpse.export
   run vit_glimpse.plot
+  run vit_glimpse.sweep
+  run vit_glimpse.examples
 }
 
 looking_closer() {

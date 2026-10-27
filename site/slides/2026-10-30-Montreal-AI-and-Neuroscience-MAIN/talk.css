@@ -530,18 +530,24 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #task-dependent-scanpaths.shows-tasks figure { opacity: 1; }
 #task-dependent-scanpaths figcaption .cite { display: block; margin-top: 2px; font-weight: 400; }
 
-/* A Vision Transformer on a glimpse: scene, glimpse, backbone, tokens, left to right, each on its own click. */
-#vit-on-a-glimpse .vit-flow { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 70px; }
-#vit-on-a-glimpse figure { display: flex; flex-direction: column; align-items: center; }
-#vit-on-a-glimpse figcaption { margin-top: 12px; font-size: 22px; font-weight: 750; }
-#vit-on-a-glimpse .scene .frame { position: relative; width: 340px; height: 340px; }
+/* A Vision Transformer on a glimpse: scene, glimpse, backbone, tokens, left to right, each on its own click. The three
+   pictures and the backbone share one height and one grid whose rows every figure shares (subgrid): pictures, box and
+   arrows centered on one line, the captions on one baseline right below, the token view's label under its caption. */
+#vit-on-a-glimpse { --picture: 256px; }
+#vit-on-a-glimpse .vit-flow { display: grid; grid-template-columns: repeat(3, auto 36px) auto; grid-template-rows: auto auto auto;
+                              justify-content: center; align-items: center; column-gap: 20px; margin-top: 90px; }
+#vit-on-a-glimpse :is(.arrow, .vit) { grid-row: 1; }
+#vit-on-a-glimpse figure { display: grid; grid-row: 1 / span 3; grid-template-rows: subgrid; place-items: center; }
+#vit-on-a-glimpse figcaption { grid-row: 2; align-self: start; margin-top: 12px; font-size: 22px; font-weight: 750; }
+#vit-on-a-glimpse :is(.pca-label, .pca-player) { grid-row: 3; align-self: start; }
+#vit-on-a-glimpse .scene .frame { position: relative; width: var(--picture); height: var(--picture); }
 #vit-on-a-glimpse .scene img { display: block; width: 100%; height: 100%; border-radius: 10px; }
 #vit-on-a-glimpse .box { position: absolute; box-sizing: border-box; border: 3px solid var(--glimpse); border-radius: 3px; opacity: 0; transition: opacity .4s ease; }
-#vit-on-a-glimpse .glimpse img, #vit-on-a-glimpse .tokens img { width: 210px; height: 210px; border-radius: 8px; }
+#vit-on-a-glimpse .glimpse img, #vit-on-a-glimpse .tokens img { width: var(--picture); height: var(--picture); border-radius: 8px; }
 #vit-on-a-glimpse .glimpse img { box-shadow: 0 0 0 3px var(--glimpse); }
 #vit-on-a-glimpse .pca-label { margin: 4px 0 0; font-size: 15px; color: var(--ink); white-space: nowrap; }
 #vit-on-a-glimpse .glimpse figcaption { color: var(--glimpse); }
-#vit-on-a-glimpse .vit { display: grid; place-items: center; width: 150px; height: 210px; border-radius: 14px;
+#vit-on-a-glimpse .vit { display: grid; place-items: center; width: 150px; height: var(--picture); box-sizing: border-box; border-radius: 14px;
                          background: #d8b4e2; border: 2px solid #a879b8; color: #5b2a73; font-size: 20px; font-weight: 800; text-align: center; }
 #vit-on-a-glimpse .arrow { width: 36px; height: 3px; background: var(--muted); position: relative; }
 #vit-on-a-glimpse .arrow::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }

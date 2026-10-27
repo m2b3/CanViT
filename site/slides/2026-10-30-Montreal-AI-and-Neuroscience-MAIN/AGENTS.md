@@ -78,6 +78,37 @@ as the page's: bundles under `../../data/` recorded by `canvit_pytorch.viz`, the
 `../../assets/paper/`, and numbers in `<span data-macro>` checked by `../../check_paper_numbers.py`. A number the paper
 does not carry yet (a new experiment) has an `XXX` comment beside it naming its source.
 
+## Paper figures
+
+The paper's figures and tables can be tried on slides before the paper version they come from is public.
+`sources/paper-figures.json` lists each one, one line per entry: a figure by its export name (`paper/exports/NAME.pdf`),
+a table by its LaTeX label. An entry with `"enabled": true` is a slide after the slide whose id its `where` names, or
+at the end of Backup for `"backup"`, headed by its `title` (HTML, none when empty), with its `notes` (a list of HTML
+bullets) as speaker notes and its `status` as `data-status` (draft when absent); edit the file and the open deck
+reloads with the slide added or removed. The slides follow "Writing slides" below: the paper's caption is not shown,
+so what it says goes in the title or the notes. `../paper_figures.py` does the rest (its docstring has the details);
+`$PAPER` is a checkout holding the paper version to show:
+
+```bash
+TALK=2026-10-30-Montreal-AI-and-Neuroscience-MAIN
+uv run site/slides/paper_figures.py try --talk $TALK --paper $PAPER learned_policies_miou --where learned-policy
+uv run site/slides/paper_figures.py accept --talk $TALK learned_policies_miou
+uv run site/slides/paper_figures.py reject --talk $TALK learned_policies_miou
+```
+
+- Trying stays local. `try` renders the entries from a commit of `$PAPER` (`--rev`, default `HEAD`) into
+  `.paper-figures/`, which git ignores and `deploy.sh` never ships, and enables them; each slide is marked as a trial
+  until accepted. A figure is its export as SVG; a table is cut from the camera-ready build at the same commit, from
+  its top rule to its bottom rule.
+- Accepting publishes. `accept` moves the trial render into `assets/paper-figures/` and records its commit, source,
+  renderer and checksum in the entry; commit the render and the manifest together. The branch is public, so accept
+  only what may be public.
+- Rejecting leaves no trace. `reject` deletes the entry's renders, trial and accepted, and resets its line as `sync`
+  wrote it. Setting `"enabled": false` only hides the slide.
+- `deploy.sh` runs `paper_figures.py check`, which refuses an enabled entry that is not accepted, an accepted render
+  that differs from its record, a render that no entry accepts, and a `where` that names no slide.
+- `paper_figures.py sync --talk $TALK --paper $PAPER` adds the figures and tables the paper has gained.
+
 ## Workflow
 
 Before any work on the talk, and again after every context reset or compaction, read the paper

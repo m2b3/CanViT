@@ -5,7 +5,8 @@
 # to main; replacing gh-pages at every deploy keeps them out of all history. A talk ships its committed files except
 # its notes (Markdown), working pages (names starting with _) and the experiments that compute its data
 # (experiments/), and without its Backup slides: every section from <section id="backup"> to the end of its slides is
-# cut from the published index.html, and only the data the published files name ship.
+# cut from the published index.html, and only the data the published files name ship. The paper's figures a talk
+# shows must be accepted renders, committed with it (slides/paper_figures.py check).
 #
 #   bash site/deploy.sh          # check and stage the page, list what would be published
 #   bash site/deploy.sh --push   # publish
@@ -14,6 +15,7 @@ site=$(cd "$(dirname "$0")" && pwd)
 cd "$site/.."
 
 uv run --no-project python site/check_paper_numbers.py
+uv run site/slides/paper_figures.py check
 [ -z "$(git status --porcelain -- site)" ] || { echo "site/ has uncommitted changes: commit them first" >&2; exit 1; }
 talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$|/experiments/')
 [ -f site/slides/node_modules/reveal.js/dist/reveal.mjs ] || { echo "reveal.js is missing: npm ci --prefix site/slides" >&2; exit 1; }
@@ -22,7 +24,7 @@ talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]
 out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
 cp -R site/index.html site/live.html site/css site/js "$out/"
-mkdir -p "$out/slides/node_modules/reveal.js" && cp site/slides/deck.js site/slides/deck.css "$out/slides/"
+mkdir -p "$out/slides/node_modules/reveal.js" && cp site/slides/deck.js site/slides/deck.css site/slides/paper-figures.js "$out/slides/"
 cp -R site/slides/node_modules/reveal.js/dist "$out/slides/node_modules/reveal.js/"
 for file in $talks; do mkdir -p "$out/$(dirname "${file#site/}")" && cp "$file" "$out/${file#site/}"; done
 # A talk's Backup slides stay out of the published deck.

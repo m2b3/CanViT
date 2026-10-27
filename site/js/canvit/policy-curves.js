@@ -10,13 +10,13 @@
 // range shows the end of the rollouts with the low starts entering from below. Lines are drawn up to glimpse t (all
 // without t), each in its policy's color from the paper's figures; a slide drives t to grow them in step with recorded
 // rollouts. glimpses limits the axis to the first glimpses. added-src adds a curve that is not in the paper's exports
-// ({label, per_timestep: [{t, mean, sd}]}, mean and sd as fractions), thicker, in policy teal, with a band of one sd,
-// in the shadow part "added" so that a slide can reveal it. baselines lists prior models of src's baselines,
-// comma-separated by name ("AME (SETR), AdaGlimpse"); each one's best result is a marker at the glimpse count it was
-// measured at, named beside it, drawn when inside the axes. The chart's height is its width times
-// --canvit-chart-aspect (default 0.78). show="dashed-only" draws only the dashed set, still dashed, its policies named at
-// its heads (a slide's step before both, so no curve changes style between steps); --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text
-// sizes (14, 15 and 16 px by default).
+// read here ({label, per_timestep: [{t, mean, ci_lo, ci_hi}]}, fractions, as the exports give them), thicker, in policy
+// teal, with its confidence interval as a band, in the shadow part "added" so that a slide can reveal it. baselines
+// lists prior models of src's baselines, comma-separated by name ("AME (SETR), AdaGlimpse"); each one's best result is
+// a marker at the glimpse count it was measured at, named beside it, drawn when inside the axes. The chart's height is
+// its width times --canvit-chart-aspect (default 0.78). show="dashed-only" draws only the dashed set, still dashed, its
+// policies named at its heads (a slide's step before both, so no curve changes style between steps);
+// --canvit-chart-tick, --canvit-chart-title and --canvit-chart-label set the text sizes (14, 15 and 16 px by default).
 
 import { POLICIES } from "./policies.js";
 
@@ -140,8 +140,8 @@ class CanvitPolicyCurves extends HTMLElement {
     };
     const curves = [...select(data, src, grid, "solid"), ...(withDashed ? select(dashedData, dashedSrc, dashedGrid, "dashed") : [])];
     this.#legend = legend;
-    if (added && !(typeof added.label === "string" && added.per_timestep?.every((p) => [p.t, p.mean, p.sd].every(Number.isFinite)))) {
-      throw new Error(`<canvit-policy-curves>: ${addedSrc} is not {label, per_timestep: [{t, mean, sd}]}`);
+    if (added && !(typeof added.label === "string" && added.per_timestep?.every((p) => [p.t, p.mean, p.ci_lo, p.ci_hi].every(Number.isFinite)))) {
+      throw new Error(`<canvit-policy-curves>: ${addedSrc} is not {label, per_timestep: [{t, mean, ci_lo, ci_hi}]}`);
     }
     this.#added = added;
     const known = task.baselines(data);
@@ -232,8 +232,8 @@ class CanvitPolicyCurves extends HTMLElement {
     }
     if (this.#added) {
       const band = this.#added.per_timestep.slice(0, shown);
-      const edge = (sign) => band.map((p) => [x(p.t), y(100 * (p.mean + sign * p.sd))]);
-      el("polygon", { class: "band", points: [...edge(1), ...edge(-1).reverse()].map((p) => p.join(",")).join(" ") }, addedGroup);
+      const edge = (bound) => band.map((p) => [x(p.t), y(100 * p[bound])]);
+      el("polygon", { class: "band", points: [...edge("ci_hi"), ...edge("ci_lo").reverse()].map((p) => p.join(",")).join(" ") }, addedGroup);
       el("polyline", { class: "curve", points: band.map((p) => [x(p.t), y(100 * p.mean)].join(",")).join(" ") }, addedGroup);
     }
     // The named set's heads (the solid set's, or the dashed set's when drawn alone); a head below or above the range is

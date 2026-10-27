@@ -54,13 +54,16 @@ What the talk's current argument rests on. Each line was checked on the date giv
   token's projection) in float32; SDPA and learned projections in bfloat16. Subtle correctness issues caused
   regressions only after several hundred thousand steps (paper App. pretraining, "Numerical precision considerations")
   [2026-10-24].
-- The learned policy (unpublished; `learned-policy.json`, its `_about` says how it was made): trained by
-  reinforcement learning on the frozen, released CanViT-B and its frozen ADE20K probe (64² canvas); the reward is how
-  much a glimpse reduces the segmentation error; it chooses each next glimpse among 512 candidate viewpoints; every
-  rollout starts with the full-scene glimpse. 8 seeds, 640 k glimpse-forwards, about 80 minutes per seed on one
-  RTX 4090. ADE20K validation mIoU, mean ± sd over seeds, glimpses 2–5: 42.65 ± .16, 43.95 ± .16, 44.62 ± .12,
-  44.97 ± .10, against EG-C2F 42.23, 43.29, 44.05, 44.65 (deterministic) and C2F 41.34, 42.52, 43.60, 44.69 (the
-  authors' experiments, read 2026-10-24).
+- The learned policy (`learned-policy.json`, its `_about` says how it was made): the camera-ready's appendix "Learned
+  viewing policies" (`supp:learned-policies`; its export `paper/exports/learned_policies.json` is not yet on this
+  branch) trains viewing policies with reinforcement learning, Q-learning and REINFORCE, on the frozen, released
+  CanViT-B and its frozen ADE20K probe (64² canvas); the reward is the relative reduction in segmentation
+  cross-entropy after a glimpse, with the discount factor at zero; the policy chooses each later glimpse among 512
+  candidate viewpoints; every rollout starts with the full-scene glimpse. 8 training runs per objective, each 8,000
+  steps of 16 images with 5 glimpses (640,000 glimpses), 74 to 91 minutes per run on one RTX 4090, validation
+  included; each run's best and last checkpoints are evaluated with the paper's protocol. The deck shows Q-learning's
+  best checkpoints: their means and 95% intervals are in `learned-policy.json`; C2F and EG-C2F come from the paper's
+  ADE20K export [read in the camera-ready's export, 2026-10-26].
 
 ## Bank
 

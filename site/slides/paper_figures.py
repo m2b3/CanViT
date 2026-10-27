@@ -32,6 +32,7 @@ same commit, from its top rule to its bottom rule, so its caption stays off the 
 
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -87,6 +88,11 @@ def slug(id: str) -> str:
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def shown(path: Path) -> str:
+    """A path as messages give it: relative to the working directory (the repository's root, as the usage shows)."""
+    return os.path.relpath(path)
 
 
 def run(command: list[str], cwd: Path | None = None, stdin: bytes | None = None) -> bytes:
@@ -267,7 +273,7 @@ class Talk:
 
     def check_where(self, entry: Entry) -> None:
         if entry.where != BACKUP and entry.where not in self.slide_ids():
-            raise SystemExit(f"{entry.id}: where={entry.where!r} names no slide of {self.dir / 'index.html'}")
+            raise SystemExit(f"{entry.id}: where={entry.where!r} names no slide of {shown(self.dir / 'index.html')}")
 
 
 @dataclass(frozen=True)
@@ -511,7 +517,7 @@ class Sync:
             print(f"{entry.id}: not in the paper at {paper.commit[:12]}; kept at the end of the manifest")
         talk.manifest_path.parent.mkdir(parents=True, exist_ok=True)
         talk.save(Manifest(tuple(known.get(e.id, e) for e in ordered) + tuple(gone)))
-        print(f"{talk.manifest_path}: {len(added)} added ({', '.join(e.id for e in added) or 'none'})")
+        print(f"{shown(talk.manifest_path)}: {len(added)} added ({', '.join(e.id for e in added) or 'none'})")
 
 
 @dataclass(frozen=True)
@@ -550,7 +556,9 @@ class Try:
                 )
             manifest = manifest.with_entry(replace(entry, enabled=True, accepted=None))
             place = "at the end of Backup" if entry.where == BACKUP else f"after #{entry.where}"
-            print(f"{entry.id}: on trial {place}, rendered from {paper.commit[:12]} to {talk.trial(entry.id, '.svg')}")
+            print(
+                f"{entry.id}: on trial {place}, rendered from {paper.commit[:12]} to {shown(talk.trial(entry.id, '.svg'))}"
+            )
         talk.save(manifest)
 
 
@@ -572,19 +580,19 @@ class Accept:
             id = entry.id
             svg, record = talk.trial(id, ".svg"), talk.trial(id, ".json")
             if not (svg.is_file() and record.is_file()):
-                raise SystemExit(f"{id}: no trial render in {talk.dir / TRIALS}; `try` makes one")
+                raise SystemExit(f"{id}: no trial render in {shown(talk.dir / TRIALS)}; `try` makes one")
             made = Render(**json.loads(record.read_text()))
             if sha256(svg) != made.sha256:
-                raise SystemExit(f"{id}: {svg} changed since `try` rendered it; render it again")
+                raise SystemExit(f"{id}: {shown(svg)} changed since `try` rendered it; render it again")
             target = talk.accepted_file(id)
             shutil.move(svg, target)
             record.unlink()
             file = str(target.relative_to(talk.dir))
             accepted = Accepted(file, made.sha256, made.commit, made.source, made.renderer, date.today().isoformat())
             manifest = manifest.with_entry(replace(entry, accepted=accepted))
-            print(f"{id}: accepted as {target} (commit {made.commit[:12]})")
+            print(f"{id}: accepted as {shown(target)} (commit {made.commit[:12]})")
         talk.save(manifest)
-        print(f"to keep them: git add {talk.manifest_path} {talk.dir / ACCEPTED} && git commit")
+        print(f"to keep them: git add {shown(talk.manifest_path)} {shown(talk.dir / ACCEPTED)} and commit")
 
 
 @dataclass(frozen=True)
@@ -609,8 +617,11 @@ class Reject:
             reset = Entry(entry.id, entry.kind)
             manifest = manifest.with_entry(reset)
             was = "" if entry == reset else f"; its entry was {json.dumps(entry.to_json(), ensure_ascii=False)}"
-            print(f"{id}: rejected, removed {', '.join(map(str, removed)) or 'no render'}{was}")
+            print(f"{id}: rejected, removed {', '.join(map(shown, removed)) or 'no render'}{was}")
         talk.save(manifest)
+        trials = talk.dir / TRIALS
+        if trials.is_dir() and not any(trials.iterdir()):
+            trials.rmdir()
 
 
 def problems(talk: Talk, manifest: Manifest) -> list[str]:
@@ -627,15 +638,17 @@ def problems(talk: Talk, manifest: Manifest) -> list[str]:
             file = talk.dir / entry.accepted.file
             accepted_files.add(file)
             if file != talk.accepted_file(entry.id):
-                found.append(f"{entry.id}: accepted file {entry.accepted.file} is not {talk.accepted_file(entry.id)}")
+                found.append(
+                    f"{entry.id}: accepted file {entry.accepted.file} is not {shown(talk.accepted_file(entry.id))}"
+                )
             elif not file.is_file():
-                found.append(f"{entry.id}: accepted file {file} is missing")
+                found.append(f"{entry.id}: accepted file {shown(file)} is missing")
             elif sha256(file) != entry.accepted.sha256:
-                found.append(f"{entry.id}: {file} differs from the render accepted on {entry.accepted.date}")
+                found.append(f"{entry.id}: {shown(file)} differs from the render accepted on {entry.accepted.date}")
     if (talk.dir / ACCEPTED).is_dir():
         for file in sorted((talk.dir / ACCEPTED).iterdir()):
             if file.name != PROVENANCE and file not in accepted_files:
-                found.append(f"{file}: no entry accepts it (`accept` its entry again, or `reject` it)")
+                found.append(f"{shown(file)}: no entry accepts it (`accept` its entry again, or `reject` it)")
     return found
 
 
@@ -654,7 +667,7 @@ class Check:
             accepted = sum(e.accepted is not None for e in manifest.entries)
             print(f"{directory.name}: {shown} enabled, {accepted} accepted, of {len(manifest.entries)} paper figures")
             for problem in found:
-                print(f"  {problem}", file=sys.stderr)
+                print(f"  {problem}")
             failed |= bool(found)
         if failed:
             raise SystemExit("paper figures: fix the problems above before publishing")

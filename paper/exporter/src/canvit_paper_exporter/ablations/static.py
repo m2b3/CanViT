@@ -1,14 +1,18 @@
+"""The ablation variants' parameters and per-glimpse segmentation FLOPs at the released canvas grid, each relative to
+the baseline's, and the baseline run's number of pretraining steps, from its Comet history."""
+
 import torch
 from canvit_pytorch import CanViT, CanViTConfig
 from canvit_pytorch.hub.repos import RELEASED_CANVAS_GRID_SIZE
 
-from canvit_paper_exporter import paths
+from canvit_paper_exporter.ablations import history
 from canvit_paper_exporter.ablations.registry import BASELINE, VARIANTS, AblationVariant
-from canvit_paper_exporter.core import Dataset, load_json
+from canvit_paper_exporter.core import Dataset
 from canvit_paper_exporter.flops.canvit import segmentation_glimpse_flops
 
 # 4 decimal digits = 0.01% precision; matches the display precision of the ablation table.
 REL_DIGITS = 4
+BASELINE_HISTORY = history.runs(BASELINE.slug)
 
 
 def _fractional_change(value: float, baseline: float) -> float:
@@ -16,7 +20,7 @@ def _fractional_change(value: float, baseline: float) -> float:
     return round((value - baseline) / baseline, REL_DIGITS)
 
 
-def param_count(config: CanViTConfig) -> int:
+def _param_count(config: CanViTConfig) -> int:
     """Parameters of CanViT built from config, pretraining readouts excluded; the meta device allocates nothing."""
     with torch.device("meta"):
         return sum(p.numel() for p in CanViT(config).parameters())
@@ -27,7 +31,7 @@ def _gflops(config: CanViTConfig) -> float:
 
 
 def _record(v: AblationVariant, bl_params: int, bl_gflops: float) -> dict:
-    p = param_count(v.model_config)
+    p = _param_count(v.model_config)
     f = _gflops(v.model_config)
     return {
         "slug": v.slug,
@@ -44,13 +48,12 @@ def _record(v: AblationVariant, bl_params: int, bl_gflops: float) -> dict:
 
 
 def _baseline_n_steps() -> int:
-    """Last training step of the baseline ablation run, from its exported Comet curves."""
-    curves = load_json(paths.comet_curves() / f"{BASELINE.slug}.json")
-    return max(p["step"] for p in curves["total_loss"])
+    """Last training step of the baseline ablation run, from its pretraining history."""
+    return int(history.load(BASELINE_HISTORY, BASELINE.slug)["total_loss"].steps[-1])
 
 
 def compute() -> dict:
-    bl_params = param_count(BASELINE.model_config)
+    bl_params = _param_count(BASELINE.model_config)
     bl_gflops = _gflops(BASELINE.model_config)
     return {
         "_meta": {
@@ -62,4 +65,4 @@ def compute() -> dict:
     }
 
 
-dataset = Dataset(name="ablation_variants", compute=compute)
+dataset = Dataset(name="ablation_variants", compute=compute, inputs=(BASELINE_HISTORY,))

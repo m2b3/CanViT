@@ -6,10 +6,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 import torch
+from canvit_core.config import CanViTConfig
 from PIL import Image
 
 from canvit_pytorch.hub.publish import Pretrained
-from canvit_pytorch.model.config import CanViTConfig
 from canvit_pytorch.pretrain import checkpoint
 from canvit_pytorch.pretrain.config import PretrainingConfig
 from canvit_pytorch.pretrain.features.shard import STORAGE_DTYPE, FeatureShard, shard_path

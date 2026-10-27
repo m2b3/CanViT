@@ -1,4 +1,4 @@
-"""Probe runs as specialize.ade20k records them, staged for the Hub under the probe-name grammar."""
+"""Probe and policy runs as their trainers record them, staged for the Hub."""
 
 import dataclasses
 import json
@@ -6,9 +6,12 @@ from pathlib import Path
 
 import pytest
 
-from canvit_pytorch.hub.publish import Probe
+from canvit_pytorch.hub.publish import Policy, Probe
 from canvit_pytorch.hub.repos import FLAGSHIP
 from canvit_pytorch.probes import SegmentationProbe
+from canvit_pytorch.rl import ViewpointScorer
+from canvit_pytorch.rl.candidates import CandidateViewpoints
+from canvit_pytorch.rl.observer import flagship_observer
 from canvit_pytorch.specialize.ade20k.canvas_probe import CanvasProbeConfig
 from canvit_pytorch.specialize.ade20k.config import ProbeTrainingConfig
 from canvit_pytorch.specialize.ade20k.dinov3_probe import DINOv3ProbeConfig
@@ -35,3 +38,24 @@ def test_probe_run_is_staged_with_card_and_record(
     assert f'"canvit/{expected_name}"' in (staged / "README.md").read_text()
     assert json.loads((staged / "config.json").read_text())["training"]["validation_miou"] == [0.4]
     SegmentationProbe.from_pretrained(str(staged))
+
+
+def test_policy_run_is_staged_with_card_and_record(tmp_path: Path) -> None:
+    run = tmp_path / "run"
+    ViewpointScorer(
+        observer=flagship_observer(canvas_grid_size=64), canvas_dim=8, candidates=CandidateViewpoints((0.5,), 2),
+        width=8, blocks_per_stage=1, dueling=True,
+    ).save_pretrained(run / "scorer")
+    validations = [{"step": step, "training_loss": 0.1, "validation_cross_entropy": [0.9, value]}
+                   for step, value in ((2, 0.75), (4, 0.5))]
+    record = {"objective": "QRegression", "config": {"seed": 3, "num_glimpses": 2}, "selected_step": 4,
+              "validations": validations}
+    (run / "record.json").write_text(json.dumps(record))
+
+    Policy(run_dir=run, repo="canvit/policy-test", release="9.9", out_dir=tmp_path / "staging").run()
+
+    staged = tmp_path / "staging" / "policy-test"
+    card = (staged / "README.md").read_text()
+    assert all(text in card for text in ('"canvit/policy-test"', "canvit-pytorch>=9.9", "seed 3", "0.9000, 0.5000"))
+    assert json.loads((staged / "config.json").read_text())["training"] == record
+    ViewpointScorer.from_pretrained(str(staged))

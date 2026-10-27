@@ -8,14 +8,13 @@ from huggingface_hub import HfApi
 
 from canvit_pytorch.benchmarks.ade20k import CLASS_NAMES
 from canvit_pytorch.hub.repos import (
-    FLAGSHIP,
     RELEASED_GLIMPSE_SIZE_PX,
     RELEASED_SCENE_SIZE_PX,
     VIZ_CANVAS_GRID_SIZE,
-    released_ade20k_probe,
+    hub_id,
+    released_segmenter,
 )
 from canvit_pytorch.model.segmentation import CanViTForSemanticSegmentation
-from canvit_pytorch.project import HUB_ORGANIZATION
 
 # The released model's pretraining geometry (g128px-s512px in its name), and the canvas grid of the
 # probe the project page shows.
@@ -26,7 +25,7 @@ CANVAS_GRID_SIZE = VIZ_CANVAS_GRID_SIZE
 
 def hub_identity(repo: str) -> dict[str, str]:
     """The Hub name and current revision of a repo, also when it was loaded from a local copy (CANVIT_HUB_ROOT)."""
-    name = f"{HUB_ORGANIZATION}/{repo.rsplit('/', 1)[-1]}"
+    name = hub_id(repo)
     revision = HfApi().model_info(name).sha
     assert revision, f"no Hub revision for {name}"
     return {"repo": name, "revision": revision}
@@ -42,12 +41,13 @@ class ReleasedSegmenter:
 
 
 def load_released_segmenter(*, scene_size_px: int, canvas_grid_size: int, device: torch.device) -> ReleasedSegmenter:
-    probe_repo = released_ade20k_probe("in21k", scene_size_px=scene_size_px, canvas_grid_size=canvas_grid_size)
-    model = CanViTForSemanticSegmentation.from_pretrained_with_probe(pretrained_repo=FLAGSHIP, probe_repo=probe_repo)
-    model = model.to(device).eval()
+    pretrained_repo, probe_repo = released_segmenter(scene_size_px=scene_size_px, canvas_grid_size=canvas_grid_size)
+    model = CanViTForSemanticSegmentation.from_pretrained_with_probe(
+        pretrained_repo=pretrained_repo, probe_repo=probe_repo,
+    ).to(device).eval()
     canvit = model.canvit
     model_record = {
-        **hub_identity(FLAGSHIP),
+        **hub_identity(pretrained_repo),
         "backbone": canvit.config.backbone_name, "num_blocks": len(canvit.backbone.blocks),
         "patch_px": canvit.patch_size, "canvas_dim": canvit.canvas_dim,
         "read_after_blocks": list(canvit.read_after_blocks), "write_after_blocks": list(canvit.write_after_blocks),

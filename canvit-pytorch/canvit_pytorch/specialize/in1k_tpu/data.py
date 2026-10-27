@@ -24,14 +24,13 @@ from canvit_pytorch.viewpoint import sample_at_viewpoint
 
 log = logging.getLogger(__name__)
 
-SCENE_SIZE_PX = RELEASED_SCENE_SIZE_PX
 TFRECORD_FIELDS = {"image/encoded": "byte", "image/class/label": "int"}
 
 ShardSplit = Literal["train", "validation"]
 """The file-name prefix of a split's shards."""
 
 TRAINING_TRANSFORM = T.Compose([
-    T.RandomResizedCrop(SCENE_SIZE_PX, scale=(0.2, 1.0)),  # bilinear, as in pretraining
+    T.RandomResizedCrop(RELEASED_SCENE_SIZE_PX, scale=(0.2, 1.0)),  # bilinear, as in pretraining
     T.RandomHorizontalFlip(),
     T.ToImage(),
     T.ToDtype(torch.float32, scale=True),
@@ -39,8 +38,8 @@ TRAINING_TRANSFORM = T.Compose([
 ])
 
 VALIDATION_TRANSFORM = T.Compose([
-    T.Resize(SCENE_SIZE_PX),  # bilinear, as in pretraining
-    T.CenterCrop(SCENE_SIZE_PX),
+    T.Resize(RELEASED_SCENE_SIZE_PX),  # bilinear, as in pretraining
+    T.CenterCrop(RELEASED_SCENE_SIZE_PX),
     T.ToImage(),
     T.ToDtype(torch.float32, scale=True),
     T.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),

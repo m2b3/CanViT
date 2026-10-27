@@ -1,0 +1,11 @@
+default: lint typecheck test
+
+lint:
+    uv run ruff check .
+
+typecheck:
+    uv run basedpyright adaglimpse_nnx tests
+
+# The equivalence tests fetch AdaGlimpse at the pinned commit from GitHub, once.
+test:
+    uv run pytest tests

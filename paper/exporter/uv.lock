@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
@@ -171,6 +171,7 @@ requires-dist = [
     { name = "pillow", marker = "extra == 'demo'", specifier = ">=10.0.0" },
     { name = "pillow", marker = "extra == 'evaluate'", specifier = ">=10.0.0" },
     { name = "pillow", marker = "extra == 'live'", specifier = ">=10.0.0" },
+    { name = "pillow", marker = "extra == 'rl'", specifier = ">=10.0.0" },
     { name = "pillow", marker = "extra == 'specialize'", specifier = ">=10.0.0" },
     { name = "pillow", marker = "extra == 'viz'", specifier = ">=10.0.0" },
     { name = "playwright", marker = "extra == 'live'", specifier = ">=1.63.0" },
@@ -193,11 +194,12 @@ requires-dist = [
     { name = "tyro", marker = "extra == 'evaluate'", specifier = ">=1.0.0" },
     { name = "tyro", marker = "extra == 'live'", specifier = ">=1.0.0" },
     { name = "tyro", marker = "extra == 'pretrain'" },
+    { name = "tyro", marker = "extra == 'rl'", specifier = ">=1.0.0" },
     { name = "tyro", marker = "extra == 'specialize'", specifier = ">=1.0.0" },
     { name = "tyro", marker = "extra == 'viz'", specifier = ">=1.0.0" },
     { name = "xxhash", marker = "extra == 'pretrain'" },
 ]
-provides-extras = ["demo", "pretrain", "specialize", "viz", "evaluate", "live"]
+provides-extras = ["demo", "pretrain", "specialize", "viz", "rl", "evaluate", "live"]
 
 [package.metadata.requires-dev]
 dev = [

@@ -1,15 +1,16 @@
 import logging
 
 import numpy as np
+from canvit_pytorch.teacher import DINOV3_PATCH_SIZE
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure as MplFigure
 from matplotlib.ticker import FuncFormatter
 
-from canvit_paper_exporter import paths
-from canvit_paper_exporter.core import Figure, load_json
+from canvit_paper_exporter.ade20k import obj, seg
+from canvit_paper_exporter.core import Figure
 from canvit_paper_exporter.style import (
     CI_ALPHA, LABEL_SIZE, LEGEND_SIZE, LINE_ALPHA, LINE_WIDTH,
-    bottom_legend_with_header, linestyle_legend_handles,
+    bottom_legend_with_header, linestyle_legend_handles, mean_and_ci,
     si_flops_label, three_panel_figure,
 )
 
@@ -29,7 +30,6 @@ LS_DV3 = "--"
 LS_CV = "-"
 NEUTRAL = "0.15"
 
-DV3_PATCH_SIZE = 16             # DINOv3 ViT-B/16 patch size: input_px / 16 = output grid
 FRONTIER_POLICY = "entropy_coarse_to_fine"
 
 # Shared convention for the linestyle inline legend on panels A and C.
@@ -98,11 +98,10 @@ def _panel_passive(ax: Axes, obj: dict) -> None:
     x_grid = np.array(obj["x_grid"])
     drawn_dv3 = 0
     for entry in obj["dv3"]:
-        output_grid = entry["resolution"] // DV3_PATCH_SIZE
+        output_grid = entry["resolution"] // DINOV3_PATCH_SIZE
         if output_grid != 8:
             continue
-        _plot_lowess(ax, entry, GRID_COLORS.get(output_grid, NEUTRAL),
-                     x_grid=x_grid, linestyle=LS_DV3)
+        _plot_lowess(ax, entry, GRID_COLORS[output_grid], x_grid=x_grid, linestyle=LS_DV3)
         drawn_dv3 += 1
     drawn_cv = 0
     for entry in obj["canvit_t0"]:
@@ -152,47 +151,42 @@ def _panel_pareto(ax: Axes, ade20k: dict) -> None:
             continue
         pts = entry["per_timestep"]
         flops = np.array([p["cum_gflops"] for p in pts]) * 1e9
-        mean = np.array([p["mean"] for p in pts]) * 100
-        lo = np.array([p["ci_lo"] for p in pts]) * 100
-        hi = np.array([p["ci_hi"] for p in pts]) * 100
-        ax.plot(flops, mean, color=GRID_COLORS[g], linewidth=LINE_WIDTH,
-                linestyle=LS_CV, alpha=LINE_ALPHA, zorder=3)
-        if entry.get("n_runs", 0) >= 2:
-            ax.fill_between(flops, lo, hi, color=GRID_COLORS[g], alpha=CI_ALPHA, zorder=2)
+        mean_and_ci(ax, flops, pts, n_runs=entry["n_runs"], color=GRID_COLORS[g], zorder=3,
+                    linestyle=LS_CV, alpha=LINE_ALPHA)
         drawn += 1
     log.info("panel C: %d Pareto curves", drawn)
 
     dv3b = sorted(
-        (r for r in ade20k.get("probe_table", []) if r["model"] == "DINOv3 ViT-B/16"),
+        (r for r in ade20k["probe_table"] if r["model"] == "DINOv3 ViT-B/16"),
         key=lambda r: r["gflops"],
     )
-    if dv3b:
-        gf = np.array([r["gflops"] for r in dv3b]) * 1e9
-        miou = [r["miou_pct"] for r in dv3b]
-        ax.plot(gf, miou, color=NEUTRAL, linewidth=LINE_WIDTH,
-                linestyle=LS_DV3, alpha=DV3_BASELINE_ALPHA, zorder=1)
-        for r in dv3b:
-            dot_color = GRID_COLORS.get(r["output_grid"], NEUTRAL)
-            annotated = r["input_px"] in DV3_ANNOTATE_INPUT_PX
-            ax.scatter(
-                [r["gflops"] * 1e9], [r["miou_pct"]],
-                s=DV3_MARKER_SIZE if annotated else DV3_MARKER_SIZE * 0.55,
-                color=dot_color, zorder=4,
+    assert dv3b, "no DINOv3 ViT-B/16 rows in ade20k_seg's probe_table"
+    gf = np.array([r["gflops"] for r in dv3b]) * 1e9
+    miou = [r["miou_pct"] for r in dv3b]
+    ax.plot(gf, miou, color=NEUTRAL, linewidth=LINE_WIDTH,
+            linestyle=LS_DV3, alpha=DV3_BASELINE_ALPHA, zorder=1)
+    for r in dv3b:
+        # Output grids outside the canvas-grid legend draw neutral.
+        dot_color = GRID_COLORS.get(r["output_grid"], NEUTRAL)
+        annotated = r["input_px"] in DV3_ANNOTATE_INPUT_PX
+        ax.scatter(
+            [r["gflops"] * 1e9], [r["miou_pct"]],
+            s=DV3_MARKER_SIZE if annotated else DV3_MARKER_SIZE * 0.55,
+            color=dot_color, zorder=4,
+        )
+        if annotated:
+            ax.annotate(
+                rf"${r['input_px']}^2$ px",
+                xy=(r["gflops"] * 1e9, r["miou_pct"]),
+                xytext=(5, 0), textcoords="offset points",
+                ha="left", va="center",
+                fontsize=LEGEND_SIZE - 1, color=NEUTRAL,
             )
-            if annotated:
-                ax.annotate(
-                    rf"${r['input_px']}^2$ px",
-                    xy=(r["gflops"] * 1e9, r["miou_pct"]),
-                    xytext=(5, 0), textcoords="offset points",
-                    ha="left", va="center",
-                    fontsize=LEGEND_SIZE - 1, color=NEUTRAL,
-                )
-        log.info("panel C: %d DINOv3 ViT-B probe rows (%d annotated)",
-                 len(dv3b), sum(1 for r in dv3b if r["input_px"] in DV3_ANNOTATE_INPUT_PX))
+    log.info("panel C: %d DINOv3 ViT-B probe rows (%d annotated)",
+             len(dv3b), sum(1 for r in dv3b if r["input_px"] in DV3_ANNOTATE_INPUT_PX))
 
     ax.set_xscale("log")
-    if dv3b:
-        ax.set_xlim(left=PARETO_FLOPS_MIN, right=float(max(gf)) * PARETO_XLIM_RIGHT_PAD)
+    ax.set_xlim(left=PARETO_FLOPS_MIN, right=float(max(gf)) * PARETO_XLIM_RIGHT_PAD)
     ax.xaxis.set_major_formatter(FuncFormatter(si_flops_label))
     ax.set_xlabel("Cumulative FLOPs", fontsize=LABEL_SIZE)
     ax.set_ylabel("ADE20K mIoU", fontsize=LABEL_SIZE)
@@ -202,15 +196,13 @@ def _panel_pareto(ax: Axes, ade20k: dict) -> None:
     _inline_linestyle_legend(ax)
 
 
-def plot() -> MplFigure:
-    obj = load_json(paths.export_json("ade20k_iou_vs_obj"))
-    ade20k = load_json(paths.export_json("ade20k_seg"))
+def plot(iou_vs_obj: dict, ade20k: dict) -> MplFigure:
     log.info("ade20k_iou_vs_obj: %d DINOv3 curves, %d CanViT t=0, %d CanViT Δ",
-             len(obj["dv3"]), len(obj["canvit_t0"]), len(obj["canvit_delta"]))
+             len(iou_vs_obj["dv3"]), len(iou_vs_obj["canvit_t0"]), len(iou_vs_obj["canvit_delta"]))
 
     fig, axs = three_panel_figure()
-    _panel_passive(axs[0], obj)
-    _panel_delta(axs[1], obj)
+    _panel_passive(axs[0], iou_vs_obj)
+    _panel_delta(axs[1], iou_vs_obj)
     _panel_pareto(axs[2], ade20k)
 
     bottom_legend_with_header(
@@ -220,4 +212,4 @@ def plot() -> MplFigure:
     return fig
 
 
-figure = Figure(name="resolution_and_mask_size", plot=plot)
+figure = Figure(name="resolution_and_mask_size", plot=plot, datasets=(obj.dataset, seg.dataset))

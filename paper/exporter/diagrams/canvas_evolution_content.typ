@@ -7,9 +7,9 @@
 // -------------------------
 
 #let residual-row(
-  g-idx, 
-  coords: "", 
-  img-dir: "outputs/canvas_evolution/cat", 
+  g-idx,
+  coords,
+  img-dir,
   width: 56.69pt,
 ) = {
   
@@ -24,14 +24,14 @@
   )
 
   // Adding glimpse contour
-  // Example: "s0.20_c-0.5_-0.5" -> scale 0.2, x -0.5, y -0.5
+  // "s0.20_c-0.5_0.3" -> scale 0.2, center row -0.5, center col 0.3
   let parts = coords.split("_")
-  let s = float(parts.at(0).slice(1)) // Extracts 0.20
-  let cy = float(parts.at(1).slice(1))  // "c-0.5"  → -0.5
-  let cx = float(parts.at(2))           // "-0.5"   → -0.5  
+  let s = float(parts.at(0).slice(1))
+  let cy = float(parts.at(1).slice(1))
+  let cx = float(parts.at(2))
   
   let full_with_contour = box(width: width, height: width, {         
-    image(img-dir + "/scene.png", width: 100%)                       
+    image(img-dir + "/scene.jpg", width: 100%)                       
     place(                                                           
       top + left,                                                    
       dx: (cx - s + 1) / 2 * width,                                  
@@ -90,8 +90,7 @@
 // -------------------------
 // Main Evolution Diagram
 // -------------------------
-// Coords loaded from metadata.json written by canvas_write_evolution.py.
-// No hardcoded viewpoint coords — single source of truth is the Python script.
+// The viewpoints come from the metadata.json that canvas_write_evolution.py writes beside its images.
 #let _base = "outputs/canvas_evolution"
 #let _meta_cat = json(_base + "/Cat03/metadata.json")
 #let _meta_places = json(_base + "/Places365/metadata.json")
@@ -129,14 +128,14 @@
 
         // Cat rows
         ..glimpse-coords-cat.enumerate().map(((i, c)) =>
-          residual-row(i, coords: c, img-dir: img-dir + "/" + _meta_cat.dir_name, width: img-width),
+          residual-row(i, c, img-dir + "/" + _meta_cat.dir_name, width: img-width),
         ).flatten(),
 
         grid.cell(colspan: 17)[#v(21.26pt)],
 
         // Places365 rows
         ..glimpse-coords-places365.enumerate().map(((i, c)) =>
-          residual-row(i, coords: c, img-dir: img-dir + "/" + _meta_places.dir_name, width: img-width),
+          residual-row(i, c, img-dir + "/" + _meta_places.dir_name, width: img-width),
         ).flatten()
       )
     )

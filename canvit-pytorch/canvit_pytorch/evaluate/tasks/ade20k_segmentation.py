@@ -1,11 +1,13 @@
-"""ADE20K semantic segmentation with linear probes: CanViT after every glimpse, and the passive DINOv3 baseline.
+"""ADE20K semantic segmentation with linear probes: CanViT after every glimpse of a paper policy or a learned
+policy, and the passive DINOv3 baseline.
 
-Both save {"mious": {"t0": ..., "t1": ...}, "metadata": ...}: dataset-level mIoU over the
+All save {"mious": {"t0": ..., "t1": ...}, "metadata": ...}: dataset-level mIoU over the
 validation set, after each glimpse for CanViT and after its single forward pass for DINOv3.
 """
 
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -14,12 +16,15 @@ import torch.nn.functional as F
 from torch import Tensor
 
 from canvit_pytorch.benchmarks import ade20k
-from canvit_pytorch.evaluate.config import SCENE_SIZE_PX, EpisodeConfig
+from canvit_pytorch.episode import EpisodeStep
+from canvit_pytorch.evaluate.config import EpisodeConfig
 from canvit_pytorch.evaluate.tasks.task import Task
 from canvit_pytorch.hub import repos
+from canvit_pytorch.hub.loading import checkpoint_record
 from canvit_pytorch.model import CanViTForSemanticSegmentation
 from canvit_pytorch.probes import SegmentationProbe
-from canvit_pytorch.teacher import DINOV3_REPOS, DINOv3Teacher, DINOv3Variant, load_teacher
+from canvit_pytorch.rl import LearnedPolicy
+from canvit_pytorch.teacher import DINOV3_REPOS, DINOv3Variant, load_teacher
 
 log = logging.getLogger(__name__)
 
@@ -35,26 +40,6 @@ def predicted_labels(logits: Tensor, *, size_px: int) -> Tensor:
     ])
 
 
-def dinov3_patch_grid(teacher: DINOv3Teacher, images: Tensor, *, input_size_px: int) -> Tensor:
-    """DINOv3's patch features [B, g, g, D] of images [B, 3, H, W] bilinearly resized to input_size_px."""
-    assert input_size_px % teacher.patch_size == 0, (input_size_px, teacher.patch_size)
-    grid = input_size_px // teacher.patch_size
-    resized = F.interpolate(images, size=(input_size_px, input_size_px), mode="bilinear", align_corners=False)
-    return teacher(resized).patches.view(images.shape[0], grid, grid, -1)
-
-
-def probe_logits(probe: SegmentationProbe, features: Tensor) -> Tensor:
-    """[B, g, g, D] features -> [B, num_classes, g, g] float32 logits, also under autocast."""
-    with torch.autocast(device_type=features.device.type, enabled=False):
-        return probe(features.float())
-
-
-def ade20k_validation_set(scene_size_px: int) -> ade20k.ADE20kDataset:
-    return ade20k.ADE20kDataset(
-        root=ade20k.dataset_root(), split="validation", transform=ade20k.evaluation_transform(scene_size_px),
-    )
-
-
 @dataclass(frozen=True, kw_only=True)
 class ADE20kSegmentationCanViT(Task):
     """ADE20K mIoU after every glimpse: a linear probe decodes CanViT's canvas into a segmentation."""
@@ -63,30 +48,66 @@ class ADE20kSegmentationCanViT(Task):
     """Hub repo or local directory of an ADE20K probe trained on this checkpoint's canvas at this canvas grid size."""
     pretrained_repo: str = repos.FLAGSHIP
     episode: EpisodeConfig = EpisodeConfig()
-    scene_size_px: int = SCENE_SIZE_PX
+    scene_size_px: int = repos.RELEASED_SCENE_SIZE_PX
     """Side of the square scenes and label maps are resized to; glimpses are sampled from the scene."""
     output: Path = Path("results/ade20k_seg.pt")
     batch_size: int = 32
 
     @torch.inference_mode()
     def run(self) -> Path:
-        device = self.torch_device
-        dataset = ade20k_validation_set(self.scene_size_px)
         seg = CanViTForSemanticSegmentation.from_pretrained_with_probe(
             pretrained_repo=self.pretrained_repo, probe_repo=self.probe_repo,
-        ).to(device).eval()
-        mious = [ade20k.MeanIoU(device=device) for _ in range(self.episode.num_glimpses)]
-        start = time.monotonic()
-        with self.autocast():
-            for images, labels in self.batches(dataset, description="ADE20K"):
-                steps = self.episode.rollout(canvit=seg.canvit, images=images.to(device), canvas_logits=seg.logits)
-                labels = labels.to(device)
-                for step in steps:
-                    predictions = predicted_labels(seg.logits(step.state.canvas), size_px=self.scene_size_px)
-                    mious[step.t].update(predictions, labels)
-        results = {f"t{t}": miou.compute() for t, miou in enumerate(mious)}
-        log.info("mIoU by glimpse: %s", ", ".join(f"{100 * v:.2f}" for v in results.values()))
-        return self.save({"mious": results}, n_images=len(dataset), wall_time_seconds=time.monotonic() - start)
+        ).to(self.torch_device).eval()
+        return save_mious_by_glimpse(
+            self, seg, lambda images: self.episode.rollout(canvit=seg.canvit, images=images, canvas_logits=seg.logits),
+            num_glimpses=self.episode.num_glimpses, scene_size_px=self.scene_size_px,
+        )
+
+
+@dataclass(frozen=True, kw_only=True)
+class ADE20kSegmentationLearnedPolicy(Task):
+    """ADE20K mIoU after every glimpse of a learned policy (canvit_pytorch.rl), with the observer its scorer records."""
+
+    scorer_repo: str
+    """Hub repo or local directory of a ViewpointScorer, such as one of hub.repos.Q_REGRESSION_POLICIES."""
+    scorer_revision: str | None = None
+    """The Hub commit, branch or tag of scorer_repo to evaluate, the latest when None; the result records the commit."""
+    num_glimpses: int
+    """The full scene, then the policy's choices."""
+    output: Path = Path("results/ade20k_seg_learned_policy.pt")
+    batch_size: int = 8
+
+    @torch.inference_mode()
+    def run(self) -> Path:
+        scorer = checkpoint_record(self.scorer_repo, revision=self.scorer_revision)
+        policy = LearnedPolicy.from_pretrained(self.scorer_repo, self.torch_device, revision=scorer["revision"])
+        return save_mious_by_glimpse(
+            self, policy.model, lambda images: policy.rollout(images, num_glimpses=self.num_glimpses),
+            num_glimpses=self.num_glimpses, scene_size_px=policy.scorer.observer.scene_size_px, scorer=scorer,
+        )
+
+
+def save_mious_by_glimpse(
+    task: Task, seg: CanViTForSemanticSegmentation, rollout: Callable[[Tensor], list[EpisodeStep]], *,
+    num_glimpses: int, scene_size_px: int, **metadata_entries: object,
+) -> Path:
+    """Run rollout on each batch of validation scenes [B, 3, S, S]; save the mIoU of seg's probe after every glimpse,
+    with metadata_entries."""
+    device = task.torch_device
+    dataset = ade20k.validation_set(size_px=scene_size_px)
+    mious = [ade20k.MeanIoU(device=device) for _ in range(num_glimpses)]
+    start = time.monotonic()
+    with task.autocast():
+        for images, labels in task.batches(dataset, description="ADE20K"):
+            steps = rollout(images.to(device))
+            labels = labels.to(device)
+            for step in steps:
+                mious[step.t].update(predicted_labels(seg.logits(step.state.canvas), size_px=scene_size_px), labels)
+    results = {f"t{t}": miou.compute() for t, miou in enumerate(mious)}
+    log.info("mIoU by glimpse: %s", ", ".join(f"{100 * v:.2f}" for v in results.values()))
+    return task.save(
+        {"mious": results}, n_images=len(dataset), wall_time_seconds=time.monotonic() - start, **metadata_entries,
+    )
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -96,7 +117,7 @@ class ADE20kSegmentationDINOv3(Task):
     input_size_px: int
     """DINOv3's input resolution, which its released probe was trained at; the scene is resized to it."""
     variant: DINOv3Variant = "vitb16"
-    scene_size_px: int = SCENE_SIZE_PX
+    scene_size_px: int = repos.RELEASED_SCENE_SIZE_PX
     """Resolution of the label maps the prediction is upsampled to and scored against."""
     output: Path = Path("results/ade20k_seg_dinov3.pt")
     batch_size: int = 32
@@ -113,15 +134,15 @@ class ADE20kSegmentationDINOv3(Task):
     @torch.inference_mode()
     def run(self) -> Path:
         device = self.torch_device
-        dataset = ade20k_validation_set(self.scene_size_px)
+        dataset = ade20k.validation_set(size_px=self.scene_size_px)
         teacher = load_teacher(self.dinov3_repo, device)
         probe = SegmentationProbe.from_pretrained(self.probe_repo).to(device).eval()
         miou = ade20k.MeanIoU(device=device)
         start = time.monotonic()
         with self.autocast():
             for images, labels in self.batches(dataset, description="ADE20K"):
-                features = dinov3_patch_grid(teacher, images.to(device), input_size_px=self.input_size_px)
-                predictions = predicted_labels(probe_logits(probe, features), size_px=self.scene_size_px)
+                features = teacher.patch_grid(images.to(device), input_size_px=self.input_size_px)
+                predictions = predicted_labels(probe(features), size_px=self.scene_size_px)
                 miou.update(predictions, labels.to(device))
         result = miou.compute()
         log.info("mIoU: %.2f", 100 * result)

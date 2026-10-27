@@ -120,12 +120,14 @@ def test_the_numbers_printed_in_the_paper():
     num_glimpse = num_glimpse_tokens(CANVIT_B, glimpse_size_px=PAPER_GLIMPSE_PX)
     num_canvas = num_canvas_tokens(CANVIT_B, canvas_grid_size=32)
     canvas_dim = CANVIT_B.canvas_dim
-    # Section 4: N_g = 71, and one canvas-side projection costs D_can / (2 N_g) = 7.2 times the attention it joins.
+    # The paper's CanViT section: N_g = 71, and one canvas-side projection costs D_can / (2 N_g) = 7.2 times the
+    # attention it joins.
     assert num_glimpse == 71
     projection = linear_flops(num_tokens=num_canvas, in_dim=canvas_dim, out_dim=canvas_dim)
     attention = attention_flops(num_queries=num_glimpse, num_keys=num_canvas, dim=canvas_dim)
     assert one_decimal(Decimal(projection) / attention) == "7.2"
-    # Section 4: with a 64² canvas, canvas-side QKVO projections would take a Read/Write pair from 2.8 to 37.3 GFLOPs.
+    # The paper's CanViT section: with a 64² canvas, canvas-side QKVO projections would take a Read/Write pair
+    # from 2.8 to 37.3 GFLOPs.
     assert gflops(read_write_pair_flops(CANVIT_B, canvas_grid_size=64)) == "2.8"
     assert gflops(read_write_pair_flops(qkvo, canvas_grid_size=64)) == "37.3"
     # The passive-vision comparison table: one full-scene glimpse onto a 32² canvas.

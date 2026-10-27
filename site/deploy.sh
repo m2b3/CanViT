@@ -13,7 +13,7 @@ set -euo pipefail
 site=$(cd "$(dirname "$0")" && pwd)
 cd "$site/.."
 
-python3 site/check_paper_numbers.py
+uv run --no-project python site/check_paper_numbers.py
 [ -z "$(git status --porcelain -- site)" ] || { echo "site/ has uncommitted changes: commit them first" >&2; exit 1; }
 talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$|/experiments/')
 [ -f site/slides/node_modules/reveal.js/dist/reveal.mjs ] || { echo "reveal.js is missing: npm ci --prefix site/slides" >&2; exit 1; }

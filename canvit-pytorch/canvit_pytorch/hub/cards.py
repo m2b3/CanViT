@@ -1,19 +1,22 @@
-"""Hub model cards (README.md) of CanViT checkpoints and probes.
+"""Hub model cards (README.md) of CanViT checkpoints, probes and learned policies.
 
 Every card shares the project's description, links and citation (project.py)
-and shows working 0.2 code for its checkpoint; the facts that differ between
+and shows working code for its checkpoint; the facts that differ between
 checkpoints come in as typed arguments.
 """
 
 from dataclasses import dataclass
 from typing import Any
 
-from huggingface_hub import EvalResult, ModelCardData
+from huggingface_hub import ModelCardData
 
 from canvit_pytorch import project
 from canvit_pytorch.hub.loading import FORMAT_VERSION
 from canvit_pytorch.hub.repos import PretrainingDataset
 from canvit_pytorch.pretrain.ablations import Ablation
+from canvit_pytorch.rl.candidates import CandidateViewpoints
+from canvit_pytorch.rl.observer import Observer
+from canvit_pytorch.rl.train.objectives import OBJECTIVES
 
 DATASET_NAMES: dict[PretrainingDataset, str] = {"in21k": "ImageNet-21k", "in1k": "ImageNet-1k"}
 DATASET_HUB_IDS: dict[PretrainingDataset, str] = {"in21k": "imagenet-21k", "in1k": "imagenet-1k"}
@@ -28,7 +31,7 @@ class PretrainingFacts:
     scene_size_px: int
     glimpse_size_px: int
     canvas_grid_size: int
-    steps: int | None
+    steps: int
 
 
 @dataclass(frozen=True)
@@ -78,6 +81,22 @@ class DINOv3ProbeFacts:
     patch_size: int
     embed_dim: int
     training: ProbeTraining
+
+
+@dataclass(frozen=True)
+class PolicyTrainingFacts:
+    """The run that trained a learned policy's scorer, as its card states it."""
+
+    objective: str
+    """The objective's class name in canvit_pytorch.rl.train.objectives."""
+    seed: int
+    num_glimpses: int
+    """Glimpses per training episode."""
+    selected_step: int
+    validation_cross_entropy: list[float]
+    """The ADE20K validation cross-entropy after each glimpse at the selected step."""
+    record: str
+    """Where the repo holds the run's full record."""
 
 
 INSTALL = f'pip install "canvit-pytorch>={FORMAT_VERSION}"'
@@ -167,51 +186,12 @@ with torch.inference_mode():
         ("Scenes", f"{facts.scene_size_px} px"),
         ("Glimpses", f"{facts.glimpse_size_px} px"),
         ("Canvas during pretraining", f"{grid} × {grid} (any size at inference)"),
+        ("Training steps", f"{facts.steps:,}"),
     ]
-    if facts.steps is not None:
-        details.append(("Training steps", f"{facts.steps:,}"))
     data = ModelCardData(
         license="mit", library_name="canvit-pytorch", pipeline_tag="image-feature-extraction",
         tags=TAGS + (["ablation"] if ablation else []), datasets=[DATASET_HUB_IDS[facts.dataset]],
     )
-    return _card(data=data, title=title, summary=summary, usage=usage, details=details)
-
-
-def classifier_card(
-    *, repo: str, pretrained_repo: str, pretraining: PretrainingDataset, details: list[tuple[str, str]],
-    top1_accuracy: float, conditions: str,
-) -> str:
-    """conditions: how the reported accuracy was measured, e.g. "C2F, T=21, single run"."""
-    usage = f"""
-import torch
-from PIL import Image
-from canvit_pytorch import CanViTForImageClassification, Viewpoint, sample_at_viewpoint
-from canvit_pytorch.benchmarks.imagenet import CLASS_NAMES
-from canvit_pytorch.preprocess import preprocess
-
-model = CanViTForImageClassification.from_pretrained("{repo}").eval()
-{_load_scene(512)}
-
-state = model.init_state(batch_size=1, canvas_grid_size=32)
-with torch.inference_mode():
-    viewpoint = Viewpoint.full_scene(batch_size=1, device=scene.device)
-    glimpse = sample_at_viewpoint(spatial=scene, viewpoint=viewpoint, glimpse_size_px=128)
-    logits, state = model(glimpse=glimpse, state=state, viewpoint=viewpoint)  # [1, 1000]; more glimpses refine it
-print(CLASS_NAMES[logits.argmax().item()])
-"""
-    data = ModelCardData(
-        license="mit", library_name="canvit-pytorch", pipeline_tag="image-classification",
-        tags=TAGS, datasets=["imagenet-1k"], base_model=pretrained_repo, model_name=repo.split("/")[-1],
-        eval_results=[EvalResult(
-            task_type="image-classification", dataset_type="imagenet-1k", dataset_name="ImageNet-1k",
-            dataset_split="validation", metric_type="accuracy", metric_name=f"Top-1 accuracy ({conditions})",
-            metric_value=top1_accuracy,
-        )],
-    )
-    summary = (f"[CanViT-B](https://huggingface.co/{pretrained_repo}) fine-tuned end to end for ImageNet-1k "
-               f"classification by linear probing then fine-tuning (LP-FT), as in the paper: {top1_accuracy}% "
-               f"top-1 accuracy on the validation set ({conditions}).")
-    title = f"CanViT-B, pretrained on {DATASET_NAMES[pretraining]}, fine-tuned for ImageNet-1k classification"
     return _card(data=data, title=title, summary=summary, usage=usage, details=details)
 
 
@@ -286,6 +266,54 @@ with torch.inference_mode():
                f"protocol.")
     return _card(data=data, title=f"ADE20K probe on {facts.dinov3_name} at {facts.input_size_px} px",
                  summary=summary, usage=usage, details=details)
+
+
+def policy_card(
+    *, repo: str, observer: Observer, candidates: CandidateViewpoints, training: PolicyTrainingFacts, release: str,
+) -> str:
+    """release: the first canvit-pytorch release that reads the scorer's format."""
+    objective = OBJECTIVES[training.objective]
+    grid, centers = observer.canvas_grid_size, candidates.centers_per_axis
+    scales = ", ".join(f"{scale:g}" for scale in candidates.scales)
+    usage = f"""
+import torch
+from PIL import Image
+from canvit_pytorch.preprocess import preprocess
+from canvit_pytorch.rl import LearnedPolicy
+
+policy = LearnedPolicy.from_pretrained("{repo}", torch.device("cpu"))  # with the CanViT and probe it was trained with
+{_load_scene(observer.scene_size_px)}
+
+with torch.inference_mode():
+    steps = policy.rollout(scene, num_glimpses={training.num_glimpses})  # the full scene, then the policy's choices
+for step in steps:
+    print(step.t, step.viewpoint.centers.tolist(), step.viewpoint.scales.tolist())  # (row, col) center and scale
+labels = policy.model.logits(steps[-1].state.canvas).argmax(dim=1)  # [1, {grid}, {grid}] ADE20K classes
+"""
+    cross_entropy = ", ".join(f"{value:.4f}" for value in training.validation_cross_entropy)
+    details = [
+        ("Observer", (f"[{observer.pretrained_repo}](https://huggingface.co/{observer.pretrained_repo}) and its "
+                      f"ADE20K probe [{observer.probe_repo}](https://huggingface.co/{observer.probe_repo}), frozen")),
+        ("Viewing", (f"{observer.scene_size_px} px scenes, {observer.glimpse_size_px} px glimpses, a {grid} × {grid} "
+                     f"canvas")),
+        ("Candidates", f"{centers} × {centers} centers at each scale of {scales}"),
+        ("Objective", objective.title),
+        ("Training", (f"{training.num_glimpses}-glimpse episodes on the ADE20K training scenes, seed {training.seed}; "
+                      f"the full record is {training.record}")),
+        ("Selected step", (f"{training.selected_step:,}, of lowest mean ADE20K validation cross-entropy after the "
+                           f"glimpses the policy chose")),
+        ("Validation cross-entropy after each glimpse", cross_entropy),
+    ]
+    data = ModelCardData(
+        license="mit", library_name="canvit-pytorch", pipeline_tag="reinforcement-learning",
+        tags=TAGS + ["ade20k", "learned-policy"], datasets=[ADE20K_HUB_ID], base_model=observer.pretrained_repo,
+    )
+    summary = (f"A learned viewing policy: it scores candidate viewpoints from the canvas of the frozen CanViT-B and "
+               f"the segmentation its ADE20K probe reads out of the canvas, and CanViT-B looks next at the candidate "
+               f"of highest score. Trained by {objective.title} to choose the viewpoints whose glimpses most reduce "
+               f"the probe's cross-entropy.")
+    return _card(data=data, title=f"Learned viewing policy for CanViT-B on ADE20K: {objective.title}, seed {training.seed}",
+                 summary=summary, usage=usage, details=details, install=f'pip install "canvit-pytorch>={release}"')
 
 
 def _hub_link(record: dict[str, Any]) -> str:

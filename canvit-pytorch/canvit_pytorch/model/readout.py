@@ -2,7 +2,7 @@ from torch import Tensor, nn
 
 
 class LinearReadout(nn.Module):
-    """LayerNorm then a linear map, applied token-wise: how CanViT's tokens are decoded (paper, Eq. 1)."""
+    """LayerNorm then a linear map, applied token-wise: how CanViT's tokens are decoded (paper, "Decoding")."""
 
     def __init__(self, in_dim: int, out_dim: int) -> None:
         super().__init__()

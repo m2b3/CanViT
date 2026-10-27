@@ -72,11 +72,12 @@ Collections:
 - [CanViT ADE20K segmentation probes](https://huggingface.co/collections/canvit/canvit-ade20k-segmentation-probes-pytorch) and [DINOv3 ADE20K segmentation probes](https://huggingface.co/collections/canvit/dinov3-ade20k-segmentation-probes-pytorch)
 - [DINOv3 ImageNet-1k probes](https://huggingface.co/collections/canvit/dinov3-imagenet-1k-probes-pytorch), which the frozen classification path uses
 - [CanViT pretraining ablations](https://huggingface.co/collections/canvit/canvit-pretraining-ablations-pytorch), the paper's ablation backbones
-- [JAX / Flax NNX](https://huggingface.co/collections/canvit/canvit-jax-flax-nnx) and [MLX](https://huggingface.co/collections/canvit/canvit-mlx) copies, for the ports under [Repository layout](#repository-layout)
+- [JAX / Flax NNX](https://huggingface.co/models?other=nnx&author=canvit) and [MLX](https://huggingface.co/models?other=mlx&author=canvit) copies, listed by their Hub tag, for the ports under [Repository layout](#repository-layout)
 
 ## Quickstart
 
-We recommend [`uv`](https://docs.astral.sh/uv/) for dependency management.
+We recommend [`uv`](https://docs.astral.sh/uv/) for dependency management. Add the package to your project
+(`uv init` creates one):
 
 ```bash
 uv add canvit-pytorch
@@ -253,15 +254,19 @@ We aim to maintain compatibility with [`torch.export`](https://docs.pytorch.org/
 | `canvit_pytorch.pretrain` | Pretraining: passive-to-active dense distillation from DINOv3 | [docs/pretrain.md](canvit-pytorch/docs/pretrain.md) |
 | `canvit_pytorch.specialize` | Downstream training: ADE20K segmentation probes, ImageNet-1k fine-tuning | [docs/specialize.md](canvit-pytorch/docs/specialize.md) |
 | `canvit_pytorch.evaluate` | Evaluation and benchmarking: ADE20K mIoU, ImageNet-1k top-k, DINOv3 reconstruction | [docs/evaluate.md](canvit-pytorch/docs/evaluate.md) |
+| `canvit_pytorch.rl` | Learned viewing policies: run the published ones, train new ones on the frozen CanViT | [docs/rl.md](canvit-pytorch/docs/rl.md) |
 | `canvit_pytorch.viz` | Recorded rollouts and smooth viewpoint paths for the project page and slides | [docs/viz.md](canvit-pytorch/docs/viz.md) |
 | `canvit-core` | Shared configuration, architecture specifications, readout fusion and checkpoint schema | [README](canvit-core/README.md) |
 | `canvit-mlx` | MLX implementation for Apple Silicon | [README](canvit-mlx/README.md) |
-| `canvit-nnx` | JAX/Flax NNX implementation | [README](canvit-nnx/README.md) |
+| `canvit-nnx` | JAX/Flax NNX implementation, ImageNet-1k fine-tuning with fused TPU kernels, and COCO object detection | [README](canvit-nnx/README.md) |
 
 [`site/`](site) is the [project page](https://m2b3.github.io/CanViT/).
 
 [`paper/`](paper) holds the NeurIPS 2026 paper: its LaTeX sources, and the pipeline that turns evaluation
 results into its tables and figures.
+
+[`baselines/`](baselines) holds the paper's baselines, apart from the packages: AdaGlimpse's architecture in
+JAX/Flax NNX, and the measurements of GFNet and AdaptiveNN on ImageNet-1k.
 
 Related repositories:
 

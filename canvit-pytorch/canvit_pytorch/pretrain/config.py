@@ -3,8 +3,9 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+from canvit_core.config import CanViTConfig
+
 from canvit_pytorch.hub.repos import RELEASED_CANVAS_GRID_SIZE, RELEASED_GLIMPSE_SIZE_PX, PretrainingDataset
-from canvit_pytorch.model.config import CanViTConfig
 from canvit_pytorch.policies import POLICIES, PolicyName
 
 

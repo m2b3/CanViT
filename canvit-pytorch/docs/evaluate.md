@@ -46,6 +46,7 @@ uv run python -m canvit_pytorch.evaluate COMMAND --help
 | --- | --- |
 | `ade20k-segmentation-canvit` | Dataset mIoU after every glimpse from a probe on CanViT's canvas. |
 | `ade20k-segmentation-dinov3` | Dataset mIoU from a frozen DINOv3 patch probe after one forward pass. |
+| `ade20k-segmentation-learned-policy` | Dataset mIoU after every glimpse of a learned policy ([`canvit_pytorch.rl`](rl.md)) on the CanViT and probe it was trained with. |
 | `imagenet-classification` | Top-5 class indices after every glimpse from the recurrent CLS readout. |
 | `reconstruction` | Cosine similarity between CanViT's predicted teacher features and the teacher features after every glimpse. |
 | `mask-iou-dinov3` | Per-image, per-class ADE20K intersection, union and ground-truth area for DINOv3. |
@@ -91,8 +92,9 @@ uv run python -m canvit_pytorch.evaluate imagenet-classification \
 ## Result files
 
 Every dataset result is a `torch.save` file with a `metadata` entry containing
-the task configuration and runtime provenance. The result-specific payloads
-are:
+the task configuration and runtime provenance. The metadata holds only Python
+builtins (paths as `str`), so a result loads with
+`torch.load(path, weights_only=True)`. The result-specific payloads are:
 
 - ADE20K segmentation: `mious`, keyed by `t0`, `t1`, and so on. DINOv3 has
   only `t0`.

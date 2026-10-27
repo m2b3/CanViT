@@ -18,6 +18,15 @@ dependencies = [
     "safetensors>=0.8.0",
 ]
 
+[project.optional-dependencies]
+# The trainers: canvit_nnx.specialize.in1k and canvit_nnx.detect.
+train = [
+    "optax>=0.2.8",
+    "pycocotools>=2.0.11",
+    "tfrecord>=1.14.6",
+    "tyro>=1.0.3",
+]
+
 [project.urls]
 Repository = "https://github.com/m2b3/CanViT"
 Homepage = "https://m2b3.github.io/CanViT/"
@@ -62,3 +71,8 @@ select = ["E4", "E7", "E9", "F", "I", "BLE", "ISC", "PLW1510", "RUF100"]
 
 [tool.basedpyright]
 typeCheckingMode = "standard"
+
+# pytest puts tests/ on sys.path (it holds conftest.py), so the tests import support.py by its bare name.
+[[tool.basedpyright.executionEnvironments]]
+root = "tests"
+extraPaths = ["tests"]

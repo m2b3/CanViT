@@ -11,6 +11,7 @@ from canvit_core.config import CanViTConfig
 
 from canvit_nnx.model.attention import CanvasAttentionRead, CanvasAttentionWrite
 from canvit_nnx.model.backbone import ViTBackbone
+from canvit_nnx.model.config import ComputeDtype
 from canvit_nnx.model.rope import compute_2d_rope, make_rope_periods
 from canvit_nnx.model.vpe import ViewpointEncoding
 from canvit_nnx.viewpoint import Viewpoint, grid_coords, viewpoint_grid_coords
@@ -36,10 +37,12 @@ class CanViTOutput(NamedTuple):
 
 
 class CanViT(nnx.Module):
-    def __init__(self, config: CanViTConfig, *, rngs: nnx.Rngs) -> None:
+    def __init__(self, config: CanViTConfig, *, rngs: nnx.Rngs, compute_dtype: ComputeDtype = "float32") -> None:
         self.config = config
+        self.compute_dtype: ComputeDtype = compute_dtype
+        dtype = jnp.dtype(compute_dtype)
         spec = config.backbone_spec
-        self.backbone = ViTBackbone(spec=spec, rngs=rngs)
+        self.backbone = ViTBackbone(spec=spec, dtype=dtype, rngs=rngs)
         self.read_after_blocks, self.write_after_blocks = canvas_attention_schedule(
             num_blocks=spec.num_blocks,
             rw_stride=config.rw_stride,
@@ -52,6 +55,7 @@ class CanViT(nnx.Module):
                     canvas_dim=config.canvas_dim,
                     num_heads=config.canvas_num_heads,
                     projections=config.canvas_projections,
+                    dtype=dtype,
                     rngs=rngs,
                 )
                 for _ in self.read_after_blocks
@@ -64,6 +68,7 @@ class CanViT(nnx.Module):
                     canvas_dim=config.canvas_dim,
                     num_heads=config.canvas_num_heads,
                     projections=config.canvas_projections,
+                    dtype=dtype,
                     rngs=rngs,
                 )
                 for _ in self.write_after_blocks
@@ -96,7 +101,9 @@ class CanViT(nnx.Module):
         return self.config.backbone_spec.patch_size
 
     def init_state(self, *, batch_size: int, canvas_grid_size: int) -> RecurrentState:
+        """The state before any glimpse, in the compute dtype."""
         assert batch_size > 0 and canvas_grid_size > 0, (batch_size, canvas_grid_size)
+        dtype = jnp.dtype(self.compute_dtype)
         registers = jnp.broadcast_to(
             self.init_canvas_registers[...],
             (batch_size, self.config.num_canvas_registers, self.canvas_dim),
@@ -110,8 +117,8 @@ class CanViT(nnx.Module):
             (batch_size, 1, self.backbone_dim),
         )
         return RecurrentState(
-            canvas=jnp.concatenate((registers, patches), axis=1),
-            recurrent_cls=recurrent_cls,
+            canvas=jnp.concatenate((registers, patches), axis=1).astype(dtype),
+            recurrent_cls=recurrent_cls.astype(dtype),
         )
 
     def canvas_patches(self, canvas: Array) -> Array:
@@ -142,20 +149,26 @@ class CanViT(nnx.Module):
         )
         assert state.canvas.ndim == 3 and state.canvas.shape[-1] == self.canvas_dim, state.canvas.shape
         assert state.recurrent_cls.shape == (batch_size, 1, self.backbone_dim), state.recurrent_cls.shape
+        dtype = jnp.dtype(self.compute_dtype)
+        assert state.canvas.dtype == state.recurrent_cls.dtype == dtype, (
+            f"the recurrent state must be in the compute dtype {dtype}; start it with init_state",
+            state.canvas.dtype,
+            state.recurrent_cls.dtype,
+        )
         glimpse_grid_size = height // self.patch_size
         patches = self.backbone.patch_embed(glimpse)
 
         tokens_before_patches: list[Array] = []
         if self.config.enable_vpe:
             assert self.vpe is not None
-            tokens_before_patches.append(self.vpe(viewpoint)[:, None, :].astype(patches.dtype))
+            tokens_before_patches.append(self.vpe(viewpoint)[:, None, :].astype(dtype))
         tokens_before_patches.extend(
             (
                 state.recurrent_cls,
                 jnp.broadcast_to(
                     self.backbone_registers[...],
                     (batch_size, self.config.num_backbone_registers, self.backbone_dim),
-                ),
+                ).astype(dtype),
             )
         )
         num_prefix_tokens = sum(token.shape[1] for token in tokens_before_patches)
@@ -179,19 +192,9 @@ class CanViT(nnx.Module):
         for block_index, block in enumerate(self.backbone.blocks):
             tokens = block(tokens, glimpse_rope)
             if (read := reads.get(block_index)) is not None:
-                tokens = tokens + read(
-                    query=tokens,
-                    kv=canvas,
-                    query_rope=glimpse_canvas_rope,
-                    kv_rope=canvas_rope,
-                )
+                tokens = read(tokens=tokens, canvas=canvas, tokens_rope=glimpse_canvas_rope, canvas_rope=canvas_rope)
             if (write := writes.get(block_index)) is not None:
-                canvas = canvas + write(
-                    query=canvas,
-                    kv=tokens,
-                    query_rope=canvas_rope,
-                    kv_rope=glimpse_canvas_rope,
-                )
+                canvas = write(canvas=canvas, tokens=tokens, canvas_rope=canvas_rope, tokens_rope=glimpse_canvas_rope)
 
         cls_index = 1 if self.config.enable_vpe else 0
         return CanViTOutput(

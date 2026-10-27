@@ -1,94 +1,56 @@
-import re
-from collections import defaultdict
-from dataclasses import dataclass
-from pathlib import Path
+"""ImageNet-1k top-1 of the paper's CanViT-B after every glimpse, by policy and canvas grid (canvit_pytorch.evaluate
+groups in1k_clf_frozen and in1k_clf_finetuned)."""
 
 import numpy as np
 import torch
+from canvit_pytorch.hub.repos import (
+    DINOV3_VITB16_IN1K_PROBE, FINETUNED_IN1K, FLAGSHIP, RELEASED_CANVAS_GRID_SIZE, RELEASED_SCENE_SIZE_PX,
+)
 
-from canvit_paper_exporter import paths
-from canvit_paper_exporter.core import Dataset, load_result
-from canvit_paper_exporter.stats import bootstrap_mean_ci
+from canvit_paper_exporter.core import Dataset
+from canvit_paper_exporter.paths import Inputs
+from canvit_paper_exporter.results import Result, config, group_by, load_results, results_in, top1_curve, viewing
+from canvit_paper_exporter.stats import per_timestep_ci
 from canvit_paper_exporter.style import POLICY_STYLES
 
-
-# File names of canvit_pytorch.evaluate batch groups "in1k_clf_frozen" and "in1k_clf_finetuned":
-#   in1k_{policy}_s{scene}_c{grid}_{YYYYMMDDTHHMMSSZ}_r{run}.pt
-_FILENAME = re.compile(r"^in1k_(?P<policy>[a-z_]+)_s(?P<scene>\d+)_c(?P<grid>\d+)_\d{8}T\d{6}Z_r\d+\.pt$")
-
-BASELINE_RESOLUTION: tuple[int, int] = (512, 32)
+BASELINE_RESOLUTION = (RELEASED_SCENE_SIZE_PX, RELEASED_CANVAS_GRID_SIZE)
+FROZEN, FINETUNED = results_in("in1k_clf_frozen"), results_in("in1k_clf_finetuned")
 
 
-@dataclass(frozen=True, order=True)
-class PolicyKey:
-    """Bootstrap-pooling key for IN1k classification runs."""
-    policy: str
-    scene: int
-    grid: int
-
-
-def _key(path: Path) -> PolicyKey:
-    m = _FILENAME.match(path.name)
-    assert m, f"Unparseable IN1k filename: {path.name!r}"
-    return PolicyKey(m["policy"], int(m["scene"]), int(m["grid"]))
-
-
-def _summarise(runs: list[dict]) -> dict:
+def _summarise(runs: list[Result]) -> dict:
     labels = runs[0]["labels"]
-    for i, r in enumerate(runs[1:], 1):
-        assert torch.equal(r["labels"], labels), f"Labels mismatch in run {i}"
-    preds = torch.stack([r["top_k_preds"] for r in runs])              # [R, N, T, K]
-    top1_correct = (preds[:, :, :, 0] == labels[None, :, None]).float()  # [R, N, T]
-    per_run_acc = top1_correct.mean(dim=1).numpy()                      # [R, T]
-    R, T = per_run_acc.shape
-
-    per_t = []
-    for t in range(T):
-        r = bootstrap_mean_ci(per_run_acc[:, t])
-        per_t.append({
-            "t": t,
-            "mean": round(float(r.mean), 6),
-            "ci_lo": round(float(r.ci_lo), 6),
-            "ci_hi": round(float(r.ci_hi), 6),
-        })
+    assert all(torch.equal(r["labels"], labels) for r in runs), "runs scored different label sequences"
+    per_t = per_timestep_ci(np.array([top1_curve(r) for r in runs]))
     best_t = int(np.argmax([p["mean"] for p in per_t]))
     return {
-        "n_runs": R,
-        "n_timesteps": T,
+        "n_runs": len(runs),
+        "n_timesteps": len(per_t),
         "per_timestep": per_t,
         "best_t": best_t,
         "best_mean": per_t[best_t]["mean"],
     }
 
 
-def _compute_mode(data_dir: Path) -> dict:
-    assert data_dir.is_dir(), f"Missing {data_dir}"
-
-    grouped: dict[PolicyKey, list[dict]] = defaultdict(list)
-    for path in sorted(data_dir.glob("in1k_*.pt")):
-        run = load_result(path)
-        grouped[_key(path)].append(run)
-
-    assert grouped, f"No in1k_*.pt files in {data_dir}"
-    assert any(
-        (k.scene, k.grid) == BASELINE_RESOLUTION for k in grouped
-    ), f"No runs at BASELINE_RESOLUTION={BASELINE_RESOLUTION}"
+def _compute(runs: Inputs, classifier: dict) -> dict:
+    """Every run, which must all evaluate classifier (the recorded config.classifier)."""
+    results = load_results(runs).values()
+    for r in results:
+        assert config(r)["classifier"] == classifier, config(r)["classifier"]
+    grouped = group_by(results, viewing)
+    is_baseline = {k: (k.scene_size, k.canvas_grid) == BASELINE_RESOLUTION for k in grouped}
+    assert any(is_baseline.values()), f"No runs at BASELINE_RESOLUTION={BASELINE_RESOLUTION}"
 
     configs: list[dict] = []
     sweep: list[dict] = []
     for k, runs in sorted(grouped.items()):
-        assert k.policy in POLICY_STYLES, (
-            f"Policy {k.policy!r} has no entry in POLICY_STYLES (canvit_paper_exporter.style); "
-            f"every IN1k policy must declare a display label there."
-        )
         rec = {
             "policy": k.policy,
             "label": POLICY_STYLES[k.policy]["label"],
-            "scene_size": k.scene,
-            "canvas_grid": k.grid,
+            "scene_size": k.scene_size,
+            "canvas_grid": k.canvas_grid,
             **_summarise(runs),
         }
-        (configs if (k.scene, k.grid) == BASELINE_RESOLUTION else sweep).append(rec)
+        (configs if is_baseline[k] else sweep).append(rec)
 
     return {
         "_meta": {
@@ -100,13 +62,11 @@ def _compute_mode(data_dir: Path) -> dict:
     }
 
 
-def compute_frozen() -> dict:
-    return _compute_mode(paths.eval_dir("in1k_clf_frozen"))
-
-
-def compute_finetuned() -> dict:
-    return _compute_mode(paths.eval_dir("in1k_clf_finetuned"))
-
-
-frozen_dataset = Dataset(name="in1k_clf_frozen", compute=compute_frozen)
-finetuned_dataset = Dataset(name="in1k_clf_finetuned", compute=compute_finetuned)
+frozen_dataset = Dataset(
+    name="in1k_clf_frozen",
+    compute=lambda: _compute(FROZEN, {"pretrained_repo": FLAGSHIP, "probe_repo": DINOV3_VITB16_IN1K_PROBE}),
+    inputs=(FROZEN,),
+)
+finetuned_dataset = Dataset(
+    name="in1k_clf_finetuned", compute=lambda: _compute(FINETUNED, {"repo": FINETUNED_IN1K}), inputs=(FINETUNED,),
+)

@@ -1,6 +1,8 @@
 import matplotlib as mpl
 import matplotlib.lines as mlines
+import numpy as np
 import ultraplot as uplt
+from canvit_pytorch.policies import POLICIES, PolicyName
 from matplotlib.figure import Figure as MplFigure
 from matplotlib.legend_handler import HandlerBase
 from matplotlib.patches import Rectangle
@@ -28,32 +30,44 @@ uplt.rc["svg.hashsalt"] = "canvit-paper-exporter"
 # Setting via `uplt.rc` (not `mpl.rcParams`) is required: ultraplot's first
 # `uplt.subplots()` call re-applies its own theming and would otherwise reset
 # `mpl.rcParams["pdf.fonttype"]` back to 3.
-#
-# Downstream pipelines should add a `pdffonts` regression guard after compile
-# to catch silent regressions here (ultraplot upgrade, rcParam removal, etc.).
+# paper/justfile's check-fonts fails a manuscript build that embeds a Type 3 font.
 uplt.rc["pdf.fonttype"] = 42
 uplt.rc["ps.fonttype"] = 42
 
 
-# Single source of truth for policy display name + plot color.
-# Iteration order is the legend order used by the comparison figure and every
-# dataset exporter that emits `label` (in1k_clf_*, ade20k_seg).
+# Each viewing policy's line color and label, its name in the paper (canvit_pytorch.policies), in the legend order of
+# the main_results figure.
+_POLICY_COLORS: dict[PolicyName, str] = {
+    "entropy_coarse_to_fine": "#2ca02c",
+    "coarse_to_fine":         "#1f77b4",
+    "full_then_random":       "#1a1a1a",
+    "random":                 "#ff7f0e",
+    "repeated_full_scene":    "#8c564b",
+    "fine_to_coarse":         "#d62728",
+}
+assert set(_POLICY_COLORS) == set(POLICIES), "every viewing policy needs a color"
 POLICY_STYLES: dict[str, dict] = {
-    "entropy_coarse_to_fine": {"color": "#2ca02c", "label": "EG-C2F"},
-    "coarse_to_fine":         {"color": "#1f77b4", "label": "C2F"},
-    "full_then_random":       {"color": "#1a1a1a", "label": "F-IID"},
-    "random":                 {"color": "#ff7f0e", "label": "R-IID"},
-    "repeated_full_scene":    {"color": "#8c564b", "label": "RFS"},
-    "fine_to_coarse":         {"color": "#d62728", "label": "F2C"},
+    policy: {"color": color, "label": POLICIES[policy].paper_name} for policy, color in _POLICY_COLORS.items()
 }
 
 POLICY_ORDER = list(POLICY_STYLES)
+
+# The learned viewing policies (learned_policies), by training objective; apart from POLICY_STYLES, whose order is the
+# results figure's legend.
+LEARNED_POLICY_STYLES: dict[str, dict] = {
+    "q_regression":    {"color": "#9467bd", "label": "Q-learning"},
+    "policy_gradient": {"color": "#17becf", "label": "REINFORCE"},
+}
 
 
 # Full-text-width 3-panel figure. Both `main_results` and
 # `resolution_and_mask_size` use these so the two figures match exactly.
 FIGWIDTH = 5.5                # inches (manuscript text width)
 REFASPECT = 1.3
+
+# A single-axis figure: wider and shorter than the 3-panel default, so it doesn't waste vertical space beside a table.
+SINGLE_PANEL_FIGWIDTH = 4.95  # inches
+SINGLE_PANEL_FIGHEIGHT = 2.85
 
 LABEL_SIZE = 8
 TICK_SIZE = 7
@@ -71,7 +85,15 @@ ABC_SIZE = 9
 ABC_WEIGHT = "bold"
 
 
-def _add_abc_labels(axs) -> None:
+def mean_and_ci(ax, x, per_timestep: list[dict], *, n_runs: int, color: str, zorder: float = 2, **line) -> None:
+    """A curve of fractions, drawn as percentages, and its CI band one layer below when there are runs to resample."""
+    mean, lo, hi = (np.array([p[k] for p in per_timestep]) * 100 for k in ("mean", "ci_lo", "ci_hi"))
+    ax.plot(x, mean, color=color, linewidth=LINE_WIDTH, zorder=zorder, **line)
+    if n_runs >= 2:
+        ax.fill_between(x, lo, hi, color=color, alpha=CI_ALPHA, zorder=zorder - 1)
+
+
+def add_abc_labels(axs) -> None:
     for i, ax in enumerate(axs):
         ax.text(ABC_X, ABC_Y, chr(ord("A") + i),
                 transform=ax.transAxes,
@@ -89,7 +111,7 @@ def three_panel_figure():
     for ax in axs:
         ax.tick_params(labelsize=TICK_SIZE)
         ax.grid(False)
-    _add_abc_labels(axs)
+    add_abc_labels(axs)
     return fig, axs
 
 
@@ -106,25 +128,33 @@ def bottom_legend_with_header(fig: MplFigure, *, header: str, entries: list[tupl
 
     `entries` is a list of (color, label) pairs.
     """
-    header_handle = mlines.Line2D([], [], linewidth=0, markersize=0, label=header)
-    swatch_handles = [
-        mlines.Line2D([], [], color=color, linewidth=LINE_WIDTH, label=label)
-        for color, label in entries
-    ]
-    # ultraplot-specific: loc="b" is its short form for bottom; ncols is plural.
-    # `space` is in em-widths (NOT inches — verified against ultraplot
-    # internals/docstring.py:179). `space=0` collapses the default em-width
-    # gap; negative values overlap x-tick labels (tested -0.02 on
-    # main_results — labels bumped into the legend).
+    bottom_legend_with_headers(fig, [(header, [(color, label, "-") for color, label in entries])])
+
+
+def bottom_legend_with_headers(fig: MplFigure, groups: list[tuple[str, list[tuple[str, str, str]]]]) -> None:
+    """Bottom-of-figure horizontal legend: for each group, a bold header followed by its swatches.
+
+    `groups` is a list of (header, entries) pairs; each entry is (color, label, linestyle), drawn as its curves are.
+    """
+    headers = [mlines.Line2D([], [], linewidth=0, markersize=0, label=header) for header, _ in groups]
+    handles = []
+    for header_handle, (_, entries) in zip(headers, groups, strict=True):
+        handles.append(header_handle)
+        handles += [
+            mlines.Line2D([], [], color=color, linewidth=LINE_WIDTH, linestyle=linestyle, label=label)
+            for color, label, linestyle in entries
+        ]
+    # ultraplot's loc="b" is the bottom; `space` is in em-widths, and a negative one overlaps the x tick labels.
     leg = fig.legend(
-        handles=[header_handle, *swatch_handles],
-        loc="b", ncols=1 + len(swatch_handles), space=3.25,
+        handles=handles,
+        loc="b", ncols=len(handles), space=3.25,
         fontsize=LEGEND_SIZE, frame=True, edgecolor="0.8", facecolor="white",
         handlelength=1.5, handletextpad=0.4,
-        handler_map={header_handle: _HeaderHandler()},
+        handler_map={h: _HeaderHandler() for h in headers},
     )
+    header_labels = {header for header, _ in groups}
     for text in leg.get_texts():
-        if text.get_text() == header:
+        if text.get_text() in header_labels:
             text.set_fontweight("bold")
 
 

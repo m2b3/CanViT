@@ -1,4 +1,4 @@
-"""Random viewpoints, as sampled in pretraining (paper, Section 5.2) and by the R-IID and F-IID policies."""
+"""Random viewpoints, as sampled in pretraining (paper, "Policy agnosticism") and by the R-IID and F-IID policies."""
 
 import torch
 

@@ -44,8 +44,8 @@ coordinates in `[-1, 1]`; each scale is the crop's half-side.
 
 The example uses the [ImageNet-21k CanViT-B checkpoint](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02-nnx)
 and the [ADE20K probe](https://huggingface.co/canvit/probe-ade20k-40k-s512-c64-in21k-nnx).
-The [JAX / Flax NNX collection](https://huggingface.co/collections/canvit/canvit-jax-flax-nnx)
-also contains the ImageNet-1k pretrained and fine-tuned native checkpoints.
+The Hub lists [every NNX checkpoint](https://huggingface.co/models?other=nnx&author=canvit)
+by its `nnx` tag.
 
 Constructing a model without a checkpoint requires an explicit parameter RNG,
 for example:
@@ -56,6 +56,22 @@ from canvit_nnx import CanViT, CanViTConfig
 
 model = CanViT(CanViTConfig(), rngs=nnx.Rngs(0))
 ```
+
+## Fine-tune on ImageNet-1k
+
+`canvit_nnx.specialize.in1k` fine-tunes CanViT-B for ImageNet-1k
+classification with the paper's recipe, in bfloat16 with fused Pallas kernels
+on TPU. It is new since canvit-nnx 0.2.0 and needs the `train` extra; its
+[README](canvit_nnx/specialize/in1k/README.md) describes the data and the
+command.
+
+## Detect objects on COCO
+
+`canvit_nnx.detect` trains CanViT-B with a CenterNet head for COCO 2017 object
+detection and scores average precision after each glimpse, on one host or a
+multi-host TPU slice. It is new since canvit-nnx 0.2.0 and needs the `train`
+extra; its [README](canvit_nnx/detect/README.md) describes the data and the
+commands.
 
 ## Develop from a checkout
 

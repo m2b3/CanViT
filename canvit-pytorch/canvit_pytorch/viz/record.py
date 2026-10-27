@@ -11,7 +11,7 @@ from torch.utils.hooks import RemovableHandle
 from canvit_pytorch.episode import run_episode
 from canvit_pytorch.model.segmentation import CanViTForSemanticSegmentation
 from canvit_pytorch.policies import Policy
-from canvit_pytorch.preprocess import imagenet_denormalize
+from canvit_pytorch.preprocess import imagenet_denormalize_uint8
 from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
 
 
@@ -36,11 +36,6 @@ class Rollout:
     glimpses: tuple[GlimpseRecord, ...]
     canvas_grid_size: int
     glimpse_size_px: int
-
-
-def _uint8_image(normalized: Tensor) -> NDArray[np.uint8]:
-    """[3, H, W] ImageNet-normalized -> [H, W, 3] uint8."""
-    return (imagenet_denormalize(normalized.float().cpu()).permute(1, 2, 0).numpy() * 255).round().astype(np.uint8)
 
 
 @torch.inference_mode()
@@ -100,14 +95,14 @@ def record(
         glimpses.append(GlimpseRecord(
             t=step.t,
             viewpoint=viewpoint,
-            crop=_uint8_image(crop[0]),
+            crop=imagenet_denormalize_uint8(crop[0]),
             canvas=canvas,
             logits=model.logits(step.state.canvas)[0].cpu().numpy(),
             write_residuals=writes,
             write_sources=tuple(s[0].float().cpu().numpy() for s in sources[step.t * num_writes : (step.t + 1) * num_writes]),
         ))
     return Rollout(
-        scene=_uint8_image(image[0]),
+        scene=imagenet_denormalize_uint8(image[0]),
         initial_canvas=canvas_patches(initial.canvas),
         annotation=None if annotation is None else annotation.cpu().numpy().astype(np.int64),
         glimpses=tuple(glimpses),

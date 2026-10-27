@@ -1,5 +1,6 @@
 """Linear probes that decode frozen spatial features, CanViT's canvas or a passive ViT's patch grid."""
 
+import torch
 from torch import Tensor, nn
 
 from canvit_pytorch.hub.loading import HubMixin
@@ -10,6 +11,8 @@ class SegmentationProbe(nn.Module, HubMixin):
 
     The head follows DINOv3's linear segmentation evaluation. Features that are
     already layer-normalized (DINOv3's outputs) skip the LayerNorm (use_ln=False).
+    The probe computes in float32, also under autocast: a bfloat16 head flips a
+    fraction of the predicted classes.
     """
 
     def __init__(self, *, embed_dim: int, num_classes: int, dropout: float, use_ln: bool) -> None:
@@ -28,5 +31,6 @@ class SegmentationProbe(nn.Module, HubMixin):
     def forward(self, features: Tensor) -> Tensor:
         B, H, W, D = features.shape
         assert D == self.embed_dim, f"probe expects {self.embed_dim}-dim features, got {D}"
-        x = self.ln(features).permute(0, 3, 1, 2).contiguous()
-        return self.conv(self.bn(self.dropout(x)))
+        with torch.autocast(device_type=features.device.type, enabled=False):
+            x = self.ln(features.float()).permute(0, 3, 1, 2).contiguous()
+            return self.conv(self.bn(self.dropout(x)))

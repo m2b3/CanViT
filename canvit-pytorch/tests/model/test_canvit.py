@@ -1,8 +1,8 @@
 import pytest
 import torch
+from canvit_core.attention import canvas_attention_schedule
 
 from canvit_pytorch import CanViT, CanViTOutput, RecurrentState, Viewpoint
-from canvit_pytorch.model.canvit import canvas_attention_schedule
 from tests.model.tiny import TINY, glimpse_batch
 
 

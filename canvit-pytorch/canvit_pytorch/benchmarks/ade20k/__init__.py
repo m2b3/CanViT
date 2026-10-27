@@ -7,10 +7,12 @@ from canvit_pytorch.benchmarks.ade20k.dataset import (
     dataset_root,
     decode_annotation,
     evaluation_transform,
+    validation_set,
 )
 from canvit_pytorch.benchmarks.ade20k.metrics import MeanIoU, per_image_confusion
 
 __all__ = [
     "CLASS_NAMES", "IGNORE_LABEL", "NUM_CLASSES", "NUM_VALIDATION_IMAGES",
     "ADE20kDataset", "MeanIoU", "dataset_root", "decode_annotation", "evaluation_transform", "per_image_confusion",
+    "validation_set",
 ]

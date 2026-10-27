@@ -1,4 +1,4 @@
-"""Teacher features computed once and read by every pretraining run (paper, Section 5.1).
+"""Teacher features computed once and read by every pretraining run (paper, "Precomputation of teacher features").
 
 The frozen teacher's features of every training scene are exported to shards
 of 4,096 images; pretraining then reads them instead of running the teacher.

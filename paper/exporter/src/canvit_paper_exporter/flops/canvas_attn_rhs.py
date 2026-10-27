@@ -26,10 +26,11 @@ from matplotlib.figure import Figure as MplFigure
 from matplotlib.ticker import FuncFormatter
 
 from canvit_pytorch.flops import dinov3_flops
+from canvit_pytorch.teacher import DINOV3_PATCH_SIZE
 
 from canvit_paper_exporter.core import Figure
 from canvit_paper_exporter.flops.canvit import CANVIT_B, read_write_pair_flops, segmentation_glimpse_flops
-from canvit_paper_exporter.flops.dinov3 import DINOV3_CONFIGS, DINOV3_PATCH_SIZE
+from canvit_paper_exporter.flops.dinov3 import DINOV3_CONFIGS
 from canvit_paper_exporter.style import (
     FIGWIDTH, LABEL_SIZE, LEGEND_SIZE, LINE_WIDTH, TICK_SIZE, si_flops_label,
 )

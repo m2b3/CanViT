@@ -15,18 +15,14 @@ from torchvision.transforms.functional import to_tensor
 OUTPUT_SIZE = 512
 
 
-def load_image(path: Path, device: torch.device) -> tuple[Tensor, Image.Image]:
-    """The image center-cropped to a square: ImageNet-normalized [1, 3, H, W], and as PIL."""
+def load_image(path: Path, device: torch.device) -> Tensor:
+    """The image center-cropped to a square, ImageNet-normalized [1, 3, H, W]."""
     img = Image.open(path).convert("RGB")
     w, h = img.size
     s = min(w, h)
     left, top = (w - s) // 2, (h - s) // 2
     img = img.crop((left, top, left + s, top + s))
-    return imagenet_normalize(to_tensor(img)).unsqueeze(0).to(device), img
-
-
-def save_image(img: Image.Image, path: Path, size: int = OUTPUT_SIZE) -> None:
-    img.resize((size, size), Resampling.LANCZOS).save(path)
+    return imagenet_normalize(to_tensor(img)).unsqueeze(0).to(device)
 
 
 def denormalized_numpy(image: Tensor) -> np.ndarray:
@@ -34,10 +30,15 @@ def denormalized_numpy(image: Tensor) -> np.ndarray:
     return imagenet_denormalize(image.cpu().float()).permute(1, 2, 0).numpy()
 
 
-def save_tensor_rgb(tensor: Tensor, path: Path, size: int = OUTPUT_SIZE) -> None:
-    """Save an ImageNet-normalized [3, H, W] tensor as an RGB image."""
-    arr = (denormalized_numpy(tensor) * 255).astype(np.uint8)
-    Image.fromarray(arr).resize((size, size), Resampling.LANCZOS).save(path)
+def save_photo(image: Tensor, path: Path, size: int) -> None:
+    """Save an ImageNet-normalized [3, H, W] image as a size×size JPEG.
+
+    A PDF embeds a JPEG as it is, while Typst stores a PNG's decoded pixels, deflated: several times larger for a
+    photograph. Quality 95 without chroma subsampling keeps the compression invisible.
+    """
+    assert path.suffix == ".jpg", path
+    rgb = Image.fromarray((denormalized_numpy(image).clip(0, 1) * 255).round().astype(np.uint8))
+    rgb.resize((size, size), Resampling.LANCZOS).save(path, quality=95, subsampling=0, optimize=True)
 
 
 def pca_colors(basis: PCABasis, tokens: np.ndarray, *, shape: tuple[int, int] | None = None) -> np.ndarray:

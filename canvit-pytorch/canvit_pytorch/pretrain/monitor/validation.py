@@ -10,11 +10,11 @@ from contextlib import AbstractContextManager
 from dataclasses import dataclass
 
 import torch
+from canvit_core.checkpoint import hub_file
 from safetensors.torch import load_file
 from torch import Tensor, nn
 
 from canvit_pytorch.episode import run_episode
-from canvit_pytorch.hub.loading import hub_file
 from canvit_pytorch.hub.repos import DINOV3_VITB16_IN1K_PROBE
 from canvit_pytorch.model.pretraining import CanViTForPretraining
 from canvit_pytorch.policies import PolicyName, make_policy

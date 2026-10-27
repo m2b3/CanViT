@@ -4,7 +4,8 @@ lint:
     uv run ruff check .
 
 typecheck:
-    uv run basedpyright canvit_nnx ../canvit-core/canvit_core
+    uv run --all-extras basedpyright canvit_nnx tests ../canvit-core/canvit_core
 
 test:
-    uv run pytest ../tests/backends --backend nnx -m 'not network'
+    uv run --all-extras pytest ../tests/backends --backend nnx -m 'not network'
+    uv run --all-extras pytest tests -m 'not network'

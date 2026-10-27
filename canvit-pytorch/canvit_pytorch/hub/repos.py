@@ -5,6 +5,7 @@ laid out the same way when $CANVIT_HUB_ROOT points to one.
 """
 
 import os
+from pathlib import Path
 from typing import Literal
 
 from canvit_pytorch.project import HUB_ORGANIZATION
@@ -14,6 +15,18 @@ HUB_ROOT = os.environ.get("CANVIT_HUB_ROOT", HUB_ORGANIZATION).rstrip("/")
 
 def hub_repo(name: str) -> str:
     return f"{HUB_ROOT}/{name}"
+
+
+def hub_id(repo: str) -> str:
+    """The Hub id of a repo given by its Hub id, its name, or its directory in a local mirror ($CANVIT_HUB_ROOT)."""
+    return f"{HUB_ORGANIZATION}/{Path(repo).name}"
+
+
+def resolve(repo: str) -> str:
+    """Where a repo loads from: a Hub id of the organization resolves under HUB_ROOT; any other Hub id or a local
+    directory is itself."""
+    organization, _, name = repo.partition("/")
+    return hub_repo(name) if organization == HUB_ORGANIZATION and "/" not in name else repo
 
 
 PretrainingDataset = Literal["in21k", "in1k"]
@@ -73,9 +86,19 @@ def released_ade20k_probe(model: str, *, scene_size_px: int, canvas_grid_size: i
     return hub_repo(name)
 
 
+def released_segmenter(*, scene_size_px: int, canvas_grid_size: int) -> tuple[str, str]:
+    """(pretrained repo, probe repo): the flagship and its released ADE20K probe for that scene size and canvas grid."""
+    return FLAGSHIP, released_ade20k_probe("in21k", scene_size_px=scene_size_px, canvas_grid_size=canvas_grid_size)
+
+
 def released_dinov3_ade20k_probe(model: str, *, input_size_px: int) -> str:
     return hub_repo(dinov3_ade20k_probe_name(model, input_size_px=input_size_px, steps=RELEASED_PROBE_STEPS))
 
+
+# Learned viewing policies (canvit_pytorch.rl): a ViewpointScorer per seed of each objective's training recipe
+# (rl.train.PolicyTraining); each scorer records the observer it reads.
+Q_REGRESSION_POLICIES = tuple(hub_repo(f"qpolicy-ade20k-c64-t5-qband-2026-07-04-s{seed}") for seed in range(8))
+POLICY_GRADIENT_POLICIES = tuple(hub_repo(f"pgpolicy-ade20k-c64-t5-floorband-2026-07-07-s{seed}") for seed in range(8))
 
 # The canvas grid of the project page's visualizations and of the browser exports: that of the probe they read.
 VIZ_CANVAS_GRID_SIZE = 64

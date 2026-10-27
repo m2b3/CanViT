@@ -1,6 +1,5 @@
 """CanViT with a linear segmentation probe on the canvas."""
 
-import torch
 from torch import Tensor, nn
 from torch.nn import functional as F
 
@@ -37,8 +36,7 @@ class CanViTForSemanticSegmentation(nn.Module):
 
     def logits(self, canvas: Tensor) -> Tensor:
         """Decode a canvas into [B, num_classes, G, G] float32 logits, also under autocast."""
-        with torch.autocast(device_type=canvas.device.type, enabled=False):
-            return self.probe(self.canvit.canvas_patch_grid(canvas).float())
+        return self.probe(self.canvit.canvas_patch_grid(canvas))
 
     def predict(
         self, *, glimpse: Tensor, state: RecurrentState, viewpoint: Viewpoint, target_size: tuple[int, int],

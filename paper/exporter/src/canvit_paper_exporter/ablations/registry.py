@@ -35,7 +35,8 @@ class AblationVariant:
 
 BASELINE = AblationVariant("baseline", "Baseline", "(none)", "#000000")
 
-# Row order of the ablation tables: the paper's row letters a-k.
+# Row order of the ablation tables: the paper's row letters a-k. Colors: tab10, then navy, which stays apart from
+# the red and brown curves that "No F-IID (2×R)" overlaps.
 VARIANTS: list[AblationVariant] = [
     AblationVariant("dcan256", r"$D_{\mathrm{can}}=256$ (asym.)", "D_can 1024>256", "#2ca02c"),
     AblationVariant("qkvo-dcan256", r"+ QKVO, $D_{\mathrm{can}}=256$",
@@ -47,11 +48,13 @@ VARIANTS: list[AblationVariant] = [
     AblationVariant("no-dense", "No dense loss", "enable_scene_patches_loss true>false", "#8c564b"),
     AblationVariant("no-fiid-1riid", r"No F-IID (1×R)", "n_full_start_branches 1>0", "#e377c2"),
     AblationVariant("no-fiid-2riid", r"No F-IID (2×R)", "n_full_start_branches 1>0, n_random_start_branches 1>2",
-                    "#c2185b"),
+                    "#000080"),
     AblationVariant("no-bptt", r"No BPTT ($K{=}1$)", "chunk_size 2>1, continue_prob 0.5>0.75", "#bcbd22"),
     AblationVariant("vit-s", "ViT-S backbone", "backbone_dim 768>384", "#7f7f7f"),
     AblationVariant("no-vpe", "No VPE", "enable_vpe true>false", "#9467bd"),
 ]
 
 BY_SLUG: dict[str, AblationVariant] = {BASELINE.slug: BASELINE, **{v.slug: v for v in VARIANTS}}
+# Evaluation results name the checkpoint they evaluated by its released repo.
+SLUG_BY_REPO: dict[str, str] = {v.ablation.released_repo: slug for slug, v in BY_SLUG.items()}
 assert [v.slug for v in VARIANTS] == sorted((a.slug for a in ABLATIONS.values() if a.paper_row), key=lambda s: ABLATIONS[s].paper_row)

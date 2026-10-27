@@ -1,6 +1,8 @@
 """ImageNet normalization, the input convention of CanViT and of its DINOv3 teacher."""
 
+import numpy as np
 from canvit_core.preprocess import IMAGENET_MEAN, IMAGENET_STD
+from numpy.typing import NDArray
 from torch import Tensor
 from torchvision import transforms
 
@@ -13,6 +15,11 @@ def imagenet_normalize(image: Tensor) -> Tensor:
 def imagenet_denormalize(image: Tensor) -> Tensor:
     """Inverse of imagenet_normalize, clamped to [0, 1]."""
     return (image * image.new_tensor(IMAGENET_STD).view(3, 1, 1) + image.new_tensor(IMAGENET_MEAN).view(3, 1, 1)).clamp(0, 1)
+
+
+def imagenet_denormalize_uint8(image: Tensor) -> NDArray[np.uint8]:
+    """[3, H, W] ImageNet-normalized -> [H, W, 3] uint8 pixels, rounded."""
+    return (imagenet_denormalize(image.float().cpu()).permute(1, 2, 0).numpy() * 255).round().astype(np.uint8)
 
 
 def preprocess(size: int) -> transforms.Compose:

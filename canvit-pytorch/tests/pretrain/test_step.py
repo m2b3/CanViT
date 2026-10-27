@@ -1,8 +1,8 @@
 from contextlib import nullcontext
 
 import torch
+from canvit_core.config import CanViTConfig
 
-from canvit_pytorch.model.config import CanViTConfig
 from canvit_pytorch.model.pretraining import CanViTForPretraining
 from canvit_pytorch.policies import make_policy
 from canvit_pytorch.pretrain.loss import DistillationTargets, distillation_losses

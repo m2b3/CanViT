@@ -1,6 +1,6 @@
 """How closely CanViT predicts its DINOv3 teacher's features of the whole scene after every glimpse.
 
-The metric of the paper's pretraining ablations (Appendix E): cosine similarity between the
+The metric of the paper's pretraining ablations: cosine similarity between the
 teacher's features and CanViT's predictions of them, for the patch features decoded from the
 canvas ("scene") and the CLS token decoded from the recurrent CLS token ("cls"). "norm" compares
 in the teacher's per-position standardized space, where pretraining fits the predictions and

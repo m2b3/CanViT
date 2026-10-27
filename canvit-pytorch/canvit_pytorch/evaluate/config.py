@@ -1,20 +1,15 @@
-"""The paper's evaluation protocol: scene and glimpse sizes, and how CanViT views each scene."""
+"""The paper's evaluation protocol: how CanViT views each scene."""
 
 from dataclasses import dataclass
 
 from torch import Tensor
 
 from canvit_pytorch.episode import EpisodeStep, run_episode
-from canvit_pytorch.hub.repos import RELEASED_CANVAS_GRID_SIZE, RELEASED_GLIMPSE_SIZE_PX, RELEASED_SCENE_SIZE_PX
+from canvit_pytorch.hub.repos import RELEASED_CANVAS_GRID_SIZE, RELEASED_GLIMPSE_SIZE_PX
 from canvit_pytorch.model import CanViT
 from canvit_pytorch.policies import POLICIES, PolicyName, make_policy
 from canvit_pytorch.policies.entropy import CanvasLogits
 
-SCENE_SIZE_PX = RELEASED_SCENE_SIZE_PX
-"""Side of the square scene that ADE20K and ImageNet-1k images are resized to, as in pretraining."""
-GLIMPSE_SIZE_PX = RELEASED_GLIMPSE_SIZE_PX
-CANVAS_GRID_SIZE = RELEASED_CANVAS_GRID_SIZE
-"""The canvas grid CanViT-B was pretrained with: one canvas patch per 16 px of a 512 px scene."""
 NUM_GLIMPSES = 21
 """Glimpses per scene: the full scene, its 4 quadrants and its 16 sixteenths under C2F."""
 
@@ -25,8 +20,8 @@ class EpisodeConfig:
 
     policy: PolicyName = "coarse_to_fine"
     num_glimpses: int = NUM_GLIMPSES
-    canvas_grid_size: int = CANVAS_GRID_SIZE
-    glimpse_size_px: int = GLIMPSE_SIZE_PX
+    canvas_grid_size: int = RELEASED_CANVAS_GRID_SIZE
+    glimpse_size_px: int = RELEASED_GLIMPSE_SIZE_PX
 
     def __post_init__(self) -> None:
         assert self.num_glimpses >= 1, self

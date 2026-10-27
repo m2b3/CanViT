@@ -7,7 +7,7 @@ directory laid out the same way that $CANVIT_HUB_ROOT names.
 import json
 from pathlib import Path
 
-from canvit_pytorch.hub.loading import hub_file
+from canvit_core.checkpoint import hub_file
 from canvit_pytorch.hub.repos import FINETUNED_IN1K, HUB_ROOT, hub_repo
 
 from canvit_paper_exporter.core import Dataset
@@ -28,13 +28,17 @@ DV3_OFFICIAL_REAL_TOP1 = {
 }
 # The configs of ViT-S/16, ViT-S+/16 and ViT-B/16 record no loss: their trainer had only softmax
 # cross-entropy (the code their Comet runs logged). Later configs record the one they were trained with.
-UNRECORDED_OBJECTIVE = "softmax"
+UNRECORDED_OBJECTIVE = {"vits16": "softmax", "vits16plus": "softmax", "vitb16": "softmax"}
+
+
+def hub_config(repo: str) -> dict:
+    return json.loads(hub_file(repo, "config.json").read_text())
 
 
 def _config(repo: str) -> tuple[dict, str]:
     """A repo's config.json and a description of where it was read."""
     source = f"local CANVIT_HUB_ROOT/{Path(repo).name}" if Path(HUB_ROOT).is_dir() else f"HuggingFace config.json from {repo}"
-    return json.loads(hub_file(repo, "config.json").read_text()), source
+    return hub_config(repo), source
 
 
 def _compute_in1k_finetune_config() -> dict:
@@ -71,7 +75,8 @@ def _dv3_probe_row(model_key: str) -> dict:
     cfg, _ = _config(repo)
     tp = cfg["trial_params"]
     vr = cfg["val_results"]
-    assert tp["optimizer"] == "adamw", f"{repo}: {tp['optimizer']}; momentum would apply"
+    assert tp["optimizer"] == "adamw", f"{repo}: {tp['optimizer']}, not AdamW"
+    assert ("objective" in tp) != (model_key in UNRECORDED_OBJECTIVE), f"{repo}: trial params {sorted(tp)}"
     return {
         "model": DV3_PROBE_DISPLAY[model_key],
         "model_key": model_key,
@@ -84,9 +89,8 @@ def _dv3_probe_row(model_key: str) -> dict:
         "weight_decay": tp["weight_decay"],
         "beta1": tp["beta1"],
         "beta2": tp["beta2"],
-        "momentum": None,
         "use_dinov3_init": tp["use_dinov3_init"],
-        "objective": tp.get("objective", UNRECORDED_OBJECTIVE),
+        "objective": UNRECORDED_OBJECTIVE[model_key] if model_key in UNRECORDED_OBJECTIVE else tp["objective"],
         "n_train_epochs": tp["n_train_epochs"],
         "outer_epochs": tp["outer_epochs"],
         "total_epochs": tp["total_epochs"],

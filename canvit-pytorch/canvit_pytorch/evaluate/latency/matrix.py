@@ -1,4 +1,4 @@
-"""The paper's latency matrix (Appendix F): every model at every scene size, on CPU and on CUDA.
+"""The paper's latency matrix: every model at every scene size, on CPU and on CUDA.
 
 CPU runs float32 in eager mode at each thread count; CUDA runs each precision, compiled or not.
 Each pass visits the configurations in a new random order, each in a fresh process. The machine

@@ -3,6 +3,7 @@
 from typing import Literal, NamedTuple
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor, nn
 from transformers import AutoModel, PreTrainedModel
 
@@ -43,6 +44,13 @@ class DINOv3Teacher(nn.Module):
         tokens = self.model(images).last_hidden_state
         assert tokens.shape[1] > self.NUM_PREFIX_TOKENS, tokens.shape
         return TeacherFeatures(patches=tokens[:, self.NUM_PREFIX_TOKENS :], cls=tokens[:, 0])
+
+    def patch_grid(self, images: Tensor, *, input_size_px: int) -> Tensor:
+        """Patch features [B, g, g, D] of images [B, 3, H, W] bilinearly resized to input_size_px × input_size_px."""
+        assert input_size_px % self.patch_size == 0, f"{input_size_px} px is not a whole number of {self.patch_size} px patches"
+        grid = input_size_px // self.patch_size
+        resized = F.interpolate(images, size=(input_size_px, input_size_px), mode="bilinear", align_corners=False)
+        return self(resized).patches.view(images.shape[0], grid, grid, -1)
 
 
 def load_teacher(repo_id: str, device: torch.device) -> DINOv3Teacher:

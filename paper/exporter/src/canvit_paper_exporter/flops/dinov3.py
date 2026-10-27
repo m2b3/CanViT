@@ -4,9 +4,8 @@ The facebook/dinov3-* repos are gated on the Hub, so their architectures are sta
 here; canvit_pytorch.flops.dinov3_flops counts from them.
 """
 
+from canvit_pytorch.teacher import DINOV3_PATCH_SIZE
 from transformers import DINOv3ViTConfig
-
-DINOV3_PATCH_SIZE = 16
 
 DINOV3_CONFIGS: dict[str, DINOv3ViTConfig] = {
     "DINOv3 ViT-S/16": DINOv3ViTConfig(

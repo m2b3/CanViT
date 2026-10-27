@@ -25,10 +25,12 @@ from torch import Tensor, nn
 from torch.utils.hooks import RemovableHandle
 
 from canvit_paper_exporter.diagrams._common import DIAGRAMS_OUTPUTS, EXAMPLE_IMAGES, BaseConfig, load_canvit
-from canvit_paper_exporter.diagrams.io import denormalized_numpy, pca_colors
+from canvit_paper_exporter.diagrams.io import denormalized_numpy, pca_colors, save_photo
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
 log = logging.getLogger(__name__)
+
+# The diagram prints each scene about 0.43 in wide, so 512 px is about 1,200 ppi.
+SCENE_PX = 512
 
 
 @dataclass
@@ -169,8 +171,8 @@ def _generate_one(cfg: Config, scenario: Scenario, model: CanViT, device: torch.
     run_dir.mkdir(parents=True, exist_ok=True)
     log.info("Saving images to %s...", run_dir)
 
-    plt.imsave(run_dir / "scene.png", denormalized_numpy(image[0]))
-    log.info("  scene.png")
+    save_photo(image[0], run_dir / "scene.jpg", SCENE_PX)
+    log.info("  scene.jpg")
 
     by_glimpse: dict[int, list[Snapshot]] = defaultdict(list)
     for snap in snapshots:
@@ -207,4 +209,5 @@ def _generate_one(cfg: Config, scenario: Scenario, model: CanViT, device: torch.
 if __name__ == "__main__":
     import tyro
 
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     main(tyro.cli(Config))

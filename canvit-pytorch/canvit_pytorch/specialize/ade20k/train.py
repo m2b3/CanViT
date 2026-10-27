@@ -1,4 +1,4 @@
-"""The probe-training loop, the same for every frozen feature source (paper, Appendix D.3).
+"""The probe-training loop, the same for every frozen feature source (paper, appendix "Task: ADE20K segmentation").
 
 One probe decodes every feature map of a scene (the canvas after each glimpse, or DINOv3's patch features);
 the loss averages its cross-entropy over the maps.
@@ -78,7 +78,7 @@ def segmentation_loss(logits: Tensor, labels: Tensor) -> Tensor:
 
 def predict(probe: SegmentationProbe, features: Tensor, labels: Tensor) -> Tensor:
     """The predicted class of each pixel of the labels [B, S, S]: the probe's argmax, resized to the labels."""
-    return resize_labels(probe(features.float()).argmax(1), labels.shape[1:])
+    return resize_labels(probe(features).argmax(1), labels.shape[1:])
 
 
 def feature_autocast(config: ProbeTrainingConfig, device: torch.device) -> torch.autocast:
@@ -228,7 +228,7 @@ def train_probe(setup: ProbeSetup) -> Path:
         with autocast:
             maps = feature_maps(images, "training")
         optimizer.zero_grad()
-        logits = [probe(features.float()) for features in maps]
+        logits = [probe(features) for features in maps]
         loss = torch.stack([segmentation_loss(map_logits, labels) for map_logits in logits]).mean()
         loss.backward()
         grad_norm = torch.nn.utils.get_total_norm([p.grad for p in probe.parameters() if p.grad is not None])

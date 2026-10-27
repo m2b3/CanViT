@@ -1,6 +1,6 @@
 """Latency of one forward pass at batch size 1: CanViT processing one glimpse, or DINOv3 one image.
 
-The protocol of the paper's Appendix F: untimed warmup iterations, then timed iterations, each
+The protocol of the paper's appendix "Inference latency": untimed warmup iterations, then timed iterations, each
 between two device synchronizations, at least min_iters of them and until time_budget_s or
 max_iters; peak memory over the timed iterations on CUDA. The paper reports the minimum latency.
 
@@ -19,11 +19,10 @@ from pathlib import Path
 from typing import Literal
 
 import torch
+from canvit_core.backbone import BACKBONES
 
-from canvit_pytorch.evaluate.config import GLIMPSE_SIZE_PX
-from canvit_pytorch.hub.repos import RELEASED_SCENE_SIZE_PX
+from canvit_pytorch.hub.repos import RELEASED_GLIMPSE_SIZE_PX, RELEASED_SCENE_SIZE_PX
 from canvit_pytorch.model import CanViT, CanViTConfig
-from canvit_pytorch.model.backbone import BACKBONES
 from canvit_pytorch.provenance import provenance
 from canvit_pytorch.teacher import DINOV3_REPOS, DINOv3Variant, load_teacher
 from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
@@ -110,7 +109,7 @@ class LatencyMeasurement:
             canvit = CanViT(CanViTConfig()).to(device).eval()
             if self.compiled:
                 canvit.compile()
-            glimpse_size_px = GLIMPSE_SIZE_PX
+            glimpse_size_px = RELEASED_GLIMPSE_SIZE_PX
             viewpoint = Viewpoint.full_scene(batch_size=BATCH_SIZE, device=device)
             image = torch.randn(BATCH_SIZE, 3, glimpse_size_px, glimpse_size_px, device=device)
             glimpse = sample_at_viewpoint(spatial=image, viewpoint=viewpoint, glimpse_size_px=glimpse_size_px)
@@ -144,7 +143,7 @@ class LatencyMeasurement:
         if device.type == "cuda":
             record["device_mem_gb"] = round(torch.cuda.get_device_properties(device).total_memory / 1e9, 1)
         if self.model == "canvit":
-            record |= {"canvas_grid": self.canvas_grid_size, "glimpse_px": GLIMPSE_SIZE_PX}
+            record |= {"canvas_grid": self.canvas_grid_size, "glimpse_px": RELEASED_GLIMPSE_SIZE_PX}
         return record
 
     @torch.inference_mode()

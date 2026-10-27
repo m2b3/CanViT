@@ -53,11 +53,8 @@ EG_C2F = "entropy_coarse_to_fine"
 
 
 def sha256_hex(path: Path) -> str:
-    digest = hashlib.sha256()
     with path.open("rb") as f:
-        for block in iter(lambda: f.read(1 << 24), b""):
-            digest.update(block)
-    return digest.hexdigest()
+        return hashlib.file_digest(f, "sha256").hexdigest()
 
 
 def file_record(path: Path) -> dict[str, Any]:

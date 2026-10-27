@@ -3,8 +3,11 @@
 //
 // This wraps canvit_overview_content.typ in a minimal document; the manuscript includes the PDF.
 
+// No creation date, so identical inputs give identical files.
+#set document(date: none)
+
 // width must be concrete (not auto) because the diagram uses layout(size => ...).
-// 5.5in = manuscript text width. height: auto so it shrink-wraps vertically.
+// 5.5in = manuscript text width.
 // Small margin to prevent clipping of panel labels ("A", "B") and arrows
 // that use negative dx/dy offsets in the diagram code.
 // height: 6.3cm trims the automatic height (~6.7cm).
@@ -13,7 +16,4 @@
 #set text(font: ("Helvetica", "Liberation Sans", "Nimbus Sans"), size: 11pt)
 #import "canvit_overview_content.typ": canvit-overview-diagram
 
-#canvit-overview-diagram(
-  scene-path: "outputs/canvas_evolution/Places365/scene.png",
-  glimpse-width: 1.42cm,
-)
+#canvit-overview-diagram(glimpse-width: 1.42cm)

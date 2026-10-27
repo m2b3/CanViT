@@ -1,0 +1,50 @@
+[project]
+name = "adaglimpse-nnx"
+version = "0.1.0"
+description = "AdaGlimpse's architecture in JAX/Flax NNX, as the CanViT paper's architecture control trains it"
+readme = "README.md"
+requires-python = ">=3.12"
+# Not published: PyPI refuses any upload that carries this classifier.
+classifiers = ["Private :: Do Not Upload"]
+
+dependencies = [
+    "canvit-nnx",
+    "flax>=0.12.10",
+    "jax>=0.11.2",
+    "numpy>=2.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["adaglimpse_nnx"]
+
+[tool.uv.sources]
+canvit-core = { path = "../../canvit-core", editable = true }
+canvit-nnx = { path = "../../canvit-nnx", editable = true }
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.40.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+    "rust-just>=1.58.0",
+    # The upstream reference the equivalence tests run: AdaGlimpse's own modules, in its environment's timm.
+    "timm==0.9.16",
+    "torch>=2.11",
+    "torchvision>=0.26",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "BLE", "ISC", "PLW1510", "RUF100"]
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+
+[tool.pytest.ini_options]
+markers = ["network: fetches AdaGlimpse's source from GitHub"]

@@ -23,7 +23,7 @@ from torch import Tensor
 from canvit_pytorch.model.canvit import RecurrentState
 from canvit_pytorch.model.segmentation import CanViTForSemanticSegmentation
 from canvit_pytorch.policies.entropy import predictive_entropy
-from canvit_pytorch.preprocess import imagenet_denormalize
+from canvit_pytorch.preprocess import imagenet_denormalize_uint8
 from canvit_pytorch.viewpoint import Viewpoint, sample_at_viewpoint
 from canvit_pytorch.viz.path import Segment
 from canvit_pytorch.viz.pca import ColorLimits, PCABasis, fit_pca, project, to_rgb
@@ -39,10 +39,6 @@ class ConditionLayers:
     labels: list[NDArray[np.uint8]]  # [G, G]
     entropy: list[NDArray[np.uint8]]  # [G, G], entropy / log(num_classes) × 255
     pixel_accuracy: list[float]
-
-
-def _uint8_image(normalized: Tensor) -> NDArray[np.uint8]:
-    return (imagenet_denormalize(normalized.float().cpu()).permute(1, 2, 0).numpy() * 255).round().astype(np.uint8)
 
 
 def _reference_colors(
@@ -90,7 +86,7 @@ def record_path(
     for viewpoint in viewpoints:
         viewpoint = Viewpoint(centers=viewpoint.centers.to(image.device), scales=viewpoint.scales.to(image.device))
         glimpse = sample_at_viewpoint(spatial=image, viewpoint=viewpoint, glimpse_size_px=glimpse_size_px)
-        crops.append(_uint8_image(glimpse[0]))
+        crops.append(imagenet_denormalize_uint8(glimpse[0]))
         state = model.canvit(glimpse=glimpse, state=state, viewpoint=viewpoint).state
         _add(carried, model, state.canvas, basis=basis, limits=limits, annotation=annotation)
 

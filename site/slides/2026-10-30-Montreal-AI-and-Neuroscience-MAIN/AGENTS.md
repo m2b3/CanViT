@@ -60,7 +60,11 @@ Each thing has one home; everything else points to it.
 - `../shoot.py`: screenshots of every slide in Chromium, the browser errors and layout problems (below).
 - `../pdf_backup.py`: the PDF backup for a room where the browser deck cannot run: every click of every slide as a
   page (`slides.pdf`, Backup included) and a presenter's copy with each slide's last state, timing and notes
-  (`notes.pdf`), with its checks in `check.txt`; rebuild it after the last change before a talk.
+  (`notes.pdf`), and the same pages as `slides.pptx` for Google Slides or PowerPoint, each with the notes said over
+  it; its checks in `check.txt`. `../single_file.py`: the deck as one self-contained HTML file that runs from disk with
+  no server and no network (its modules bundled by esbuild, every file it loads embedded), checked by opening it
+  offline and walking every click. Rebuild both after the last change before a talk. The fallbacks, in order: the
+  published deck; the deck served from a laptop; the single file; `slides.pptx`; `slides.pdf`.
 - `../stress.py`, `../check_published.py`: a talk skipped through at speed; its files checked against the published site
   (below).
 - This directory: `index.html` (every slide, with speaker notes), `talk.css` (rules scoped by slide id), talk-only

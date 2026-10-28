@@ -13,8 +13,13 @@
 //   data-shows="NAME"            on a fragment: while it is shown, its slide has the class shows-NAME, so the slide's CSS
 //                                builds a diagram click by click, keyed on named states
 //   <section data-status="…">    how far the slide is from presentable: ready, draft or aspirational
-//   <section data-seconds="N">   the slide's share of the talk's time: the slides that have one run back to back from
-//                                00:00, and each shows its range (00:42–01:30) at the top of its speaker notes
+//   <div class="slides" data-talk-seconds="N">
+//                                the talk's time, shared among the slides before <section id="backup"> in proportion to
+//                                the words of their speaker notes (the spoken lines: not [CLICK] or other bracketed
+//                                markers, not a line in parentheses); each slide's range of the clock from 00:00 heads
+//                                its notes (⏱ 00:42–01:30, 48 s), so the budgets follow the notes as they change
+//   data-rehearsal="FILE"        on the same element: a measured run-through (experiments/rehearsal_timing.py), each
+//                                slide's range of that run's clock shown under its budget
 //   data-load-near               on an element that loads something heavy when given `autoload` (<canvit-live>): the
 //                                attribute is added once its slide is the current one or the next, never at page load
 //   <code data-src="FILE">       filled with the file's text before reveal.js highlights it (class="language-…"), so
@@ -143,18 +148,51 @@ function checkStatuses(slides) {
 }
 
 /** Each timed slide's range of the talk's clock, the slides back to back from 00:00 in document order. */
-function timeRanges(slides) {
-  const clock = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-  let start = 0;
-  for (const section of slides.querySelectorAll("section[data-seconds]")) {
-    const seconds = Number(section.dataset.seconds);
-    if (!(Number.isInteger(seconds) && seconds > 0)) throw new Error(`#${section.id}: data-seconds="${section.dataset.seconds}"`);
-    const range = `${clock(start)}–${clock(start + seconds)}`;
-    start += seconds;
-    const note = document.createElement("p");
-    note.textContent = `⏱ ${range} (${seconds} s)`;
-    section.querySelector("aside.notes")?.prepend(note);
+/** How many words a speaker says from a slide's notes: its lines without bracketed markers, and no line in parentheses. */
+function spokenWords(section) {
+  let words = 0;
+  for (const line of section.querySelectorAll("aside.notes li")) {
+    const text = line.textContent.replace(/\[[^\]]*\]/g, " ").trim();
+    if (text.startsWith("(") && text.endsWith(")")) continue;
+    words += text.split(/\s+/).filter(Boolean).length;
   }
+  return words;
+}
+
+/** Each slide before Backup gets the talk's time in proportion to its notes' words, back to back from 00:00; with a
+ * measured run-through, its range in that run follows. */
+async function timeRanges(slides) {
+  if (!slides.hasAttribute("data-talk-seconds")) return;
+  const total = Number(slides.dataset.talkSeconds);
+  if (!(total > 0)) throw new Error(`data-talk-seconds="${slides.dataset.talkSeconds}"`);
+  const timed = [];
+  for (const section of slides.querySelectorAll(":scope > section")) {
+    if (section.id === "backup") break;
+    timed.push(section);
+  }
+  const words = timed.map(spokenWords), all = words.reduce((a, b) => a + b, 0);
+  if (!all) throw new Error("data-talk-seconds: the notes of the slides before Backup have no words");
+  const clock = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  const range = (start, end) => `${clock(Math.round(start))}–${clock(Math.round(end))} (${Math.round(end) - Math.round(start)} s)`;
+  let run = null;
+  if (slides.dataset.rehearsal) {
+    const response = await fetch(slides.dataset.rehearsal);
+    if (!response.ok) throw new Error(`data-rehearsal: ${slides.dataset.rehearsal} answered ${response.status}`);
+    run = await response.json();
+  }
+  let said = 0, ran = 0;
+  timed.forEach((section, i) => {
+    const start = (total * said) / all;
+    said += words[i];
+    const lines = [`⏱ Budget ${range(start, (total * said) / all)}`];
+    if (run) {
+      const seconds = run.seconds[section.id];
+      lines.push(seconds === undefined ? `▶ Run ${run.run}: not in it` : `▶ Run ${run.run} ${range(ran, ran + seconds)}`);
+      ran += seconds ?? 0;
+    }
+    const notes = section.querySelector("aside.notes");
+    for (const text of lines.reverse()) notes?.prepend(Object.assign(document.createElement("p"), { textContent: text }));
+  });
 }
 
 /** A button that starts the current slide over: fragments hidden, animations from the beginning. */
@@ -184,7 +222,7 @@ function replayButton(deck) {
 export async function startDeck(options = {}) {
   const slides = document.querySelector(".reveal .slides");
   checkStatuses(slides);
-  timeRanges(slides);
+  await timeRanges(slides);
   await fillCode(slides);
   const deck = new Reveal({
     width: 1280,

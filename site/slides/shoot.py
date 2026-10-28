@@ -158,7 +158,9 @@ async def shoot(args: Shoot) -> int:
 
         page.on("console", on_console)
         page.on("pageerror", lambda error: errors.append(f"[{where['slide']}] page error: {error}"))
-        await page.goto(args.url)
+        # The notes' authoring marks, which the checks below read, unless this is a still capture (pdf_backup.py).
+        url = args.url if "capture" in args.url else args.url + ("&" if "?" in args.url else "?") + "markers"
+        await page.goto(url)
         await page.wait_for_function("window.deck?.isReady()")
         count = await page.evaluate("deck.getTotalSlides()")
         for index in range(count):

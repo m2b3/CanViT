@@ -122,8 +122,7 @@ async def notes_pdf(slides: list[dict], grouped: dict[str, list[Path]], out: Pat
     rows = []
     for number, slide in enumerate(slides, 1):
         last = grouped[slide["id"]][-1]
-        rows.append(f"""<section><header><b>{number}. {html.escape(slide['title'] or '#' + slide['id'])}</b>
-          <span>#{html.escape(slide['id'])}</span></header><img src="{last.resolve().as_uri()}">
+        rows.append(f"""<section><header><b>{number}. {html.escape(slide['title'])}</b></header><img src="{last.resolve().as_uri()}">
           <div class="notes">{slide['notes']}</div></section>""")
     page_html = """<!doctype html><meta charset="utf-8"><style>
       @page { size: A4; margin: 12mm; }

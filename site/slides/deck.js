@@ -20,6 +20,10 @@
 //                                its notes (⏱ 00:42–01:30, 48 s), so the budgets follow the notes as they change
 //   data-rehearsal="FILE"        on the same element: a measured run-through (experiments/rehearsal_timing.py), each
 //                                slide's range of that run's clock shown under its budget
+//   speaker notes                a line that is only a mark in brackets ([AI draft …], [From …], [Timing …]) or in
+//                                parentheses, and a mark in brackets that opens a line, are authors' annotations: hidden
+//                                unless the URL has ?markers, so the speaker view, the backups and the single file show
+//                                what is said ([CLICK] stays)
 //   data-load-near               on an element that loads something heavy when given `autoload` (<canvit-live>): the
 //                                attribute is added once its slide is the current one or the next, never at page load
 //   <code data-src="FILE">       filled with the file's text before reveal.js highlights it (class="language-…"), so
@@ -36,6 +40,7 @@ const STATUSES = ["ready", "draft", "aspirational"];
 const params = new URLSearchParams(location.search);
 const printing = params.has("print-pdf");
 const capturing = params.has("capture"); // a still capture (pdf_backup.py): no on-screen controls
+const markers = params.has("markers"); // the notes' authoring marks shown (shoot.py's checks read them)
 
 // Clicks on these never advance the deck: controls, links and the live model's scene.
 const INTERACTIVE = "a, button, input, select, textarea, label, video[controls], canvit-live, canvit-episode, canvit-frontier, canvit-rollout, [data-no-advance]";
@@ -174,7 +179,7 @@ async function timeRanges(slides) {
   const words = timed.map(spokenWords), all = words.reduce((a, b) => a + b, 0);
   if (!all) throw new Error("data-talk-seconds: the notes of the slides before Backup have no words");
   const clock = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-  const range = (start, end) => `${clock(Math.round(start))}–${clock(Math.round(end))} (${Math.round(end) - Math.round(start)} s)`;
+  const span = (start, end) => `${clock(Math.round(start))}–${clock(Math.round(end))}`;
   let run = null;
   if (slides.dataset.rehearsal) {
     const response = await fetch(slides.dataset.rehearsal);
@@ -185,15 +190,25 @@ async function timeRanges(slides) {
   timed.forEach((section, i) => {
     const start = (total * said) / all;
     said += words[i];
-    const lines = [`⏱ Budget ${range(start, (total * said) / all)}`];
+    let line = `⏱ ${span(start, (total * said) / all)}`;
     if (run) {
       const seconds = run.seconds[section.id];
-      lines.push(seconds === undefined ? `▶ Run ${run.run}: not in it` : `▶ Run ${run.run} ${range(ran, ran + seconds)}`);
+      line += seconds === undefined ? " · not in the run" : ` · run ${span(ran, ran + seconds)}`;
       ran += seconds ?? 0;
     }
-    const notes = section.querySelector("aside.notes");
-    for (const text of lines.reverse()) notes?.prepend(Object.assign(document.createElement("p"), { textContent: text }));
+    section.querySelector("aside.notes")?.prepend(Object.assign(document.createElement("p"), { textContent: line }));
   });
+}
+
+/** The notes as said: authors' marks out of sight, unless ?markers. */
+function spokenNotes(slides) {
+  if (markers) return;
+  const mark = /^\s*\[(?!CLICK\])[^\]]*\]\s*/;
+  for (const line of slides.querySelectorAll("aside.notes li")) {
+    const text = line.textContent.trim();
+    if (/^\[(?!CLICK\])[^\]]*\]$/.test(text) || /^\(.*\)$/s.test(text)) line.remove();
+    else if (line.firstChild?.nodeType === Node.TEXT_NODE) line.firstChild.textContent = line.firstChild.textContent.replace(mark, "");
+  }
 }
 
 /** A button that starts the current slide over: fragments hidden, animations from the beginning. */
@@ -224,6 +239,7 @@ export async function startDeck(options = {}) {
   const slides = document.querySelector(".reveal .slides");
   checkStatuses(slides);
   await timeRanges(slides);
+  spokenNotes(slides);
   await fillCode(slides);
   const deck = new Reveal({
     width: 1280,

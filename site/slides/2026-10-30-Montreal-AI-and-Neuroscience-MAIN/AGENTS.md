@@ -65,6 +65,8 @@ Each thing has one home; everything else points to it.
   no server and no network (its modules bundled by esbuild, every file it loads embedded), checked by opening it
   offline and walking every click. Rebuild both after the last change before a talk. The fallbacks, in order: the
   published deck; the deck served from a laptop; the single file; `slides.pptx`; `slides.pdf`.
+  Speaker notes show their authoring marks ([AI draft …], [From …], [Timing …], lines in parentheses) only with
+  `?markers`; the speaker view, the backups and the single file show what is said.
 - `../stress.py`, `../check_published.py`: a talk skipped through at speed; its files checked against the published site
   (below).
 - This directory: `index.html` (every slide, with speaker notes), `talk.css` (rules scoped by slide id), talk-only

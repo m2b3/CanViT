@@ -59,14 +59,12 @@ Each thing has one home; everything else points to it.
 - `../package.json`: reveal.js, pinned and installed locally (`npm ci --prefix site/slides`), so a talk runs offline.
 - `../shoot.py`: screenshots of every slide in Chromium, the browser errors and layout problems (below).
 - `../pdf_backup.py`: the PDF backup for a room where the browser deck cannot run: every click of every slide as a
-  page (`slides.pdf`, Backup included) and a presenter's copy with each slide's last state, timing and notes
+  page (`slides.pdf`, the appendix included) and a presenter's copy with each slide's last state, timing and notes
   (`notes.pdf`), and the same pages as `slides.pptx` for Google Slides or PowerPoint, each with the notes said over
   it; its checks in `check.txt`. `../single_file.py`: the deck as one self-contained HTML file that runs from disk with
   no server and no network (its modules bundled by esbuild, every file it loads embedded), checked by opening it
   offline and walking every click. Rebuild both after the last change before a talk. The fallbacks, in order: the
   published deck; the deck served from a laptop; the single file; `slides.pptx`; `slides.pdf`.
-  Speaker notes show their authoring marks ([AI draft …], [From …], [Timing …], lines in parentheses) only with
-  `?markers`; the speaker view, the backups and the single file show what is said.
 - `../stress.py`, `../check_published.py`: a talk skipped through at speed; its files checked against the published site
   (below).
 - This directory: `index.html` (every slide, with speaker notes), `talk.css` (rules scoped by slide id), talk-only
@@ -94,7 +92,7 @@ does not carry yet (a new experiment) has an `XXX` comment beside it naming its 
 The paper's figures and tables can be tried on slides before the paper version they come from is public.
 `sources/paper-figures.json` lists each one, one line per entry: a figure by its export name (`paper/exports/NAME.pdf`),
 a table by its LaTeX label. An entry with `"enabled": true` is a slide after the slide whose id its `where` names, or
-at the end of Backup for `"backup"`, headed by its `title` (HTML, none when empty), with its `notes` (a list of HTML
+at the end of the appendix for `"appendix"`, headed by its `title` (HTML, none when empty), with its `notes` (a list of HTML
 bullets) as speaker notes and its `status` as `data-status` (draft when absent); edit the file and the open deck
 reloads with the slide added or removed. The slides follow "Writing slides" below: the paper's caption is not shown,
 so what it says goes in the title or the notes. `../paper_figures.py` does the rest (its docstring has the details);
@@ -171,8 +169,8 @@ Screenshots are review material and are never committed (`site/.screens/` is ign
 `../stress.py` skips through a talk quickly, forward, back and at random, and checks that each slide lands in the state
 a settled visit gives it, with nothing playing off its slide [Yohaï, 2026-10-01].
 
-The published deck has no Backup slides (`../published_deck.py` cuts them), so the page's script reaches a Backup slide
-only through `drawIfPresent`; the cut refuses a deck that looks one up directly, which would not start.
+Every slide is published, the appendix's included; the page's script draws a slide through `drawIfPresent`, so a
+slide can leave the deck before its drawing code does.
 
 After a deploy, `../check_published.py` walks the project page and a talk locally, every click and every scene of its
 episodes, and requests each file they loaded from the published site [Yohaï, 2026-10-01]. Do not edit `site/` while
@@ -308,10 +306,11 @@ land in the same commit as the work.
   [Yohaï, 2026-10-25].
 - "We" means the authors. A pointer ("this", "that") refers to the thing just named; when its referent is not
   immediate, restate the thing ("drawing inspiration from human vision", not "from this process") [Yohaï, 2026-10-25].
-- Speaker notes an agent drafted start with `[AI draft: not the authors' text]` until an author rewrites them; an
-  agent's text kept beside an author's is marked the same way. Notes taken from an author's run-through start with
-  a line naming the run-through and keep its wording, false starts removed and self-corrections applied. Agents' framings and words ("a twist") are never passed
-  off as the authors' [Yohaï, 2026-10-25].
+- Speaker notes hold only what is said: no marks besides [CLICK]. Who wrote each slide's notes (an author, an
+  author's run-through, or an agent's draft, which stays a draft until an author rewrites it) is recorded in
+  `TALK.md`, "Notes provenance", and kept current with every change to the notes. Notes taken from a run-through keep
+  its wording, false starts removed and self-corrections applied. Agents' framings and words ("a twist") are never
+  passed off as the authors' [Yohaï, 2026-10-25].
 - An agent's notes for a slide are not acceptable until it has answered each of these in writing for that slide, the
   way the authors work through a slide together, which takes them fifteen to twenty minutes [Yohaï, 2026-10-25]:
   - What the slide must make the listener understand, and whether the first bullet says it, not what is visible.
@@ -326,7 +325,7 @@ land in the same commit as the work.
     formula packing a label and its definition, no pointer without an immediate referent, no undefined jargon, no
     invented connectors.
   - Spoken length at the authors' measured speaking rate (`TALK.md`, rehearsal timings).
-  `../shoot.py` checks the mechanical part (clicks against [CLICK] marks, and Transition lines in AI drafts); passing
+  `../shoot.py` checks the mechanical part (clicks against [CLICK] marks, and transition lines); passing
   it is necessary, never sufficient.
 - Glimpse blue, canvas red and policy teal keep their meanings on every slide (`../../css/canvit.css`).
 - Viewing policies keep the paper's figure colors (`../../js/canvit/policies.js`) [Yohaï, 2026-10-25].

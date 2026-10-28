@@ -13,7 +13,7 @@ script and its imports bundled into one by esbuild (site/slides/package.json pin
 fonts and images as data URIs, and every other file the deck requests (found by walking it locally, every click and
 every view of its episodes) embedded under a <base> at a made-up origin; a first script answers the deck's fetches and
 image sources from them. Then the file is opened from disk offline and walked again: the build fails on a request it
-cannot answer, a page error or a slide that does not appear. Backup slides stay in.
+cannot answer, a page error or a slide that does not appear.
 """
 
 import asyncio

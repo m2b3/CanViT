@@ -458,8 +458,8 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 #eg-c2f .quadrants small { margin-left: 6px; font-size: 18px; font-weight: 650; }
 #eg-c2f.shows-quadrants:not(.shows-next) .quadrants span { opacity: 1; }
 
-/* The divider before the Backup slides. */
-#backup .divider { display: grid; place-items: center; height: 100%; margin: 0; font-size: 96px; font-weight: 800;
+/* The divider before the appendix's slides. */
+#appendix .divider { display: grid; place-items: center; height: 100%; margin: 0; font-size: 96px; font-weight: 800;
                    letter-spacing: -.03em; color: var(--ink); }
 
 /* The chart, then the budget below it: the chart shrinks and the glimpses of pretraining and of learning where to
@@ -481,9 +481,6 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 /* Next: two directions, each in its own panel. */
 
 /* Free-viewing datasets: the two papers' figures, large. */
-#free-viewing .papers { display: grid; grid-template-columns: 1.25fr 1fr; gap: 36px; align-items: center; height: 600px; margin: 0 -40px; }
-#free-viewing figure img { width: 100%; height: auto; }
-#free-viewing figcaption { margin-top: 10px; text-align: center; }
 
 #links .funders .wordlogo { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 800; letter-spacing: -.01em; color: var(--ink); white-space: nowrap; }
 #links .funders .wordlogo img { height: 34px; width: 34px; }

@@ -552,14 +552,14 @@ drafts until Yohaï words them.
 Part II's notes total about 12 minutes at Part I's rate; Part I's run-through took about 6:15 (rehearsal timings,
 below).
 
-Backup since 2026-10-27, each slide for a question the room may ask: `#canvas-updates` (the emergent hierarchy within
-a glimpse, moved from the main flow on 2026-10-27 evening), `#brain-score` (Schrimpf et al. 2018's figure), `#free-viewing` (neuro-AI datasets; its argument
-is open), `#rollout` (the live model, for a demonstration), `#extrapolation` (how far the canvas extrapolates, with
+The appendix (called Backup until 2026-10-27 evening, when it was renamed and first published with the deck), each
+slide for a question the room may ask: `#canvas-updates` (the emergent hierarchy within a glimpse, moved from the main
+flow on 2026-10-27 evening), `#brain-score` (Schrimpf et al. 2018's figure), `#rollout` (the live model, for a demonstration), `#extrapolation` (how far the canvas extrapolates, with
 its measured overshoot), `#detail` (why zoom: a television only a zoomed glimpse finds); then the paper's figures and
 tables, each with the question it answers in its notes (`sources/paper-figures.json`): Fig. 4, the ablations'
 downstream accuracy, the canvas updates within a glimpse, the pretraining dataset, ImageNet-1k against inference cost,
 the architecture control, COCO detection, the learned policies. Removed on 2026-10-27 (A, at Yohaï's request to
-eliminate weak AI-written backups; git keeps them): `#architecture-paper` (the figure `#architecture` shows),
+eliminate weak AI-written backups; git keeps them): `#free-viewing` ("Toward AVFMs for Neuro-AI", removed 2026-10-27 evening), `#architecture-paper` (the figure `#architecture` shows),
 `#history` (the earlier form of `#gap`), `#results` (its point, CanViT-B against passive and active models, is now
 `#state-of-the-art`'s), `#cost` (rejected as drawn; the architecture control answers training cost under matched
 conditions, and the accounting stays in `experiments/training_cost/`), `#canvas` (`#canvit-rollout` shows the canvas,
@@ -635,6 +635,24 @@ removed.
   should reach the same accuracy after enough glimpses of a static scene.
 - The Backup tables are the camera-ready's at `8924d417`; the dataset-scale table's values are still being decided for
   the paper. `paper_figures.py try` then `accept` refreshes them.
+
+## Notes provenance
+
+Since 2026-10-27 evening the speaker notes hold only what is said (and [CLICK]); who wrote them is recorded here and
+kept current with every change to the notes.
+
+- Part I, `#title` to `#compare`: Sabrina's, except two agent lines on `#dinov3-and-the-brain` ("This suggests that for
+  self-supervised foundation models like DINOv3, scaling up pretraining matters if we aim to capture higher-order neural
+  responses."), which she says as written. Her per-slide "[Timing: …]" lines and her "[next slide]" were removed on
+  2026-10-27; the speaker notes' timing line replaces them, and her rehearsal times are under "Rehearsal timings".
+- Part II, `#paper` to `#links`: Yohaï's wording from his run-throughs of 2026-10-27 (16:37, 19:56), false starts
+  removed and self-corrections applied, except one agent line on `#architecture` ("We also carry a recurrent CLS token
+  from one glimpse to the next, a global summary that we read out for classification."), which he says as written.
+- Appendix: `#canvas-updates` is Yohaï's up to its first Write, then three agent lines (the second and third Writes,
+  the emergent progression). Agent drafts: the notes of `#brain-score`, `#rollout`, `#extrapolation`, `#detail`, and of
+  the paper's figures and tables shown (`sources/paper-figures.json`: `resolution_and_mask_size`,
+  `tab:ablation-downstream`, `canvas_evolution`, `tab:dataset-scale`, `tab:in1k-efficiency`,
+  `tab:architecture-control`, `tab:coco-detection`, `learned_policies_miou`).
 
 ## Open work
 

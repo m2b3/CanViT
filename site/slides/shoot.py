@@ -12,8 +12,8 @@ Writes NN-<slide id>.png (with --steps, one image per click) and errors.txt into
 missing an id. Animations are captured after --wait-ms on each slide. Layout problems on each captured state (a title
 that wraps, visible content in the footer band, a word alone on the last line of a text block, text blocks that
 overlap) go to layout.txt and are printed, without changing the exit status: some titles wrap by design. So does a
-presented slide (not Backup) whose speaker notes mark a different number of [CLICK]s than the slide has clicks, and
-an agent's draft notes with a transition line.
+presented slide (not in the appendix) whose speaker notes mark a different number of [CLICK]s than the slide has clicks, and
+notes with a transition line.
 """
 
 import asyncio
@@ -103,22 +103,18 @@ LAYOUT_PROBLEMS_JS = r"""([footerTop]) => {
 
 
 # The current slide's speaker notes: its clicks as reveal.js counts them (fragments sharing an index are one click)
-# against the notes' [CLICK] marks; and, in an agent's draft (the authors' own text is theirs to word), transition
-# lines, which notes never have. Backup slides (after #backup) are not presented and not checked.
+# against the notes' [CLICK] marks; and transition lines, which notes never have. The appendix's slides (after #appendix) are not presented and not checked.
 NOTES_PROBLEMS_JS = r"""() => {
-  const slide = deck.getCurrentSlide(), backup = document.querySelector("#backup");
-  if (backup && backup.compareDocumentPosition(slide) & Node.DOCUMENT_POSITION_FOLLOWING) return [];
+  const slide = deck.getCurrentSlide(), appendix = document.querySelector("#appendix");
+  if (appendix && appendix.compareDocumentPosition(slide) & Node.DOCUMENT_POSITION_FOLLOWING) return [];
   const notes = slide.querySelector("aside.notes");
   if (!notes) return [];
   const problems = [];
   const clicks = new Set([...slide.querySelectorAll(".fragment")].map((f) => f.dataset.fragmentIndex)).size;
   const marked = (notes.textContent.match(/\[CLICK\]/g) || []).length;
   if (clicks !== marked) problems.push(`speaker notes mark ${marked} [CLICK] for ${clicks} clicks`);
-  if (!notes.textContent.includes("[AI draft")) return problems;
   for (const item of notes.querySelectorAll("li")) {
-    const text = item.textContent.trim();
-    if (text.startsWith("[")) continue;
-    if (/^Transition\b/.test(text)) problems.push(`AI draft, a transition line: "${text}"`);
+    if (/^Transition\b/.test(item.textContent.trim())) problems.push(`a transition line: "${item.textContent.trim()}"`);
   }
   return problems;
 }"""
@@ -158,9 +154,7 @@ async def shoot(args: Shoot) -> int:
 
         page.on("console", on_console)
         page.on("pageerror", lambda error: errors.append(f"[{where['slide']}] page error: {error}"))
-        # The notes' authoring marks, which the checks below read, unless this is a still capture (pdf_backup.py).
-        url = args.url if "capture" in args.url else args.url + ("&" if "?" in args.url else "?") + "markers"
-        await page.goto(url)
+        await page.goto(args.url)
         await page.wait_for_function("window.deck?.isReady()")
         count = await page.evaluate("deck.getTotalSlides()")
         for index in range(count):

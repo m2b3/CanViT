@@ -4,13 +4,12 @@
 //   import { insertPaperFigures } from "../paper-figures.js";
 //   await insertPaperFigures("sources/paper-figures.json");
 //
-// Every enabled entry becomes a slide after the slide its `where` names, or at the end of the Backup slides for
-// "backup"; entries with the same `where` keep the manifest's order. An accepted entry shows its tracked render; any
+// Every enabled entry becomes a slide after the slide its `where` names, or at the end of the appendix for
+// "appendix"; entries with the same `where` keep the manifest's order. An accepted entry shows its tracked render; any
 // other its trial render in the talk's .paper-figures/, which is never published (deploy.sh refuses an enabled entry
-// that is not accepted) and is marked as a trial unless ?present. The published deck has no Backup slides
-// (published_deck.py), so an entry placed in Backup, or after a Backup slide, is left out of it.
+// that is not accepted) and is marked as a trial unless ?present.
 
-const BACKUP = "backup";
+const APPENDIX = "appendix";
 const TRIALS = ".paper-figures";
 const params = new URLSearchParams(location.search);
 const presenting = params.has("present") || params.has("receiver");
@@ -73,17 +72,17 @@ export async function insertPaperFigures(manifestUrl) {
   const enabled = (await response.json()).figures.filter((entry) => entry.enabled);
   if (enabled.length === 0) return;
   const slides = document.querySelector(".reveal .slides");
-  const hasBackup = Boolean(slides.querySelector(":scope > section#backup"));
+  const hasAppendix = Boolean(slides.querySelector(":scope > section#appendix"));
   const placed = new Map(); // where -> the slide last placed there
   for (const entry of enabled) {
     let after;
-    if (entry.where === BACKUP) {
-      if (!hasBackup) continue;
-      after = placed.get(BACKUP) ?? slides.querySelector(":scope > section:last-of-type");
+    if (entry.where === APPENDIX) {
+      if (!hasAppendix) continue;
+      after = placed.get(APPENDIX) ?? slides.querySelector(":scope > section:last-of-type");
     } else {
       const named = slides.querySelector(`:scope > section#${CSS.escape(entry.where)}`);
       if (!named) {
-        if (hasBackup) throw new Error(`${manifestUrl}: ${entry.id} has where="${entry.where}", which names no slide`);
+        if (hasAppendix) throw new Error(`${manifestUrl}: ${entry.id} has where="${entry.where}", which names no slide`);
         continue;
       }
       after = placed.get(entry.where) ?? named;

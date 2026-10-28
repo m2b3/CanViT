@@ -45,7 +45,6 @@
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>[Timing: 0:45]</li>
     <li>Hi, we're super excited to be here.</li>
     <li>We're going to tell you about a <b>new class</b> of foundation models,</li>
     <li>which we call <b>Active-Vision Foundation Models</b>, or AVFMs.</li>
@@ -65,7 +64,6 @@
     <figure class="zhuang fragment"><div class="plot"><p class="axis y">Noise-corrected IT predictivity</p><img src="assets/figures/zhuang-2021-fig2b-it.png" alt="Noise-corrected IT predictivity of networks trained without labels against a supervised network: several contrastive models, among them SimCLR and Local Aggregation, are not significantly different from the supervised one"></div><figcaption><b class="regime">Unsupervised / self-supervised</b><span class="cite">Zhuang et al. 2021, <i>PNAS</i></span></figcaption></figure>
   </div>
   <aside class="notes"><ul>
-    <li>[Timing: 0:50]</li>
     <li>Deep artificial neural networks have a long history</li>
     <li>as <b>models of the ventral visual stream</b>.</li>
     <li>Some of the first deep networks to predict its responses well were trained with <b>supervised</b> learning.</li>
@@ -104,7 +102,6 @@
   <p class="cite">DINOv3 ViT-B/16, Siméoni et al., <i>TMLR</i> 2026</p>
   <span class="fragment step-marker" data-shows="decode"></span>
   <aside class="notes"><ul>
-    <li>[Timing: 0:45]</li>
     <li>A <b>notable example</b> of a self-supervised vision foundation model is DINOv3,</li>
     <li>which came out in summer 2025.</li>
     <li>Given an <b>image</b>, it produces a <b>feature map</b>,</li>
@@ -128,7 +125,6 @@
   <span class="fragment step-marker" data-shows="scaling"></span>
   <figure class="scaling"><p class="takeaway">Late alignment with higher-order cortical areas</p><img src="assets/figures/raugel-2025-fig5e-half-time-vs-distance.png" alt="For 15 cortical regions, the training steps DINOv3 needs to reach half its final encoding score, against the region's distance from V1: early visual areas are matched first, frontal areas only after about twice as much training"><figcaption class="cite">Raugel et al. 2026, <i>ICLR</i> (Fig. 5E of arXiv:2508.18226v1)</figcaption></figure>
   <aside class="notes"><ul>
-    <li>[Timing: 0:35]</li>
     <li>DINOv3 was at the center of a recent study by Raugel and colleagues</li>
     <li>that used <b>7-Tesla fMRI and MEG</b> imaging</li>
     <li>to <b>disentangle</b> the factors of convergence between brains and the model.</li>
@@ -136,15 +132,14 @@
     <li>A <b>striking finding</b> was</li>
     <li>that representational alignment between the model and <b>higher brain areas</b></li>
     <li>took <b>more training</b> to emerge than for lower areas.</li>
-    <li>[AI draft: not the authors' text] This suggests that for self-supervised foundation models like DINOv3,</li>
-    <li>[AI draft: not the authors' text] <b>scaling up</b> pretraining matters if we aim to capture <b>higher-order neural responses</b>.</li>
+    <li>This suggests that for self-supervised foundation models like DINOv3,</li>
+    <li><b>scaling up</b> pretraining matters if we aim to capture <b>higher-order neural responses</b>.</li>
   </ul></aside>
 </section>
 
 <section id="passive-models" class="signpost" data-status="draft">
   <p class="statement">What's missing?</p>
   <aside class="notes"><ul>
-    <li>[Timing: 0:10]</li>
     <li>These models are great NeuroAI tools,</li>
     <li><b>but</b> they're missing something <b>fundamental</b>.</li>
     <li>Can you guess?</li>
@@ -160,7 +155,6 @@
   </div>
   <span class="fragment step-marker" data-shows="full-scene"></span>
   <aside class="notes"><ul>
-    <li>[Timing: 0:15]</li>
     <li>Our vision is inherently <b>active</b>:</li>
     <li>we constantly <b>shift our gaze</b></li>
     <li>to bring our high acuity <b>fovea</b> to regions of interest.</li>
@@ -184,7 +178,6 @@
   <span class="fragment step-marker" data-shows="rest"></span>
   <span class="fragment step-marker" data-shows="neuro"></span>
   <aside class="notes"><ul>
-    <li>[Timing: 0:35]</li>
     <li>Drawing inspiration from human vision,</li>
     <li>so-called <b>deep active vision models</b>,</li>
     <li>which incorporate <b>virtual eye movements</b>, have been developed.</li>
@@ -216,7 +209,6 @@
   <span class="fragment step-marker" data-shows="bars"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
-    <li>[Timing: 0:45]</li>
     <li><b>Although</b> active-vision models are structurally and conceptually compelling,</li>
     <li>they have <b>struggled to match</b> the visual intelligence of their passive counterparts.</li>
     <li>This gap is <b>especially striking</b> in so-called <b>dense prediction</b> tasks,</li>
@@ -251,14 +243,13 @@
       <p class="role">Policy</p>
     </div>
   </div>
-  <!-- The claim under the diagram; the prior models' own ablations are on #active-vision-model-ablations (Backup). -->
+  <!-- The claim under the diagram; the prior models' own ablations are on #active-vision-model-ablations (Appendix). -->
   <div class="bottom">
     <p class="claim"><span>No policy can make up for a poor observer.</span> <span>A general-purpose observer lets you use any policy.</span></p>
   </div>
   <span class="fragment step-marker" data-shows="claim"></span>
   <span class="fragment step-marker" data-shows="active-focus"></span>
   <aside class="notes"><ul>
-    <li>[Timing: 0:45]</li>
     <li>To better understand this gap,</li>
     <li>it's helpful to consider active-vision models along <b>three axes</b>:</li>
     <li><b>instantaneous vision</b>, <b>memory</b> and <b>action selection</b>.</li>
@@ -294,7 +285,6 @@
   </div>
   <span class="fragment step-marker" data-shows="tasks"></span>
   <aside class="notes"><ul>
-    <li>[Timing: 0:35]</li>
     <li><b>So</b>, we just talked about a "general-purpose observer".</li>
     <li>Can we train a general-purpose <b>policy</b>?</li>
     <li>In a landmark 1967 experimental psychology study by <b>Yarbus</b>,</li>
@@ -303,7 +293,6 @@
     <li>The study found that their eye movement patterns, or <b>scanpaths</b>,</li>
     <li>were <b>strongly dependent</b> on the question they were asked,</li>
     <li><b>showing that</b> the "right" viewing policy <b>depends on the task</b> at hand.</li>
-    <li>[next slide]</li>
   </ul></aside>
 </section>
 
@@ -322,7 +311,6 @@
   </div>
   <span class="fragment step-marker" data-shows="goal"></span>
   <aside class="notes"><ul>
-    <li>[Timing: 0:45–0:50]</li>
     <li>Alright, that was a lot.</li>
     <li><b>Putting it all together</b>:</li>
     <li><b>passive</b> foundation models like DINOv3 have rich <b>general-purpose</b> representations,</li>
@@ -368,7 +356,6 @@
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>Thank you for this great intro.</li>
     <li>Now I'm going to tell you about our efforts to actually build an active-vision foundation model, one that we call CanViT, standing for the Canvas Vision Transformer.</li>
     <li>This work was supervised by Professor Audrey Durand and Professor Suresh Krishna.</li>
@@ -395,7 +382,6 @@
   <span class="fragment step-marker" data-shows="g3"></span>
   <span class="fragment step-marker" data-shows="g4"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>Let's set up the problem that CanViT is supposed to solve.</li>
     <li>We consider a scene, which is a high-resolution image,</li>
     <li>[CLICK]</li>
@@ -418,7 +404,6 @@
   <div class="outline"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <span class="fragment step-marker" data-shows="architecture"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>To actually build this model, we needed to develop a new architecture and a new pretraining scheme, and to evaluate the quality of this model, we ran some experiments.</li>
     <li>[CLICK]</li>
     <li>I'm going to tell you first about the architecture side of things.</li>
@@ -445,7 +430,6 @@
   <span class="fragment step-marker" data-shows="vit"></span>
   <span class="fragment step-marker" data-shows="tokens"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>Let's go back to what we would do if we didn't have CanViT.</li>
     <li>If we have a scene and we want to process it with a modern vision architecture, like a regular Vision Transformer,</li>
     <li>[CLICK]</li>
@@ -485,7 +469,6 @@
   <span class="fragment step-marker" data-shows="answer-near"></span>
   <span class="fragment step-marker" data-shows="gap"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>But there's a problem with this: each glimpse is processed independently of the other glimpses,</li>
     <li>so the model only has instantaneous vision, one of those three components that we told you about in part one.</li>
     <li>It really has no way to extrapolate spatially beyond what it has seen, or to put together disparate pieces of evidence.</li>
@@ -512,12 +495,11 @@
   <span class="fragment step-marker" data-shows="next"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>That motivates why we needed to come up with a new architecture.</li>
     <li>Our architecture builds upon a standard Vision Transformer for instantaneous processing, but we augment this component with a memory module that we call the canvas.</li>
     <li>The Vision Transformer is responsible for retinotopic, glimpse-centered visual processing,</li>
     <li>whereas the canvas starts off without any scene-relevant information at the beginning of an episode, and then gets gradually updated through what we call Canvas Attention read and write operations.</li>
-    <li>[AI draft: not the authors' text] We also carry a recurrent CLS token from one glimpse to the next, a global summary that we read out for classification.</li>
+    <li>We also carry a recurrent CLS token from one glimpse to the next, a global summary that we read out for classification.</li>
     <li>Here we see a glimpse coming into the model. As the backbone processes it, it reads from the canvas and writes to it.</li>
     <li>From that local evidence, the model produces a global understanding of the scene.</li>
     <li>But of course, it hasn't seen much here: only a cat's ears. It does extrapolate that there might be something like a whole cat in the picture, but it can't know for sure.</li>
@@ -546,7 +528,6 @@
   </div>
   <span class="fragment step-marker" data-shows="zoom"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>A key component of this process is to handle space correctly.</li>
     <li>We developed a positional encoding scheme based on a well-established technique called rotary position embeddings, or RoPE,</li>
     <li>which allows the model to identify where each piece of evidence came from, and relate it to its spatiotopic, scene-wide canvas.</li>
@@ -577,7 +558,6 @@
   </div>
   <span class="fragment step-marker" data-shows="payoff"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>To zoom in a bit more on the computational mechanism behind the Canvas Attention reads and writes that I told you about: here's one step of Canvas Attention.</li>
     <li>You can think of it as a cross-attention mechanism, for those who are familiar with Transformers, which uses the scene-relative rotary position embeddings that I just told you about, with a few twists.</li>
     <li>[CLICK]</li>
@@ -594,7 +574,6 @@
 <section id="outline-pretraining" class="signpost" data-status="draft">
   <div class="outline on-pretraining"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>Now I'm going to tell you about how we actually train this model to be a general-purpose active-vision foundation model.</li>
   </ul></aside>
 </section>
@@ -604,7 +583,6 @@
        "disentangles 'how to see in an active-vision setting' from 'where to look'"); Yohaï's formulation. -->
   <p class="statement"><span>Before knowing <span class="look">where to look</span>,<br>we should know <span class="see">how to see</span>.</span></p>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>One of the key ideas behind what we did is that before knowing where to look, it's critical to know how to see.</li>
     <li>That ties back into the observer–policy distinction that Sabrina told you about in part one.</li>
   </ul></aside>
@@ -617,7 +595,6 @@
        then the glimpses as the model receives them (experiments/pretraining/crops.py). -->
   <div class="pretraining-grid"></div>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>During training, we presented the model with random glimpses: glimpses from random locations, at various zoom levels.</li>
     <li>We used two pretraining policies: one that we call R-IID, random, independent and identically distributed,</li>
     <li>and F-IID, the same thing, except that the very first glimpse is zoomed out.</li>
@@ -684,7 +661,6 @@
   <span class="fragment step-marker" data-shows="third"></span>
   <span class="fragment step-marker" data-shows="last"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>So what do we do with those glimpses?</li>
     <li>We take glimpses from scenes from a large dataset, we pass them through CanViT, and from the canvas we get predictions.</li>
     <li>Here it has seen the corner of a room, the ceiling: not a very informative prediction.</li>
@@ -717,7 +693,6 @@
   </div>
   </div>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>Some numbers on pretraining.</li>
     <li>We pretrained CanViT-B, our flagship model, on 13.2 million unique scenes from the ImageNet-21k dataset.</li>
     <li>We took one billion glimpses from this dataset, and we only used one H100 GPU to train our model.</li>
@@ -751,7 +726,6 @@
   </div>
   <span class="fragment step-marker" data-shows="canvit"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>To go back to the example I told you about earlier:</li>
     <li>[CLICK]</li>
     <li>here's what things look like if we use CanViT instead of independent per-glimpse processing. CanViT actually completes the table.</li>
@@ -761,7 +735,6 @@
 <section id="outline-experiments" class="signpost" data-status="draft">
   <div class="outline on-experiments"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>Now let's get to experiments.</li>
   </ul></aside>
 </section>
@@ -785,7 +758,6 @@
   <span class="fragment step-marker" data-shows="in1k"></span>
   <span class="fragment step-marker" data-shows="in1k-canvit"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>On ADE20K semantic segmentation,</li>
     <li>[CLICK]</li>
     <li>CanViT sets a new state of the art among active-vision models, by a very large margin,</li>
@@ -804,7 +776,6 @@
        introduced on #pretraining-policies, EG-C2F on #eg-c2f, every policy before the results (Y, 2026-10-24). -->
   <div class="stages"></div>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>To zoom in on how we evaluated the model: we used distinct policies during evaluation, not just the pretraining policies that I told you about before, R-IID and F-IID.</li>
     <li>The most important is what we call the C2F policy, or coarse-to-fine, which subdivides a scene into quadrants recursively and traverses them sequentially.</li>
     <li>This policy is deterministic across zoom levels, but it randomizes the visitation order within each zoom level,</li>
@@ -841,7 +812,6 @@
   <span class="fragment step-marker" data-shows="quadrants"></span>
   <span class="fragment step-marker" data-shows="next" data-canvit-target="canvit-rollout.next-glimpse" data-canvit-t="1"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>Another policy that is particularly interesting is what we call the entropy-guided coarse-to-fine policy.</li>
     <li>It's the same idea as C2F, except that it takes into account the model's own estimate of its uncertainty.</li>
     <li>For each output location of the model on ADE20K, we can get a probability distribution over classes.</li>
@@ -880,7 +850,6 @@
   <span class="fragment step-marker" data-shows="ade20k"></span>
   <span class="fragment step-marker" data-canvit-target=".ade20k canvit-policy-curves" data-canvit-show="both"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>We looked at the accuracy of the model by viewing policy, on both classification and segmentation.</li>
     <li>The fine-to-coarse strategy is by far the worst; it's actually worse than a random strategy.</li>
     <li>Starting from a full-scene view boosts performance significantly, although performance keeps improving afterwards.</li>
@@ -908,7 +877,6 @@
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-frontier" data-canvit-series="f2c-32 f2c-64 prior egc2f-32 egc2f-64"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>So what about computational efficiency in practice?</li>
     <li>Here we're plotting the cumulative cost of an episode, on the x-axis, against ADE20K segmentation quality.</li>
     <li>Here we're using the fine-to-coarse policy, first with a 32 by 32 canvas,</li>
@@ -940,7 +908,6 @@
   <span class="fragment step-marker" data-shows="learned"></span>
   <span class="fragment step-marker" data-shows="budget"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>Heuristic policies are great and all, but could we also have the model just learn where to look, in order to maximize both accuracy and efficiency? And could we do so inexpensively?</li>
     <li>[CLICK]</li>
     <li>The answer is yes. We trained policies using a couple of reinforcement learning methods; here I'm showing Q-learning.</li>
@@ -973,7 +940,6 @@
   <span class="fragment step-marker" data-shows="first" data-lines="14-17"></span>
   <span class="fragment step-marker" data-shows="second" data-lines="19-22"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>So, CanViT is open source. The code, the pretrained models and the readout heads are all available,</li>
     <li>and you can install it by just typing uv add canvit-pytorch in your terminal.</li>
     <li>[CLICK]</li>
@@ -997,7 +963,6 @@
   </div>
   <span class="fragment step-marker" data-shows="next"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>So, what's next? CanViT, as it stands, handles static scenes, so images,</li>
     <li>with glimpses of uniform resolution within each glimpse, even though the zoom level can change from one glimpse to the next.</li>
     <li>[CLICK]</li>
@@ -1029,17 +994,16 @@
   </div>
   <!-- The funders and computing providers of the paper's acknowledgments. -->
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed]</li>
     <li>That's it for me. Thank you very much.</li>
     <li>If you would like to learn more, the QR codes on screen will send you to the paper on arXiv, to the GitHub repository, and to our Hugging Face repository with our checkpoints.</li>
     <li>Thanks to all of our funders, and we're happy to take questions.</li>
   </ul></aside>
 </section>
 
-<!-- ============================================================== Backup -->
+<!-- ============================================================== Appendix -->
 
-<section id="backup" data-status="ready">
-  <p class="divider">Backup</p>
+<section id="appendix" data-status="ready">
+  <p class="divider">Appendix</p>
 </section>
 
 <section id="canvas-updates" data-status="draft">
@@ -1049,7 +1013,7 @@
        diagrams/canvas_write_evolution.py): the paper's cat, its first glimpse, and what each of the glimpse's three
        Canvas Attention Writes adds to the canvas (its residual), each colored by a PCA fitted on itself, as in the
        paper; one Write per click (canvas-updates.js). The writes count from 1 here, from 0 in the paper. The
-       glimpse's box is drawn on every map. In Backup since 2026-10-27 (it was after #learned-policy); the example and its
+       glimpse's box is drawn on every map. In the appendix since 2026-10-27 (it was after #learned-policy); the example and its
        alternatives: TALK.md, "#canvas-updates". -->
   <div class="updates">
     <figure class="scene"><div class="frame"><img alt="The paper's cat, with the glimpse's box"><span class="box"></span></div><figcaption>Scene</figcaption></figure>
@@ -1064,17 +1028,16 @@
   <span class="fragment step-marker" data-shows="write-2"></span>
   <span class="fragment step-marker" data-shows="write-3"></span>
   <aside class="notes"><ul>
-    <li>[From Yohaï's run-throughs of 2026-10-27 (16:37, 19:56), false starts removed; the recording ends during this slide, and the lines marked AI draft continue it in his manner]</li>
     <li>One more thing that I'd like to tell you about is what we saw when we looked inside the model.</li>
     <li>It has multiple Canvas Attention layers within a single glimpse,</li>
     <li>and we observed an interesting progression across depth within each glimpse, in the Canvas Attention write residuals that get sent to the canvas.</li>
     <li>[CLICK]</li>
     <li>The first Canvas Attention write seems to deal with essentially only what is contained within the glimpse, and doesn't represent much that is interpretable in human terms.</li>
     <li>[CLICK]</li>
-    <li>[AI draft: not the authors' text] The second write starts to reflect the structure of the objects within the glimpse.</li>
+    <li>The second write starts to reflect the structure of the objects within the glimpse.</li>
     <li>[CLICK]</li>
-    <li>[AI draft: not the authors' text] And the third one actually extrapolates beyond the confines of the glimpse, and delineates sharper object boundaries.</li>
-    <li>[AI draft: not the authors' text] So this progression is emergent: we never trained the model for it, but it reads like a processing hierarchy, going from local, feature-level content to scene-wide, semantically grounded content.</li>
+    <li>And the third one actually extrapolates beyond the confines of the glimpse, and delineates sharper object boundaries.</li>
+    <li>So this progression is emergent: we never trained the model for it, but it reads like a processing hierarchy, going from local, feature-level content to scene-wide, semantically grounded content.</li>
   </ul></aside>
 </section>
 
@@ -1083,24 +1046,8 @@
        PDF (assets/figures/PROVENANCE.md). -->
   <figure class="lone"><img src="assets/figures/brain-score-2018.png" alt="Brain-Score against ImageNet top-1 accuracy across many networks: correlated overall (r = 0.92); among the models above 70% top-1, no significant relationship"><figcaption class="cite">Schrimpf et al. 2018, <i>bioRxiv</i></figcaption></figure>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
     <li>Across networks, Brain-Score rises with ImageNet accuracy, with a correlation of 0.92.</li>
     <li><b>But</b> among the models above 70% top-1, the relationship is not significant.</li>
-  </ul></aside>
-</section>
-
-<section id="free-viewing" data-status="draft">
-  <h2>Toward AVFMs for Neuro-AI</h2>
-  <!-- Figures cropped from the papers' PDFs (assets/figures/PROVENANCE.md). -->
-  <div class="papers">
-    <figure><img src="assets/figures/xiao-2024-free-viewing-fig1ab.png" alt="A monkey freely viewing images; its eye trajectory over one image"><figcaption class="cite">Xiao, Sharma, Kreiman &amp; Livingstone 2024, <i>Nat. Neurosci.</i></figcaption></figure>
-    <figure class="fragment"><img src="assets/figures/sulewski-2026-avs-fig1a.png" alt="The AVS design: people freely view natural scenes while MEG and eye movements are recorded"><figcaption class="cite">Sulewski et al. 2026, <i>arXiv</i></figcaption></figure>
-  </div>
-  <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
-    <li>And this is where it comes back to neuroscience. There are now datasets where monkeys and people look wherever they want, with neural recordings: Xiao and colleagues in monkeys, thirteen of them and millions of fixations.</li>
-    <li>And the AVS dataset, MEG and eye tracking in people exploring natural scenes.</li>
-    <li>Because CanViT is policy-agnostic, you can take a recorded scanpath, a monkey's or a person's, turn each fixation into a viewpoint, replay it through the model, and read out what it knows after every fixation. That gives you a model of the observer that you can line up with recordings like these, fixation by fixation.</li>
   </ul></aside>
 </section>
 
@@ -1119,7 +1066,6 @@
   <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-episode" data-canvit-stage="all"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="all" data-canvit-readout="labels"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
     <li>All together on a street: a viewpoint, the glimpse it crops, CanViT reading and writing its canvas, and the canvas read out as a segmentation of the whole street at any time.</li>
   </ul></aside>
 </section>
@@ -1140,7 +1086,6 @@
     <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_ab.png" alt="">
   </div>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
     <li>Back to the table. A passive model on each glimpse alone: the middle is unknown.</li>
     <li>CanViT after the far end: it already extends the table beyond the glimpse.</li>
     <li>After the near end, the same from the other side.</li>
@@ -1176,7 +1121,6 @@
   <span class="fragment step-marker" data-shows="zoom"></span>
   <span class="fragment step-marker" data-shows="passive"></span>
   <aside class="notes"><ul>
-    <li>[AI draft: not the authors' text]</li>
     <li>128 &times; 128 px at any zoom: spatial coverage vs perception of detail.</li>
     <li>Mean p(television) over the TV: 0.03 after the full scene, 0.77 after the zoom, 0.03 after the full scene again; DINOv3 on the whole scene at 128 px: 0.004.</li>
     <li>4,151 small ADE20K objects (0.05 to 2% of the scene). Mean share of the object's pixels labeled as its class: 18% after the full scene, 32% after a zoom on it, 19% after the full scene twice.</li>
@@ -1211,7 +1155,7 @@
   import { POLICIES } from "../../js/canvit/policies.js";
   import { insertPaperFigures } from "../paper-figures.js";
   import { startDeck } from "../deck.js";
-  // The published deck has no Backup slides (site/deploy.sh cuts them): a Backup slide is drawn only when present.
+  // A slide is drawn only when present, so a slide can leave the deck without its drawing code.
   const drawIfPresent = (selector, draw) => { const slide = document.querySelector(selector); return slide && draw(slide); };
   await drawTimeline(document.querySelector("#timeline .timeline"));
   await drawMapNames();

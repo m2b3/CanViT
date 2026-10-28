@@ -11,7 +11,7 @@ the presenter view), and a presenter's copy with each slide's last state, its ti
         --out site/.screens/pdf/main-2026
 
 Writes into --out: frames/ (shoot.py's capture of each click with ?present&capture, which hides the deck's controls, at --scale, with its errors.txt and
-layout.txt), slides.pdf (a 16:9 page per click, Backup included after its divider), slides.pptx (the same pages, each
+layout.txt), slides.pdf (a 16:9 page per click, the appendix included after its divider), slides.pptx (the same pages, each
 with the lines of the notes said over it), notes.pdf (a page per slide: the
 slide's last state, the timing lines and the notes deck.js puts in its speaker view) and check.txt (what was verified).
 Exits with status 1 when the capture logged a browser error, a frame is blank, or a slide has no page. Do not edit

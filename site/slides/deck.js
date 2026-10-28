@@ -14,16 +14,12 @@
 //                                builds a diagram click by click, keyed on named states
 //   <section data-status="…">    how far the slide is from presentable: ready, draft or aspirational
 //   <div class="slides" data-talk-seconds="N">
-//                                the talk's time, shared among the slides before <section id="backup"> in proportion to
+//                                the talk's time, shared among the slides before <section id="appendix"> in proportion to
 //                                the words of their speaker notes (the spoken lines: not [CLICK] or other bracketed
 //                                markers, not a line in parentheses); each slide's range of the clock from 00:00 heads
 //                                its notes (⏱ 00:42–01:30, 48 s), so the budgets follow the notes as they change
 //   data-rehearsal="FILE"        on the same element: a measured run-through (experiments/rehearsal_timing.py), each
 //                                slide's range of that run's clock shown under its budget
-//   speaker notes                a line that is only a mark in brackets ([AI draft …], [From …], [Timing …]) or in
-//                                parentheses, and a mark in brackets that opens a line, are authors' annotations: hidden
-//                                unless the URL has ?markers, so the speaker view, the backups and the single file show
-//                                what is said ([CLICK] stays)
 //   data-load-near               on an element that loads something heavy when given `autoload` (<canvit-live>): the
 //                                attribute is added once its slide is the current one or the next, never at page load
 //   <code data-src="FILE">       filled with the file's text before reveal.js highlights it (class="language-…"), so
@@ -40,7 +36,6 @@ const STATUSES = ["ready", "draft", "aspirational"];
 const params = new URLSearchParams(location.search);
 const printing = params.has("print-pdf");
 const capturing = params.has("capture"); // a still capture (pdf_backup.py): no on-screen controls
-const markers = params.has("markers"); // the notes' authoring marks shown (shoot.py's checks read them)
 
 // Clicks on these never advance the deck: controls, links and the live model's scene.
 const INTERACTIVE = "a, button, input, select, textarea, label, video[controls], canvit-live, canvit-episode, canvit-frontier, canvit-rollout, [data-no-advance]";
@@ -165,7 +160,7 @@ function spokenWords(section) {
   return words;
 }
 
-/** Each slide before Backup gets the talk's time in proportion to its notes' words, back to back from 00:00; with a
+/** Each slide before the appendix gets the talk's time in proportion to its notes' words, back to back from 00:00; with a
  * measured run-through, its range in that run follows. */
 async function timeRanges(slides) {
   if (!slides.hasAttribute("data-talk-seconds")) return;
@@ -173,11 +168,11 @@ async function timeRanges(slides) {
   if (!(total > 0)) throw new Error(`data-talk-seconds="${slides.dataset.talkSeconds}"`);
   const timed = [];
   for (const section of slides.querySelectorAll(":scope > section")) {
-    if (section.id === "backup") break;
+    if (section.id === "appendix") break;
     timed.push(section);
   }
   const words = timed.map(spokenWords), all = words.reduce((a, b) => a + b, 0);
-  if (!all) throw new Error("data-talk-seconds: the notes of the slides before Backup have no words");
+  if (!all) throw new Error("data-talk-seconds: the notes of the slides before the appendix have no words");
   const clock = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
   const span = (start, end) => `${clock(Math.round(start))}–${clock(Math.round(end))}`;
   let run = null;
@@ -198,17 +193,6 @@ async function timeRanges(slides) {
     }
     section.querySelector("aside.notes")?.prepend(Object.assign(document.createElement("p"), { textContent: line }));
   });
-}
-
-/** The notes as said: authors' marks out of sight, unless ?markers. */
-function spokenNotes(slides) {
-  if (markers) return;
-  const mark = /^\s*\[(?!CLICK\])[^\]]*\]\s*/;
-  for (const line of slides.querySelectorAll("aside.notes li")) {
-    const text = line.textContent.trim();
-    if (/^\[(?!CLICK\])[^\]]*\]$/.test(text) || /^\(.*\)$/s.test(text)) line.remove();
-    else if (line.firstChild?.nodeType === Node.TEXT_NODE) line.firstChild.textContent = line.firstChild.textContent.replace(mark, "");
-  }
 }
 
 /** A button that starts the current slide over: fragments hidden, animations from the beginning. */
@@ -239,7 +223,6 @@ export async function startDeck(options = {}) {
   const slides = document.querySelector(".reveal .slides");
   checkStatuses(slides);
   await timeRanges(slides);
-  spokenNotes(slides);
   await fillCode(slides);
   const deck = new Reveal({
     width: 1280,

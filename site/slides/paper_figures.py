@@ -6,7 +6,7 @@
 
 A talk lists the figures and tables it may show in its sources/paper-figures.json, by the paper's own names: a figure
 by its export (paper/exports/NAME.pdf), a table by its LaTeX label. Every enabled entry is a slide, which
-paper-figures.js (beside this file) inserts after the slide the entry's `where` names, or at the end of the Backup
+paper-figures.js (beside this file) inserts after the slide the entry's `where` names, or at the end of the appendix
 slides. The deck is public while the paper's next version may not be, so a render reaches a talk in two steps:
 
 - `try` renders entries from a commit of a paper checkout into the talk's .paper-figures/ (ignored by git, never
@@ -55,8 +55,8 @@ TRIALS = Path(".paper-figures")
 ACCEPTED = Path("assets/paper-figures")
 PROVENANCE = "PROVENANCE.md"
 """The one file of ACCEPTED that is not a render: it points to the manifest."""
-BACKUP = "backup"
-"""The `where` of an entry shown at the end of the Backup slides, and the id of the section that opens them."""
+APPENDIX = "appendix"
+"""The `where` of an entry shown at the end of the appendix, and the id of the section that opens it."""
 
 MANUSCRIPT = "paper/latex/CanViT_Toward_AVFMs.tex"
 CAMERA_READY = "camera_ready_wrapper"
@@ -73,7 +73,7 @@ TALK_BUILD_TEX = rf"""% The camera-ready build with the drafting marks in black,
 ABOUT = (
     "The paper's figures and tables this talk may show, by the paper's names: a figure by its export "
     "(paper/exports/NAME.pdf), a table by its LaTeX label. An enabled entry is a slide after the slide its `where` "
-    'names, or at the end of the Backup slides for "backup"; `title` (HTML) heads it, `notes` (HTML) are its speaker '
+    'names, or at the end of the appendix for "appendix"; `title` (HTML) heads it, `notes` (HTML) are its speaker '
     "notes, `status` is its data-status (draft unless given). `accepted` records the render the talk ships. "
     'site/slides/paper_figures.py writes this file; the talk\'s AGENTS.md, "Paper figures", says how to use it.'
 )
@@ -154,8 +154,8 @@ class Entry:
     """A figure's export name, or a table's LaTeX label."""
     kind: Kind
     enabled: bool = False
-    where: str = BACKUP
-    """The id of the slide this one follows, or BACKUP for the end of the Backup slides."""
+    where: str = APPENDIX
+    """The id of the slide this one follows, or APPENDIX for the end of the appendix."""
     title: str = ""
     status: str | None = None
     """The slide's data-status; None for draft. deck.js checks the value."""
@@ -272,7 +272,7 @@ class Talk:
         return set(re.findall(r'<section\b[^>]*\bid="([^"]+)"', (self.dir / "index.html").read_text()))
 
     def check_where(self, entry: Entry) -> None:
-        if entry.where != BACKUP and entry.where not in self.slide_ids():
+        if entry.where != APPENDIX and entry.where not in self.slide_ids():
             raise SystemExit(f"{entry.id}: where={entry.where!r} names no slide of {shown(self.dir / 'index.html')}")
 
 
@@ -494,7 +494,7 @@ Ids = Annotated[tuple[str, ...], tyro.conf.Positional]
 
 @dataclass(frozen=True)
 class Sync:
-    """Add the paper's figures and tables at a commit to the talk's manifest, disabled and in Backup, in the paper's
+    """Add the paper's figures and tables at a commit to the talk's manifest, disabled and in the appendix, in the paper's
     order; entries already there keep their settings, and entries the paper no longer has are reported and kept."""
 
     talk: str
@@ -534,7 +534,7 @@ class Try:
     rev: str = "HEAD"
     """The commit of the checkout to read (a commit, branch or tag)."""
     where: str | None = None
-    """Place the slides after this slide (its id), or at the end of the Backup slides ("backup")."""
+    """Place the slides after this slide (its id), or at the end of the appendix ("appendix")."""
 
     def run(self) -> None:
         talk = Talk.named(self.talk)
@@ -555,7 +555,7 @@ class Try:
                     f"deletes it (`git checkout {MANIFEST}` keeps it instead)"
                 )
             manifest = manifest.with_entry(replace(entry, enabled=True, accepted=None))
-            place = "at the end of Backup" if entry.where == BACKUP else f"after #{entry.where}"
+            place = "at the end of the appendix" if entry.where == APPENDIX else f"after #{entry.where}"
             print(
                 f"{entry.id}: on trial {place}, rendered from {paper.commit[:12]} to {shown(talk.trial(entry.id, '.svg'))}"
             )
@@ -630,7 +630,7 @@ def problems(talk: Talk, manifest: Manifest) -> list[str]:
     slides = talk.slide_ids()
     accepted_files = set()
     for entry in manifest.entries:
-        if entry.where != BACKUP and entry.where not in slides:
+        if entry.where != APPENDIX and entry.where not in slides:
             found.append(f"{entry.id}: where={entry.where!r} names no slide")
         if entry.enabled and entry.accepted is None:
             found.append(f"{entry.id}: enabled but not accepted (`accept` it, or disable or `reject` it)")

@@ -431,9 +431,15 @@ canvit-policy-curves, canvit-frontier { --canvit-chart-tick: 17px; --canvit-char
 #eg-c2f .frame .map { position: absolute; left: 0; top: 0; width: var(--frame); opacity: 0; transition: opacity .7s ease; }
 #eg-c2f.shows-map:not(.shows-next) .frame .map { opacity: 1; }
 #eg-c2f .frame :is(.patches, .quadrants) { position: absolute; left: 0; top: 0; width: var(--frame); height: var(--frame); pointer-events: none; }
-#eg-c2f .patches rect { fill: none; vector-effect: non-scaling-stroke; opacity: 0; transition: opacity .4s ease; }
+#eg-c2f .patches :is(rect, circle) { fill: none; vector-effect: non-scaling-stroke; opacity: 0; transition: opacity .4s ease; }
 #eg-c2f .patches .halo { stroke: #fff; stroke-width: 6; }
 #eg-c2f .patches .outline { stroke: var(--ink); stroke-width: 2.5; }
+#eg-c2f .patches .ring.outline { stroke-width: 2; }
+/* The entropy map's key, readable from the room (canvit-legend's parts). */
+#eg-c2f canvit-legend { --canvit-legend-height: 4.2em; margin-top: 6px; }
+#eg-c2f canvit-legend::part(bar) { height: 10px; }
+#eg-c2f canvit-legend::part(ends) { font: 650 17px var(--sans); color: var(--ink); }
+#eg-c2f canvit-legend::part(range) { font: 500 15px var(--sans); color: var(--text); }
 #eg-c2f .patch { position: absolute; left: 590px; width: 410px; opacity: 0; transition: opacity .5s ease; }
 #eg-c2f .patch.certain { top: 10px; }
 #eg-c2f .patch.uncertain { top: 270px; }

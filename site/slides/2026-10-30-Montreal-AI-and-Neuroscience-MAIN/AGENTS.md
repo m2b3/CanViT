@@ -58,6 +58,9 @@ Each thing has one home; everything else points to it.
   `data-canvit-target`/`data-canvit-t`, `data-shows`, `<section data-status>`.
 - `../package.json`: reveal.js, pinned and installed locally (`npm ci --prefix site/slides`), so a talk runs offline.
 - `../shoot.py`: screenshots of every slide in Chromium, the browser errors and layout problems (below).
+- `../pdf_backup.py`: the PDF backup for a room where the browser deck cannot run: every click of every slide as a
+  page (`slides.pdf`, Backup included) and a presenter's copy with each slide's last state, timing and notes
+  (`notes.pdf`), with its checks in `check.txt`; rebuild it after the last change before a talk.
 - `../stress.py`, `../check_published.py`: a talk skipped through at speed; its files checked against the published site
   (below).
 - This directory: `index.html` (every slide, with speaker notes), `talk.css` (rules scoped by slide id), talk-only

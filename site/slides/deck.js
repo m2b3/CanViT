@@ -35,6 +35,7 @@ const STATUSES = ["ready", "draft", "aspirational"];
 
 const params = new URLSearchParams(location.search);
 const printing = params.has("print-pdf");
+const capturing = params.has("capture"); // a still capture (pdf_backup.py): no on-screen controls
 
 // Clicks on these never advance the deck: controls, links and the live model's scene.
 const INTERACTIVE = "a, button, input, select, textarea, label, video[controls], canvit-live, canvit-episode, canvit-frontier, canvit-rollout, [data-no-advance]";
@@ -205,7 +206,7 @@ function replayButton(deck) {
   document.querySelector(".reveal").append(button);
   const sync = () => {
     const slide = deck.getCurrentSlide();
-    button.hidden = printing || !slide?.querySelector("[data-play], .fragment");
+    button.hidden = printing || capturing || !slide?.querySelector("[data-play], .fragment");
   };
   deck.on("ready", sync);
   deck.on("slidechanged", sync);

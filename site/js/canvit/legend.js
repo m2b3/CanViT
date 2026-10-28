@@ -1,6 +1,7 @@
 // <canvit-legend src t layer [max] [domain]>: how to read a map. Segmentation: the
 // largest classes at glimpse t (at most `max`, default 5). Scalar maps: the colormap
-// and its range (`domain` as on the map). RGB maps: what the colors are.
+// and its range (`domain` as on the map). RGB maps: what the colors are. A scalar legend's bar, ends and range are
+// the shadow parts bar, ends and range, so a page can size them.
 
 import { requireLayer } from "./bundle.js";
 import { CanvitView, define, sheet } from "./view.js";
@@ -77,9 +78,9 @@ class CanvitLegend extends CanvitView {
       const fmt = (f) => spec.value(f, bundle).toFixed(spec.value(hi, bundle) < 0.1 ? 3 : 2);
       const quantity = spec.quantity(bundle);
       this.body.innerHTML = `
-        <div class="bar" style="background:${colormapGradient(spec.colormap)}"></div>
-        <div class="ends"><span>${spec.low}</span><span>${spec.high}</span></div>
-        <div class="range" title="${quantity}: ${fmt(lo)} to ${fmt(hi)}">${quantity} ${fmt(lo)}–${fmt(hi)}</div>`;
+        <div class="bar" part="bar" style="background:${colormapGradient(spec.colormap)}"></div>
+        <div class="ends" part="ends"><span>${spec.low}</span><span>${spec.high}</span></div>
+        <div class="range" part="range" title="${quantity}: ${fmt(lo)} to ${fmt(hi)}">${quantity} ${fmt(lo)}–${fmt(hi)}</div>`;
     }
   }
 }

@@ -472,8 +472,8 @@
       <img class="pixels answer" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="A passive model's probability of table from the far glimpse alone, pasted where the glimpse was taken">
       <img class="pixels answer" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="A passive model's probability of table from the near glimpse alone, pasted where the glimpse was taken">
       <svg class="marks" viewBox="0 0 470 470">
-        <ellipse class="halo" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
-        <ellipse class="ring" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
+        <ellipse class="halo" cx="320" cy="268" rx="50" ry="30" transform="rotate(27 320 268)"/>
+        <ellipse class="ring" cx="320" cy="268" rx="50" ry="30" transform="rotate(27 320 268)"/>
         <text class="query" x="320" y="283" text-anchor="middle">?</text>
       </svg>
       <p class="scale"><span>0</span><i></i><span>1</span><b>p(table)</b></p>
@@ -508,7 +508,7 @@
        CLS token and the canvas carried over; the third. #vit-on-a-glimpse already showed the backbone alone. -->
   <figure class="arch-reveal"><img src="../../assets/paper/arch_overview.svg" alt="CanViT's architecture over three glimpses: for each, a ViT backbone (purple blocks) processes the glimpse (blue) beside the canvas (red), reading from it and writing to it between blocks; the canvas and a recurrent CLS token (green) carry over to the next glimpse."><!-- The figure's timestep labels count glimpses from 0 (t = 0, and v with subscript t); the talk counts from 1. White
        patches over them (positions located in the paper's PDF rendered at 2000 px wide) carry "Glimpse n" and the bare
-       viewpoint (x, y, s). --><svg class="relabel" viewBox="0 0 2000 1825" preserveAspectRatio="none" aria-hidden="true"><rect x="7" y="1600" width="289" height="44"/><text class="viewpoint" x="152" y="1634">x=−0.7, y=−0.7, s=0.2</text><rect x="739" y="1600" width="248" height="44"/><text class="viewpoint" x="863" y="1634">x=0.3, y=0.3, s=0.5</text><rect x="1488" y="1600" width="294" height="44"/><text class="viewpoint" x="1635" y="1634">x=0.25, y=−0.8, s=0.15</text><rect x="206" y="1651" width="147" height="51"/><text class="glimpse-count" x="280" y="1694">Glimpse 1</text><rect x="955" y="1651" width="145" height="51"/><text class="glimpse-count" x="1028" y="1694">Glimpse 2</text><rect x="1691" y="1651" width="146" height="51"/><text class="glimpse-count" x="1764" y="1694">Glimpse 3</text></svg><span class="mask"></span></figure>
+       viewpoint (x, y, s). --><svg class="relabel" viewBox="0 0 2000 1825" preserveAspectRatio="none" aria-hidden="true"><rect x="7" y="1600" width="289" height="44"/><text class="viewpoint" x="152" y="1634">x=−0.7, y=−0.7, s=0.2</text><rect x="739" y="1600" width="248" height="44"/><text class="viewpoint" x="863" y="1634">x=0.3, y=0.3, s=0.5</text><rect x="1488" y="1600" width="294" height="44"/><text class="viewpoint" x="1635" y="1634">x=0.25, y=−0.8, s=0.15</text><rect x="206" y="1651" width="147" height="51"/><text class="glimpse-count" x="280" y="1694">Glimpse 1</text><rect x="955" y="1651" width="145" height="51"/><text class="glimpse-count" x="1028" y="1694">Glimpse 2</text><rect x="1691" y="1651" width="146" height="51"/><text class="glimpse-count" x="1748" y="1694">Glimpse 3</text></svg><span class="mask"></span></figure>
   <span class="fragment step-marker" data-shows="next"></span>
   <span class="fragment step-marker" data-shows="more"></span>
   <aside class="notes"><ul>
@@ -742,8 +742,8 @@
       <img class="pixels answer" src="../../data/talk/table/ADE_val_00001271-table/prob_dinov3.png" alt="A passive model's probability of table from the near glimpse alone">
       <img class="pixels canvit" src="../../data/talk/table/ADE_val_00001271-table/prob_ab.png" alt="CanViT's probability of table after both glimpses: the table continues through the middle">
       <svg class="marks" viewBox="0 0 470 470">
-        <ellipse class="halo" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
-        <ellipse class="ring" cx="320" cy="268" rx="62" ry="34" transform="rotate(27 320 268)"/>
+        <ellipse class="halo" cx="320" cy="268" rx="50" ry="30" transform="rotate(27 320 268)"/>
+        <ellipse class="ring" cx="320" cy="268" rx="50" ry="30" transform="rotate(27 320 268)"/>
         <text class="query" x="320" y="283" text-anchor="middle">?</text>
       </svg>
       <p class="scale"><span>0</span><i></i><span>1</span><b>p(table)</b></p>

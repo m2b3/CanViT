@@ -46,7 +46,7 @@ template.innerHTML = `
   .grid line { stroke: #e2e8f0; }
   .axis-line { stroke: var(--canvit-ink, #0f172a); stroke-width: 1.5; }
   .axis text { fill: var(--canvit-muted, #475569); font-size: var(--canvit-chart-tick, 14px); font-variant-numeric: tabular-nums; }
-  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-title, 15px); font-weight: 650; }
+  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-title, 15px); font-weight: 650; font-variant-numeric: normal; }
   .curve { fill: none; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
   .curve.dashed { stroke-width: 2.6; stroke-dasharray: 7 5; }
   .legend text { fill: var(--canvit-muted, #475569); font-size: var(--canvit-chart-tick, 14px); font-weight: 600; }

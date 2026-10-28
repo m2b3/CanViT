@@ -35,11 +35,17 @@ export async function drawPretrainingGrid(container, src, sceneName, policies) {
     const frame = Object.assign(document.createElement("div"), { className: "scene" });
     frame.append(Object.assign(document.createElement("img"), { src: `${src}/${scene.image}`, alt: "" }));
     const svg = el("svg", { viewBox: "-1 -1 2 2" }, frame);
-    viewpoints.forEach(([r, c, s], i) => {
+    viewpoints.forEach(([r, c, s]) => {
       el("rect", { x: c - s, y: r - s, width: 2 * s, height: 2 * s, class: "halo" }, svg);
       el("rect", { x: c - s, y: r - s, width: 2 * s, height: 2 * s }, svg);
-      const tag = el("text", { x: c - s + 0.04, y: r - s + 0.13 }, svg);
-      tag.textContent = i + 1;
+    });
+    // The glimpses' numbers over every box, each in its box's corner, moved along when it would cover an earlier one.
+    const placed = [];
+    viewpoints.forEach(([r, c, s], i) => {
+      let [x, y] = [c - s + 0.04, r - s + 0.13];
+      while (placed.some(([px, py]) => Math.abs(px - x) < 0.12 && Math.abs(py - y) < 0.12)) x += 0.13;
+      placed.push([x, y]);
+      el("text", { x, y }, svg).textContent = i + 1;
     });
     const glimpses = Object.assign(document.createElement("div"), { className: "glimpses" });
     viewpoints.forEach((_, i) => {

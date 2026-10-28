@@ -58,7 +58,7 @@ template.innerHTML = `
   .chart { display: block; width: 100%; overflow: visible; }
   .grid line { stroke: #e2e8f0; }
   .axis text { fill: var(--canvit-muted, #475569); font-size: var(--canvit-chart-tick, 13.5px); font-variant-numeric: tabular-nums; }
-  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-title, 14.5px); font-weight: 650; }
+  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-title, 14.5px); font-weight: 650; font-variant-numeric: normal; }
   .curve { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
   .band { opacity: .15; }
   .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-tick, 13.5px); }
@@ -416,7 +416,7 @@ class CanvitFrontier extends HTMLElement {
 
     // Baselines are labeled beside their markers on wide screens; narrow screens rely on the legend. A label goes left
     // where another baseline shares its cost or the edge is near, and above the reference line for the best prior.
-    // A label across the callout's corridor puts its glimpse count on a second line, which narrows it clear.
+    // A label across the callout's corridor, or on a staged build, puts its glimpse count on a second line, which narrows it clear.
     for (const b of baselines) {
       const style = BASELINES[b.name];
       if (!style) throw new Error(`<canvit-frontier>: no style for baseline "${b.name}"`);
@@ -435,7 +435,7 @@ class CanvitFrontier extends HTMLElement {
         label.setAttribute("x", String(px - 11));
         label.setAttribute("text-anchor", "end");
       }
-      if (inCorridor(label.getBBox())) {
+      if (staged || inCorridor(label.getBBox())) { // a staged build's curves pass close to the labels: a narrower label
         count.textContent = `${b.num_glimpses} glimpses`;
         count.setAttribute("x", label.getAttribute("x"));
         count.setAttribute("dy", "1.15em");

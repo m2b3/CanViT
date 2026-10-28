@@ -594,7 +594,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #vit-on-a-glimpse .box { position: absolute; box-sizing: border-box; border: 3px solid var(--glimpse); border-radius: 3px; opacity: 0; transition: opacity .4s ease; }
 #vit-on-a-glimpse .glimpse img, #vit-on-a-glimpse .tokens img { width: var(--picture); height: var(--picture); border-radius: 8px; }
 #vit-on-a-glimpse .glimpse img { box-shadow: 0 0 0 3px var(--glimpse); }
-#vit-on-a-glimpse .pca-label { margin: 4px 0 0; font-size: 15px; color: var(--ink); white-space: nowrap; }
+#vit-on-a-glimpse .pca-label { margin: 4px 0 0; font-size: 17px; font-weight: 600; color: var(--ink); white-space: nowrap; }
 #vit-on-a-glimpse .glimpse figcaption { color: var(--glimpse); }
 #vit-on-a-glimpse .vit { display: grid; place-items: center; width: 150px; height: var(--picture); box-sizing: border-box; border-radius: 14px;
                          background: #d8b4e2; border: 2px solid #a879b8; color: #5b2a73; font-size: 20px; font-weight: 800; text-align: center; }
@@ -752,7 +752,7 @@ table.compare thead .goal, table.compare thead .ours { color: var(--ink); }
 #sr-rope .canvas-cells { position: absolute; inset: 0; border-radius: 8px; --n: 32; --line: rgb(224 72 62 / .25); }
 #sr-rope .canvas-cells::after { content: ""; position: absolute; inset: 0;
                                 background: radial-gradient(circle, var(--canvas) 1.7px, transparent 2.3px) 0 0 / calc(100% / 32) calc(100% / 32); }
-#sr-rope .arrow { height: 3px; background: var(--muted); position: relative; margin: 0 26px 40px 0; }
+#sr-rope .arrow { height: 3px; background: var(--muted); position: relative; margin: 0 36px 40px 0; }
 #sr-rope .arrow::after { content: ""; position: absolute; right: -8px; top: -5.5px; border: 7px solid transparent; border-left: 10px solid var(--muted); border-right: 0; }
 #sr-rope .legend { grid-column: 3; display: flex; justify-content: center; gap: 26px; margin: 8px 0 0; font-size: 17px; font-weight: 650; }
 #sr-rope .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; vertical-align: 1px; }

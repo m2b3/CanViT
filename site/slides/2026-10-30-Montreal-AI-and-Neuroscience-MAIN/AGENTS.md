@@ -171,9 +171,9 @@ episodes, and requests each file they loaded from the published site [Yohaï, 20
 the run.
 
 Every slide carries `data-status`: `ready`, `draft` (content in place, visuals or wording to finish) or
-`aspirational` (shows what we want; the data or code behind it does not exist yet). Drafting views show it as a
-corner badge; `?present` hides the badges. An aspirational slide describes its missing visual in a
-`.placeholder` and has an entry in `TALK.md`; status changes land in the same commit as the work.
+`aspirational` (shows what we want; the data or code behind it does not exist yet). The slides show no badge for it.
+An aspirational slide describes its missing visual in a `.placeholder` and has an entry in `TALK.md`; status changes
+land in the same commit as the work.
 
 ## Writing slides
 

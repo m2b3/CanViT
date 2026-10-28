@@ -12,10 +12,9 @@
 //                                a frontier); with none shown, a target keeps the values of its markup
 //   data-shows="NAME"            on a fragment: while it is shown, its slide has the class shows-NAME, so the slide's CSS
 //                                builds a diagram click by click, keyed on named states
-//   <section data-status="…">    how far the slide is from presentable: shown as a corner badge unless ?present
+//   <section data-status="…">    how far the slide is from presentable: ready, draft or aspirational
 //   <section data-seconds="N">   the slide's share of the talk's time: the slides that have one run back to back from
-//                                00:00, and each shows its range (00:42–01:30) at the top of its speaker notes and, unless
-//                                ?present, as a corner badge
+//                                00:00, and each shows its range (00:42–01:30) at the top of its speaker notes
 //   data-load-near               on an element that loads something heavy when given `autoload` (<canvit-live>): the
 //                                attribute is added once its slide is the current one or the next, never at page load
 //   <code data-src="FILE">       filled with the file's text before reveal.js highlights it (class="language-…"), so
@@ -27,14 +26,9 @@ import Reveal from "./node_modules/reveal.js/dist/reveal.mjs";
 import RevealNotes from "./node_modules/reveal.js/dist/plugin/notes.mjs";
 import RevealHighlight from "./node_modules/reveal.js/dist/plugin/highlight.mjs";
 
-const STATUSES = {
-  ready: "ready",
-  draft: "draft",
-  aspirational: "aspirational: shows what we want; the data or code behind it does not exist yet",
-};
+const STATUSES = ["ready", "draft", "aspirational"];
 
 const params = new URLSearchParams(location.search);
-const presenting = params.has("present") || params.has("receiver");
 const printing = params.has("print-pdf");
 
 // Clicks on these never advance the deck: controls, links and the live model's scene.
@@ -141,15 +135,10 @@ function syncLines(deck) {
   pre.style.setProperty("--line-count", String(Number(match[2]) - Number(match[1]) + 1));
 }
 
-function statusBadges(slides) {
+function checkStatuses(slides) {
   for (const section of slides.querySelectorAll("section[data-status]")) {
     const status = section.dataset.status;
-    if (!(status in STATUSES)) throw new Error(`data-status="${status}": expected one of ${Object.keys(STATUSES).join(", ")}`);
-    if (presenting || printing || status === "ready") continue;
-    const badge = document.createElement("div");
-    badge.className = `status-badge ${status}`;
-    badge.textContent = STATUSES[status];
-    section.append(badge);
+    if (!STATUSES.includes(status)) throw new Error(`#${section.id}: data-status="${status}": expected one of ${STATUSES.join(", ")}`);
   }
 }
 
@@ -165,11 +154,6 @@ function timeRanges(slides) {
     const note = document.createElement("p");
     note.textContent = `⏱ ${range} (${seconds} s)`;
     section.querySelector("aside.notes")?.prepend(note);
-    if (presenting || printing) continue;
-    const badge = document.createElement("div");
-    badge.className = "time-badge";
-    badge.textContent = range;
-    section.append(badge);
   }
 }
 
@@ -199,7 +183,7 @@ function replayButton(deck) {
 
 export async function startDeck(options = {}) {
   const slides = document.querySelector(".reveal .slides");
-  statusBadges(slides);
+  checkStatuses(slides);
   timeRanges(slides);
   await fillCode(slides);
   const deck = new Reveal({

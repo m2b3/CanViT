@@ -1,16 +1,17 @@
-// <canvit-frontier src="ade20k_seg.json" [show="canvit|prior"] [series="..."]>: the paper's accuracy–efficiency frontier on ADE20K
-// (Figure 3A), drawn from its exported data: CanViT-B's mIoU against cumulative inference FLOPs, glimpse by glimpse,
-// for EG-C2F and F2C at 32² and 64² canvases, and the prior active models as points. Colors, line styles and markers
-// follow the paper's figure. show="prior" draws what active vision faced before CanViT instead: the prior active
-// models and the passive DINOv3 ViT-B/16 teacher at input resolutions from 128 to 512 px (the export's probe_table,
-// the paper's Figure 5C), on the same axes. The chart is drawn at its displayed size, so text stays legible on
-// narrow screens; hovering names the nearest point. series, for a talk's step-by-step build, names what to draw:
-// policy-canvas keys (f2c-32, f2c-64, egc2f-32, egc2f-64), prior (the prior active models) and dinov3 (the passive
-// teacher over input resolutions, as in show="prior"); each curve is then
-// labeled at its end (the legend and the best-prior reference line are then left out), the cost axis fits what is shown, and a change of series first
-// glides the axis to its new range, then draws the new curves in. height (px) fixes the chart's height.
-// x-scale="log" spaces the cost axis logarithmically, so the low budgets get room; y-range="LO HI" (mIoU, %) narrows
-// the vertical axis, curves clipped to it.
+// <canvit-frontier src="ade20k_seg.json" [show="canvit|prior"] [series="KEY …"] [height] [x-scale] [y-range]>: the
+// paper's accuracy–efficiency frontier on ADE20K (fig:main-ade20k-in1k-results), from its exported data: CanViT-B's
+// mIoU against cumulative inference FLOPs, glimpse by glimpse, for EG-C2F and F2C at 32² and 64² canvases, with the
+// prior active models as points, styled as in the paper's figure. The chart is drawn at its displayed size, so text
+// stays legible on narrow screens; hovering names the nearest point.
+//   show="prior"     the prior active models and the passive DINOv3 ViT-B/16 teacher at inputs of 128 to 512 px (the
+//                    export's probe_table, as in fig:resolution-and-mask-size-analysis), on the same axes
+//   series="KEY …"   a talk's step-by-step build: policy-canvas keys (f2c-32, f2c-64, egc2f-32, egc2f-64), prior and
+//                    dinov3. Curves are labeled at their ends instead of a legend and best-prior line; the cost axis
+//                    fits what is shown and glides to a new range before new curves draw in.
+//   height           the chart's height, px
+//   x-scale="log"    a logarithmic cost axis, giving the low budgets room
+//   y-range="LO HI"  the mIoU axis, %, curves clipped to it
+// --canvit-chart-tick, --canvit-chart-title, --canvit-chart-label and --canvit-chart-callout set the text sizes.
 
 import { POLICIES as PAPER_POLICIES } from "./policies.js";
 
@@ -20,10 +21,19 @@ const POLICIES = {
 };
 const CANVASES = { 32: { label: "32² canvas", dash: "7 5" }, 64: { label: "64² canvas", dash: "" } };
 const SCENE_SIZE = 512;
+// Prior active models share a color; their markers tell them apart.
+// XXX: the talk's talk.css repeats this color (#timeline .marker, .bar-chart .active).
+const PRIOR_ACTIVE = "#d97706";
+// Marker outlines, in a box of half-side 1 around the point; the chart scales them, the legend draws them at 7.
+const SHAPES = {
+  triangle: [[0, -1.15], [1, .7], [-1, .7]],
+  square: [[-.8, -.8], [.8, -.8], [.8, .8], [-.8, .8]],
+  diamond: [[0, -1.1], [1.1, 0], [0, 1.1], [-1.1, 0]],
+};
 const BASELINES = {
-  "AME (SETR)": { color: "#7f2704", marker: "triangle" },
-  "AME (MAE)": { color: "#00a4b8", marker: "triangle" },
-  AdaGlimpse: { color: "#6a3d9a", marker: "diamond" },
+  "AME (SETR)": { color: PRIOR_ACTIVE, marker: "triangle" },
+  "AME (MAE)": { color: PRIOR_ACTIVE, marker: "square" },
+  AdaGlimpse: { color: PRIOR_ACTIVE, marker: "diamond" },
 };
 const PASSIVE = { model: "DINOv3 ViT-B/16", color: "#334155" };
 const VIEWS = ["canvit", "prior"];
@@ -45,8 +55,8 @@ template.innerHTML = `
   .legend svg.marker { width: 12px; height: 12px; }
   .halo { paint-order: stroke; stroke: var(--canvit-surface, #fff); stroke-width: 5px; stroke-linejoin: round; }
   .reference { stroke: #64748b; stroke-width: 1.4; stroke-dasharray: 5 5; }
-  .reference-label { fill: #475569; font-size: 13.5px; font-weight: 600; }
-  .end-label { font-size: 13.5px; font-weight: 700; }
+  .reference-label { fill: #475569; font-size: var(--canvit-chart-tick, 13.5px); font-weight: 600; }
+  .end-label { font-size: var(--canvit-chart-label, 13.5px); font-weight: 700; }
   .takeaway { fill: var(--canvit-ink, #0f172a); font-size: 14px; font-weight: 650; }
   .arrow { fill: none; stroke: var(--canvit-ink, #0f172a); stroke-width: 1.4; stroke-linecap: round; }
   .arrow-halo { fill: none; stroke: var(--canvit-surface, #fff); stroke-width: 6; stroke-linecap: round; }
@@ -55,25 +65,34 @@ template.innerHTML = `
   .frame { position: relative; }
   .chart { display: block; width: 100%; overflow: visible; }
   .grid line { stroke: #e2e8f0; }
-  .axis text { fill: var(--canvit-muted, #475569); font-size: 13.5px; font-variant-numeric: tabular-nums; }
-  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: 14.5px; font-weight: 650; }
+  .axis text { fill: var(--canvit-muted, #475569); font-size: var(--canvit-chart-tick, 13.5px); font-variant-numeric: tabular-nums; }
+  .axis .title { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-title, 14.5px); font-weight: 650; font-variant-numeric: normal; }
   .curve { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
   .band { opacity: .15; }
-  .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: 13.5px; }
+  .baseline-label { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-tick, 13.5px); }
   .baseline-label tspan { fill: var(--canvit-muted, #475569); }
-  .callout { fill: var(--canvit-ink, #0f172a); font-size: 15px; font-weight: 750; }
+  .callout { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-callout, 15px); font-weight: 750; }
   .focus circle { fill: #fff; stroke-width: 2.5; }
-  .reveal { transition: width 1.4s cubic-bezier(.3, .6, .2, 1); }
-  .enter { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw-in 1.2s ease forwards; }
+  .reveal { transition: width var(--canvit-glide, 1.4s) cubic-bezier(.3, .6, .2, 1); }
+  .wipe { animation: wipe .8s ease backwards; }
   /* Fades in to the element's own opacity (a band's is .15): the animation sets only where it starts. */
   .enter-fade { animation: fade-in .6s ease .5s backwards; }
-  @keyframes draw-in { to { stroke-dashoffset: 0; } }
+  @keyframes wipe { from { width: 0; } }
+  .gain-path { fill: none; stroke: var(--canvit-ink, #0f172a); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .gain-halo { fill: none; stroke: var(--canvit-surface, #fff); stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+  .gain-head { fill: var(--canvit-ink, #0f172a); }
+  .gain-label .big { font-size: 1.35em; }
+  .gain-label { fill: var(--canvit-ink, #0f172a); font-size: var(--canvit-chart-callout, 15px); font-weight: 800; }
+  /* As the entering curves' wipe (.8 s) ends: the path draws, then its head and labels fade in. */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .6s ease .7s forwards; }
+  .late { animation: fade-in .4s ease 1.25s backwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
   @keyframes fade-in { from { opacity: 0; } }
   .tooltip { position: absolute; pointer-events: none; padding: 7px 10px; border-radius: 8px; background: var(--canvit-ink, #0f172a);
              color: #fff; font-size: 13.5px; line-height: 1.45; white-space: nowrap; transform: translate(-50%, calc(-100% - 12px)); }
   .tooltip b { font-weight: 650; }
   [hidden] { display: none !important; }
-  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } .enter, .enter-fade { animation: none; stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } .wipe, .enter-fade, .late { animation: none; } .draw { animation: none; stroke-dashoffset: 0; } }
 </style>
 <div class="frame"><svg class="chart" role="img"></svg><div class="tooltip" hidden></div></div>
 <div class="legend"></div>`;
@@ -98,11 +117,28 @@ function arrow(from, leave, to, arrive, parent) {
   el("path", { class: "arrow", d, "marker-end": "url(#arrowhead)" }, parent);
 }
 
+/** Whether the polyline through points passes through the box (Liang–Barsky clipping of each segment). */
+function crosses({ x: left, y: top, width, height }, points) {
+  return points.slice(1).some(([x1, y1], i) => {
+    const [x0, y0] = points[i];
+    let [t0, t1] = [0, 1];
+    for (const [p, q] of [[x0 - x1, x0 - left], [x1 - x0, left + width - x0], [y0 - y1, y0 - top], [y1 - y0, top + height - y0]]) {
+      if (p === 0) {
+        if (q < 0) return false;
+        continue;
+      }
+      if (p < 0) t0 = Math.max(t0, q / p);
+      else t1 = Math.min(t1, q / p);
+      if (t0 > t1) return false;
+    }
+    return true;
+  });
+}
+
 function marker(shape, x, y, size, color, parent) {
-  const r = size / 2;
-  const points = shape === "triangle"
-    ? [[x, y - r * 1.15], [x + r, y + r * 0.7], [x - r, y + r * 0.7]]
-    : [[x, y - r * 1.1], [x + r * 1.1, y], [x, y + r * 1.1], [x - r * 1.1, y]];
+  const r = size / 2, outline = SHAPES[shape];
+  if (!outline) throw new Error(`<canvit-frontier>: no marker shape "${shape}"`);
+  const points = outline.map(([dx, dy]) => [x + r * dx, y + r * dy]);
   return el("polygon", { points: points.map((p) => p.join(",")).join(" "), fill: color }, parent);
 }
 
@@ -201,7 +237,18 @@ class CanvitFrontier extends HTMLElement {
   /** Glide the cost axis from its current end to the shown series', redrawing what was already shown, then draw it all. */
   #changeSeries() {
     const width = Math.round(this.svg.clientWidth);
+    // On a slide being entered (the talk deck's .entering), the chart takes its state at once.
+    if (this.closest(".entering")) {
+      ++this.#glide;
+      this.#render(width, { xMax: this.#targetXMax() });
+      return;
+    }
     const from = this.#xMax ?? this.#targetXMax(), to = this.#targetXMax(), glide = ++this.#glide;
+    // An axis that keeps its range has nothing to glide: the new curves draw in at once.
+    if (Math.abs(to - from) < 1e-6 * to) {
+      this.#render(width, { xMax: to });
+      return;
+    }
     const start = performance.now();
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const frame = (now) => {
@@ -253,7 +300,7 @@ class CanvitFrontier extends HTMLElement {
 
   #legend(view) {
     const markerSwatch = ({ color, marker: shape }) =>
-      `<svg viewBox="-7 -7 14 14" class="marker">${shape === "triangle" ? `<polygon points="0,-7 6,4 -6,4" fill="${color}"/>` : `<polygon points="0,-7 7,0 0,7 -7,0" fill="${color}"/>`}</svg>`;
+      `<svg viewBox="-8 -8 16 16" class="marker"><polygon points="${SHAPES[shape].map(([dx, dy]) => `${7 * dx},${7 * dy}`).join(" ")}" fill="${color}"/></svg>`;
     const prior = `<div class="row"><b>Prior active models</b>${Object.entries(BASELINES).map(([name, style]) => `<span>${markerSwatch(style)}${name}</span>`).join("")}</div>`;
     this.shadowRoot.querySelector(".legend").innerHTML = view === "prior"
       ? `<div class="row"><b>Passive</b><span>${lineSwatch(PASSIVE.color, "")}${PASSIVE.model}, frozen, linear probe, input 128 to 512 px</span></div>${prior}`
@@ -264,7 +311,9 @@ class CanvitFrontier extends HTMLElement {
   #render(width, { xMax: fixedXMax = null, only = null } = {}) {
     // A source change while hidden must invalidate the old visible width.
     this.#width = width;
-    const series = only ?? this.series, staged = this.staged, entering = only ? new Set() : new Set([...series].filter((k) => !this.#drawnSeries.has(k)));
+    // Series not drawn before animate in, except on a slide being entered (the talk deck's .entering).
+    const series = only ?? this.series, staged = this.staged;
+    const entering = only || this.closest(".entering") ? new Set() : new Set([...series].filter((k) => !this.#drawnSeries.has(k)));
     const margin = { top: 14, right: staged ? 96 : 12, bottom: 54, left: 58 };
     if (width <= margin.left + margin.right) return;
     const narrow = width < NARROW_PX;
@@ -307,6 +356,7 @@ class CanvitFrontier extends HTMLElement {
       el("text", { x: x(value), y: plot.bottom + 20, "text-anchor": "middle" }, axis).textContent = String(value);
     }
     el("line", { x1: plot.left, x2: plot.right, y1: plot.bottom, y2: plot.bottom, stroke: "#94a3b8" }, svg);
+    el("line", { x1: plot.left, x2: plot.left, y1: plot.top, y2: plot.bottom, stroke: "#94a3b8" }, svg);
     el("text", { class: "title", x: (plot.left + plot.right) / 2, y: height - 10, "text-anchor": "middle" }, axis)
       .textContent = "Cumulative inference GFLOPs";
     el("text", { class: "title", x: -(plot.top + plot.bottom) / 2, y: 14, transform: "rotate(-90)", "text-anchor": "middle" }, axis)
@@ -332,7 +382,13 @@ class CanvitFrontier extends HTMLElement {
     const [clipTop, clipHeight] = this.hasAttribute("y-range") ? [plot.top - 6, plot.bottom - plot.top + 6] : [0, height];
     el("rect", { class: "reveal", x: 0, y: clipTop, width: this.#shown || staged ? width : 0, height: clipHeight }, clip);
     const drawn = el("g", { "clip-path": "url(#reveal)" }, svg);
+    // Entering curves are wiped in from the left, keeping their dash pattern; cumulative cost only grows along a curve,
+    // so the wipe draws each one from its first glimpse to its last.
+    const wipe = el("clipPath", { id: "wipe" }, defs);
+    el("rect", { class: "wipe", x: 0, y: clipTop, width, height: clipHeight }, wipe);
+    const wiped = el("g", { "clip-path": "url(#wipe)" }, drawn);
     this.#points = [];
+    const endLabels = [];
     // Both views share the axes (curves are measured for the x range even when hidden), so they can follow each other.
     if (view === "prior" || series.has("dinov3")) this.#drawPassive(drawn, x, y, entering.has("dinov3") ? " enter-fade" : "");
     if (view !== "prior") for (const curve of curves) {
@@ -344,23 +400,35 @@ class CanvitFrontier extends HTMLElement {
         const lower = pts.map((p) => `${x(p.cum_gflops)},${y(100 * p.ci_lo)}`).reverse();
         el("polygon", { class: `band${enter ? " enter-fade" : ""}`, points: [...upper, ...lower].join(" "), fill: color }, drawn);
       }
-      // A curve drawing itself in is solid while it draws (its dash pattern would fight the draw), dashed once drawn.
-      const line = el("polyline", { class: `curve${enter ? " enter" : ""}`, points: pts.map((p) => `${x(p.cum_gflops)},${y(100 * p.mean)}`).join(" "),
-                                    stroke: color, "stroke-dasharray": enter ? "" : canvas.dash, pathLength: enter ? 1 : "" }, drawn);
-      if (enter) line.addEventListener("animationend", () => {
-        line.classList.remove("enter");
-        line.removeAttribute("pathLength");
-        line.setAttribute("stroke-dasharray", canvas.dash);
-      });
-      if (staged) {
-        const last = pts.at(-1);
-        el("text", { class: `end-label halo${enter ? " enter-fade" : ""}`, x: x(last.cum_gflops) + 8, y: y(100 * last.mean) + 5, fill: color }, drawn)
-          .textContent = `${label}, ${curve.canvas_grid}²`;
-      }
+      el("polyline", { class: "curve", points: pts.map((p) => `${x(p.cum_gflops)},${y(100 * p.mean)}`).join(" "),
+                       stroke: color, "stroke-dasharray": canvas.dash }, enter ? wiped : drawn);
+      if (staged) endLabels.push({ points: pts.map((p) => [x(p.cum_gflops), y(100 * p.mean)]), text: `${label}, ${curve.canvas_grid}²`, color, enter });
       for (const p of pts) {
         this.#points.push({ x: x(p.cum_gflops), y: y(100 * p.mean), color,
           html: `<b>CanViT-B</b>, ${label}, ${canvas.label}<br>${p.t + 1} glimpse${p.t ? "s" : ""}: ${(100 * p.mean).toFixed(1)}% mIoU, ${p.cum_gflops.toFixed(1)} GFLOPs` });
       }
+    }
+
+    // Each label goes right of its curve's end, or else above the curve, ending at one of its last points: the first
+    // place that no curve crosses, checked against every curve the chart can show so a label keeps its place as the
+    // build adds curves. Crossed everywhere, it stays at the end.
+    const paths = allCurves.map((c) => c.per_timestep.map((p) => [x(p.cum_gflops), y(100 * p.mean)]));
+    const clear = (label) => {
+      const box = label.getBBox(), pad = 2;
+      const padded = { x: box.x - pad, y: box.y - pad, width: box.width + 2 * pad, height: box.height + 2 * pad };
+      return !paths.some((path) => crosses(padded, path));
+    };
+    for (const { points, text, color, enter } of endLabels) {
+      const [ex, ey] = points.at(-1);
+      const places = [[ex + 8, ey + 5, "start"], ...points.slice(-4).reverse().map(([px, py]) => [px - 6, py - 10, "end"])];
+      const label = el("text", { class: `end-label halo${enter ? " enter-fade" : ""}`, fill: color }, drawn);
+      label.textContent = text;
+      const place = ([px, py, anchor]) => {
+        label.setAttribute("x", String(px));
+        label.setAttribute("y", String(py));
+        label.setAttribute("text-anchor", anchor);
+      };
+      place(places.find((candidate) => (place(candidate), clear(label))) ?? places[0]);
     }
 
     // Where the F2C order, worse than random, first beats the best prior model (the exported claim). Its note sits
@@ -376,7 +444,8 @@ class CanvitFrontier extends HTMLElement {
 
     // Baselines are labeled beside their markers on wide screens; narrow screens rely on the legend. A label goes left
     // where another baseline shares its cost or the edge is near, and above the reference line for the best prior.
-    // A label across the callout's corridor puts its glimpse count on a second line, which narrows it clear.
+    // A label across the callout's corridor puts its glimpse count on a second line, which narrows it clear; a staged
+    // build writes the count as (T=N) on the name's line.
     for (const b of baselines) {
       const style = BASELINES[b.name];
       if (!style) throw new Error(`<canvit-frontier>: no style for baseline "${b.name}"`);
@@ -386,16 +455,20 @@ class CanvitFrontier extends HTMLElement {
         html: `<b>${b.name}</b><br>${b.num_glimpses} glimpses: ${b.miou_pct.toFixed(1)}% mIoU, ${b.gflops.toFixed(1)} GFLOPs` });
       if (narrow) continue;
       const isBest = b.name === bestPrior.name && b.num_glimpses === bestPrior.num_glimpses;
-      const label = el("text", { class: `baseline-label halo${enterPrior}`, x: px + 11, y: isBest ? py - 9 : py + 4 }, svg);
+      // On a staged build, the single-glimpse path leaves the best prior's marker leftward, so its label goes right.
+      const keepRight = staged && isBest;
+      const label = el("text", { class: `baseline-label halo${enterPrior}`, x: px + 11, y: keepRight ? py - 3 : isBest ? py - 9 : py + 4 }, svg);
       label.textContent = b.name;
       const count = el("tspan", {}, label);
       count.textContent = `, ${b.num_glimpses} glimpses`;
       const sharesCost = baselines.some((other) => other !== b && other.gflops === b.gflops);
-      if (sharesCost || px + 11 + label.getComputedTextLength() > width) {
+      if (!keepRight && (sharesCost || px + 11 + label.getComputedTextLength() > width)) {
         label.setAttribute("x", String(px - 11));
         label.setAttribute("text-anchor", "end");
       }
-      if (inCorridor(label.getBBox())) {
+      if (staged) {
+        count.textContent = ` (T=${b.num_glimpses})`;
+      } else if (inCorridor(label.getBBox())) {
         count.textContent = `${b.num_glimpses} glimpses`;
         count.setAttribute("x", label.getAttribute("x"));
         count.setAttribute("dy", "1.15em");
@@ -405,8 +478,10 @@ class CanvitFrontier extends HTMLElement {
       el("text", { class: `reference-label halo${enterPrior}`, x: plot.right, y: y(bestPrior.miou_pct) - 8, "text-anchor": "end" }, svg)
         .textContent = `${narrow ? "Best prior" : "Best prior active model"}: ${bestPrior.miou_pct.toFixed(1)}%`;
     }
-    // The project page's annotations go with its full view; a staged build says them aloud instead.
+    // The project page's annotations go with its full view; a staged build says them aloud instead, except the
+    // single-glimpse result against the best prior, which comes with the EG-C2F curve it sits on.
     if (view === "canvit" && !staged) this.#annotateCanvit({ svg, drawn, curves, x, y, narrow, beat: [cx, cy], note: [tx, ty] });
+    if (staged && series.has("egc2f-32")) this.#singleGlimpseGain(svg, x, y, entering.has("egc2f-32"));
     this.#hover(svg, plot, width);
   }
 
@@ -446,14 +521,51 @@ class CanvitFrontier extends HTMLElement {
     const text = el("text", { class: "takeaway halo", x: tx, y: ty }, drawn);
     lines.forEach((line, i) => { el("tspan", { x: tx, dy: i ? 17 : 0 }, text).textContent = line; });
 
-    // CanViT-B's first glimpse at the 32² canvas, the paper's single-glimpse result, labeled above the curves.
-    const first = curves.find((c) => c.policy === "entropy_coarse_to_fine" && c.canvas_grid === 32).per_timestep[0];
-    const [fx, fy] = [x(first.cum_gflops), y(100 * first.mean)];
+    this.#singleGlimpse(svg, x, y);
+  }
+
+  /** The paper's single-glimpse result: CanViT-B's first glimpse (EG-C2F, 32² canvas), from the export's claims. */
+  #singleGlimpseClaim() {
+    const key = `entropy_coarse_to_fine_s${SCENE_SIZE}_c32`;
+    const first = this.#data.claims.beats_prior.find((claim) => claim.key === key);
+    if (!first || first.first_beat_t !== 0) throw new Error(`<canvit-frontier>: no single-glimpse claim for ${key}`);
+    return first;
+  }
+
+  /** The single-glimpse result labeled above the curves (the project page). */
+  #singleGlimpse(parent, x, y) {
+    const first = this.#singleGlimpseClaim();
+    const [fx, fy] = [x(first.first_beat_gflops), y(first.first_beat_miou_pct)];
     const labelY = y(Y_MAX - 1.2);
     // The arrow leaves the note leftward, then turns down into the point from above, clear of the curves.
-    arrow([fx + 26, labelY - 5], [-1, 0], [fx, fy - 7], [0, 1], svg);
-    el("text", { class: "callout", x: fx + 32, y: labelY }, svg).textContent =
-      `${(100 * first.mean).toFixed(1)}% mIoU in a single glimpse`;
+    arrow([fx + 26, labelY - 5], [-1, 0], [fx, fy - 7], [0, 1], parent);
+    el("text", { class: "callout", x: fx + 32, y: labelY }, parent).textContent =
+      `${first.first_beat_miou_pct.toFixed(1)}% mIoU in a single glimpse`;
+  }
+
+  /**
+   * The single-glimpse result against the best prior active model (a staged build): a path leftward from the prior
+   * model to the glimpse's cost, labeled with the FLOP ratio, then up into the glimpse's mIoU, labeled with the gain.
+   * With enter, the path draws itself, then its head and labels fade in.
+   */
+  #singleGlimpseGain(parent, x, y, enter) {
+    const first = this.#singleGlimpseClaim();
+    const { best_prior_gflops: priorCost, best_prior_miou_pct: priorMiou } = this.#data.claims;
+    const [px, py, fx, fy] = [x(priorCost), y(priorMiou), x(first.first_beat_gflops), y(first.first_beat_miou_pct)];
+    const corner = 10, tip = fy + 9;
+    const d = `M${px - 12},${py}H${fx + corner}Q${fx},${py} ${fx},${py - corner}V${tip + 6}`;
+    const group = el("g", { class: "gain" }, parent);
+    const draw = enter ? " draw" : "", late = enter ? " late" : "";
+    el("path", { class: `gain-halo${draw}`, d, pathLength: 1 }, group);
+    el("path", { class: `gain-path${draw}`, d, pathLength: 1 }, group);
+    el("path", { class: `gain-head${late}`, d: `M${fx - 7},${tip + 10}L${fx},${tip}L${fx + 7},${tip + 10}Z` }, group);
+    // Two short lines by the prior model's marker, where the curves above have risen clear of them.
+    const ratio = el("text", { class: `gain-label halo${late}`, x: px - 22, y: py - 36, "text-anchor": "end" }, group);
+    el("tspan", { class: "big" }, ratio).textContent = `${Math.round(first.flop_ratio)}×`;
+    el("tspan", { x: px - 22, dy: 26 }, ratio).textContent = "fewer FLOPs";
+    const gain = el("text", { class: `gain-label halo${late}`, x: fx + 14, y: y(35) }, group);
+    el("tspan", { class: "big" }, gain).textContent = `+${(first.first_beat_miou_pct - priorMiou).toFixed(1)}`;
+    el("tspan", {}, gain).textContent = " mIoU";
   }
 
   /** Hovering the plot names the nearest point. */

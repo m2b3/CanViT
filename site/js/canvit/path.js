@@ -5,7 +5,7 @@
 // Changing `src` loads another bundle; hovering any scene-aligned panel marks the same point in all of them
 // and names the classes there.
 
-import { loadPathBundle, pointOn } from "./path-bundle.js";
+import { loadPathBundle, pointOn, tileOrigin } from "./path-bundle.js";
 import { UNLABELED } from "./layers.js";
 import { ADE20K_PALETTE } from "./ade20k.js";
 import { COLORMAPS } from "./colormaps.js";
@@ -259,14 +259,13 @@ class CanvitPath extends HTMLElement {
   }
 
   #tileValue(raster, sample, row, col) {
-    const grid = this.bundle.manifest.canvas_grid, columns = this.bundle.manifest.atlas_columns;
-    return raster.data[(Math.floor(sample / columns) * grid + row) * raster.width + (sample % columns) * grid + col];
+    const [row0, col0] = tileOrigin(this.bundle.manifest, sample, this.bundle.manifest.canvas_grid);
+    return raster.data[(row0 + row) * raster.width + col0 + col];
   }
 
   #paintTile(canvas, raster, sample, readout) {
     const grid = canvas.width;
-    const columns = this.bundle.manifest.atlas_columns;
-    const row0 = Math.floor(sample / columns) * grid, col0 = (sample % columns) * grid;
+    const [row0, col0] = tileOrigin(this.bundle.manifest, sample, grid);
     const out = new ImageData(grid, grid);
     const lut = COLORMAPS.viridis;
     for (let r = 0; r < grid; r++) {
@@ -342,9 +341,8 @@ class CanvitPath extends HTMLElement {
     const key = `${sample}|${this.readout}`;
     if (key !== this.shown) {
       this.shown = key;
-      const g = manifest.glimpse_px, columns = manifest.atlas_columns;
-      this.shadowRoot.querySelector("[data-input]").getContext("2d")
-        .drawImage(inputs, (sample % columns) * g, Math.floor(sample / columns) * g, g, g, 0, 0, g, g);
+      const g = manifest.glimpse_px, [y0, x0] = tileOrigin(manifest, sample, g);
+      this.shadowRoot.querySelector("[data-input]").getContext("2d").drawImage(inputs, x0, y0, g, g, 0, 0, g, g);
       for (const [name, condition] of Object.entries(conditions)) {
         this.#paintTile(this.shadowRoot.querySelector(`[data-map="${name}"]`), condition.layers[this.readout], sample, this.readout);
       }

@@ -6,6 +6,14 @@ saved files do; **Hub** entries are steps on the Hugging Face Hub that go with t
 order, each before or after it as the entry says, because released versions load each repo's
 `main` revision.
 
+## Unreleased
+
+### Changed
+
+- **Breaking**: web bundles (`canvit_pytorch.viz.web`) record each glimpse's mIoU on its scene, `miou`, instead of
+  `pixel_accuracy`, under a new schema (`canvit-web-bundle-cdc839e2-d28e-4422-b635-d16b24797584`); readers of the old
+  schema reject the new bundles. `viz.web.mean_iou` computes it.
+
 ## 0.3.0 (2026-10-29)
 
 ### Added

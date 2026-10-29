@@ -51,6 +51,17 @@ for macro, value in [("adeBestPriorMiou", claims["best_prior_miou_pct"]), ("adeB
     checked += 1
     if f"{value:.1f}" != macros[macro]:
         errors.append(f"assets/paper/ade20k_seg.json: {macro} would read {value:.1f}, the paper says {macros[macro]!r}")
+# A talk's ImageNet-1k references for prior active models must read as the paper's Table 1 prints them, in the row that
+# cites the model.
+paper_tex = (SITE.parent / "paper/latex/CanViT_Toward_AVFMs.tex").read_text()
+for references in sorted(SITE.glob("slides/*/sources/in1k-active-references.json")):
+    for ref in json.loads(references.read_text())["references"]:
+        checked += 1
+        rows = [line for line in paper_tex.splitlines() if f"{ref['name']} \\cite{{{ref['cite']}}}" in line]
+        if len(rows) != 1:
+            errors.append(f"{references}: {len(rows)} rows of the paper cite {ref['name']} as {ref['cite']}, not one")
+        elif (printed := rows[0].split("&")[-1].strip().removesuffix("\\\\").strip()) != f"{ref['top1']:.1f}":
+            errors.append(f"{references}: {ref['name']} reads {ref['top1']:.1f}, the paper's Table 1 says {printed!r}")
 if errors:
     sys.exit("\n".join(errors))
-print(f"{checked} numbers match the paper's macros")
+print(f"{checked} numbers match the paper")

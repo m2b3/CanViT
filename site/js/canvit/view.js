@@ -12,7 +12,7 @@ export function define(tag, elementClass) {
 }
 
 /** The nearest <canvit-rollout> above `element`, across shadow roots. */
-export function rolloutOf(element) {
+function rolloutOf(element) {
   for (let node = element.parentNode; node; node = node instanceof ShadowRoot ? node.host : node.parentNode) {
     if (node.localName === "canvit-rollout") return node;
   }

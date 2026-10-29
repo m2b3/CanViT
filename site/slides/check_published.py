@@ -2,14 +2,14 @@
 # requires-python = ">=3.12"
 # dependencies = ["playwright>=1.63", "tyro"]
 # ///
-"""Every file the project page and a talk load from the local site is served by the published one.
+"""Check that the published site serves every file the project page and a talk load from the local site.
 
     node site/serve.mjs 8765 &
-    uv run site/slides/check_published.py --talk 2026-10-30-Montreal-AI-and-Neuroscience-MAIN
+    uv run site/slides/check_published.py --talk 2026-10-29-Montreal-AI-and-Neuroscience-MAIN
 
-Opens the page and scrolls through it, then walks the talk's every slide and click, showing each scene and readout of
-its episodes, and records the site's files they request; then requests each from the published site. Exits with
-status 1 when a file is missing there or a local request failed.
+Scrolls through the page and walks every slide and click of the talk, showing each scene and readout of its episodes,
+recording the site's files they request, then requests each from the published site. Exits with status 1 when a file
+is missing there or a local request failed.
 """
 
 import asyncio
@@ -74,7 +74,7 @@ async def requested_paths(args: Check) -> tuple[set[str], list[str]]:
 
         await page.goto(f"{args.local}/slides/{args.talk}/")
         await page.wait_for_function("window.deck?.isReady()")
-        for index in range(await page.evaluate("deck.getTotalSlides()")):
+        for index in range(await page.evaluate("deck.getHorizontalSlides().length")):
             await page.evaluate(f"deck.slide({index}, 0, -1)")
             while True:
                 await page.wait_for_timeout(args.wait_ms)

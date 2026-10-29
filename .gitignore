@@ -59,6 +59,9 @@ site/.screens/
 # The talks' experiments' sweeps and exports (site/slides/*/experiments/): local, never committed
 site/.experiments/
 
+# The paper's figures and tables a talk is trying (site/slides/paper_figures.py try): local, never committed
+site/slides/*/.paper-figures/
+
 # Exported live models (python -m canvit_pytorch.viz.live export): hundreds of MB, never committed
 site/.live-model
 

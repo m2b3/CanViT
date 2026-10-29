@@ -18,7 +18,7 @@ from canvit_pytorch.viewpoint import Viewpoint, crop_box_px
 from canvit_pytorch.viz.pca import ColorLimits, color_limits, fit_pca, layernorm, project, to_rgb
 from canvit_pytorch.viz.record import Rollout
 
-SCHEMA = "canvit-web-bundle-70766501-fb7f-4856-8a88-bb16253c34c5"
+SCHEMA = "canvit-web-bundle-cdc839e2-d28e-4422-b635-d16b24797584"
 PCAProtocol = Literal["paper", "fixed-limits"]
 
 
@@ -49,16 +49,32 @@ def canvas_change(before: NDArray[np.floating], after: NDArray[np.floating]) -> 
     return 1.0 - (a * b).sum(axis=-1) / (np.linalg.norm(a, axis=-1) * np.linalg.norm(b, axis=-1) + 1e-12)
 
 
-def pixel_accuracy(logits: NDArray[np.floating], annotation: NDArray[np.integer]) -> float:
-    """Fraction of the annotated pixels whose class, decoded at the annotation's resolution, is right.
-
-    The [C, G, G] logits are upsampled bilinearly to the [H, W] annotation, as the paper's ADE20K evaluation does.
-    """
-    upsampled = F.interpolate(torch.from_numpy(np.asarray(logits))[None], size=annotation.shape, mode="bilinear",
+def _decode(logits: NDArray[np.floating], shape: tuple[int, ...]) -> NDArray[np.int64]:
+    """[C, G, G] logits -> the class of each pixel of an [H, W] annotation, upsampled bilinearly as the paper's ADE20K
+    evaluation does."""
+    upsampled = F.interpolate(torch.from_numpy(np.asarray(logits))[None], size=shape, mode="bilinear",
                               align_corners=False)
-    predicted = upsampled[0].argmax(dim=0).numpy()
+    return upsampled[0].argmax(dim=0).numpy()
+
+
+def pixel_accuracy(logits: NDArray[np.floating], annotation: NDArray[np.integer]) -> float:
+    """Fraction of the annotated pixels whose class, decoded at the annotation's resolution, is right."""
     labeled = annotation != IGNORE_LABEL
-    return float((predicted[labeled] == annotation[labeled]).mean())
+    return float((_decode(logits, annotation.shape)[labeled] == annotation[labeled]).mean())
+
+
+def mean_iou(logits: NDArray[np.floating], annotation: NDArray[np.integer]) -> float:
+    """Intersection over union of each class on the annotated pixels of one scene, averaged over the classes that are
+    annotated or predicted there.
+
+    The benchmark's mIoU pools intersections and unions over the whole validation set before dividing, so a scene's
+    value is not comparable with it.
+    """
+    labeled = annotation != IGNORE_LABEL
+    predicted, truth = _decode(logits, annotation.shape)[labeled], annotation[labeled]
+    classes = np.union1d(predicted, truth)
+    return float(np.mean([((predicted == c) & (truth == c)).sum() / ((predicted == c) | (truth == c)).sum()
+                          for c in classes]))
 
 
 def cell_center_labels(annotation: NDArray[np.integer], grid: int) -> NDArray[np.uint8]:
@@ -151,7 +167,7 @@ def write_bundle(
             "layers": layers,
         }
         if rollout.annotation is not None:
-            entry["pixel_accuracy"] = pixel_accuracy(glimpse.logits, rollout.annotation)
+            entry["miou"] = mean_iou(glimpse.logits, rollout.annotation)
         entries.append(entry)
 
     manifest = {

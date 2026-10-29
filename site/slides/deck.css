@@ -43,25 +43,27 @@ html, body { background: var(--bg); }
 .reveal .small { font-size: 20px; }
 .reveal .cols { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 36px; align-items: start; }
 /* A citation line under a figure: authors, year, venue. */
-.reveal .cite { font-size: 15px; line-height: 1.35; color: var(--muted); }
+.reveal .cite { font-size: 18px; line-height: 1.35; color: var(--muted); }
 .reveal .cite i { font-style: italic; }
-/* The highlighter of the project page, for the one phrase a slide must leave behind. */
+/* The project page's highlighter. */
 .reveal .hl { padding: 0 .1em; border-radius: 3px; background: linear-gradient(transparent 58%, var(--highlight) 58%); }
 
 /* A fragment that only names a build state (data-shows, deck.js), without a visible element of its own. */
 .reveal .step-marker { display: none; }
 
-/* An SVG path that draws itself when its fragment (or its own .fragment class) becomes visible. pathLength="1" on the
-   path makes the dash independent of its measured length. */
-.reveal .draw { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .9s ease; }
-.reveal .fragment.visible .draw, .reveal .draw.fragment.visible { stroke-dashoffset: 0; }
+/* An SVG path that draws itself when its fragment (or its own .fragment class) becomes visible; pathLength="1" on the
+   path makes the dash independent of its length. It draws in .9 s and undraws in .2 s: a transition takes the
+   duration of the state being entered, so drawn states carry the slow one; a talk's own drawn states add
+   transition-duration: .9s. */
+.reveal .draw { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .2s ease; }
+.reveal .fragment.visible .draw, .reveal .draw.fragment.visible { stroke-dashoffset: 0; transition-duration: .9s; }
 
 /* Maps and model inputs drawn on a grid (feature maps, probability maps, glimpses) keep their cells crisp when the
    deck scales them: hard nearest neighbor, never the browser's smoothing. Photographs stay smooth. */
 .reveal img.pixels { image-rendering: pixelated; }
 
 /* An overlay revealed across its image from left to right: as a fragment when shown, or when the slide's CSS sets
-   clip-path: inset(0) on a named state (e.g. #history.shows-map .map). */
+   clip-path: inset(0) on a named state (data-shows, deck.js). */
 .reveal .wipe { clip-path: inset(0 100% 0 0); transition: clip-path 1.2s ease; }
 .reveal .wipe.fragment { opacity: 1; visibility: inherit; }
 .reveal .wipe.fragment.visible { clip-path: inset(0); }
@@ -99,11 +101,12 @@ html, body { background: var(--bg); }
 
 /* reveal.js's own furniture, in the page's colors. */
 .reveal .progress { height: 4px; color: var(--glimpse); background: transparent; }
-.reveal .slide-number { right: 22px; bottom: 16px; padding: 0; background: none; color: var(--muted);
-                        font: 500 15px/1 var(--sans); font-variant-numeric: tabular-nums; }
+.reveal.in-appendix .progress span { transform: scaleX(1) !important; }
+.reveal .slide-number { right: 22px; bottom: 16px; padding: 0; background: none; color: var(--ink);
+                        font: 650 21px/1 var(--sans); font-variant-numeric: tabular-nums; }
 .reveal .slide-number a { color: inherit; text-decoration: none; }
-.reveal .footer { position: absolute; left: var(--slide-pad-x); bottom: 16px; z-index: 5; color: var(--muted);
-                  font: 500 15px/1 var(--sans); pointer-events: none; }
+.reveal .footer { position: absolute; left: var(--slide-pad-x); bottom: 16px; z-index: 5; color: var(--ink);
+                  font: 500 18px/1 var(--sans); pointer-events: none; }
 .reveal .footer .brand { font-weight: 800; }
 
 /* The replay button (deck.js), discreet, above the slide number. */
@@ -113,11 +116,15 @@ html, body { background: var(--bg); }
 .reveal .replay:hover { opacity: 1; color: var(--ink); }
 .reveal .replay[hidden] { display: none; }
 
-/* How far a slide is from presentable (data-status, deck.js); hidden with ?present. */
-.reveal .status-badge { position: absolute; top: 10px; right: 12px; z-index: 20; max-width: 560px; padding: 4px 10px;
-                        border-radius: 6px; font: 600 13px/1.3 var(--sans); pointer-events: none; }
-.reveal .status-badge.draft { background: #fef3c7; color: #92400e; }
-.reveal .status-badge.aspirational { background: #ede9fe; color: #5b21b6; }
-
 /* Speaker notes never show on the slide. */
 .reveal aside.notes { display: none; }
+
+/* A placeholder for material a slide still needs, saying what is missing and why. */
+.reveal .missing { border: 4px dashed #dc2626; border-radius: 14px; background: #fef2f2; color: #7f1d1d;
+                   padding: 16px 22px; font-size: 21px; line-height: 1.35; text-align: left; }
+.reveal .missing > b:first-child { display: block; margin-bottom: 6px; color: #dc2626; font-size: 15px;
+                                   letter-spacing: .08em; text-transform: uppercase; }
+
+/* A slide just entered (deck.js, sync) takes its state without transitions, its components' included. */
+.reveal .slides section.entering { --canvit-move: 0ms; --canvit-glide: 0ms; }
+.reveal .slides section.entering * { transition: none !important; }

@@ -4,7 +4,7 @@
 # ///
 """Skip through a talk the way a nervous speaker does, then check where it lands.
 
-    uv run site/slides/stress.py --url http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/
+    uv run site/slides/stress.py --url http://127.0.0.1:8765/slides/2026-10-29-Montreal-AI-and-Neuroscience-MAIN/
 
 Walks every fragment forward and back with --step-ms between moves, then, for each slide before its fragments and
 after all of them, lands there after a burst of random moves and compares the slide's state (its shows-* classes and
@@ -74,7 +74,7 @@ async def stress(args: Stress) -> int:
         page = await open_deck(browser, args.url, errors, "stressed")
         reference = await open_deck(browser, args.url, errors, "reference")
         # Fragment counts per slide: reveal.js numbers each slide's fragments from 0.
-        counts = await page.evaluate("""() => deck.getSlides().map((s) =>
+        counts = await page.evaluate("""() => deck.getHorizontalSlides().map((s) =>
           1 + Math.max(-1, ...[...s.querySelectorAll('.fragment')].map((f) => Number(f.dataset.fragmentIndex))))""")
 
         async def move(how: str) -> None:

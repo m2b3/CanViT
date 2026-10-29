@@ -1,11 +1,11 @@
-// Load a web bundle (schema canvit-web-bundle-70766501-..., canvit-pytorch/docs/viz.md): the manifest
-// and every layer, decoded and checked once, shared by all elements showing it.
+// Load a web bundle (format SCHEMA, documented in canvit-pytorch/docs/viz.md): the manifest and every layer, decoded
+// and checked once, shared by all elements showing it.
 
 import { decodePng } from "./png.js";
 import { layerSpec, fractions, UNLABELED } from "./layers.js";
 import { ADE20K_PALETTE } from "./ade20k.js";
 
-const SCHEMA = "canvit-web-bundle-70766501-fb7f-4856-8a88-bb16253c34c5";
+const SCHEMA = "canvit-web-bundle-cdc839e2-d28e-4422-b635-d16b24797584";
 const cache = new Map();
 
 /** Resolve `src` (a bundle directory, relative to the page) and load it once per page. */
@@ -89,7 +89,7 @@ async function load(url) {
       const raster = await decodePng(await (await fetchOk(file)).arrayBuffer(), file);
       layers[name] = checkRaster(raster, name, file, { sides, numClasses: readout.num_classes });
     }));
-    return { t, box: g.box, viewpoint: g.viewpoint, layers, pixelAccuracy: g.pixel_accuracy ?? null };
+    return { t, box: g.box, viewpoint: g.viewpoint, layers, miou: g.miou ?? null };
   }));
 
   const range = {};

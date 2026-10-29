@@ -1,9 +1,9 @@
 // <canvit-episode src="BUNDLE [BUNDLE…]" [readout="canvas|entropy|labels|correct"] [stage] [autoplay]>: a recorded
 // rollout (web bundle) played as the loop CanViT runs: the viewpoint moves on the scene, its crop becomes the glimpse,
-// the glimpse goes into CanViT, at the center, which reads its canvas and writes the glimpse into it. Under the canvas, the
-// pixel accuracy of the segmentation decoded from it; beside a segmentation, its largest classes, named. The first
-// glimpses are slow and later ones faster; the
-// last state holds until Replay. Several bundles in `src` become scene tabs labeled with their titles.
+// the glimpse goes into CanViT, at the center, which reads its canvas and writes the glimpse into it. Under the canvas,
+// the scene's mIoU of the segmentation decoded from it; beside a segmentation, its largest classes, named. The first
+// glimpses are slow and later ones faster; the last state holds until Replay. Several bundles in `src` become scene
+// tabs labeled with their titles.
 // stage introduces the loop part by part, each in its place: "scene" (the scene alone), "viewpoint" (with the first
 // glimpse's box), "glimpse" (the crop), "model" (CanViT), "canvas" (the canvas after the first glimpse), "all" (the
 // default: everything, and it plays). Before "all" it holds at the first glimpse and does not play; released to "all",
@@ -13,6 +13,7 @@
 import { ADE20K_PALETTE } from "./ade20k.js";
 import { loadBundle } from "./bundle.js";
 import { CORRECTNESS, colormapGradient, correctnessImage, layerImage, layerSpec } from "./layers.js";
+import { glimpseLabel } from "./glimpse-label.js";
 
 const READOUTS = {
   canvas: { label: "Features", image: (bundle, t) => layerImage(bundle, t, "canvas") },
@@ -167,11 +168,11 @@ template.innerHTML = `
   <div class="label canvas-label">Canvas</div>
   <div class="cell canvas"><div class="with-colorbar"><canvas class="canvas-view"></canvas><div class="side"><div class="colorbar" aria-hidden="true"><span class="colorbar-max"></span><div class="colorbar-bar"></div><span>0</span></div><div class="legend"></div><div class="classes"></div></div></div></div>
   <div class="meter" hidden>
-    <div class="meter-head"><span title="Share of annotated pixels whose class, decoded from the canvas, is right">Pixel accuracy</span><b class="meter-value"></b><span class="meter-gain" title="Change since the first glimpse"></span></div>
+    <div class="meter-head"><span title="Intersection over union of each class on this scene, decoded from the canvas, averaged over classes">mIoU</span><b class="meter-value"></b><span class="meter-gain" title="Change since the first glimpse"></span></div>
     <div class="meter-track"><span class="meter-base"></span><span class="meter-gained"></span><span class="meter-start"></span></div>
   </div>
 </div>
-<div class="bar">
+<div class="bar" part="controls">
   <div class="group"><button class="play" aria-label="Play"></button><div class="choice scenes" role="group" aria-label="Scene"></div></div>
   <div class="choice readouts" role="group" aria-label="Canvas readout"></div>
 </div>`;
@@ -350,7 +351,7 @@ class CanvitEpisode extends HTMLElement {
       this.#scene = scene;
       this.#schedule = schedule(bundle.glimpses.length);
       this.#namedAt = null;
-      const annotated = bundle.truth !== null && bundle.glimpses.every((g) => g.pixelAccuracy !== null);
+      const annotated = bundle.truth !== null && bundle.glimpses.every((g) => g.miou !== null);
       this.$.meter.hidden = !annotated;
       this.$.colorbarMax.textContent = `log ${bundle.manifest.readout.num_classes}`;
       this.$.colorbar.title = `Entropy of the decoded class distribution, from 0 to its maximum, log ${bundle.manifest.readout.num_classes}`;
@@ -440,7 +441,7 @@ class CanvitEpisode extends HTMLElement {
     const lit = this.#schedule.durations[t] >= HIGHLIGHT_MIN_STEP_MS;
     const active = (phase) => lit && u >= PHASES[phase][0] && u < PHASES[phase][1];
     this.$.model.dataset.phase = active("input") ? "input" : active("write") ? "write" : "";
-    this.$.step.textContent = `t = ${t}`;
+    this.$.step.textContent = glimpseLabel(t);
   }
 
   #drawScene(t, u) {
@@ -497,14 +498,14 @@ class CanvitEpisode extends HTMLElement {
     }));
   }
 
-  /** Pixel accuracy after glimpse t, on a fixed 0–100% bar: the part gained since the first glimpse in green. */
+  /** The scene's mIoU after glimpse t, on a fixed 0–100% bar: the part gained since the first glimpse in green. */
   #drawMeter(t) {
     const percent = (fraction) => `${(100 * fraction).toFixed(1)}%`;
-    const first = this.#bundle.glimpses[0].pixelAccuracy;
-    const now = t >= 0 ? this.#bundle.glimpses[t].pixelAccuracy : 0;
+    const first = this.#bundle.glimpses[0].miou;
+    const now = t >= 0 ? this.#bundle.glimpses[t].miou : 0;
     this.$.value.textContent = t >= 0 ? percent(now) : "–";
     const gain = 100 * (now - first);
-    this.$.gain.textContent = t >= 1 ? `${gain < 0 ? "−" : "+"}${Math.abs(gain).toFixed(1)} since t = 0` : "";
+    this.$.gain.textContent = t >= 1 ? `${gain < 0 ? "−" : "+"}${Math.abs(gain).toFixed(1)} since ${glimpseLabel(0)}` : "";
     this.$.base.style.width = percent(Math.min(now, first));
     this.$.gained.style.left = percent(first);
     this.$.gained.style.width = percent(Math.max(0, now - first));

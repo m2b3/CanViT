@@ -5,13 +5,19 @@
 """Screenshot every slide of a talk in Chromium, each with all its fragments shown, and report browser errors.
 
     node site/serve.mjs 8765 &                            # from the repository root
-    uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/ \
+    uv run site/slides/shoot.py --url http://127.0.0.1:8765/slides/2026-10-29-Montreal-AI-and-Neuroscience-MAIN/ \
         --out site/.screens/main-2026
 
-Writes NN-<slide id>.png (with --steps, one image per click) and errors.txt into --out; exits with status 1 when the page logged an error or a slide is
-missing an id. Animations are captured after --wait-ms on each slide. Layout problems on each captured state (a title
-that wraps, visible content in the footer band, a word alone on the last line of a text block, text blocks that
-overlap) go to layout.txt and are printed, without changing the exit status: some titles wrap by design.
+Writes NN-<slide id>.png (with --steps, NN-<slide id>-SS.png per click) and errors.txt into --out; exits with status 1
+when the page logged an error or a slide lacks an id. Animations are captured after --wait-ms, except that with --steps
+the animations a state shows that name their stills (data-play with data-stills="MS,MS,...", the deck's data-play
+contract) are restarted together and captured MS milliseconds later, an image per still (NN-<slide id>-SS-sK.png) in
+place of the click's.
+
+Printed and written to layout.txt, without changing the exit status (some titles wrap by design): each captured state's
+layout problems (a wrapping title, content in the footer band, a lone word on a text block's last line, overlapping
+text blocks), a presented slide whose notes mark a different number of [CLICK]s than it has clicks, and notes with a
+transition line.
 """
 
 import asyncio
@@ -100,8 +106,50 @@ LAYOUT_PROBLEMS_JS = r"""([footerTop]) => {
 }"""
 
 
+# The current slide's speaker notes: its clicks as reveal.js counts them (fragments sharing an index are one click)
+# against the notes' [CLICK] marks; and transition lines, which notes never have. The appendix's slides (after
+# #appendix) are not presented and not checked.
+NOTES_PROBLEMS_JS = r"""() => {
+  const slide = deck.getCurrentSlide(), appendix = document.querySelector("#appendix");
+  if (appendix && appendix.compareDocumentPosition(slide) & Node.DOCUMENT_POSITION_FOLLOWING) return [];
+  const notes = slide.querySelector("aside.notes");
+  if (!notes) return [];
+  const problems = [];
+  const clicks = new Set([...slide.querySelectorAll(".fragment")].map((f) => f.dataset.fragmentIndex)).size;
+  const marked = (notes.textContent.match(/\[CLICK\]/g) || []).length;
+  if (clicks !== marked) problems.push(`speaker notes mark ${marked} [CLICK] for ${clicks} clicks`);
+  for (const item of notes.querySelectorAll("li")) {
+    if (/^Transition\b/.test(item.textContent.trim())) problems.push(`a transition line: "${item.textContent.trim()}"`);
+  }
+  return problems;
+}"""
+
+
 async def layout_problems(page: Page) -> list[str]:
     return await page.evaluate(LAYOUT_PROBLEMS_JS, [FOOTER_TOP_PX])
+
+
+# The animations of the current slide's state that name their stills, restarted together: the moments to capture
+# (ms after the restart, every animation's stills merged), empty when the state shows none. Shown as deck.js plays them:
+# data-play="NAME" while the slide shows NAME, "!NAME" while it does not.
+RESTART_STILLS_JS = r"""() => {
+  const slide = deck.getCurrentSlide();
+  const shows = (name) => slide.classList.contains(`shows-${name}`);
+  const shown = [...slide.querySelectorAll("[data-play][data-stills]")].filter((el) => {
+    const state = el.dataset.play;
+    return !state || (state.startsWith("!") ? !shows(state.slice(1)) : shows(state));
+  });
+  const moments = new Set();
+  for (const el of shown) {
+    const stills = el.dataset.stills.split(",").map(Number);
+    if (stills.some((ms, i) => !(ms >= 0) || (i && ms <= stills[i - 1]))) {
+      throw new Error(`#${slide.id}: data-stills="${el.dataset.stills}" is not increasing milliseconds`);
+    }
+    stills.forEach((ms) => moments.add(ms));
+  }
+  for (const el of shown) (el.restart ?? el.play).call(el);
+  return [...moments].sort((a, b) => a - b);
+}"""
 
 
 @dataclass(frozen=True)
@@ -111,6 +159,9 @@ class Shoot:
     only: tuple[str, ...] = ()
     """Slide ids to capture; every slide when empty."""
     wait_ms: int = 2500
+    """before capturing a slide when it comes up (its images and data load)"""
+    step_ms: int | None = None
+    """with --steps, before capturing each later click (wait_ms when absent)"""
     scale: float = 1.5
     """Device pixels per CSS pixel: 1.5 gives 1920 × 1080 images."""
     first_fragment: bool = False
@@ -136,7 +187,7 @@ async def shoot(args: Shoot) -> int:
         page.on("pageerror", lambda error: errors.append(f"[{where['slide']}] page error: {error}"))
         await page.goto(args.url)
         await page.wait_for_function("window.deck?.isReady()")
-        count = await page.evaluate("deck.getTotalSlides()")
+        count = await page.evaluate("deck.getHorizontalSlides().length")
         for index in range(count):
             await page.evaluate(f"deck.slide({index}, 0, {-1 if args.first_fragment else 'Infinity'})")
             slide_id = await page.evaluate("deck.getCurrentSlide().id")
@@ -146,15 +197,22 @@ async def shoot(args: Shoot) -> int:
             where["slide"] = slide_id
             if args.only and slide_id not in args.only:
                 continue
+            layout += [f"[{slide_id}] {p}" for p in await page.evaluate(NOTES_PROBLEMS_JS)]
             if args.steps:
                 await page.evaluate(f"deck.slide({index}, 0, -1)")
                 step = 0
                 while True:
-                    await page.wait_for_timeout(args.wait_ms)
-                    path = args.out / f"{index + 1:02d}-{slide_id}-{step:02d}.png"
-                    await page.screenshot(path=path)
-                    print(f"{path}", flush=True)
+                    await page.wait_for_timeout(args.wait_ms if step == 0 or args.step_ms is None else args.step_ms)
+                    stem = f"{index + 1:02d}-{slide_id}-{step:02d}"
                     layout += [f"[{slide_id} step {step}] {p}" for p in await layout_problems(page)]
+                    stills = await page.evaluate(RESTART_STILLS_JS)
+                    shots = [(args.out / f"{stem}-s{k + 1}.png", ms) for k, ms in enumerate(stills)] or [(args.out / f"{stem}.png", 0)]
+                    elapsed = 0
+                    for path, ms in shots:
+                        await page.wait_for_timeout(ms - elapsed)
+                        elapsed = ms
+                        await page.screenshot(path=path)
+                        print(f"{path}", flush=True)
                     if not await page.evaluate("deck.nextFragment()"):
                         break
                     step += 1

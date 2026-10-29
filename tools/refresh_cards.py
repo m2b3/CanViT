@@ -10,8 +10,8 @@ the Hub's as README.hub.md beside it. --push uploads each card that differs from
 parent is the revision the card was generated from. The browser exports' cards also need the parity report that
 `python -m canvit_pytorch.viz.live parity` wrote for the published graphs.
 
-Left alone, and listed: the learned policies, whose cards come with their republication
-(canvit_pytorch.hub.republish_policies), and repos without a record this tool reads.
+Left alone, and listed: the learned policies, whose cards were written when they were republished in
+canvit_pytorch.rl's format (canvit_pytorch.hub.cards.policy_card), and repos without a record this tool reads.
 """
 
 import json
@@ -320,7 +320,7 @@ def _live_card(repo: Repo, parity: dict[str, Any]) -> str:
 def card(repo: Repo, results: PaperResults, parity: dict[str, Any] | None) -> str:
     name = repo.id.split("/")[1]
     if name.startswith(POLICY_PREFIXES):
-        raise NoCard("a learned policy: its card comes with its republication (canvit_pytorch.hub.republish_policies)")
+        raise NoCard("a learned policy: its card was written at its republication (hub.cards.policy_card)")
     if "manifest.json" in repo.files:
         if parity is None:
             raise NoCard("a browser export: pass --live-parity")

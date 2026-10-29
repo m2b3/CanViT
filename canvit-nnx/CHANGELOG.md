@@ -5,7 +5,7 @@ entries under its version. Entries marked **Breaking** change what existing code
 **Hub** entries are steps on the Hugging Face Hub that must follow the release, in order, because
 released versions load each repo's `main` revision.
 
-## Unreleased
+## 0.3.0 (2026-10-29)
 
 ### Added
 

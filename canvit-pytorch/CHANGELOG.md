@@ -6,7 +6,7 @@ saved files do; **Hub** entries are steps on the Hugging Face Hub that go with t
 order, each before or after it as the entry says, because released versions load each repo's
 `main` revision.
 
-## Unreleased
+## 0.3.0 (2026-10-29)
 
 ### Added
 
@@ -38,14 +38,9 @@ order, each before or after it as the entry says, because released versions load
 
 ### Hub
 
-- Before the first release that contains `canvit_pytorch.rl`, which reads only its own scorer
-  format, republish the learned policies (`canvit/qpolicy-ade20k-*`, `canvit/pgpolicy-ade20k-*`),
-  which are in the format of the archived code that trained them. With that release's
-  `canvit_pytorch.rl`, run
-  `python -m canvit_pytorch.hub.republish_policies --release VERSION --out-dir STAGING`, review the
-  staged repos, then run the same command with `--push`, which tags the commit each repo was staged
-  from `original-format` for the archived code before uploading. No released version reads these
-  repos, so no user breaks. Then delete `canvit_pytorch.hub.republish_policies`.
+- Done before this release: the learned policies (`canvit/qpolicy-ade20k-*`, `canvit/pgpolicy-ade20k-*`) are in
+  `canvit_pytorch.rl`'s format on their `main`; the format of the archived code that trained them stays at the
+  revision `original-format`.
 
 ### Changed
 

@@ -110,7 +110,7 @@ with torch.inference_mode():
     out = model(glimpse=glimpse, state=state, viewpoint=vp)
 
 # The output carries the updated recurrent state and the glimpse features.
-out.state.recurrent_cls  # [1, 1, 768] — global CLS token
+out.state.recurrent_cls  # [1, 1, 768] — recurrent CLS token
 out.glimpse_patches      # [1, 64, 768] — glimpse patch features
 
 # Now let's do a second glimpse: zoom into the top-left quadrant
@@ -122,12 +122,11 @@ with torch.inference_mode():
     )
     glimpse2 = sample_at_viewpoint(spatial=image, viewpoint=vp2, glimpse_size_px=128)
     out2 = model(glimpse=glimpse2, state=out.state, viewpoint=vp2)
-    
 ```
 
 ### ImageNet-1k Classification
 
-`CanViTForImageClassification` provides a unified interface for classification. Two construction paths, same forward pass:
+`CanViTForImageClassification` can be built in two ways:
 
 **From a finetuned checkpoint** (CanViT + head trained on IN1k):
 
@@ -167,7 +166,7 @@ print(logits.argmax(dim=-1))  # ImageNet-1k class index
 
 ### ADE20K Semantic Segmentation
 
-`CanViTForSemanticSegmentation` bundles a CanViT and a `SegmentationProbe` head into one model. `forward` returns per-pixel logits at canvas-grid resolution; `predict` adds bilinear upsampling.
+`CanViTForSemanticSegmentation` bundles a CanViT and a `SegmentationProbe` head into one model. `forward` returns logits for each canvas-grid cell; `predict` upsamples them bilinearly to `target_size`.
 
 ```python
 import torch
@@ -240,7 +239,7 @@ The demos run on the accelerator torch finds (CUDA, or MPS on Apple silicon), el
 
 - **CPU**
 - **CUDA** (tested on RTX 4090, H100 SXM 80GB)
-- **Apple Silicon** via MPS (inference, tested with torch 2.14)
+- **Apple Silicon** via MPS (inference, tested with torch 2.15)
 - **TPU**: [`canvit-nnx`](canvit-nnx/) for training and inference. `canvit-pytorch` runs inference under
   [TorchTPU](https://github.com/google-pytorch/torch_tpu) 0.2.0 (tested on TPU v5p); training under it is not supported yet.
 
@@ -291,9 +290,10 @@ Code written for canvit-pytorch 0.1 needs `canvit-pytorch<0.2` and the checkpoin
 If you use this work, please cite our paper:
 
 ```bibtex
-@article{berreby2026canvit,
+@inproceedings{berreby2026canvit,
   title={CanViT: Toward Active-Vision Foundation Models},
   author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
+  booktitle={Advances in Neural Information Processing Systems},
   year={2026},
   eprint={2603.22570},
   archivePrefix={arXiv},

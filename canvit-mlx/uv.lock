@@ -90,7 +90,7 @@ dev = [
 
 [[package]]
 name = "canvit-pytorch"
-version = "0.2.1"
+version = "0.3.0"
 source = { editable = "../canvit-pytorch" }
 dependencies = [
     { name = "canvit-core" },

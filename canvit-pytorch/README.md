@@ -11,7 +11,7 @@ task specialization, and evaluation code. The paper is
 uv add canvit-pytorch
 ```
 
-On Linux, torch 2.14's PyPI wheels are built for CUDA 13.0 and cannot use the GPU under an older NVIDIA driver.
+On Linux, torch's PyPI wheels (2.14 and later) are built for CUDA 13 and cannot use the GPU under an older NVIDIA driver.
 There, install the torch build for your CUDA version first ([PyTorch's selector](https://pytorch.org/get-started/locally/);
 in a uv project, [uv's PyTorch guide](https://docs.astral.sh/uv/guides/integration/pytorch/)).
 
@@ -43,7 +43,7 @@ print(output.state.recurrent_cls.shape)  # [1, 1, 768]
 
 The example uses the [ImageNet-21k pretrained CanViT-B checkpoint](https://huggingface.co/canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02).
 The [fine-tuned ImageNet-1k classifier](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06)
-and separate task probes are also available from the [PyTorch checkpoints](https://huggingface.co/canvit).
+and separate task probes are also on the [Hub](https://huggingface.co/canvit).
 The root [README](https://github.com/m2b3/CanViT) documents classification,
 segmentation, native backends, and the training and evaluation entry points.
 PyTorch inputs use NCHW: scenes and feature maps are

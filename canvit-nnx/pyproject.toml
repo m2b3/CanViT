@@ -1,6 +1,6 @@
 [project]
 name = "canvit-nnx"
-version = "0.2.0"
+version = "0.3.0"
 description = "CanViT (Canvas Vision Transformer) for JAX and Flax NNX"
 readme = "README.md"
 license = "MIT"

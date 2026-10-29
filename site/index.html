@@ -136,9 +136,10 @@
       <h2>Citation</h2>
       <div class="bibtex">
         <button class="copy" type="button">Copy</button>
-        <pre><code>@article{berreby2026canvit,
+        <pre><code>@inproceedings{berreby2026canvit,
   title={CanViT: Toward Active-Vision Foundation Models},
   author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
+  booktitle={Advances in Neural Information Processing Systems},
   year={2026},
   eprint={2603.22570},
   archivePrefix={arXiv},
@@ -150,7 +151,10 @@
   </main>
 
   <footer class="prose">
-    <p>Code and model weights are released under the MIT license. Scenes from the ADE20K validation set.</p>
+    <p>Code and model weights are released under the MIT license; CanViT is pretrained by distillation from
+      <a href="https://github.com/facebookresearch/dinov3">DINOv3</a>, released under the
+      <a href="https://github.com/facebookresearch/dinov3/blob/main/LICENSE.md">DINOv3 License</a>.
+      Scenes from the ADE20K validation set.</p>
   </footer>
 
   <script type="module" src="js/page.js"></script>

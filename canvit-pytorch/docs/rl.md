@@ -10,15 +10,11 @@ that most reduce the probe's segmentation error, while CanViT and the probe
 stay frozen. Each scorer records in its `config.json` the `Observer` it was
 trained with: the CanViT and probe checkpoints, by Hub id (they load from a
 local mirror when `CANVIT_HUB_ROOT` names one), the scene and glimpse sizes and
-the canvas grid. The commands below run from `canvit-pytorch/`, and
-[CHANGELOG.md](../CHANGELOG.md) lists `canvit_pytorch.rl` under the first
-release that contains it.
+the canvas grid. The commands below run from `canvit-pytorch/`.
 
 ## Run a published policy
 
-`LearnedPolicy.from_pretrained` loads a scorer with its observer. The published scorers are
-republished in this package's format with the first release that contains `canvit_pytorch.rl`
-(CHANGELOG.md); until then, loading them fails with a list of the keys their `config.json` lacks.
+`LearnedPolicy.from_pretrained` loads a scorer with its observer (canvit-pytorch 0.3.0 or later).
 
 ```python
 import torch

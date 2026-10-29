@@ -29,14 +29,15 @@ Edit `.envrc` before loading it. The relevant variables are:
   pretraining uses them for validation metrics.
 - `PROJECT_STORAGE`, `CHECKPOINTS_DIR`, `FEATURES_DIR` and `INDEX_DIR`:
   storage locations for checkpoints, teacher shards and the index. The example
-  file derives the latter three from `PROJECT_STORAGE`.
+  file derives the checkpoint and feature directories from `PROJECT_STORAGE`, and the index directory from
+  `SCRATCH` when it is set.
 - `HF_TOKEN`: access to the gated DINOv3 teacher.
 - `COMET_API_KEY` and `COMET_WORKSPACE`: experiment tracking credentials.
 
 Load the file with `direnv allow` or `source .envrc`. SLURM wrappers source
 `.envrc` themselves through `slurm/env.sh`.
 
-## 1. Index the images
+## Index the images
 
 `features.index` scans a class-per-directory tree, writes `path`,
 `class_name` and `class_idx` columns, and shuffles the rows by default. The
@@ -57,7 +58,7 @@ expected_images="$(uv run python -c 'import pyarrow.parquet as pq, sys; print(pq
   "$INDEX_DIR/in21k-shuffled.parquet")"
 ```
 
-## 2. Export teacher features
+## Export teacher features
 
 The exporter writes `out_dir/shards/<id>.pt`. A shard contains DINOv3 ViT-B/16
 features of 512 px scenes, image paths, class indices, decoded-pixel hashes,
@@ -94,7 +95,7 @@ uv run python -m canvit_pytorch.pretrain.features.check \
 Failed decodes are recorded as failed indices and their feature tensors are
 NaN. The check is the gate that prevents those rows from entering training.
 
-## 3. Train
+## Train
 
 The SLURM wrapper supplies the required dataset and storage arguments. Each
 array task trains `steps_per_job` optimizer steps, saves a checkpoint, and

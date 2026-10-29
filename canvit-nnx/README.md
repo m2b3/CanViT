@@ -61,16 +61,16 @@ model = CanViT(CanViTConfig(), rngs=nnx.Rngs(0))
 
 `canvit_nnx.specialize.in1k` fine-tunes CanViT-B for ImageNet-1k
 classification with the paper's recipe, in bfloat16 with fused Pallas kernels
-on TPU. It is new since canvit-nnx 0.2.0 and needs the `train` extra; its
-[README](canvit_nnx/specialize/in1k/README.md) describes the data and the
+on TPU. It is new in canvit-nnx 0.3.0 and needs the `train` extra; its
+[README](https://github.com/m2b3/CanViT/blob/main/canvit-nnx/canvit_nnx/specialize/in1k/README.md) describes the data and the
 command.
 
 ## Detect objects on COCO
 
 `canvit_nnx.detect` trains CanViT-B with a CenterNet head for COCO 2017 object
 detection and scores average precision after each glimpse, on one host or a
-multi-host TPU slice. It is new since canvit-nnx 0.2.0 and needs the `train`
-extra; its [README](canvit_nnx/detect/README.md) describes the data and the
+multi-host TPU slice. It is new in canvit-nnx 0.3.0 and needs the `train`
+extra; its [README](https://github.com/m2b3/CanViT/blob/main/canvit-nnx/canvit_nnx/detect/README.md) describes the data and the
 commands.
 
 ## Develop from a checkout

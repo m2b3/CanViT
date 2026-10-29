@@ -1,0 +1,41 @@
+{
+ "scene": "ADE20K validation ADE_val_00001517",
+ "object": "lamp",
+ "viewpoint": [
+  -0.7078125,
+  0.06640625,
+  0.2921875
+ ],
+ "box": {
+  "top": 0.0,
+  "left": 0.387109375,
+  "size": 0.2921875
+ },
+ "glimpse_px": 128,
+ "token_grid": 8,
+ "model": "facebook/dinov3-vitb16-pretrain-lvd1689m",
+ "clip_percentiles": [
+  2.0,
+  98.0
+ ],
+ "feature_dim": 768,
+ "pca_cycle": [
+  {
+   "components": [
+    1,
+    2,
+    3
+   ],
+   "image": "tokens-1.png",
+   "auc": 1.0
+  }
+ ],
+ "measures": {
+  "pixel_auc": 0.8813953488372093,
+  "token_auc": 1.0,
+  "token_fisher": 31.486049463332076,
+  "delta_e": 0.5320998911195358,
+  "object_patches": 10,
+  "surrounding_patches": 43
+ }
+}

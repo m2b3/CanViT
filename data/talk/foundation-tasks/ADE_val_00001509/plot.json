@@ -1,0 +1,23 @@
+{
+ "colormap": "viridis, near bright",
+ "percentiles": [
+  2.0,
+  98.0
+ ],
+ "nearness_range": {
+  "disparity.png": {
+   "of": "-1 x disparity",
+   "range": [
+    -1443897164.8,
+    34028844441.59999
+   ]
+  },
+  "depth-probe.png": {
+   "of": "-log depth (m)",
+   "range": [
+    -1.8156232404708863,
+    -0.10056358084082485
+   ]
+  }
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "scene": "ADE_val_00000996",
+ "model": "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02",
+ "canvas_grid": 64,
+ "glimpse_px": 128,
+ "writes_per_glimpse": 3,
+ "glimpses": [
+  {
+   "viewpoint": [
+    0.5,
+    -0.5,
+    0.5
+   ],
+   "box": {
+    "top": 0.5,
+    "left": 0.0,
+    "size": 0.5
+   }
+  }
+ ]
+}

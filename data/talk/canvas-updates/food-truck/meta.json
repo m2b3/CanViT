@@ -1,0 +1,45 @@
+{
+ "scene": "Places365_IMG_9600.jpeg",
+ "model": "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02",
+ "canvas_grid": 64,
+ "glimpse_px": 128,
+ "writes_per_glimpse": 3,
+ "glimpses": [
+  {
+   "viewpoint": [
+    -0.3,
+    -0.3,
+    0.6
+   ],
+   "box": {
+    "top": 0.050000000000000044,
+    "left": 0.050000000000000044,
+    "size": 0.6
+   }
+  },
+  {
+   "viewpoint": [
+    0.4,
+    0.5,
+    0.5
+   ],
+   "box": {
+    "top": 0.45,
+    "left": 0.5,
+    "size": 0.5
+   }
+  },
+  {
+   "viewpoint": [
+    0.0,
+    0.0,
+    0.6
+   ],
+   "box": {
+    "top": 0.2,
+    "left": 0.2,
+    "size": 0.6
+   }
+  }
+ ]
+}

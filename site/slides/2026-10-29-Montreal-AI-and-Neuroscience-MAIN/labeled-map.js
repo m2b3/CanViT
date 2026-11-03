@@ -31,8 +31,8 @@ const resized = new ResizeObserver((entries) => {
   for (const container of new Set(entries.map(({ target }) => target.closest(".names")))) layOut(container);
 });
 
-export async function drawMapNames(root = document) {
-  for (const container of root.querySelectorAll(".names[data-src]")) {
+export async function drawMapNames() {
+  for (const container of document.querySelectorAll(".names[data-src]")) {
     const response = await fetch(container.dataset.src);
     if (!response.ok) throw new Error(`map names: ${container.dataset.src} answered ${response.status}`);
     const { names } = await response.json();

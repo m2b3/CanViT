@@ -6,8 +6,6 @@
   <title>Toward Active-Vision Foundation Models · MAIN 2026</title>
   <link rel="icon" href="data:,">
   <link rel="preload" href="../../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="../node_modules/reveal.js/dist/reset.css">
-  <link rel="stylesheet" href="../node_modules/reveal.js/dist/reveal.css">
   <link rel="stylesheet" href="../../css/canvit.css">
   <link rel="stylesheet" href="../deck.css">
   <link rel="stylesheet" href="talk.css">
@@ -1225,10 +1223,76 @@
 </div>
 
 <script type="module">
-  import { drawSlides } from "./talk.js";
+  import "../../js/canvit/index.js";
+  import "../../js/canvit/episode.js";
+  import "../../js/canvit/frontier.js";
+  import "../../js/canvit/policy-curves.js";
+  import "./foveate.js";
+  import { drawCanvit2 } from "./canvit2-glimpses.js";
+  import "./glimpse-tour.js";
+  import { drawTimeline } from "./timeline.js";
+  import { drawMapNames } from "./labeled-map.js";
+  import { drawUncertainty } from "./uncertainty.js";
+  import { drawDetail } from "./detail.js";
+  import { drawDistillation } from "./distillation.js";
+  import { drawVitOnGlimpse } from "./vit-glimpse.js";
+  import { drawCanvasUpdates } from "./canvas-updates.js";
+  import { drawSrRope } from "./sr-rope.js";
+  import { drawPcaCycle } from "./pca-cycle.js";
+  import { drawFoundationTasks } from "./foundation-tasks.js";
+  import { drawPretrainingGrid } from "./pretraining-grid.js";
+  import { drawPolicyStages } from "./policy-stages.js";
+  import "./title-teaser.js";
+  import { placeTableAnswers } from "./table.js";
+  import { drawGap, drawIn1kGap } from "./gap.js";
+  import { totalFlops, projectionRatio } from "./flops-chart.js";
+  import { fetchJson } from "./bar-rows.js";
+  import { POLICIES } from "../../js/canvit/policies.js";
   import { insertPaperFigures } from "../paper-figures.js";
   import { startDeck } from "../deck.js";
-  await drawSlides();
+  // A slide is drawn only when present, so a slide can leave the deck without its drawing code.
+  const drawIfPresent = (selector, draw) => { const slide = document.querySelector(selector); return slide && draw(slide); };
+  await drawTimeline(document.querySelector("#timeline .timeline"));
+  await drawMapNames();
+  // Class legends: each class in its color, from a plot step's legend.json.
+  for (const legend of document.querySelectorAll(".class-legend[data-src]")) {
+    const entries = await (await fetch(legend.dataset.src)).json();
+    legend.replaceChildren(...entries.map(({ class: name, color }) => {
+      const chip = document.createElement("span");
+      chip.textContent = name;
+      chip.style.setProperty("--chip", color);
+      return chip;
+    }));
+  }
+  await drawIfPresent("#detail", (slide) => drawDetail(slide, "../../data/talk/looking-closer/ADE_val_00001715-television"));
+  await drawPolicyStages(document.querySelector("#c2f-and-f2c .stages"), ["../../data/street-c2f", "../../data/street-f2c"]);
+  await drawPretrainingGrid(document.querySelector("#pretraining-policies .pretraining-grid"), "../../data/talk/pretraining", "truck", ["random", "full_then_random"]);
+  // Principal components 1 to 12 on #foundation, then over again.
+  await drawPcaCycle(document.querySelector("#foundation"), "../../data/talk/foundation/ADE_val_00001509", "maps.json", { lastComponent: 12 });
+  await drawFoundationTasks(document.querySelector("#foundation"), "../../data/talk/foundation-tasks/ADE_val_00001509");
+  const vitExample = "../../data/talk/vit-glimpse-examples/ADE_val_00001517-lamp";
+  await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), vitExample);
+  await drawPcaCycle(document.querySelector("#vit-on-a-glimpse"), vitExample, "meta.json");
+  // Alternatives to the paper's cat: data/talk/canvas-updates/.
+  const canvasUpdatesExample = "../../data/talk/canvas-updates/cat";
+  await drawIfPresent("#canvas-updates", (slide) => drawCanvasUpdates(slide, canvasUpdatesExample));
+  await drawSrRope(document.querySelector("#sr-rope"), "../../data/talk/vit-glimpse");
+  await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
+  await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
+  await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
+  await drawGap(document.querySelector("#state-of-the-art .ade20k .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json", canvit: true });
+  await drawIn1kGap(document.querySelector("#state-of-the-art .in1k .bars"), { macros: "../../assets/paper/data_macros.json", probes: "../../assets/paper/dinov3_probe_data.json", references: "sources/in1k-active-references.json" });
+  {
+    const slide = document.querySelector("#canvas-attention"), flops = await fetchJson("../../data/talk/canvas-attention/flops.json");
+    totalFlops(slide.querySelector(".b-only .total"), flops, { width: 1100, height: 540, labels: 280 });
+    totalFlops(slide.querySelector(".with-c .total"), flops, { width: 640, height: 540, labels: 280 });
+    projectionRatio(slide.querySelector(".with-c .ratio"), flops, { width: 500, height: 540, labels: 90 });
+  }
+  await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
+  const egc2f = document.querySelector("#eg-c2f");
+  await drawUncertainty(egc2f, "../../data/talk/metacognition/street");
+  egc2f.style.setProperty("--canvit-glimpse", POLICIES.entropy_coarse_to_fine.color);
+  await drawIfPresent("#next", () => drawCanvit2("../../data/talk/canvit2-glimpses/"));
   // The paper's figures and tables enabled in sources/paper-figures.json (../AGENTS.md, "Paper figures").
   await insertPaperFigures("sources/paper-figures.json");
   await startDeck();

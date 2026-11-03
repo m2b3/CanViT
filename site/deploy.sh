@@ -23,7 +23,7 @@ talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]
 out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
 cp -R site/index.html site/live.html site/css site/js "$out/"
-mkdir -p "$out/slides/node_modules/reveal.js" && cp site/slides/deck.js site/slides/slide-state.js site/slides/deck.css site/slides/paper-figures.js "$out/slides/"
+mkdir -p "$out/slides/node_modules/reveal.js" && cp site/slides/deck.js site/slides/deck.css site/slides/paper-figures.js "$out/slides/"
 cp -R site/slides/node_modules/reveal.js/dist "$out/slides/node_modules/reveal.js/"
 for file in $talks; do mkdir -p "$out/$(dirname "${file#site/}")" && cp "$file" "$out/${file#site/}"; done
 # The bundles the published pages and talks load, as they name them; other recorded bundles stay local. data/talk is

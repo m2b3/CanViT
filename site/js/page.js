@@ -1,4 +1,4 @@
-// Behavior of index.html: the policy slot, the claims' underlines, the citation's copy button.
+// Behavior of index.html: the dot plots, the policy slot, the claims' underlines, the citation's copy button.
 
 import { POLICIES } from "./canvit/policies.js";
 
@@ -11,8 +11,24 @@ function onFirstView(element, threshold, action) {
   }, { threshold }).observe(element);
 }
 
-// Each claim's underlines draw in once it is in view.
-for (const claim of document.querySelectorAll(".claim")) onFirstView(claim, 0.8, () => claim.classList.add("shown"));
+// Dot plots: each dot sits at its own printed value on an axis zoomed to the group's values, with labeled ticks,
+// so small differences show without bars whose lengths would misstate the ratios.
+for (const group of document.querySelectorAll(".dots")) {
+  const rows = [...group.querySelectorAll(".dot-row")];
+  const values = rows.map((row) => parseFloat(row.querySelector(".num").textContent));
+  const [lo, hi] = [Math.floor(Math.min(...values)) - 1, Math.ceil(Math.max(...values)) + 1];
+  const position = (value) => (value - lo) / (hi - lo);
+  rows.forEach((row, i) => row.style.setProperty("--position", String(position(values[i]))));
+  const step = hi - lo > 6 ? 2 : 1;
+  group.querySelector(".ticks").innerHTML = Array.from({ length: Math.floor((hi - lo) / step) + 1 }, (_, k) => lo + k * step)
+    .map((tick) => `<span style="left: ${100 * position(tick)}%">${tick}%</span>`).join("");
+  group.style.setProperty("--tick-fraction", String(step / (hi - lo)));
+  onFirstView(group, 0.5, () => group.classList.add("shown"));
+}
+
+// The claims' underlines draw in once the claims are in view.
+const claim = document.querySelector(".claim");
+onFirstView(claim, 0.8, () => claim.classList.add("shown"));
 
 const copy = document.querySelector(".copy");
 copy.addEventListener("click", async () => {

@@ -9,6 +9,8 @@ components and the recording pipeline.
   browsers color-manage canvas readback, and anti-fingerprinting (Brave,
   Safari private browsing, Firefox `resistFingerprinting`) perturbs it, which
   silently changes class indices.
+- The page shows what stands alone in its final state: the paper's figures and the components built for the web. Talk
+  slides and their click-by-click builds stay in the talk, which the page links.
 - Maps sit beside the photograph, never over it.
 - A color scale is fixed across the frames it compares (`domain` in
   `README.md`); renormalizing per frame changes what brightness means.

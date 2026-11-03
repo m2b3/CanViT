@@ -19,6 +19,33 @@ def from_multihead(x: Array) -> Array:
     return x.reshape(batch_size, tokens, num_heads * head_dim)
 
 
+@jax.custom_vjp
+def _softmax(scores: Array) -> Array:
+    """jax.nn.softmax over the last axis, whose score cotangent is computed apart from the products that consume it.
+
+    The score cotangent p * (dp - sum(dp * p)) nearly cancels when the values
+    of every key share a component that is large against their differences,
+    as in trained Canvas Attention Writes. Fused into the matrix products
+    that consume it, with dp rounded to bfloat16, XLA on TPU computed it with
+    errors larger than the result; behind an optimization barrier it is a
+    float32 array of its own.
+    """
+    return jax.nn.softmax(scores, axis=-1)
+
+
+def _softmax_forward(scores: Array) -> tuple[Array, Array]:
+    probabilities = jax.nn.softmax(scores, axis=-1)
+    return probabilities, probabilities
+
+
+def _softmax_backward(probabilities: Array, cotangent: Array) -> tuple[Array]:
+    weighted = jnp.sum(cotangent * probabilities, axis=-1, keepdims=True)
+    return (jax.lax.optimization_barrier(probabilities * (cotangent - weighted)),)
+
+
+_softmax.defvjp(_softmax_forward, _softmax_backward)
+
+
 def attention(queries: Array, keys: Array, values: Array, *, probability_dtype: jnp.dtype) -> Array:
     """Scaled dot-product attention of [B, Nq, H, d] queries over [B, Nk, H, d] keys and values.
 
@@ -27,7 +54,7 @@ def attention(queries: Array, keys: Array, values: Array, *, probability_dtype: 
     float32 [B, Nq, H, d].
     """
     scores = jnp.einsum("bqhd,bkhd->bhqk", queries, keys, preferred_element_type=jnp.float32)
-    probabilities = jax.nn.softmax(scores * queries.shape[-1] ** -0.5, axis=-1).astype(probability_dtype)
+    probabilities = _softmax(scores * queries.shape[-1] ** -0.5).astype(probability_dtype)
     return jnp.einsum("bhqk,bkhd->bqhd", probabilities, values, preferred_element_type=jnp.float32)
 
 

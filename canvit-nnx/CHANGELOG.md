@@ -5,6 +5,15 @@ entries under its version. Entries marked **Breaking** change what existing code
 **Hub** entries are steps on the Hugging Face Hub that must follow the release, in order, because
 released versions load each repo's `main` revision.
 
+## 0.3.1 (2026-11-02)
+
+### Fixed
+
+- **Breaking**: attention's softmax has its own gradient, which computes the score cotangent apart
+  from the products that consume it: in bfloat16 on TPU, XLA computed it fused into them with
+  errors larger than the result. Outputs are unchanged; forward-mode differentiation (`jax.jvp`)
+  through attention is no longer available.
+
 ## 0.3.0 (2026-10-29)
 
 ### Added

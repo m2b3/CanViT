@@ -6,6 +6,8 @@
   <title>Toward Active-Vision Foundation Models · MAIN 2026</title>
   <link rel="icon" href="data:,">
   <link rel="preload" href="../../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../node_modules/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="../node_modules/reveal.js/dist/reveal.css">
   <link rel="stylesheet" href="../../css/canvit.css">
   <link rel="stylesheet" href="../deck.css">
   <link rel="stylesheet" href="talk.css">
@@ -533,9 +535,9 @@
 </section>
 
 <section id="architecture" data-status="ready">
-  <!-- The paper's fig:canvit-high-level-arch (assets/paper/arch_overview.svg), centered as large as the slide allows
+  <!-- The paper's fig:canvit-high-level-arch (assets/paper-diagrams/arch_overview.svg), centered as large as the slide allows
        and revealed left to right by a mask (talk.css), a glimpse at a time. -->
-  <figure class="arch-reveal"><img src="../../assets/paper/arch_overview.svg" alt="CanViT's architecture over three glimpses: for each, a ViT backbone (purple blocks) processes the glimpse (blue) beside the canvas (red), reading from it and writing to it between blocks; the canvas and a recurrent CLS token (green) carry over to the next glimpse."><!-- The figure labels timesteps from 0; white patches over its labels (placed on the paper's PDF rendered 2000 px
+  <figure class="arch-reveal"><img src="assets/paper-diagrams/arch_overview.svg" alt="CanViT's architecture over three glimpses: for each, a ViT backbone (purple blocks) processes the glimpse (blue) beside the canvas (red), reading from it and writing to it between blocks; the canvas and a recurrent CLS token (green) carry over to the next glimpse."><!-- The figure labels timesteps from 0; white patches over its labels (placed on the paper's PDF rendered 2000 px
        wide) count glimpses from 1 and give the bare viewpoint. --><svg class="relabel" viewBox="0 0 2000 1825" preserveAspectRatio="none" aria-hidden="true"><rect x="7" y="1600" width="289" height="44"/><text class="viewpoint" x="152" y="1634">x=−0.7, y=−0.7, s=0.2</text><rect x="739" y="1600" width="248" height="44"/><text class="viewpoint" x="863" y="1634">x=0.3, y=0.3, s=0.5</text><rect x="1488" y="1600" width="294" height="44"/><text class="viewpoint" x="1635" y="1634">x=0.25, y=−0.8, s=0.15</text><rect x="206" y="1651" width="147" height="51"/><text class="glimpse-count" x="280" y="1694">Glimpse 1</text><rect x="955" y="1651" width="145" height="51"/><text class="glimpse-count" x="1028" y="1694">Glimpse 2</text><rect x="1691" y="1651" width="146" height="51"/><text class="glimpse-count" x="1748" y="1694">Glimpse 3</text></svg><span class="mask"></span></figure>
   <span class="fragment step-marker" data-shows="next"></span>
   <span class="fragment step-marker" data-shows="more"></span>
@@ -601,7 +603,7 @@
        canvas-side projections, joins B when the section's class hide-c is removed. -->
   <div class="stage">
     <svg class="figure" viewBox="0 0 253 216" role="img" aria-label="Canvas Attention: a read–write pair with learned projections on the glimpse side only">
-      <image href="../../assets/paper/canvas_attention_combined.svg" width="396" height="216"/>
+      <image href="assets/paper-diagrams/canvas_attention_combined.svg" width="396" height="216"/>
       <!-- The paper's panel letter A, covered: the slide shows panel A alone. -->
       <rect class="panel-letter" x="0" y="7" width="11" height="14"/>
       <!-- The ViT blocks first: self-attention and MLPs on the glimpse side only, none on the canvas side. -->
@@ -1223,76 +1225,10 @@
 </div>
 
 <script type="module">
-  import "../../js/canvit/index.js";
-  import "../../js/canvit/episode.js";
-  import "../../js/canvit/frontier.js";
-  import "../../js/canvit/policy-curves.js";
-  import "./foveate.js";
-  import { drawCanvit2 } from "./canvit2-glimpses.js";
-  import "./glimpse-tour.js";
-  import { drawTimeline } from "./timeline.js";
-  import { drawMapNames } from "./labeled-map.js";
-  import { drawUncertainty } from "./uncertainty.js";
-  import { drawDetail } from "./detail.js";
-  import { drawDistillation } from "./distillation.js";
-  import { drawVitOnGlimpse } from "./vit-glimpse.js";
-  import { drawCanvasUpdates } from "./canvas-updates.js";
-  import { drawSrRope } from "./sr-rope.js";
-  import { drawPcaCycle } from "./pca-cycle.js";
-  import { drawFoundationTasks } from "./foundation-tasks.js";
-  import { drawPretrainingGrid } from "./pretraining-grid.js";
-  import { drawPolicyStages } from "./policy-stages.js";
-  import "./title-teaser.js";
-  import { placeTableAnswers } from "./table.js";
-  import { drawGap, drawIn1kGap } from "./gap.js";
-  import { totalFlops, projectionRatio } from "./flops-chart.js";
-  import { fetchJson } from "./bar-rows.js";
-  import { POLICIES } from "../../js/canvit/policies.js";
+  import { drawSlides } from "./talk.js";
   import { insertPaperFigures } from "../paper-figures.js";
   import { startDeck } from "../deck.js";
-  // A slide is drawn only when present, so a slide can leave the deck without its drawing code.
-  const drawIfPresent = (selector, draw) => { const slide = document.querySelector(selector); return slide && draw(slide); };
-  await drawTimeline(document.querySelector("#timeline .timeline"));
-  await drawMapNames();
-  // Class legends: each class in its color, from a plot step's legend.json.
-  for (const legend of document.querySelectorAll(".class-legend[data-src]")) {
-    const entries = await (await fetch(legend.dataset.src)).json();
-    legend.replaceChildren(...entries.map(({ class: name, color }) => {
-      const chip = document.createElement("span");
-      chip.textContent = name;
-      chip.style.setProperty("--chip", color);
-      return chip;
-    }));
-  }
-  await drawIfPresent("#detail", (slide) => drawDetail(slide, "../../data/talk/looking-closer/ADE_val_00001715-television"));
-  await drawPolicyStages(document.querySelector("#c2f-and-f2c .stages"), ["../../data/street-c2f", "../../data/street-f2c"]);
-  await drawPretrainingGrid(document.querySelector("#pretraining-policies .pretraining-grid"), "../../data/talk/pretraining", "truck", ["random", "full_then_random"]);
-  // Principal components 1 to 12 on #foundation, then over again.
-  await drawPcaCycle(document.querySelector("#foundation"), "../../data/talk/foundation/ADE_val_00001509", "maps.json", { lastComponent: 12 });
-  await drawFoundationTasks(document.querySelector("#foundation"), "../../data/talk/foundation-tasks/ADE_val_00001509");
-  const vitExample = "../../data/talk/vit-glimpse-examples/ADE_val_00001517-lamp";
-  await drawVitOnGlimpse(document.querySelector("#vit-on-a-glimpse"), vitExample);
-  await drawPcaCycle(document.querySelector("#vit-on-a-glimpse"), vitExample, "meta.json");
-  // Alternatives to the paper's cat: data/talk/canvas-updates/.
-  const canvasUpdatesExample = "../../data/talk/canvas-updates/cat";
-  await drawIfPresent("#canvas-updates", (slide) => drawCanvasUpdates(slide, canvasUpdatesExample));
-  await drawSrRope(document.querySelector("#sr-rope"), "../../data/talk/vit-glimpse");
-  await placeTableAnswers(document.querySelector("#integrating-information-across-viewpoints"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
-  await placeTableAnswers(document.querySelector("#table-callback"), "../../data/talk/table/ADE_val_00001271-table/boxes.json");
-  await drawGap(document.querySelector("#gap .bar-chart .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json" });
-  await drawGap(document.querySelector("#state-of-the-art .ade20k .bars"), { paper: "../../assets/paper/ade20k_seg.json", references: "sources/ade20k-passive-references.json", canvit: true });
-  await drawIn1kGap(document.querySelector("#state-of-the-art .in1k .bars"), { macros: "../../assets/paper/data_macros.json", probes: "../../assets/paper/dinov3_probe_data.json", references: "sources/in1k-active-references.json" });
-  {
-    const slide = document.querySelector("#canvas-attention"), flops = await fetchJson("../../data/talk/canvas-attention/flops.json");
-    totalFlops(slide.querySelector(".b-only .total"), flops, { width: 1100, height: 540, labels: 280 });
-    totalFlops(slide.querySelector(".with-c .total"), flops, { width: 640, height: 540, labels: 280 });
-    projectionRatio(slide.querySelector(".with-c .ratio"), flops, { width: 500, height: 540, labels: 90 });
-  }
-  await drawDistillation(document.querySelector("#distillation"), "../../data/talk/distillation/ADE_val_00000124/riid-s124-n21/steps.json");
-  const egc2f = document.querySelector("#eg-c2f");
-  await drawUncertainty(egc2f, "../../data/talk/metacognition/street");
-  egc2f.style.setProperty("--canvit-glimpse", POLICIES.entropy_coarse_to_fine.color);
-  await drawIfPresent("#next", () => drawCanvit2("../../data/talk/canvit2-glimpses/"));
+  await drawSlides();
   // The paper's figures and tables enabled in sources/paper-figures.json (../AGENTS.md, "Paper figures").
   await insertPaperFigures("sources/paper-figures.json");
   await startDeck();

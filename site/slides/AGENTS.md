@@ -10,6 +10,10 @@ here in the same commit.
   `../css/canvit.css`). `deck.js` documents the slide conventions at its top: `data-shows`, `data-play` and
   `data-stills`, `data-canvit-target`, `data-lines`, `data-status`. `deck.css` holds the utilities every talk may use
   (`.draw` arrows, `.marks` rings, `.wipe`, `.step-marker`).
+- `slide-state.js`: a slide's build state from its shown fragments (`data-shows`, `data-canvit-target`, `data-lines`,
+  `data-play`), shared by the deck and by the project page, which shows slides outside a deck (`../js/talk-slide.js`).
+  A deck's page links reveal.js's `reset.css` and `reveal.css` before `deck.css`, which holds only rules scoped to
+  `.reveal`, so the page can use it too.
 - `package.json`: reveal.js, pinned and installed locally (`npm ci --prefix site/slides`), so a talk runs offline.
 - `shoot.py`: screenshots of every slide in Chromium, with the browser's errors and layout problems.
 - `stress.py`: a talk skipped through at speed, forward, back and at random; each slide must land in the state a
@@ -22,7 +26,8 @@ here in the same commit.
   it offline and walking every click.
 - `export_talk.py`: the single file, the PDF and the PowerPoint under one name, for an organizer's shared folder.
 - `paper_figures.py`, `paper-figures.js`: the paper's figures and tables as slides (below).
-- `YYYY-MM-DD-Event/`: a talk: `index.html` (every slide, with speaker notes), `talk.css` (rules scoped by slide id),
+- `YYYY-MM-DD-Event/`: a talk: `index.html` (every slide, with speaker notes), `talk.js` (what each slide draws, by slide
+  id, with paths resolved against the module, so any page draws a slide the same way), `talk.css` (rules scoped by slide id),
   talk-only modules and assets, `TALK.md` (the talk's design and the authors' positions), `sources/` (the material it
   draws on, each with its provenance) and `experiments/` (what computes its data).
 

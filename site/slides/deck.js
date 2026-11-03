@@ -30,6 +30,7 @@
 import Reveal from "./node_modules/reveal.js/dist/reveal.mjs";
 import RevealNotes from "./node_modules/reveal.js/dist/plugin/notes.mjs";
 import RevealHighlight from "./node_modules/reveal.js/dist/plugin/highlight.mjs";
+import { fillCode, playsNow, syncSlide } from "./slide-state.js";
 
 const STATUSES = ["ready", "draft", "aspirational"];
 
@@ -50,10 +51,7 @@ async function syncPlayback(deck) {
   await Promise.all(elements.map((element) => customElements.whenDefined(element.localName).catch(() => {})));
   const current = deck.getCurrentSlide();
   for (const element of elements) {
-    const state = element.dataset.play;
-    const shows = (name) => current.classList.contains(`shows-${name}`);
-    const inState = !state || (state.startsWith("!") ? !shows(state.slice(1)) : shows(state));
-    const shown = !printing && !!current?.contains(element) && inState;
+    const shown = !printing && !!current?.contains(element) && playsNow(element, current);
     if (shown && !started.has(element)) {
       started.add(element);
       (element.restart ?? element.play).call(element);
@@ -64,8 +62,6 @@ async function syncPlayback(deck) {
   }
 }
 
-const initialValues = new WeakMap(); // target -> {name: its markup's value}
-
 /** Heavy elements load when their slide is the current one or the next. */
 function loadNear(deck) {
   const slides = deck.getHorizontalSlides(); // every slide, the appendix's too (getSlides() leaves uncounted ones out)
@@ -73,71 +69,6 @@ function loadNear(deck) {
   for (const slide of slides.slice(index, index + 2)) {
     for (const element of slide.querySelectorAll("[data-load-near]:not([autoload])")) element.setAttribute("autoload", "");
   }
-}
-
-/** The attributes a data-canvit-target fragment sets: its data-canvit-NAME attributes other than the target. */
-const targetAttributes = (fragment) =>
-  [...fragment.attributes].filter((a) => a.name.startsWith("data-canvit-") && a.name !== "data-canvit-target")
-    .map((a) => [a.name.slice("data-canvit-".length), a.value]);
-
-/** Every data-canvit-target fragment of the current slide sets its attributes on its targets; none shown restores the
- * markup's values. */
-function syncTargets(deck) {
-  const slide = deck.getCurrentSlide();
-  if (!slide) return;
-  const fragments = [...slide.querySelectorAll("[data-canvit-target]")]
-    .sort((a, b) => Number(a.dataset.fragmentIndex ?? 0) - Number(b.dataset.fragmentIndex ?? 0));
-  for (const selector of new Set(fragments.map((f) => f.dataset.canvitTarget))) {
-    const targets = slide.querySelectorAll(selector);
-    if (targets.length === 0) throw new Error(`data-canvit-target="${selector}" matches nothing on its slide`);
-    const mine = fragments.filter((f) => f.dataset.canvitTarget === selector);
-    const names = new Set(mine.flatMap((f) => targetAttributes(f).map(([name]) => name)));
-    const last = mine.filter((f) => f.classList.contains("visible")).at(-1);
-    for (const target of targets) {
-      if (!initialValues.has(target)) {
-        initialValues.set(target, Object.fromEntries([...names].map((name) => [name, target.getAttribute(name)])));
-      }
-      const values = last ? Object.fromEntries(targetAttributes(last)) : initialValues.get(target);
-      for (const name of names) {
-        const value = values[name] ?? initialValues.get(target)[name];
-        if (value === null) target.removeAttribute(name);
-        else if (target.getAttribute(name) !== value) target.setAttribute(name, value);
-      }
-    }
-  }
-}
-
-/** A shown fragment with data-shows="NAME" gives its slide the class shows-NAME; hidden, it takes it away. */
-function syncStates(deck) {
-  const slide = deck.getCurrentSlide();
-  if (!slide) return;
-  for (const fragment of slide.querySelectorAll(".fragment[data-shows]")) {
-    slide.classList.toggle(`shows-${fragment.dataset.shows}`, fragment.classList.contains("visible"));
-  }
-}
-
-async function fillCode(slides) {
-  for (const code of slides.querySelectorAll("code[data-src]")) {
-    const response = await fetch(code.dataset.src);
-    if (!response.ok) throw new Error(`<code data-src="${code.dataset.src}">: HTTP ${response.status}`);
-    code.textContent = (await response.text()).trimEnd();
-  }
-}
-
-/** The last shown data-lines fragment of the current slide puts a band behind those lines of the slide's <pre>. */
-function syncLines(deck) {
-  const slide = deck.getCurrentSlide();
-  const fragments = [...(slide?.querySelectorAll(".fragment[data-lines]") ?? [])];
-  if (fragments.length === 0) return;
-  const pre = slide.querySelector("pre");
-  if (!pre) throw new Error(`#${slide.id}: data-lines fragments, but no <pre> to mark`);
-  const range = fragments.filter((f) => f.classList.contains("visible")).at(-1)?.dataset.lines;
-  pre.classList.toggle("marked", Boolean(range));
-  if (!range) return;
-  const match = /^(\d+)-(\d+)$/.exec(range);
-  if (!match || Number(match[2]) < Number(match[1])) throw new Error(`#${slide.id}: data-lines="${range}" is not "A-B" with A ≤ B`);
-  pre.style.setProperty("--line-from", match[1]);
-  pre.style.setProperty("--line-count", String(Number(match[2]) - Number(match[1]) + 1));
 }
 
 function checkStatuses(slides) {
@@ -260,7 +191,7 @@ export async function startDeck(options = {}) {
   for (const event of ["ready", "slidechanged"]) {
     deck.on(event, () => slides.closest(".reveal").classList.toggle("in-appendix", deck.getCurrentSlide()?.dataset.visibility === "uncounted"));
   }
-  // A slide just entered lands in its state without transitions: syncStates only updates the current slide, so a slide
+  // A slide just entered lands in its state without transitions: syncSlide only updates the current slide, so a slide
   // left at its last state and re-entered would otherwise animate back to its start. While "entering", transitions are
   // off and components skip their glides (deck.css sets --canvit-move and --canvit-glide, which reach their shadow DOM;
   // components also check closest(".entering")). The class leaves two frames later, once the new state has rendered.
@@ -273,9 +204,7 @@ export async function startDeck(options = {}) {
       entered = slide;
       slide.classList.add("entering");
     }
-    syncTargets(deck);
-    syncStates(deck);
-    syncLines(deck);
+    if (slide) syncSlide(slide);
     if (capturing) slide.classList.add("entering");
     else if (entering) {
       slide.getBoundingClientRect();

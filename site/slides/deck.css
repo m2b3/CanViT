@@ -1,8 +1,6 @@
 /* The look of every talk: the project page's identity (../css/canvit.css) on 1280 × 720 slides, light. A talk's own
-   stylesheet adds what only its slides use. */
-
-@import url("node_modules/reveal.js/dist/reset.css");
-@import url("node_modules/reveal.js/dist/reveal.css");
+   stylesheet adds what only its slides use. Apart from the page's background, everything here is scoped to .reveal, so a page can show slides outside a
+   deck (../js/talk-slide.js) with reveal.js's reveal.css; a deck's page also links reveal.js's reset.css, first. */
 
 html, body { background: var(--bg); }
 .reveal {

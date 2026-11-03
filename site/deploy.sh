@@ -28,7 +28,7 @@ cp -R site/slides/node_modules/reveal.js/dist "$out/slides/node_modules/reveal.j
 for file in $talks; do mkdir -p "$out/$(dirname "${file#site/}")" && cp "$file" "$out/${file#site/}"; done
 # The bundles the published pages and talks load, as they name them; other recorded bundles stay local. data/talk is
 # the talks' own data, not a bundle.
-bundles=$(grep -ho 'data/[a-z0-9-]*' "$out/index.html" "$out/live.html" "$out"/slides/*/index.html "$out"/slides/*/*.js | grep -v '^data/talk$' | sort -u)
+bundles=$(grep -ho 'data/[a-z0-9-]*' "$out/index.html" "$out/live.html" "$out"/slides/*/index.html "$out"/slides/[0-9][0-9][0-9][0-9]-*/*.js | grep -v '^data/talk$' | sort -u)
 [ -n "$bundles" ] || { echo "site/index.html names no bundle under data/" >&2; exit 1; }
 # The talks' own data: the files and directories under data/talk that their published pages and scripts name (a
 # trailing period ends a sentence in a comment). A trailing slash goes too: BSD cp copies the contents of `dir/`, not

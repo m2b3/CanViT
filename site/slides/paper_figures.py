@@ -26,8 +26,7 @@ record, a render in assets/paper-figures/ that no entry accepts, and a `where` t
 
 A figure is its export, converted to SVG by pdftocairo. A table is cut from the camera-ready build of the paper at the
 same commit, from its top rule to its bottom rule, so its caption stays off the slide; the build is the paper's own
-(generated data checked, camera_ready_wrapper.tex compiled by tectonic) with the drafting marks \\agenttext and
-\\postedtext typeset in black.
+(generated data checked, camera_ready_wrapper.tex compiled by tectonic) with the drafting marks typeset in black.
 """
 
 import hashlib
@@ -65,8 +64,10 @@ EXPORTS = "paper/exports"
 INCLUDED_EXPORT = re.compile(r"\\includegraphics(?:\[[^\]]*\])?\{figures/exported/([^}]+)\.pdf\}")
 """How the manuscript includes an export: latex/figures/exported links to paper/exports."""
 TALK_BUILD = "talk_build"
-TALK_BUILD_TEX = rf"""% The camera-ready build with the drafting marks in black, for talks (site/slides/paper_figures.py).
-\AtBeginDocument{{\renewcommand{{\agenttext}}[1]{{#1}}\renewcommand{{\postedtext}}[1]{{#1}}}}
+TALK_BUILD_TEX = rf"""% The camera-ready build with the drafting marks in black, for talks (site/slides/paper_figures.py): the paper's own
+% clean switch, or, at commits before it, its marks redefined.
+\def\canvitcleanbuild{{}}
+\AtBeginDocument{{\ifdefined\agenttext\renewcommand{{\agenttext}}[1]{{#1}}\fi\ifdefined\postedtext\renewcommand{{\postedtext}}[1]{{#1}}\fi}}
 \input{{{CAMERA_READY}}}
 """
 
@@ -376,7 +377,7 @@ class CameraReadyBuild:
             pdf = Path(tmp) / "table.pdf"
             cut.save(pdf, garbage=4, deflate=True)
             run(["pdftocairo", "-svg", str(pdf), str(out)])
-        source = f"table {label} of paper/latex/{CAMERA_READY}.tex, built with \\agenttext and \\postedtext in black"
+        source = f"table {label} of paper/latex/{CAMERA_READY}.tex, built with the drafting marks in black"
         return Render(self.paper.commit, source, self.renderer, sha256(out))
 
 

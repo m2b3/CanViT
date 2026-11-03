@@ -1,6 +1,8 @@
-/* The project page (index.html). Tokens and fonts come from canvit.css. */
+/* The project page (index.html) and the live demo's page (live.html). Tokens and fonts come from canvit.css. The page
+   shows slides of a talk (<talk-slide>), styled by the deck's stylesheets inside their .reveal: every rule here is
+   scoped so that it reaches no slide. */
 
-* { box-sizing: border-box; }
+*:not(.reveal *) { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -13,7 +15,8 @@ a { color: var(--ink); text-decoration-color: var(--underline); text-decoration-
 a:hover { text-decoration-color: currentColor; }
 /* Paragraphs avoid a lone word on their last line. */
 p { text-wrap: pretty; }
-sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); font-weight: 500; }
+:is(.hero, .prose, figcaption) sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); font-weight: 500; }
+figcaption sup { margin-left: 0; color: inherit; }
 
 .wide { width: min(1120px, 100% - 32px); margin-inline: auto; }
 .prose { width: min(720px, 100% - 32px); margin-inline: auto; }
@@ -60,52 +63,106 @@ sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); f
 /* Icon URLs resolve against this stylesheet, so they are set here, not in the page. */
 .icon.arxiv { --icon: url("../assets/logos/arxiv.svg"); }
 .icon.github { --icon: url("../assets/logos/github.svg"); }
+/* A screen on a stand, and a play triangle, drawn here. */
+.icon.slides { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 4h18v12H3z M11 16h2v4h-2z M7 20h10v1.6H7z' /%3E%3C/svg%3E"); }
+.icon.play { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 4l13 8-13 8z' /%3E%3C/svg%3E"); }
+
+/* The talk the page's slides come from: its conference's emblem beside one sentence and a link. */
+.talk-callout { display: flex; align-items: center; gap: 22px; margin-top: clamp(40px, 6vw, 56px); padding: 14px;
+                border: 1px solid var(--rule); border-radius: 16px; }
+.talk-callout .emblem { flex: none; line-height: 0; }
+.talk-callout .emblem img { width: 200px; height: auto; border-radius: 10px; }
+.talk-callout p { margin: 0 0 12px; font-size: 1rem; line-height: 1.55; }
+@media (max-width: 560px) {
+  .talk-callout { flex-direction: column; align-items: stretch; text-align: center; }
+  .talk-callout .emblem img { width: 100%; }
+}
 
 #abstract { margin-top: clamp(48px, 7vw, 72px); }
 #abstract p { color: var(--text); font-size: 1.06rem; line-height: 1.7; }
 
-
-/* Sections */
-section { margin-top: clamp(72px, 10vw, 112px); }
-h2 {
-  margin: 0 0 26px;
+/* Sections: a chapter holds the slides and figures of one part of the work, each with its caption. */
+main > section { margin-top: clamp(72px, 10vw, 112px); }
+main > section > h2 {
+  width: min(1120px, 100% - 32px);
+  margin: 0 auto 26px;
   color: var(--ink);
   font-size: clamp(1.45rem, 1.05rem + 1.2vw, 1.9rem);
   font-weight: 750;
   letter-spacing: -.02em;
   text-align: center;
+  text-wrap: balance;
 }
-h2::after {
+main > section > h2::after {
   content: ""; display: block; width: 56px; height: 3px; margin: 14px auto 0; border-radius: 3px;
   background: var(--brand);
 }
-section p { margin: 0 0 1.05em; }
-section p:last-child { margin-bottom: 0; }
-strong, b { color: var(--ink); font-weight: 650; }
+main > section > h2 .term-glimpse, main > section > h2 .term-canvas { font-weight: inherit; }
+main > section > p { margin: 0 0 1.05em; }
+:is(.prose, figcaption, .talk-callout) :is(strong, b) { color: var(--ink); font-weight: 650; }
 .hl { color: var(--ink); font-weight: 750; padding: 0 .12em; border-radius: 3px;
       background: linear-gradient(transparent 58%, var(--highlight) 58%); }
-h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
 
-.lead {
-  max-width: 700px; margin: 0 auto; color: var(--text); font-size: 1.16rem; text-align: center; text-wrap: balance;
+/* A slide or figure with its caption, the caption at reading width under it. */
+main figure { margin: 0 auto; }
+main figure + figure, main figure + .wide, main .wide + figure { margin-top: clamp(48px, 7vw, 72px); }
+figure.slide > figcaption, figure.frontier > figcaption, .architecture figcaption {
+  width: min(720px, 100%); margin: 20px auto 0; color: var(--text); font-size: 1rem; line-height: 1.6;
 }
+main > figure.teaser { margin-top: clamp(40px, 6vw, 56px); }
+
+/* Inside a slide, reveal.js's reset.css as a deck page applies it, at no specificity, so the deck's and the talk's
+   rules land on the same base. */
+:where(.talk-slide-frame) :where(div, span, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, cite, code, del, em, img,
+  ins, kbd, q, s, samp, small, strike, strong, sub, sup, var, b, u, i, dl, dt, dd, ol, ul, li, fieldset, form, label,
+  legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, figure, figcaption, footer, header,
+  hgroup, menu, nav, output, section, summary, time, mark, audio, video) {
+  font-size: 100%; font: inherit; vertical-align: baseline; border: 0; margin: 0; padding: 0;
+}
+:where(.talk-slide-frame) :where(article, aside, figcaption, figure, footer, header, hgroup, menu, nav, section) { display: block; }
+
+/* <talk-slide>: the slide at its deck's 1280 × 720, scaled to the width (talk-slide.js sets --scale and the height). */
+talk-slide { display: block; }
+.talk-slide-frame { position: relative; overflow: hidden; border: 1px solid var(--rule); border-radius: 14px;
+                    background: var(--bg); }
+.talk-slide-frame > .reveal { position: absolute; top: 0; left: 0; width: 1280px; height: 720px;
+                              transform: scale(var(--scale, 1)); transform-origin: 0 0; overflow: hidden; }
+.talk-slide-frame > .reveal > .slides { width: 1280px; height: 720px; }
+.talk-slide-error { margin: 0; padding: 24px; color: #b91c1c; font: 500 .95rem/1.5 var(--mono); }
+.talk-slide-controls { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; }
+.talk-slide-controls button { display: grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px;
+                              border: 0; border-radius: 8px; background: none; color: var(--muted);
+                              font: 600 1.1rem/1 var(--sans); cursor: pointer; }
+.talk-slide-controls :is(button, .open):hover { background: var(--soft); color: var(--ink); }
+.talk-slide-controls .open { display: grid; place-items: center; min-width: 30px; height: 30px; margin-left: 6px; border-radius: 8px;
+                             color: var(--muted); font: 600 1.05rem/1 var(--sans); text-decoration: none; }
+.talk-slide-controls .dots { display: flex; align-items: center; gap: 2px; }
+.talk-slide-controls button.dot { min-width: 18px; height: 22px; padding: 0; }
+.talk-slide-controls button.dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--rule);
+                                          transition: background .2s, transform .2s; }
+.talk-slide-controls button.dot.on::before { background: var(--ink); transform: scale(1.25); }
+
+/* What's in an active-vision model: the observer's two jobs and the policy's one, with the claim under them. */
+#active-vision { margin-top: clamp(56px, 8vw, 88px); }
+#active-vision h3 { margin: 0 0 8px; color: var(--ink); font-size: clamp(1.25rem, 1rem + .8vw, 1.55rem); font-weight: 750;
+                    letter-spacing: -.015em; text-align: center; }
 /* Each card takes a third of the width; titles and the pair values scale with it so each fits on one line. */
-.axes { container-type: inline-size; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; margin: 40px auto 0; }
-.group { display: flex; flex-direction: column; padding: 14px; border-radius: 20px; }
-.group.observer { background: var(--soft); }
-.group.policy { border: 1.5px dashed #cbd5e1; }
-.does { margin: 8px 0 16px; color: var(--ink); font-size: 1.3rem; font-weight: 750; letter-spacing: -.01em; text-align: center; }
-.pair { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 18px 0 6px; text-align: center; }
-.pair .role { color: var(--text); font-size: 1.05rem; font-weight: 650; }
+#active-vision .axes { container-type: inline-size; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; margin: 32px auto 0; }
+#active-vision .group { display: flex; flex-direction: column; padding: 14px; border-radius: 20px; }
+#active-vision .group.observer { background: var(--soft); }
+#active-vision .group.policy { border: 1.5px dashed #cbd5e1; }
+#active-vision .does { margin: 8px 0 16px; color: var(--ink); font-size: 1.3rem; font-weight: 750; letter-spacing: -.01em; text-align: center; }
+#active-vision .pair { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 18px 0 6px; text-align: center; }
+#active-vision .pair .role { color: var(--text); font-size: 1.05rem; font-weight: 650; }
 /* Two lines are reserved so the longest policy name fits and both pairs stay aligned. */
-.pair .value { display: flex; align-items: center; justify-content: center; min-height: 2.3em;
-               font-size: clamp(1.4rem, 2.9cqi, 1.95rem); font-weight: 800; line-height: 1.15; letter-spacing: -.02em;
-               text-wrap: balance; }
-.cycle { color: var(--muted); }
+#active-vision .pair .value { display: flex; align-items: center; justify-content: center; min-height: 2.3em;
+                              font-size: clamp(1.4rem, 2.9cqi, 1.95rem); font-weight: 800; line-height: 1.15; letter-spacing: -.02em;
+                              text-wrap: balance; }
+#active-vision .cycle { color: var(--muted); }
 /* The landed text pops out, sways left and right, settles, then gets underlined. */
-.cycle.landed { align-self: center; color: var(--ink);
-                background: linear-gradient(transparent 62%, var(--mark) 62%) center / 100% 1.15em no-repeat;
-                animation: pop .6s ease-out, sway 1s .25s ease-in-out, sweep .7s 1.15s ease-out backwards; }
+#active-vision .cycle.landed { align-self: center; color: var(--ink);
+                               background: linear-gradient(transparent 62%, var(--mark) 62%) center / 100% 1.15em no-repeat;
+                               animation: pop .6s ease-out, sway 1s .25s ease-in-out, sweep .7s 1.15s ease-out backwards; }
 @keyframes pop { from { scale: .6; opacity: .3; } 45% { scale: 1.22; opacity: 1; } 70% { scale: .95; } to { scale: 1; } }
 @keyframes sway {
   0%, 100% { translate: 0; rotate: 0deg; }
@@ -116,87 +173,55 @@ h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
   78% { translate: -2px; rotate: -.5deg; }
 }
 @keyframes sweep { from { background-size: 0% 1.15em; } }
-.group-cards { flex: 1; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 12px; }
-@media (max-width: 900px) { .axes { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 600px) { .group-cards { grid-auto-flow: row; } }
-.job {
+#active-vision .group-cards { flex: 1; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 12px; }
+@media (max-width: 900px) { #active-vision .axes { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { #active-vision .group-cards { grid-auto-flow: row; } }
+#active-vision .job {
   padding: 22px 22px 20px; border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 14px;
   background: var(--bg);
 }
-.job h3 { display: flex; align-items: baseline; gap: .4em; margin: 0 0 8px; color: var(--accent);
-          font-size: clamp(1.05rem, 2.4cqi - 5px, 1.3rem); font-weight: 800; line-height: 1.2; letter-spacing: -.015em;
-          white-space: nowrap; }
-.job .number { font-size: 1.5em; line-height: 1; }
+#active-vision .job h4 { display: flex; align-items: baseline; gap: .4em; margin: 0 0 8px; color: var(--accent);
+                         font-size: clamp(1.05rem, 2.4cqi - 5px, 1.3rem); font-weight: 800; line-height: 1.2; letter-spacing: -.015em;
+                         white-space: nowrap; }
+#active-vision .job .number { font-size: 1.5em; line-height: 1; }
 /* Stacked layouts give each card more width: the title may grow while it still fits on one line. */
-@media (max-width: 900px) { .job h3 { font-size: clamp(1.05rem, 3.6cqi - 5px, 1.3rem); } }
-@media (max-width: 600px) { .job h3 { font-size: clamp(1.05rem, 7cqi - 5px, 1.3rem); } }
-.job p:last-child { margin: 0; color: var(--text); font-size: 1rem; line-height: 1.55; }
-.claim {
-  max-width: 820px; margin: 48px auto 0; color: var(--ink); font-size: clamp(1.55rem, 1.1rem + 1.5vw, 2.2rem); font-weight: 800;
-  line-height: 1.2; letter-spacing: -.022em; text-align: center; text-wrap: balance;
-}
-.claim > span { display: block; }
-.claim > span + span { margin-top: .3em; }
-/* "No policy" and "any policy" get a marker stroke under them, drawn left to right once the claims are in view. */
-.claim u { position: relative; z-index: 0; text-decoration: none; white-space: nowrap; }
-.claim u::after { content: ""; position: absolute; z-index: -1; left: -.04em; right: -.04em; bottom: -.02em; height: .2em;
-                  border-radius: .1em; background: var(--mark); clip-path: inset(0 100% 0 0 round .1em);
-                  transition: clip-path .6s cubic-bezier(.3, .7, .3, 1); }
-.claim.shown u::after { clip-path: inset(0 0 0 0 round .1em); }
-.claim.shown > span + span u::after { transition-delay: .45s; }
-@media (prefers-reduced-motion: reduce) { .claim u::after { transition: none; } }
-.thesis {
+@media (max-width: 900px) { #active-vision .job h4 { font-size: clamp(1.05rem, 3.6cqi - 5px, 1.3rem); } }
+@media (max-width: 600px) { #active-vision .job h4 { font-size: clamp(1.05rem, 7cqi - 5px, 1.3rem); } }
+#active-vision .job p { margin: 0; color: var(--text); font-size: 1rem; line-height: 1.55; }
+#active-vision .thesis {
   max-width: 700px; margin: 32px auto 0; color: var(--ink); font-size: clamp(1.25rem, 1rem + .8vw, 1.55rem); font-weight: 700;
   letter-spacing: -.015em; text-align: center; text-wrap: balance;
 }
-.thesis .brand { font-weight: 800; }
+#active-vision .thesis .brand { font-weight: 800; }
 
-.architecture { margin: 0 auto; }
-.architecture img { display: block; width: min(880px, 100%); height: auto; margin: 0 auto; }
-.architecture figcaption { width: min(720px, 100%); margin: 28px auto 0; }
+/* A claim in large type; its <u> words get a marker stroke, drawn left to right once it is in view (page.js). */
+main .claim {
+  max-width: 820px; margin: 48px auto 0; color: var(--ink); font-size: clamp(1.55rem, 1.1rem + 1.5vw, 2.2rem); font-weight: 800;
+  line-height: 1.2; letter-spacing: -.022em; text-align: center; text-wrap: balance;
+}
+main .claim > span { display: block; }
+main .claim > span + span { margin-top: .3em; }
+main section > .claim:first-of-type { margin: 0 auto clamp(40px, 6vw, 56px); }
+main .claim u { position: relative; z-index: 0; text-decoration: none; white-space: nowrap; }
+main .claim u::after { content: ""; position: absolute; z-index: -1; left: -.04em; right: -.04em; bottom: -.02em; height: .2em;
+                       border-radius: .1em; background: var(--mark); clip-path: inset(0 100% 0 0 round .1em);
+                       transition: clip-path .6s cubic-bezier(.3, .7, .3, 1); }
+main .claim.shown u::after { clip-path: inset(0 0 0 0 round .1em); }
+main .claim.shown u + u::after, main .claim.shown > span + span u::after { transition-delay: .45s; }
+@media (prefers-reduced-motion: reduce) { main .claim u::after { transition: none; } }
+
+.architecture img { display: block; width: min(820px, 100%); height: auto; margin: 0 auto; }
 .architecture figcaption p { margin: 0 0 1em; }
 .architecture figcaption p:last-child { margin-bottom: 0; }
 .key { color: var(--ink); font-weight: 650; white-space: nowrap; }
 .key::before { content: ""; display: inline-block; width: .7em; height: .7em; margin-right: .35em; border-radius: 3px;
                background: var(--key); vertical-align: .02em; }
 
-.comparisons { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; max-width: 1040px; margin: 0 auto; }
-.comparison { --canvit-surface: var(--soft); padding: 26px 26px 24px; border-radius: 16px; background: var(--soft); }
-@media (max-width: 480px) { .comparison { padding: 20px 14px 18px; } }
-.comparison h3 { margin: 0 0 18px; color: var(--ink); font-size: 1.15rem; font-weight: 750; letter-spacing: -.01em; }
-.comparison .metric { margin: 18px 0 10px; color: var(--muted); font-size: .95rem; font-weight: 600; }
-.comparison h3 + .metric { margin-top: 0; }
-.dots { display: grid; gap: 12px; }
-.dot-row, .dot-axis { display: grid; grid-template-columns: minmax(0, 11.5em) minmax(0, 1fr) 3.4em; align-items: center; gap: 12px; }
-.dot-group { margin: 6px 0 -4px; color: var(--muted); font-size: .9rem; font-weight: 650; }
-.dot-row .name { padding-left: .9em; color: var(--text); font-size: 1rem; line-height: 1.3; }
-.dot-row.ours .name { color: var(--ink); font-weight: 650; }
-.dot-row .track { position: relative; height: 24px;
-                  background: repeating-linear-gradient(90deg, #cbd5e1 0 1px, transparent 1px calc(var(--tick-fraction) * 100%)),
-                              linear-gradient(#cbd5e1, #cbd5e1) center / 100% 1px no-repeat; }
-.dot { position: absolute; top: 50%; left: 0; width: 18px; height: 18px; border-radius: 50%; transform: translate(-50%, -50%);
-       background: #94a3b8; box-shadow: 0 0 0 3px var(--soft); transition: left 1s cubic-bezier(.2, .7, .2, 1); }
-.dot-row.ours .dot { background: var(--brand); }
-.shown .dot { left: calc(var(--position) * 100%); }
-.dot-row .num { color: var(--text); font-size: 1.05rem; font-weight: 650; font-variant-numeric: tabular-nums; text-align: right; }
-.dot-row.ours .num { color: var(--ink); font-weight: 800; }
-.ticks { position: relative; height: 1.4em; }
-.ticks span { position: absolute; transform: translateX(-50%); color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; }
-@media (prefers-reduced-motion: reduce) { .dot { transition: none; } }
-@media (max-width: 480px) {
-  .dot-row, .dot-axis { grid-template-columns: minmax(0, 8em) minmax(0, 1fr) 3em; }
-  .ticks span:nth-child(even) { display: none; }
-}
+/* The accuracy–efficiency frontier on a light card. */
+figure.frontier .card { --canvit-surface: var(--soft); padding: 26px 26px 24px; border-radius: 16px; background: var(--soft); }
+@media (max-width: 480px) { figure.frontier .card { padding: 20px 14px 18px; } }
 
-/* <canvit-live> on a light stage in the page's palette */
-.stage {
-  --canvit-focus: var(--glimpse);
-  --canvit-placeholder: var(--rule);
-  --canvit-radius: 8px;
-  margin-top: 28px; padding: 16px; border: 1px solid var(--rule); border-radius: 18px;
-  background: var(--soft); color: var(--ink);
-}
-@media (min-width: 720px) { .stage { padding: 24px; } }
+.run-live { margin: 28px 0 0; text-align: center; }
 
 .cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin: clamp(56px, 8vw, 80px) auto 0; padding: 0 16px; }
 .button.big { padding: 16px 28px; border-radius: 14px; font-size: 1.1rem; gap: 10px; }
@@ -208,7 +233,7 @@ h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
 .cta .button:not(.secondary) .icon { background: #ef3b3b; }
 
 .bibtex { position: relative; border-radius: 12px; background: var(--soft); }
-.bibtex pre { margin: 0; padding: 20px 22px; overflow-x: auto; color: var(--ink); font: 14.5px/1.65 var(--mono); }
+.bibtex pre { margin: 0; padding: 20px 22px; overflow-x: auto; color: var(--ink); font: 14px/1.65 var(--mono); }
 .copy {
   position: absolute; top: 10px; right: 10px;
   padding: 6px 12px; border: 0; border-radius: 8px;
@@ -222,3 +247,17 @@ footer {
   border-top: 1px solid var(--rule);
   color: var(--muted); font-size: .95rem; text-align: center;
 }
+
+/* live.html: <canvit-live> on a light stage in the page's palette. */
+.live-stage {
+  --canvit-focus: var(--glimpse);
+  --canvit-placeholder: var(--rule);
+  --canvit-radius: 8px;
+  margin-top: 28px; padding: 16px; border: 1px solid var(--rule); border-radius: 18px;
+  background: var(--soft); color: var(--ink);
+}
+@media (min-width: 720px) { .live-stage { padding: 24px; } }
+.live-lead { max-width: 700px; margin: 18px auto 0; color: var(--text); font-size: 1.1rem; text-align: center; text-wrap: balance; }
+.back { margin: 0; padding-top: 28px; font-size: .95rem; font-weight: 600; }
+.back a { text-decoration: none; color: var(--muted); }
+.back a:hover { color: var(--ink); }

@@ -91,7 +91,8 @@ class CanvitRollout extends CanvitView {
   attributeChangedCallback(name, old, value) {
     if (name === "layers" && old !== value && this.shadowRoot.firstChild) this.#layout();
     super.attributeChangedCallback(name, old, value);
-    if (name === "src" && old !== value) for (const view of this.#views()) view.refresh();
+    // A view not yet upgraded (a subtree inserted whole upgrades its rollout first) refreshes itself when it connects.
+    if (name === "src" && old !== value) for (const view of this.#views()) view.refresh?.();
   }
 
   build() {

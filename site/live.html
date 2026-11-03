@@ -2,12 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CanViT-B in your browser</title>
-  <!-- Links published before the demo joined the project page (Hub model cards among them) land on its section. -->
-  <meta http-equiv="refresh" content="0; url=./#live">
-  <link rel="canonical" href="https://m2b3.github.io/CanViT/#live">
+  <link rel="icon" href="data:,">
+  <meta name="description" content="CanViT-B and its ADE20K probe running in your browser: click a scene to take a glimpse there.">
+  <link rel="canonical" href="https://m2b3.github.io/CanViT/live.html">
+  <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/canvit.css">
+  <link rel="stylesheet" href="css/page.css">
+  <script type="module" src="js/canvit/live.js"></script>
 </head>
 <body>
-  <p><a href="./#live">CanViT-B in your browser</a> is on the project page.</p>
+  <!-- The live demo, on its own page since 2026-11-03: Hub model cards link here, and the project page's #live links here. -->
+  <main class="wide">
+    <p class="back"><a href="./">← <span class="brand">CanViT</span>: Toward Active-Vision Foundation Models</a></p>
+    <section class="live">
+      <h2>Try it in your browser</h2>
+      <p class="live-lead">Click the scene: CanViT&#8209;B takes a <span class="term-glimpse">glimpse</span> there and updates its <span class="term-canvas">canvas</span>, decoded into a segmentation of the whole scene. It runs in your browser.</p>
+      <div class="live-stage">
+        <canvit-live scene="data/street-path/scene.png"></canvit-live>
+      </div>
+    </section>
+  </main>
+  <footer class="prose">
+    <p>Code and model weights are released under the MIT license; CanViT is pretrained by distillation from
+      <a href="https://github.com/facebookresearch/dinov3">DINOv3</a>, released under the
+      <a href="https://github.com/facebookresearch/dinov3/blob/main/LICENSE.md">DINOv3 License</a>.
+      The scene is from the ADE20K validation set.</p>
+  </footer>
 </body>
 </html>

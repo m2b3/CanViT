@@ -21,7 +21,7 @@
 
 <!-- ============================================================== Part I (Sabrina): why active-vision foundation models -->
 
-<section id="title" data-status="draft" data-background-gradient="linear-gradient(to right, rgb(3 6 14 / 0) 0%, rgb(3 6 14 / .25) 38%, rgb(3 6 14 / .96) 64%, #03060e 100%), linear-gradient(to bottom, color-mix(in srgb, #2d6cdf 88%, black), color-mix(in srgb, #e0483e 85%, black))">
+<section id="title" data-status="ready" data-background-gradient="linear-gradient(to right, rgb(3 6 14 / 0) 0%, rgb(3 6 14 / .25) 38%, rgb(3 6 14 / .96) 64%, #03060e 100%), linear-gradient(to bottom, color-mix(in srgb, #2d6cdf 88%, black), color-mix(in srgb, #e0483e 85%, black))">
   <!-- Title and authors on the left; on the right, a silent teaser (title-teaser.js): ADE20K scenes and viewpoints
        chosen by experiments/title_teaser, the scene above the canvas, each glimpse taken visibly. -->
   <div class="layout">
@@ -53,7 +53,7 @@
   </ul></aside>
 </section>
 
-<section id="tradition" data-status="draft">
+<section id="tradition" data-status="ready">
   <h2>Deep neural networks as models of vision</h2>
   <!-- Supervised, then unsupervised (self-supervised) models of the ventral stream: Yamins et al. 2014's categorization
        performance against IT predictivity; Zhuang et al. 2021's Fig. 2B, IT panel (assets/figures/PROVENANCE.md). -->
@@ -100,7 +100,7 @@
   </ul></aside>
 </section>
 
-<section id="foundation" data-status="draft">
+<section id="foundation" data-status="ready">
   <h2>DINOv3</h2>
   <!-- The living room of #gap. DINOv3 ViT-B/16 at 1536 x 1024 px; the feature colors cycle through principal
        components in threes (pca-cycle.js), clipped at the 2nd and 98th percentiles as on #vit-on-a-glimpse; the maps
@@ -147,7 +147,7 @@
   </ul></aside>
 </section>
 
-<section id="dinov3-and-the-brain" data-status="draft">
+<section id="dinov3-and-the-brain" data-status="ready">
   <h2>DINOv3 and the brain</h2>
   <!-- Why the scale matters: Raugel et al., ICLR 2026 version only (never mixed with arXiv): its Method Figure and
        Fig. 4E, each cortical region's training half time against its distance from V1 (assets/figures/PROVENANCE.md). -->
@@ -167,7 +167,7 @@
   </ul></aside>
 </section>
 
-<section id="passive-models" class="signpost" data-status="draft">
+<section id="passive-models" class="signpost" data-status="ready">
   <p class="statement">What's missing?</p>
   <aside class="notes"><ul>
     <li>These models are great NeuroAI tools,</li>
@@ -176,7 +176,7 @@
   </ul></aside>
 </section>
 
-<section id="human-vision" data-status="draft">
+<section id="human-vision" data-status="ready">
   <!-- Answers "What's missing?": eye movements. A fixation cross jumps between fixations chosen by hand (an
        illustration, not recorded); a click stops it on the street at full resolution. -->
   <div class="views solo">
@@ -193,7 +193,7 @@
   </ul></aside>
 </section>
 
-<section id="bandwidth" data-status="draft">
+<section id="bandwidth" data-status="ready">
   <!-- Why active vision: the world outweighs what a system can take in at once (sensory bandwidth for brains,
        computational resources for machines). No image, so nothing ties the limit to pixels or crops. The beam tips
        on "tip". -->
@@ -216,7 +216,7 @@
   </ul></aside>
 </section>
 
-<section id="timeline" data-status="draft">
+<section id="timeline" data-status="ready">
   <h2>Deep active computer vision</h2>
   <!-- Drawn by timeline.js from sources/active-vision-timeline.json: RAM alone beside its paper's figures, then the
        axis grows as the later models arrive, then the neuro-AI models, each read in its paper; the figures: assets/figures/PROVENANCE.md. -->
@@ -242,7 +242,7 @@
   </ul></aside>
 </section>
 
-<section id="gap" data-status="draft">
+<section id="gap" data-status="ready">
   <h2>The wide gap between passive and active computer vision</h2>
   <!-- The living room is from experiments/history_examples (ADE20K validation). gap.js draws the bars from the
        paper's export and sources/ade20k-passive-references.json, the second set on "more". -->
@@ -274,7 +274,7 @@
   </ul></aside>
 </section>
 
-<section id="active-vision-model" data-status="draft">
+<section id="active-vision-model" data-status="ready">
   <h2>What's in an active-vision model?</h2>
   <div class="axes">
     <div class="group observer">
@@ -316,7 +316,7 @@
   </ul></aside>
 </section>
 
-<section id="task-dependent-scanpaths" data-status="draft">
+<section id="task-dependent-scanpaths" data-status="ready">
   <h2>Where people look depends on their goal</h2>
   <!-- Yarbus 1967, Fig. 109: Repin's painting and records of the same subject under different instructions, cropped
        from the Wikimedia Commons layout with the record numbers painted out (assets/figures/PROVENANCE.md). Where we
@@ -346,7 +346,7 @@
   </ul></aside>
 </section>
 
-<section id="compare" data-status="draft">
+<section id="compare" data-status="ready">
   <h2>Toward Active-Vision Foundation Models</h2>
   <!-- Rows side by side, then the goal column. Every cell: sources/checked-facts.md; the
        prior active models are those of #timeline. -->
@@ -378,7 +378,7 @@
   </ul></aside>
 </section>
 
-<section id="paper" data-status="draft">
+<section id="paper" data-status="ready">
   <!-- The talk first names CanViT here; the QR codes are on #links. -->
   <div class="layout">
     <div class="name">
@@ -411,7 +411,7 @@
   </ul></aside>
 </section>
 
-<section id="canvit-rollout" data-status="draft">
+<section id="canvit-rollout" data-status="ready">
   <!-- The paper's fig:example-canvit-rollout built up a glimpse at a time from its own code:
        experiments/canvit_rollout/stage.typ over paper/exporter's canvit_overview, compiled into
        ../../data/talk/canvit-rollout/ by `build_deck_data.sh canvit_rollout`. Glimpses count from 1, as everywhere
@@ -444,7 +444,7 @@
   </ul></aside>
 </section>
 
-<section id="outline-architecture" class="signpost" data-status="draft">
+<section id="outline-architecture" class="signpost" data-status="ready">
   <!-- Part II's outline: the paper's contributions, then its experiments; the current part highlighted. -->
   <div class="outline"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <span class="fragment step-marker" data-shows="architecture"></span>
@@ -455,7 +455,7 @@
   </ul></aside>
 </section>
 
-<section id="vit-on-a-glimpse" data-status="draft">
+<section id="vit-on-a-glimpse" data-status="ready">
   <h2>Processing a glimpse with a Vision Transformer (ViT)</h2>
   <!-- vit-glimpse.js fills the images from experiments/vit_glimpse/examples.py: DINOv3 ViT-B/16 on a 128 px glimpse
        of an object about as bright and colored as its surroundings, its tokens shown only on the principal
@@ -484,7 +484,7 @@
   </ul></aside>
 </section>
 
-<section id="integrating-information-across-viewpoints" data-status="draft">
+<section id="integrating-information-across-viewpoints" data-status="ready">
   <!-- A question: the problem, which #table-callback answers under the same title without the question mark. -->
   <h2>Integrating visual information across viewpoints?</h2>
   <div class="table-demo">
@@ -524,7 +524,7 @@
 
 <!-- ============================================================== Part II (Yohaï): how CanViT is built and trained, what it does, policies on top -->
 
-<section id="architecture-title" class="signpost" data-status="draft">
+<section id="architecture-title" class="signpost" data-status="ready">
   <!-- The architecture's name full screen, then its figure on #architecture. -->
   <p class="statement"><span>The <span class="term-canvas">Canvas</span> <span class="term-glimpse">Vision Transformer</span><br>architecture</span></p>
   <aside class="notes"><ul>
@@ -532,7 +532,7 @@
   </ul></aside>
 </section>
 
-<section id="architecture" data-status="draft">
+<section id="architecture" data-status="ready">
   <!-- The paper's fig:canvit-high-level-arch (assets/paper/arch_overview.svg), centered as large as the slide allows
        and revealed left to right by a mask (talk.css), a glimpse at a time. -->
   <figure class="arch-reveal"><img src="../../assets/paper/arch_overview.svg" alt="CanViT's architecture over three glimpses: for each, a ViT backbone (purple blocks) processes the glimpse (blue) beside the canvas (red), reading from it and writing to it between blocks; the canvas and a recurrent CLS token (green) carry over to the next glimpse."><!-- The figure labels timesteps from 0; white patches over its labels (placed on the paper's PDF rendered 2000 px
@@ -555,7 +555,7 @@
   </ul></aside>
 </section>
 
-<section id="sr-rope" data-status="draft">
+<section id="sr-rope" data-status="ready">
   <h2>Scene-Relative Rotary Position Embeddings (SR-RoPE)</h2>
   <!-- Photo: Fir0002/Flagstaffotos, CC BY-NC 3.0, credited on no slide. -->
   <!-- A 128 px glimpse of the cat, then on "zoom" the glimpses on the way to a smaller one on its eye (placed by
@@ -586,7 +586,7 @@
   </ul></aside>
 </section>
 
-<section id="canvas-attention-title" class="signpost" data-status="draft">
+<section id="canvas-attention-title" class="signpost" data-status="ready">
   <!-- The mechanism's name full screen, then its figure on #canvas-attention. -->
   <p class="statement"><span>Canvas Attention</span></p>
   <aside class="notes"><ul>
@@ -594,7 +594,7 @@
   </ul></aside>
 </section>
 
-<section id="canvas-attention" class="hide-c" data-status="draft">
+<section id="canvas-attention" class="hide-c" data-status="ready">
   <!-- The paper's fig:canvas-attention: panel A alone (cropped from the figure), centered as large as the slide
        allows; then (shows-payoff) panel B in its place, total inference FLOPs against the output patch grid, rebuilt
        as a chart from the paper's computation (experiments/canvas_attention, flops-chart.js). Panel C, the cost of
@@ -631,14 +631,14 @@
   </ul></aside>
 </section>
 
-<section id="outline-pretraining" class="signpost" data-status="draft">
+<section id="outline-pretraining" class="signpost" data-status="ready">
   <div class="outline on-pretraining"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
     <li>Now I'm going to tell you about how we actually train this model to be a general-purpose active-vision foundation model.</li>
   </ul></aside>
 </section>
 
-<section id="how-to-see-first" class="signpost" data-status="draft">
+<section id="how-to-see-first" class="signpost" data-status="ready">
   <!-- The principle behind policy-agnostic pretraining (paper, Introduction: it "disentangles 'how to see in an
        active-vision setting' from 'where to look'"). Under it, #active-vision-model's diagram with the observer
        ringed and the policy set back. -->
@@ -666,7 +666,7 @@
   </ul></aside>
 </section>
 
-<section id="pretraining-policies" data-status="draft">
+<section id="pretraining-policies" data-status="ready">
   <h2>Pretraining policies</h2>
   <!-- Static, so the policies compare at a glance: pretraining-grid.js draws each policy's rollout on the truck
        scene of experiments/pretraining (the package's pretraining sampler): the scene with numbered boxes, then the
@@ -681,7 +681,7 @@
   </ul></aside>
 </section>
 
-<section id="distillation" data-status="draft">
+<section id="distillation" data-status="ready">
   <h2>Policy-agnostic dense latent distillation</h2>
   <!-- A training step unrolled in time, a column per glimpse: the glimpse and its viewpoint, the whole-scene
        prediction, and its mean squared error against the teacher features. A bedroom (ADE_val_00000124, chosen by a
@@ -755,7 +755,7 @@
   </ul></aside>
 </section>
 
-<section id="pretraining" data-status="draft">
+<section id="pretraining" data-status="ready">
   <h2>Pretraining CanViT-B</h2>
   <!-- The run (paper, sec:pretraining and supp:pretraining-details), then its compute beside DINOv3 7B's (Siméoni
        et al. 2025, Table 20) to scale; sources/checked-facts.md. -->
@@ -787,7 +787,7 @@
   </ul></aside>
 </section>
 
-<section id="table-callback" data-status="draft">
+<section id="table-callback" data-status="ready">
   <h2>Integrating visual information across viewpoints</h2>
   <!-- A callback to #integrating-information-across-viewpoints, as it ended: two glimpses, each passive answer pasted
        where it was taken, the middle unknown; then CanViT-B's p(table) after both glimpses (experiments/table_corners,
@@ -818,14 +818,14 @@
   </ul></aside>
 </section>
 
-<section id="outline-experiments" class="signpost" data-status="draft">
+<section id="outline-experiments" class="signpost" data-status="ready">
   <div class="outline on-experiments"><p class="architecture">Architecture</p><p class="pretraining">Pretraining</p><p class="experiments">Experiments</p></div>
   <aside class="notes"><ul>
     <li>Now let's get to experiments.</li>
   </ul></aside>
 </section>
 
-<section id="choosing-where-to-look" class="signpost" data-status="draft">
+<section id="choosing-where-to-look" class="signpost" data-status="ready">
   <!-- Part I's diagram of an active-vision model (#active-vision-model), the policy ringed and the observer set back
        (the opposite of #how-to-see-first), before the experiments' policies. -->
   <div class="axes">
@@ -850,7 +850,7 @@
   </ul></aside>
 </section>
 
-<section id="c2f-and-f2c" data-status="draft">
+<section id="c2f-and-f2c" data-status="ready">
   <h2>Coarse-to-Fine (C2F) and Fine-to-Coarse (F2C)</h2>
   <!-- Static, in stages, since animations side by side hid the difference: each policy's rollout on the street as
        its quadtree levels, in order (policy-stages.js, from the recorded bundles). R-IID and F-IID are introduced on
@@ -866,7 +866,7 @@
   </ul></aside>
 </section>
 
-<section id="eg-c2f" data-status="draft">
+<section id="eg-c2f" data-status="ready">
   <h2>Entropy-Guided Coarse-to-Fine (EG-C2F)</h2>
   <!-- How EG-C2F chooses its second glimpse on the street of #c2f-and-f2c, after the full-scene first: canvas
        patches outlined at their true size, each linked to the class probabilities read out there and their entropy;
@@ -920,7 +920,7 @@
   </ul></aside>
 </section>
 
-<section id="policy-accuracy" data-status="draft">
+<section id="policy-accuracy" data-status="ready">
   <h2>Accuracy by viewing policy</h2>
   <!-- Panels B and C of the paper's fig:main-ade20k-in1k-results as one view: how the policies compare against
        glimpse count and across tasks (they matter much more for ADE20K). ImageNet-1k fine-tuned (solid) and frozen
@@ -955,7 +955,7 @@
   </ul></aside>
 </section>
 
-<section id="frontier" data-status="draft">
+<section id="frontier" data-status="ready">
   <h2>ADE20K accuracy against inference compute</h2>
   <!-- Panel A of the paper's fig:main-ade20k-in1k-results, built step by step: the prior active models and the
        worst policy at a 32² canvas, then at 64², then the best policy (EG-C2F) at both (the frontier's series
@@ -977,7 +977,7 @@
   </ul></aside>
 </section>
 
-<section id="state-of-the-art" data-status="draft">
+<section id="state-of-the-art" data-status="ready">
   <h2>A new active-vision state of the art</h2>
   <!-- A callback to #gap as it ended, from the same export and references (gap.js); on "canvit", CanViT-B's best
        result frozen with a linear readout (the export's best point: C2F, 64 x 64 canvas, glimpse 21), in its own row
@@ -1005,11 +1005,11 @@
   </ul></aside>
 </section>
 
-<section id="learned-policy" data-status="draft">
+<section id="learned-policy" data-status="ready">
   <h2>Learning where to look</h2>
   <!-- The paper's policies on the 64 x 64 canvas (assets/paper/ade20k_seg.json) over the first five glimpses, where
        the learned policy acts, on a linear axis. On "learned", the learned policy (sources/learned-policy.json:
-       Q-learning, the best checkpoint of each run, from the camera-ready's appendix "Learned viewing policies"): the
+       Q-learning, the best checkpoint of each run, from the camera-ready's appendix "Learned ADE20K viewing policies"): the
        mean over training runs with its 95% confidence interval as a band (talk.css). -->
   <div class="learned-layout">
     <canvit-policy-curves src="../../assets/paper/ade20k_seg.json" task="ade20k" canvas-grid="64" policies="full_then_random coarse_to_fine entropy_coarse_to_fine" added-src="sources/learned-policy.json" glimpses="5" x-scale="linear" y-range="39 45.5"></canvit-policy-curves>
@@ -1017,7 +1017,7 @@
   <!-- Policy learning beside the observer's pretraining, to scale. XXX: hand-typed until an export carries them:
        pretraining "approximately 1 billion glimpses" (paper, supp:pretraining-details); policy learning 640,000
        glimpses per training run (8,000 steps of 16 images with 5 glimpses), 74 to 91 minutes per run on an RTX 4090
-       (the camera-ready's appendix "Learned viewing policies"; sources/learned-policy.json). -->
+       (the camera-ready's appendix "Learned ADE20K viewing policies"; sources/learned-policy.json). -->
   <!-- Policy learning alone on its own axis, then pretraining joins and the axis rescales (talk.css, .rescale). -->
   <div class="rescale budget">
     <div class="row policy" style="--v: 640000"><p class="who">Policy learning</p><div class="plot"><span class="bar"></span><span class="n">640K glimpses</span></div></div>
@@ -1043,7 +1043,7 @@
 </section>
 
 <!-- code-only hides the scene and maps beside the code; remove it to show them. -->
-<section id="quickstart" class="code-only" data-status="draft">
+<section id="quickstart" class="code-only" data-status="ready">
   <h2>Open-source and easy to use</h2>
   <p class="install"><code>uv add canvit-pytorch</code></p>
   <!-- quickstart.py runs as shown: experiments/quickstart/export.py executes it on a bus on a seafront street
@@ -1077,7 +1077,7 @@
   </ul></aside>
 </section>
 
-<section id="next" data-status="draft">
+<section id="next" data-status="ready">
   <h2>Toward <span class="brand">CanViT</span> 2</h2>
   <!-- CanViT 2 in broad strokes only: CanViT's column centered, then it moves aside, an arrow draws and CanViT 2's
        column appears. Atop each, what the model perceives of a scene at a moment, unseen regions black: CanViT's
@@ -1104,7 +1104,7 @@
   </ul></aside>
 </section>
 
-<section id="links" data-status="draft">
+<section id="links" data-status="ready">
   <div class="layout">
     <div class="qr">
       <a href="https://arxiv.org/abs/2603.22570"><span class="head"><img class="logo" src="../../assets/logos/arxiv.svg" alt="">Paper</span><img class="code" src="../../assets/qr/paper.svg" alt="QR code: arxiv.org/abs/2603.22570"></a>
@@ -1139,7 +1139,7 @@
   <p class="divider">Appendix</p>
 </section>
 
-<section id="canvas-updates" data-status="draft">
+<section id="canvas-updates" data-status="ready">
   <h2>An emergent hierarchy within each glimpse</h2>
   <!-- The paper's fig:canvas-evolution, rebuilt for a slide by experiments/canvas_updates/export.py from
        paper/exporter's diagrams/canvas_write_evolution.py: the paper's cat, its first glimpse, and what each of that
@@ -1158,21 +1158,9 @@
   <span class="fragment step-marker" data-shows="write-1"></span>
   <span class="fragment step-marker" data-shows="write-2"></span>
   <span class="fragment step-marker" data-shows="write-3"></span>
-  <aside class="notes"><ul>
-    <li>One more thing that I'd like to tell you about is what we saw when we looked inside the model.</li>
-    <li>It has multiple Canvas Attention layers within a single glimpse,</li>
-    <li>and we observed an interesting progression across depth within each glimpse, in the Canvas Attention write residuals that get sent to the canvas.</li>
-    <li>[CLICK]</li>
-    <li>The first Canvas Attention write seems to deal with essentially only what is contained within the glimpse, and doesn't represent much that is interpretable in human terms.</li>
-    <li>[CLICK]</li>
-    <li>The second write starts to reflect the structure of the objects within the glimpse.</li>
-    <li>[CLICK]</li>
-    <li>And the third one actually extrapolates beyond the confines of the glimpse, and delineates sharper object boundaries.</li>
-    <li>So this progression is emergent: we never trained the model for it, but it reads like a processing hierarchy, going from local, feature-level content to scene-wide, semantically grounded content.</li>
-  </ul></aside>
 </section>
 
-<section id="rollout" data-status="draft">
+<section id="rollout" data-status="ready">
   <h2><span class="brand">CanViT</span> in action</h2>
   <!-- The loop introduced part by part, so complexity appears gradually: the scene, a glimpse sampled at a
        viewpoint, then what is done with it. The fragments set the episode's stage; once everything is shown it plays
@@ -1185,12 +1173,9 @@
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="canvas"></span>
   <span class="fragment step-marker" data-shows="play" data-canvit-target="canvit-episode" data-canvit-stage="all"></span>
   <span class="fragment step-marker" data-canvit-target="canvit-episode" data-canvit-stage="all" data-canvit-readout="labels"></span>
-  <aside class="notes"><ul>
-    <li>All together on a street: a viewpoint, the glimpse it crops, CanViT reading and writing its canvas, and the canvas read out as a segmentation of the whole street at any time.</li>
-  </ul></aside>
 </section>
 
-<section id="extrapolation" data-status="draft">
+<section id="extrapolation" data-status="ready">
   <h2>Extrapolation to unobserved regions</h2>
   <div class="extrapolation">
     <div></div><p class="col-label">DINOv3, each glimpse</p><p class="col-label">CanViT, far end</p><p class="col-label">CanViT, near end</p><p class="col-label">CanViT, both</p>
@@ -1205,16 +1190,9 @@
     <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_b.png" alt="">
     <img class="pixels fragment" data-fragment-index="3" src="../../data/talk/table/ADE_val_00001271-table/prob_ab.png" alt="">
   </div>
-  <aside class="notes"><ul>
-    <li>Back to the table. A passive model on each glimpse alone: the middle is unknown.</li>
-    <li>CanViT after the far end: it already extends the table beyond the glimpse.</li>
-    <li>After the near end, the same from the other side.</li>
-    <li>After both, it connects them.</li>
-    <li>And the probability of table, for each. Over 1,436 large ADE20K objects with a glimpse at each end, about half of the unseen middle is labeled as the object after one end, 65% after both; it also labels as the object 46% of the other pixels between the glimpses, so it overshoots too. This table was picked for few false positives.</li>
-  </ul></aside>
 </section>
 
-<section id="detail" data-status="draft">
+<section id="detail" data-status="ready">
   <h2>Spatial coverage and perception of detail</h2>
   <!-- ADE_val_00001715, chosen among the small objects of ADE20K validation (experiments/looking_closer): a
        television CanViT-B misses after the full-scene glimpse and finds after a zoomed one, with few false positives.
@@ -1239,11 +1217,6 @@
   <span class="fragment step-marker" data-shows="loupe"></span>
   <span class="fragment step-marker" data-shows="zoom"></span>
   <span class="fragment step-marker" data-shows="passive"></span>
-  <aside class="notes"><ul>
-    <li>128 &times; 128 px at any zoom: spatial coverage vs perception of detail.</li>
-    <li>Mean p(television) over the TV: 0.03 after the full scene, 0.77 after the zoom, 0.03 after the full scene again; DINOv3 on the whole scene at 128 px: 0.004.</li>
-    <li>4,151 small ADE20K objects (0.05 to 2% of the scene). Mean share of the object's pixels labeled as its class: 18% after the full scene, 32% after a zoom on it, 19% after the full scene twice.</li>
-  </ul></aside>
 </section>
 
 </div>

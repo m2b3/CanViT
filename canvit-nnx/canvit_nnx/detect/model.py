@@ -33,12 +33,15 @@ class CenterNetHead(nnx.Module):
     CenterNet gives each map its own 3×3 convolution; on the wide canvas a
     3×3 convolution dominates the head's cost, so the maps share one.
     LayerNorm and BatchNorm first, as in the segmentation probe, bring the
-    canvas to the scale that HEATMAP_BIAS assumes.
+    canvas to the scale that HEATMAP_BIAS assumes. Their variance is computed
+    directly, not as E[x²] − E[x]², which cancels on trained canvases (see
+    fused_canvas_attention); the LayerNorm's epsilon, 1e-6, is the one the
+    published detectors were trained with.
     """
 
     def __init__(self, *, in_dim: int, num_classes: int, width: int, rngs: nnx.Rngs) -> None:
-        self.layer_norm = nnx.LayerNorm(in_dim, rngs=rngs)
-        self.batch_norm = nnx.BatchNorm(in_dim, rngs=rngs)
+        self.layer_norm = nnx.LayerNorm(in_dim, epsilon=1e-6, use_fast_variance=False, rngs=rngs)
+        self.batch_norm = nnx.BatchNorm(in_dim, epsilon=1e-5, use_fast_variance=False, rngs=rngs)
         self.stem = nnx.Conv(in_dim, width, kernel_size=(3, 3), rngs=rngs)
         self.heatmap = nnx.Conv(
             width, num_classes, kernel_size=(1, 1), bias_init=nnx.initializers.constant(HEATMAP_BIAS), rngs=rngs

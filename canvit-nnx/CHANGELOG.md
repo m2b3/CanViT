@@ -5,6 +5,14 @@ entries under its version. Entries marked **Breaking** change what existing code
 **Hub** entries are steps on the Hugging Face Hub that must follow the release, in order, because
 released versions load each repo's `main` revision.
 
+## 0.3.2 (2026-11-02)
+
+### Fixed
+
+- The detection head's LayerNorm and BatchNorm compute the variance directly instead of as E[x²] − E[x]², which loses
+  precision on trained canvases; their epsilons are explicit and unchanged. On the published detectors' maps the
+  difference is at float32 rounding (at most 4e-7 relative), with identical top detections.
+
 ## 0.3.1 (2026-11-02)
 
 ### Fixed

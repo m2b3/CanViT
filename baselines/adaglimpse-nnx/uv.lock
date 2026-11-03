@@ -110,7 +110,7 @@ requires-dist = [
 
 [[package]]
 name = "canvit-nnx"
-version = "0.3.1"
+version = "0.3.2"
 source = { editable = "../../canvit-nnx" }
 dependencies = [
     { name = "canvit-core" },

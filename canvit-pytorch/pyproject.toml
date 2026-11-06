@@ -17,7 +17,7 @@ exclude = ["*.pt", "*.pt.bak", "*.pth", "test_data/", "slurm/", "tpu/", "license
 
 [project]
 name = "canvit-pytorch"
-version = "0.3.0"
+version = "0.3.1"
 description = "CanViT (Canvas Vision Transformer): model, pretraining, task specialization and evaluation"
 readme = "README.md"
 license = "MIT"

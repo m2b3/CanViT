@@ -1,6 +1,6 @@
 [project]
 name = "canvit-mlx"
-version = "0.2.0"
+version = "0.2.1"
 description = "CanViT (Canvas Vision Transformer) for MLX"
 readme = "README.md"
 license = "MIT"

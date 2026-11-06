@@ -128,7 +128,7 @@ requires-dist = [
 
 [[package]]
 name = "canvit-pytorch"
-version = "0.3.0"
+version = "0.3.1"
 source = { editable = "../../canvit-pytorch" }
 dependencies = [
     { name = "canvit-core" },

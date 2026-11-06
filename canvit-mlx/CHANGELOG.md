@@ -5,9 +5,9 @@ entries under its version. Entries marked **Breaking** change what existing code
 **Hub** entries are steps on the Hugging Face Hub that must follow the release, in order, because
 released versions load each repo's `main` revision.
 
-## Unreleased
+## 0.2.1 (2026-11-06)
 
 ### Removed
 
-- **Breaking**: `canvit_mlx.model.config`, which only re-exported `CanViTConfig`; import it from
+- `canvit_mlx.model.config`, which only re-exported `CanViTConfig`; import it from
   `canvit_mlx` or `canvit_core.config`.

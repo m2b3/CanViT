@@ -6,16 +6,18 @@ saved files do; **Hub** entries are steps on the Hugging Face Hub that go with t
 order, each before or after it as the entry says, because released versions load each repo's
 `main` revision.
 
-## Unreleased
+## 0.3.1 (2026-11-06)
 
 ### Changed
 
-- **Breaking**: web bundles (`canvit_pytorch.viz.web`) record each glimpse's mIoU on its scene, `miou`, instead of
+- Web bundles (`canvit_pytorch.viz.web`) record each glimpse's mIoU on its scene, `miou`, instead of
   `pixel_accuracy`, under a new schema (`canvit-web-bundle-cdc839e2-d28e-4422-b635-d16b24797584`); readers of the old
   schema reject the new bundles. `viz.web.mean_iou` computes it.
 - Hub cards install with `uv add` instead of `pip install`.
 - `python -m canvit_pytorch.evaluate batch` runs each stochastic policy ten times by default, as the paper's tables do
   (was five).
+- `python -m canvit_pytorch.hub.publish policy` no longer takes `--release`; a policy's card requires the
+  release that introduced its scorer format.
 
 ## 0.3.0 (2026-10-29)
 

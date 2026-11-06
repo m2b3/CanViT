@@ -7,7 +7,7 @@ new private repo (made public on the Hub once reviewed).
 
     python -m canvit_pytorch.hub.publish pretrained --checkpoint RUN/step-2000000.pt --repo NAME --out-dir staging
     python -m canvit_pytorch.hub.publish probe --run-dir PROBE_RUN --out-dir staging
-    python -m canvit_pytorch.hub.publish policy --run-dir POLICY_RUN --repo NAME --release VERSION --out-dir staging
+    python -m canvit_pytorch.hub.publish policy --run-dir POLICY_RUN --repo NAME --out-dir staging
 """
 
 import json
@@ -174,6 +174,16 @@ class Probe:
         upload(staged, hub_id(name), push=self.push)
 
 
+def policy_training_facts(record: dict[str, Any]) -> cards.PolicyTrainingFacts:
+    """A policy-training run's record (canvit_pytorch.rl.train), which a published scorer keeps in its config.json."""
+    (selected,) = [v for v in record["validations"] if v["step"] == record["selected_step"]]
+    return cards.PolicyTrainingFacts(
+        objective=record["objective"], seed=record["config"]["seed"], num_glimpses=record["config"]["num_glimpses"],
+        selected_step=record["selected_step"], validation_cross_entropy=selected["validation_cross_entropy"],
+        record="in config.json, under `training`",
+    )
+
+
 @dataclass(frozen=True)
 class Policy:
     """A policy-training run directory (canvit_pytorch.rl.train) as a ViewpointScorer repo."""
@@ -181,8 +191,6 @@ class Policy:
     run_dir: Path
     repo: str
     """The full Hub repo id."""
-    release: str
-    """A canvit-pytorch release that reads the scorer, which the card's install line requires."""
     out_dir: Path
     push: bool = False
 
@@ -192,20 +200,13 @@ class Policy:
         observer = scorer.observer
         for repo in (observer.pretrained_repo, observer.probe_repo):
             assert not Path(repo).exists(), f"the scorer reads {repo}, a local path; publish it first"
-        (selected,) = [v for v in record["validations"] if v["step"] == record["selected_step"]]
-        training = cards.PolicyTrainingFacts(
-            objective=record["objective"], seed=record["config"]["seed"],
-            num_glimpses=record["config"]["num_glimpses"], selected_step=record["selected_step"],
-            validation_cross_entropy=selected["validation_cross_entropy"],
-            record="in config.json, under `training`",
-        )
+        training = policy_training_facts(record)
         staged = self.out_dir / self.repo.split("/")[-1]
         shutil.rmtree(staged, ignore_errors=True)
         scorer.save_pretrained(staged)
         _add_training_record(staged, record)
         (staged / "README.md").write_text(cards.policy_card(
             repo=self.repo, observer=observer, candidates=scorer.candidates, training=training,
-            release=self.release,
         ))
         reloaded = ViewpointScorer.from_pretrained(str(staged))
         for name, value in reloaded.state_dict().items():

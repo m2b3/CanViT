@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from canvit_pytorch.hub.loading import SCORER_FORMAT_VERSION
 from canvit_pytorch.hub.publish import Policy, Probe
 from canvit_pytorch.hub.repos import FLAGSHIP
 from canvit_pytorch.probes import SegmentationProbe
@@ -54,10 +55,12 @@ def test_policy_run_is_staged_with_card_and_record(tmp_path: Path) -> None:
               "validations": validations}
     (run / "record.json").write_text(json.dumps(record))
 
-    Policy(run_dir=run, repo="canvit/policy-test", release="9.9", out_dir=tmp_path / "staging").run()
+    Policy(run_dir=run, repo="canvit/policy-test", out_dir=tmp_path / "staging").run()
 
     staged = tmp_path / "staging" / "policy-test"
     card = (staged / "README.md").read_text()
-    assert all(text in card for text in ('"canvit/policy-test"', "canvit-pytorch>=9.9", "seed 3", "0.9000, 0.5000", "Q-learning"))
+    install = f'uv add "canvit-pytorch>={SCORER_FORMAT_VERSION}"'
+    assert all(text in card for text in ('"canvit/policy-test"', install, "seed 3", "0.9000, 0.5000", "Q-learning"))
+    assert "## Original format" not in card
     assert json.loads((staged / "config.json").read_text())["training"] == record
     ViewpointScorer.from_pretrained(str(staged))

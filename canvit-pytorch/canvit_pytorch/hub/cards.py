@@ -13,10 +13,11 @@ from typing import Any
 from huggingface_hub import EvalResult, ModelCardData
 
 from canvit_pytorch import project
-from canvit_pytorch.hub.loading import FORMAT_VERSION
+from canvit_pytorch.hub.loading import FORMAT_VERSION, SCORER_FORMAT_VERSION
 from canvit_pytorch.hub.repos import (
     DINOV3_VITB16_IN1K_PROBE,
     OLD_FORMAT_REVISION,
+    ORIGINAL_POLICY_FORMAT_REVISION,
     RELEASED_GLIMPSE_SIZE_PX,
     PretrainingDataset,
 )
@@ -189,11 +190,15 @@ class PolicyTrainingFacts:
     """Where the repo holds the run's full record."""
 
 
-INSTALL = f'pip install "canvit-pytorch>={FORMAT_VERSION}"'
+INSTALL = f'uv add "canvit-pytorch>={FORMAT_VERSION}"'
 OLD_FORMAT_SECTION = f"""## canvit-pytorch 0.1
 
 This repository's files for canvit-pytorch 0.1 remain at revision `{OLD_FORMAT_REVISION}`:
 with `canvit-pytorch<0.2`, pass `revision="{OLD_FORMAT_REVISION}"` to `from_pretrained`."""
+ORIGINAL_POLICY_FORMAT_SECTION = f"""## Original format
+
+The files in the format of the code that trained this policy remain at revision `{ORIGINAL_POLICY_FORMAT_REVISION}`;
+canvit-pytorch reads those of `main`."""
 
 
 def details_table(rows: list[tuple[str, str]]) -> str:
@@ -203,9 +208,10 @@ def details_table(rows: list[tuple[str, str]]) -> str:
 def _card(
     *, data: ModelCardData, title: str, summary: str, usage: str, details: list[tuple[str, str]],
     results: str | None = None, license_note: str = project.CHECKPOINT_LICENSE, old_format: bool = False,
-    install: str = INSTALL, install_language: str = "bash", usage_language: str = "python",
+    install: str = INSTALL, install_language: str = "bash", usage_language: str = "python", format_note: str | None = None,
 ) -> str:
-    """old_format: the repo keeps its canvit-pytorch 0.1 files at the revision OLD_FORMAT_REVISION."""
+    """old_format: the repo keeps its canvit-pytorch 0.1 files at the revision OLD_FORMAT_REVISION. format_note: a last
+    section on the formats the repo's revisions hold."""
     sections = [
         f"---\n{data.to_yaml()}\n---",
         f"# {title}",
@@ -219,6 +225,7 @@ def _card(
         f"## License\n\n{license_note}",
         f"## Citation\n\n```bibtex\n{project.BIBTEX}\n```",
         *([OLD_FORMAT_SECTION] if old_format else []),
+        *([format_note] if format_note is not None else []),
     ]
     return "\n\n".join(sections) + "\n"
 
@@ -390,7 +397,7 @@ print(CLASS_NAMES[logits.argmax().item()])
 
 
 def dinov3_classification_probe_card(*, repo: str, facts: DINOv3ClassificationProbeFacts) -> str:
-    install = ('pip install "dinov3-in1k-probes @ git+https://github.com/m2b3/dinov3-in1k-probes.git" '
+    install = ('uv add "dinov3-in1k-probes @ git+https://github.com/m2b3/dinov3-in1k-probes.git" '
                "transformers pillow")
     size = facts.image_size_px
     usage = f"""
@@ -433,9 +440,10 @@ with torch.inference_mode():
 
 
 def policy_card(
-    *, repo: str, observer: Observer, candidates: CandidateViewpoints, training: PolicyTrainingFacts, release: str,
+    *, repo: str, observer: Observer, candidates: CandidateViewpoints, training: PolicyTrainingFacts,
+    original_format: bool = False,
 ) -> str:
-    """release: the first canvit-pytorch release that reads the scorer's format."""
+    """original_format: the repo keeps the files of the code that trained it at ORIGINAL_POLICY_FORMAT_REVISION."""
     objective = OBJECTIVES[training.objective]
     grid, centers = observer.canvas_grid_size, candidates.centers_per_axis
     scales = ", ".join(f"{scale:g}" for scale in candidates.scales)
@@ -477,7 +485,8 @@ labels = policy.model.logits(steps[-1].state.canvas).argmax(dim=1)  # [1, {grid}
                f"of highest score. Trained by {objective.title} to choose the viewpoints whose glimpses most reduce "
                f"the probe's cross-entropy.")
     return _card(data=data, title=f"Learned viewing policy for CanViT-B on ADE20K: {objective.title}, seed {training.seed}",
-                 summary=summary, usage=usage, details=details, install=f'pip install "canvit-pytorch>={release}"')
+                 summary=summary, usage=usage, details=details, install=f'uv add "canvit-pytorch>={SCORER_FORMAT_VERSION}"',
+                 format_note=ORIGINAL_POLICY_FORMAT_SECTION if original_format else None)
 
 
 def _hub_link(record: dict[str, Any]) -> str:

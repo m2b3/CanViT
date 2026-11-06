@@ -45,7 +45,7 @@
     cls-sw: 1.0pt,
     glimpse-sw: 1.8pt,
     canvas-sw: 1.8pt,
-    font-sm: 5pt, font-md: 7pt, font-lg: 9pt,
+    font-sm: 6.5pt, font-md: 8pt, font-lg: 9pt,
   )
 
   let arrows = (
@@ -61,7 +61,6 @@
   let X-canvas = 0.5
   let y-viewpoint-label = 0.75
   let y-timestep-label = 1.15
-  let y-legend = 1.8
   let step = 0.45
   let tok-gap = 1.4
   let recur-below = 1.5
@@ -127,9 +126,9 @@
       grid(
         columns: (sz.vit.w,), rows: (cell-h, cell-h),
         rect(width: 100%, height: 100%, fill: C.block, stroke: (bottom: sz.sw + C.stroke), inset: 0pt,
-          align(center + horizon, text(size: 4pt, weight: "bold", str(hi)))),
+          align(center + horizon, text(size: 5.5pt, weight: "bold", str(hi)))),
         rect(width: 100%, height: 100%, fill: C.block, stroke: none, inset: 0pt,
-          align(center + horizon, text(size: 4pt, weight: "bold", str(lo)))),
+          align(center + horizon, text(size: 5.5pt, weight: "bold", str(lo)))),
       )
     )
   }
@@ -222,10 +221,10 @@
       ..range(n-rw).map(i => (
         node((xl, y-read(i)), none, name: lb("pr" + str(i))),
         node((xg, y-read(i)), none, name: lb("cr" + str(i))),
-        xfer(lb("cr" + str(i)), lb("pr" + str(i)), label: text(size: 5pt, "R"), label-side: center),
+        xfer(lb("cr" + str(i)), lb("pr" + str(i)), label: text(size: 6.5pt, "R"), label-side: center),
         node((xl, y-write(i)), none, name: lb("lw" + str(i))),
         node((xg, y-write(i)), none, name: lb("pw" + str(i))),
-        xfer(lb("lw" + str(i)), lb("pw" + str(i)), label: text(size: 5pt, "W"), label-side: center),
+        xfer(lb("lw" + str(i)), lb("pw" + str(i)), label: text(size: 6.5pt, "W"), label-side: center),
       )).flatten(),
       spine(lb("li"), lb("p0"), "-"),
       ..range(n-rw).map(i => (
@@ -249,8 +248,8 @@
   }
 
   let legend-item(color, label) = stack(dir: ltr, spacing: 2pt,
-    rect(width: 6pt, height: 6pt, fill: color, stroke: 0.4pt + C.stroke),
-    text(size: 5pt, label),
+    rect(width: 7pt, height: 7pt, fill: color, stroke: 0.4pt + C.stroke),
+    text(size: 7pt, label),
   )
 
   let legend = box(
@@ -265,8 +264,9 @@
     )
   )
 
-  diagram(
-    spacing: (3em, 1.5em),
+  // The legend sits below the diagram rather than in it, where its width would widen the grid's columns.
+  stack(dir: ttb, spacing: 6pt, diagram(
+    spacing: (6.5em, 1.5em),
     node-stroke: none, node-inset: 0pt, edge-stroke: sz.sw,
     ..range(n-timesteps).map(t => timestep(t)).flatten(),
     ..range(n-timesteps - 1).map(t => {
@@ -326,6 +326,5 @@
         mark-scale: 60%,
       )
     }).flatten(),
-    node(((n-timesteps - 1) * col-spacing / 2 + X-canvas / 2, y-tok-in + y-legend), legend),
-  )
+  ), align(center, legend))
 }

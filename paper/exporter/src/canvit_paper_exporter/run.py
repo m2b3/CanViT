@@ -1,6 +1,7 @@
 """CLI: the paper's datasets and figures, or named datasets, figures and diagrams.
 
   uv run python -m canvit_paper_exporter.run                 # the paper's datasets, then its figures
+  uv run python -m canvit_paper_exporter.run diagrams        # every diagram (loads CanViT-B from the Hub; needs typst)
   uv run python -m canvit_paper_exporter.run list            # list names
   uv run python -m canvit_paper_exporter.run inputs          # what each reads under data/ and writes, as JSON
   uv run python -m canvit_paper_exporter.run main_results ablation_loss
@@ -48,7 +49,6 @@ FIGURES: list[Figure] = [
     *flops.FIGURES,
     bench.figure,
     main_results.figure,
-    learned_policies.figure,
 ]
 
 DIAGRAMS: list[Diagram] = diagrams.DIAGRAMS
@@ -131,6 +131,9 @@ def main(argv: list[str]) -> None:
             run_dataset(d)
         for f in FIGURES:
             run_figure(f)
+    elif argv == ["diagrams"]:
+        for d in DIAGRAMS:
+            run_diagram(d)
     else:
         for name in argv:
             _run_one(name)

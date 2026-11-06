@@ -1,4 +1,4 @@
-// Standalone compilation of the CanViT overview diagram (Figure 1).
+// Standalone compilation of the CanViT overview diagram, the paper's figure "A CanViT rollout".
 // Usage: typst compile canvit_overview_standalone.typ canvit_overview.svg
 //
 // This wraps canvit_overview_content.typ in a minimal document; the manuscript includes the PDF.

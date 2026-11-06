@@ -73,7 +73,7 @@ IMPORTANT, please:
     \item {\bf Experimental result reproducibility}
     \item[] Question: Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper (regardless of whether the code and data are provided or not)?
     \item[] Answer: \answerYes{}
-    \item[] Justification: To reproduce our experimental results, we describe the CanViT architecture and Canvas Attention mechanism in detail (Section~\ref{sec:arch} and Appendix~\ref{supp:canvas-attention-pseudocode}), the pretraining protocol (Section~\ref{sec:pretraining} and Appendix~\ref{supp:pretraining-details}), including all necessary hyperparameters, and evaluation details (Section~\ref{sec:experiments} and Appendix~\ref{supp:evaluation-details}). This complements our code release.
+    \item[] Justification: To reproduce our experimental results, we describe the CanViT architecture and Canvas Attention mechanism in detail (Section~\ref{sec:arch} and Appendix~\ref{supp:canvas-attention-pseudocode}), the pretraining protocol (Section~\ref{sec:pretraining} and Appendix~\ref{supp:pretraining-details}), including all necessary hyperparameters, the evaluation details (Section~\ref{sec:experiments} and Appendix~\ref{supp:evaluation-details}), the ablation study (Appendix~\ref{supp:ablation-study}), and the additional experiments (Appendix~\ref{supp:additional-experiments}). This complements our code release.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -93,7 +93,7 @@ IMPORTANT, please:
 \item {\bf Open access to data and code}
     \item[] Question: Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results, as described in supplemental material?
     \item[] Answer: \answerYes{}
-    \item[] Justification: We release code, checkpoints, and the data necessary to regenerate figures and tables under the MIT license (Appendix~\ref{supp:declarations:code-and-data}). The repository documentation and model cards provide the commands and links needed to use the release and regenerate the paper's outputs.
+    \item[] Justification: We release code and checkpoints under the MIT license, as well as the data necessary to regenerate figures and tables (Appendix~\ref{supp:declarations:code-and-data}). We document the code in its repository, each checkpoint in its model card, and the data in the README of its release.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that paper does not include experiments requiring code.
@@ -110,7 +110,7 @@ IMPORTANT, please:
 \item {\bf Experimental setting/details}
     \item[] Question: Does the paper specify all the training and test details (e.g., data splits, hyperparameters, how they were chosen, type of optimizer) necessary to understand the results?
     \item[] Answer: \answerYes{}
-    \item[] Justification: We clearly describe all training and evaluation details in Section~\ref{sec:experiments}, Appendix~\ref{supp:pretraining-details}, and Appendix~\ref{supp:evaluation-details}.
+    \item[] Justification: We describe training and evaluation details in Section~\ref{sec:experiments}, Appendix~\ref{supp:pretraining-details}, Appendix~\ref{supp:evaluation-details}, Appendix~\ref{supp:ablation-study} and Appendix~\ref{supp:additional-experiments}.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -121,7 +121,7 @@ IMPORTANT, please:
 \item {\bf Experiment statistical significance}
     \item[] Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
     \item[] Answer: \answerYes{}
-    \item[] Justification: For experiments involving stochastic viewing policies, we report \bootstrapCiPct\% bootstrap CIs over independent evaluation runs, shown as shaded bands in Figure~\ref{fig:main-ade20k-in1k-results} and Figure~\ref{supp:fig-canvas-grid-impact} and as $\pm$ half-widths or lo--hi ranges in Table~\ref{supp:tab-policy-eval}, Table~\ref{supp:tab-ade20k-canvas-sweep}, Table~\ref{supp:tab-in1k-frozen-eval}, Table~\ref{supp:tab-in1k-canvas-sweep}, Table~\ref{supp:tab-in1k-finetuned-eval}, and Table~\ref{tab:ablation-eval-supp}. These CIs do not assume normality. See Appendix~\ref{supp:declarations:statistical-analysis} for more details.
+    \item[] Justification: For experiments involving stochastic viewing policies, we report \bootstrapCiPct\% bootstrap CIs over independent evaluation runs, shown as shaded bands in Figure~\ref{fig:main-ade20k-in1k-results} and Figure~\ref{supp:fig-canvas-grid-impact} and as $\pm$ half-widths or lo--hi ranges in Table~\ref{supp:tab-policy-eval}, Table~\ref{supp:tab-ade20k-canvas-sweep}, Table~\ref{supp:tab-in1k-frozen-eval}, Table~\ref{supp:tab-in1k-canvas-sweep}, Table~\ref{supp:tab-in1k-finetuned-eval}, Table~\ref{tab:ablation-eval-supp}, Table~\ref{tab:ablation-downstream}, Table~\ref{tab:dataset-scale}, Table~\ref{tab:dataset-scale-ade20k}, Table~\ref{tab:dataset-scale-in1k-frozen}, Table~\ref{tab:dataset-scale-in1k-lpft}, Table~\ref{tab:in1k-efficiency}, and Table~\ref{tab:coco-detection}. For the learned viewing policies, the CIs are over independent training runs (Figure~\ref{fig:main-ade20k-in1k-results}\textbf{D}, Table~\ref{tab:learned-policies}). See Appendix~\ref{supp:declarations:statistical-analysis} for more details.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -162,7 +162,7 @@ IMPORTANT, please:
 \item {\bf Broader impacts}
     \item[] Question: Does the paper discuss both potential positive societal impacts and negative societal impacts of the work performed?
     \item[] Answer: \answerYes{}
-    \item[] Justification: We discuss potential positive and negative impacts in Section~\ref{supp:declarations:broader-impact}.
+    \item[] Justification: We discuss potential positive and negative impacts in Appendix~\ref{supp:declarations:broader-impact}.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that there is no societal impact of the work performed.
@@ -204,7 +204,7 @@ IMPORTANT, please:
 \item {\bf New assets}
     \item[] Question: Are new assets introduced in the paper well documented and is the documentation provided alongside the assets?
     \item[] Answer: \answerYes{}
-    \item[] Justification: The released repository, packages, checkpoints, and data include documentation describing the assets and the commands that use them.
+    \item[] Justification: We release our code, checkpoints and data with their documentation (Appendix~\ref{supp:declarations:code-and-data}).
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not release new assets.
@@ -239,7 +239,7 @@ IMPORTANT, please:
 \item {\bf Declaration of LLM usage}
     \item[] Question: Does the paper describe the usage of LLMs if it is an important, original, or non-standard component of the core methods in this research? Note that if the LLM is used only for writing, editing, or formatting purposes and does \emph{not} impact the core methodology, scientific rigor, or originality of the research, declaration is not required.
     \item[] Answer: \answerNA{}
-    \item[] Justification: Our methodology does not involve LLMs as any important, original, or non-standard components. However, we have made extensive use of agentic AI tools, such as Claude Code with Claude Opus 4.7, when developing, debugging and refactoring our code.
+    \item[] Justification: Our methodology does not involve LLMs as any important, original, or non-standard components. However, we have made extensive use of agentic AI tools, such as Claude Code with Claude Opus 4.7 to 5.5, when developing, debugging and refactoring our code.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the core method development in this research does not involve LLMs as any important, original, or non-standard components.

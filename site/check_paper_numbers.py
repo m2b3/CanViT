@@ -17,8 +17,8 @@ PERCENT_MATH = re.compile(r"^\$(-?)([\d.]+)\\%\$$")
 
 
 def as_text(value: str) -> str:
-    """A macro's value as typeset text. Plain values read as they are; a percentage in math mode, such as the
-    ablations' $-98.8\\%$, reads with a typographic minus: −98.8%. Other math has no text form here, which fails
+    """A macro's value as typeset text. Plain values read as they are; a percentage in math mode, such as
+    $-1.0\\%$, reads with a typographic minus: −1.0%. Other math has no text form here, which fails
     loudly where a page uses it."""
     if "$" not in value:
         return value

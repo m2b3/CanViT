@@ -11,9 +11,10 @@ data:
 check-data:
     cd {{justfile_directory()}} && uv run --no-project python latex/generate_data.py --check
 
-# Run the exporter (the paper's datasets and figures) into exports/, then regenerate the data.
+# Run the exporter (the paper's datasets, figures and diagrams) into exports/, then regenerate the data.
 exports:
     cd {{justfile_directory()}}/exporter && uv run python -m canvit_paper_exporter.run
+    cd {{justfile_directory()}}/exporter && uv run python -m canvit_paper_exporter.run diagrams
 
     cd {{justfile_directory()}} && uv run --no-project python latex/generate_data.py
 
@@ -29,7 +30,7 @@ build-preprint: data && (check-fonts "preprint_wrapper.pdf")
     cd {{justfile_directory()}}/latex && tectonic --reruns 3 preprint_wrapper.tex
 
 # Camera-ready PDF: latex/camera_ready_wrapper.pdf
-build-camera-ready: data && (check-fonts "camera_ready_wrapper.pdf")
+build-camera-ready: data && (check-fonts "camera_ready_wrapper.pdf") (check-layout "camera_ready_wrapper.pdf")
     cd {{justfile_directory()}}/latex && tectonic --reruns 3 camera_ready_wrapper.tex
 
 # The NeurIPS template: "Your PDF file must only contain Type 1 or Embedded
@@ -104,3 +105,9 @@ build-arxiv: build-preprint
 clean:
     cd {{justfile_directory()}}/latex && rm -f preprint_wrapper.{pdf,aux,bbl,blg,log,out} camera_ready_wrapper.{pdf,aux,bbl,blg,log,out} arxiv_bundle.tar.gz
     rm -rf {{justfile_directory()}}/latex/arxiv_bundle
+
+# Fail if a section of latex/FILE whose page count is fixed by design spans another number of pages, or a main-text
+# paragraph ends on a hanging line; list the appendix's (latex/check_layout.py holds the rules).
+check-layout FILE="camera_ready_wrapper.pdf":
+    uv run --no-project --with pypdf --with pdfplumber python -I {{justfile_directory()}}/latex/check_layout.py {{justfile_directory()}}/latex/{{FILE}}
+

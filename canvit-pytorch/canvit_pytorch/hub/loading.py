@@ -20,6 +20,8 @@ CODERS = {CanViTConfig: (dataclasses.asdict, lambda fields: CanViTConfig(**field
 
 FORMAT_VERSION = "0.2"
 """The canvit-pytorch release that introduced the checkpoint format written and read here."""
+SCORER_FORMAT_VERSION = "0.3"
+"""The canvit-pytorch release that introduced canvit_pytorch.rl, whose scorer format the learned policies are in."""
 
 # The card save_pretrained writes into a local directory; published repos get theirs from hub.cards.
 LOCAL_CARD_TEMPLATE = f"""---

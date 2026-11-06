@@ -11,7 +11,7 @@
 )
 #let arrow(paint, thickness: 0.5pt, width: 800%) = tiptoe.straight.with(length: 6pt, width: width, stroke: (thickness: thickness, paint: paint))
 #let arrow_line_thickness = 0.5pt
-#let panel-label(letter) = text(font: default_font, size: 16pt, weight: "bold")[#letter]
+#let panel-label(letter) = text(font: default_font, size: 12pt, weight: "bold")[#letter]
 
 // SCENE HELPERS
 #let compute_centers(glimpses, p-width, p-height) = {
@@ -165,7 +165,7 @@
 
       // Timestep index
       place(left + top, dx: cx - 2pt, dy: arrow-y - 10pt,
-        text(font: default_font, size: 6pt, fill: C.stroke)[#k])
+        text(font: default_font, size: 7pt, fill: C.stroke)[#k])
 
       // Coord box
       let coords_pos = i * (slot-w + 0.375pt) + label-dist
@@ -173,10 +173,10 @@
         box(
           fill: C.patches,
           width: coord_box_width,
-          height: 16pt,
-          inset: (x: 2pt, y: 3pt),
+          height: 18pt,
+          inset: (x: 1pt, y: 3pt),
           align(center,
-            text(font: default_font, size: 4.6pt, fill: white)[
+            text(font: default_font, size: 5.4pt, fill: white)[
               *$v_#k = (x_#k, y_#k, s_#k)$
               #v(-0.06cm)
               $(#str(x), #str(y), #str(s))$*
@@ -291,7 +291,7 @@
         box(height: 27pt, {
           let arrow1_height = 15.5pt
           let tick-positions = (0pt, scene_width)
-          let tick-labels = ("-1", "1")
+          let tick-labels = ("−1", "1")
           let offset_x = 17pt
           // Coordinate system [-1, +1]
           place(top + left, dx: offset_x, dy: arrow1_height,
@@ -304,7 +304,7 @@
           )
           for (i, tx) in tick-positions.enumerate() {
             place(left + top, dx: offset_x + tx - 1.5pt, dy: arrow1_height - 3.5pt,
-              text(font: default_font, size: 6pt, fill: C.stroke)[#tick-labels.at(i)])
+              text(font: default_font, size: 7pt, fill: C.stroke)[#tick-labels.at(i)])
           }
         }),
 
@@ -343,9 +343,9 @@
                 )
               )
               // Ticks and labels
-              for (i, (label, ty)) in (("-1", 0pt), ("1", scene_width - 6pt)).enumerate() {
+              for (i, (label, ty)) in (("−1", 0pt), ("1", scene_width - 7pt)).enumerate() {
                 place(top + left, dx: -2pt, dy: ty - 3pt,
-                  text(font: default_font, size: 6pt, fill: C.stroke)[#label])
+                  text(font: default_font, size: 7pt, fill: C.stroke)[#label])
               }
             }),
             scene-panel(

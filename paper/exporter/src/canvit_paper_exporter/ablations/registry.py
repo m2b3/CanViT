@@ -35,23 +35,24 @@ class AblationVariant:
 
 BASELINE = AblationVariant("baseline", "Baseline", "(none)", "#000000")
 
-# Row order of the ablation tables: the paper's row letters a-k. Colors: tab10, then navy, which stays apart from
-# the red and brown curves that "No F-IID (2×R)" overlaps.
+# Row order of the ablation tables (row letters a-k). Labels name each variant in the loss figure and the tables, in
+# LaTeX that matplotlib's mathtext also renders. Colors: tab10, then navy, which stays apart from
+# the red and brown curves that "No F-IID, 2× R-IID" overlaps.
 VARIANTS: list[AblationVariant] = [
-    AblationVariant("dcan256", r"$D_{\mathrm{can}}=256$ (asym.)", "D_can 1024>256", "#2ca02c"),
-    AblationVariant("qkvo-dcan256", r"+ QKVO, $D_{\mathrm{can}}=256$",
+    AblationVariant("dcan256", r"$D_{\mathrm{can}}=256$, asymmetric", "D_can 1024>256", "#2ca02c"),
+    AblationVariant("qkvo-dcan256", r"$D_{\mathrm{can}}=256$, + QKVO",
                     "canvas_proj_mode asymmetric>full, D_can 1024>256", "#1f77b4"),
-    AblationVariant("qkvo-dcan384", r"+ QKVO, $D_{\mathrm{can}}=384$",
+    AblationVariant("qkvo-dcan384", r"$D_{\mathrm{can}}=384$, + QKVO",
                     "canvas_proj_mode asymmetric>full, D_can 1024>384", "#17becf"),
     AblationVariant("no-reads", "No canvas reads", "enable_reads true>false", "#d62728"),
-    AblationVariant("rw-stride6", "RW stride 6", "rw_stride 2>6 (3R+3W to 1R+1W at depth 12)", "#ff7f0e"),
-    AblationVariant("no-dense", "No dense loss", "enable_scene_patches_loss true>false", "#8c564b"),
-    AblationVariant("no-fiid-1riid", r"No F-IID (1×R)", "n_full_start_branches 1>0", "#e377c2"),
-    AblationVariant("no-fiid-2riid", r"No F-IID (2×R)", "n_full_start_branches 1>0, n_random_start_branches 1>2",
+    AblationVariant("rw-stride6", "RW stride = 6", "rw_stride 2>6 (3R+3W to 1R+1W at depth 12)", "#ff7f0e"),
+    AblationVariant("no-dense", "No dense supervision", "enable_scene_patches_loss true>false", "#8c564b"),
+    AblationVariant("no-fiid-1riid", r"No F-IID, 1$\times$ R-IID", "n_full_start_branches 1>0", "#e377c2"),
+    AblationVariant("no-fiid-2riid", r"No F-IID, 2$\times$ R-IID", "n_full_start_branches 1>0, n_random_start_branches 1>2",
                     "#000080"),
-    AblationVariant("no-bptt", r"No BPTT ($K{=}1$)", "chunk_size 2>1, continue_prob 0.5>0.75", "#bcbd22"),
-    AblationVariant("vit-s", "ViT-S backbone", "backbone_dim 768>384", "#7f7f7f"),
-    AblationVariant("no-vpe", "No VPE", "enable_vpe true>false", "#9467bd"),
+    AblationVariant("no-bptt", r"No BPTT ($K = 1$)", "chunk_size 2>1, continue_prob 0.5>0.75", "#bcbd22"),
+    AblationVariant("vit-s", r"$D_{\mathrm{bb}}=384$ (ViT-S)", "backbone_dim 768>384", "#7f7f7f"),
+    AblationVariant("no-vpe", "No VPE token", "enable_vpe true>false", "#9467bd"),
 ]
 
 BY_SLUG: dict[str, AblationVariant] = {BASELINE.slug: BASELINE, **{v.slug: v for v in VARIANTS}}

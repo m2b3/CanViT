@@ -17,13 +17,12 @@ from canvit_paper_exporter.style import (
 log = logging.getLogger(__name__)
 
 
-# Same hue across panels A / B / C for a given output grid. Only grids that
-# actually appear on a panel — no dead-weight legend swatches.
+# One color per output grid, the same in every panel.
 GRID_COLORS: dict[int, str] = {
-    8:  "#0F245C",    # navy
-    16: "#0F7C83",    # teal
-    32: "#B83292",    # magenta
-    64: "#EF7A1B",    # orange
+    8:  "#0F245C",
+    16: "#0F7C83",
+    32: "#B83292",
+    64: "#EF7A1B",
 }
 
 LS_DV3 = "--"
@@ -32,20 +31,18 @@ NEUTRAL = "0.15"
 
 FRONTIER_POLICY = "entropy_coarse_to_fine"
 
-# Shared convention for the linestyle inline legend on panels A and C.
+# The linestyle inline legend of panel A.
 MODEL_LINESTYLE = {"DINOv3 ViT-B": LS_DV3, "CanViT-B": LS_CV}
 
-# Panel C (Pareto) x-axis range. Log-scale — at linear the leftmost curve
-# collapses onto the y-axis and the DINOv3 annotations cluster at the right.
+# Panel C's logarithmic x-axis range.
 PARETO_FLOPS_MIN = 9e9        # below the smallest CanViT c=8 cum_gflops at t=0
-PARETO_XLIM_RIGHT_PAD = 3.25    # leaves room for the "512² px" annotation tail
+PARETO_XLIM_RIGHT_PAD = 3.25    # times the largest DINOv3 input's FLOPs; chosen by eye (CanViT's longest rollout ends at
+                                # about 2.2 times)
 
 # IoU / Δ panels share a log-scale x-axis from 0.1% to 100% scene area.
 X_LOG_MIN = 1e-3
 
-# DINOv3 ViT-B probes the Pareto panel overlays as scatter + label.
-# The three powers-of-two inputs map cleanly onto the canvas-grid legend
-# via input_px / patch_size = {128/16=8, 256/16=16, 512/16=32}.
+# DINOv3 ViT-B inputs labeled in panel C; their patch grids (8, 16, 32) are canvas grids of the legend.
 DV3_ANNOTATE_INPUT_PX = (128, 256, 512)
 DV3_BASELINE_ALPHA = 0.55
 DV3_MARKER_SIZE = 10
@@ -59,8 +56,9 @@ def _pct_label(x: float, _pos: int) -> str:
 def _inline_linestyle_legend(ax: Axes) -> None:
     """Small inside-axes legend disambiguating DINOv3 (dashed) vs CanViT (solid).
 
-    Vertically stacked, upper-left, one size below LEGEND_SIZE so the legend
-    doesn't crowd the data region.
+    Vertically stacked, upper-left, half a point below LEGEND_SIZE so the legend
+    doesn't crowd the data region. Panel A's serves the whole figure: panel C
+    uses the same line styles, and its curves leave no free corner.
     """
     ax.legend(
         handles=linestyle_legend_handles(MODEL_LINESTYLE, {k: k for k in MODEL_LINESTYLE}),
@@ -134,7 +132,7 @@ def _panel_delta(ax: Axes, obj: dict) -> None:
 
     t0 = obj["plotting"]["t_delta_early"]
     t1 = obj["plotting"]["t_delta_late"]
-    _format_area_axis(ax, rf"IoU($t={t1}$) - IoU($t={t0}$)")
+    _format_area_axis(ax, rf"IoU($t={t1}$) − IoU($t={t0}$)")
     ax.set_title("Active", fontsize=LABEL_SIZE, fontweight="bold")
 
 
@@ -175,11 +173,19 @@ def _panel_pareto(ax: Axes, ade20k: dict) -> None:
             color=dot_color, zorder=4,
         )
         if annotated:
+            # Labels beside their points, inside the axes and clear of the curves: the largest input's to the left,
+            # raised above the dashed line that reaches its point from below; the smallest's below and to the right;
+            # the others to the right.
+            if r["input_px"] == max(DV3_ANNOTATE_INPUT_PX):
+                offset, ha, va = (-5, 2), "right", "center"
+            elif r["input_px"] == min(DV3_ANNOTATE_INPUT_PX):
+                offset, ha, va = (4, -2), "left", "top"
+            else:
+                offset, ha, va = (5, 0), "left", "center"
             ax.annotate(
                 rf"${r['input_px']}^2$ px",
                 xy=(r["gflops"] * 1e9, r["miou_pct"]),
-                xytext=(5, 0), textcoords="offset points",
-                ha="left", va="center",
+                xytext=offset, textcoords="offset points", ha=ha, va=va,
                 fontsize=LEGEND_SIZE - 1, color=NEUTRAL,
             )
     log.info("panel C: %d DINOv3 ViT-B probe rows (%d annotated)",
@@ -190,10 +196,9 @@ def _panel_pareto(ax: Axes, ade20k: dict) -> None:
     ax.xaxis.set_major_formatter(FuncFormatter(si_flops_label))
     ax.set_xlabel("Cumulative FLOPs", fontsize=LABEL_SIZE)
     ax.set_ylabel("ADE20K mIoU", fontsize=LABEL_SIZE)
-    ax.set_ylim(top=50)
+    ax.set_ylim(bottom=25, top=50)  # room under the 128² px point for its label
     ax.set_yticks([30, 40, 50])
     ax.set_title("Pareto frontier", fontsize=LABEL_SIZE, fontweight="bold")
-    _inline_linestyle_legend(ax)
 
 
 def plot(iou_vs_obj: dict, ade20k: dict) -> MplFigure:

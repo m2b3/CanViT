@@ -34,34 +34,32 @@ from tests.model.tiny import GLIMPSE_PX, TINY, glimpse_batch
 CANVIT_B = CanViTConfig()
 PAPER_GLIMPSE_PX = 128
 
-# Reference values: the paper's FLOP exporter (m2b3/CanViT-paper-exporter @ 49966e5,
-# src/canvit_paper_exporter/flops/), run unmodified on 2026-09-26.
+# Reference values: the FLOP counts behind the paper's figures and tables, computed by its exporter on 2026-09-26.
 
 
 class ExporterCanViTB(NamedTuple):
-    glimpse: int  # canvit.py::canvit_forward_flops_per_glimpse: backbone + canvas_read + canvas_write
-    ade20k_probe: int  # its seg_head
-    read: int  # canvit.py::canvas_read_flops(..., full_proj=False)
-    write: int  # canvit.py::canvas_write_flops(..., full_proj=False, convex=False)
-    read_qkvo: int  # full_proj=True
+    glimpse: int  # one glimpse: backbone, Canvas Attention Reads and Writes
+    ade20k_probe: int
+    read: int
+    write: int
+    read_qkvo: int  # with canvas-side projections
     write_qkvo: int
 
 
-EXPORTER_CANVIT_B = {  # by canvas grid G: the exporter's arch.py::CANVIT_B with canvas_grid=G
+EXPORTER_CANVIT_B = {  # by canvas grid
     8: ExporterCanViTB(13_801_724_160, 19_660_800, 246_611_968, 246_611_968, 582_156_288, 582_156_288),
     16: ExporterCanViTB(14_136_744_192, 78_643_200, 302_448_640, 302_448_640, 1_443_299_328, 1_443_299_328),
     32: ExporterCanViTB(15_476_824_320, 314_572_800, 525_795_328, 525_795_328, 4_887_871_488, 4_887_871_488),
     64: ExporterCanViTB(20_837_144_832, 1_258_291_200, 1_419_182_080, 1_419_182_080, 18_666_160_128, 18_666_160_128),
     128: ExporterCanViTB(42_278_426_880, 5_033_164_800, 4_992_729_088, 4_992_729_088, 73_779_314_688, 73_779_314_688),
 }
-EXPORTER_DINOV3: dict[DINOv3Variant, dict[int, int]] = {  # teacher.py::teacher_flops, by input size in px
+EXPORTER_DINOV3: dict[DINOv3Variant, dict[int, int]] = {  # by input size in px
     "vits16": {128: 3_055_749_120, 144: 3_836_289_024, 160: 4_721_264_640, 192: 6_821_775_360, 256: 12_490_573_824,
                384: 31_235_180_544, 512: 63_819_417_600},
     "vitb16": {128: 11_971_989_504, 144: 14_976_958_464, 160: 18_360_668_160, 192: 26_298_814_464,
                256: 47_149_092_864, 384: 111_817_396_224, 512: 215_036_596_224},
 }
-# ablations/static.py: each variant's canvit_forward_flops_per_glimpse(...).total, ADE20K probe included,
-# behind the GFLOPs column of the paper's ablation table.
+# One glimpse of each ablation variant, ADE20K probe included: the GFLOPs column of the paper's ablation table.
 EXPORTER_ABLATIONS: dict[AblationSlug, int] = {
     "baseline": 15_791_397_120, "dcan256": 13_189_388_544, "qkvo-dcan256": 14_825_167_104,
     "qkvo-dcan384": 17_303_558_400, "no-reads": 14_214_011_136, "rw-stride6": 13_688_215_808,

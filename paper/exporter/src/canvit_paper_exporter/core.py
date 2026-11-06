@@ -105,12 +105,7 @@ def run_figure(fig: Figure) -> Path:
     mpl_fig = fig.plot(*(load_json(out) for d in fig.datasets for out in d.outputs))
     dt_plot = time.perf_counter() - t0
     t1 = time.perf_counter()
-    # `pad_inches=0` explicit because ultraplot's Figure.savefig ignores the
-    # rcParam (see style.py for the matching rcParam set, which catches plain
-    # matplotlib saves elsewhere). Without this, every save gets a 0.1-inch
-    # white border that's wasted under typst/LaTeX.
-    # SVG goes to Typst diagrams; PDF goes to LaTeX (native matplotlib vector backend).
-    # PNG kept as a low-cost preview (200 dpi). No dates, so identical inputs give identical files.
+    # SVG for Typst, PDF for LaTeX, PNG as a preview; no dates, so identical inputs give identical files.
     mpl_fig.savefig(svg, bbox_inches="tight", pad_inches=0, metadata={"Date": None})
     mpl_fig.savefig(pdf, bbox_inches="tight", pad_inches=0, metadata={"CreationDate": None})
     mpl_fig.savefig(png, bbox_inches="tight", pad_inches=0, dpi=200)

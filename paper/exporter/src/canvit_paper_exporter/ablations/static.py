@@ -10,7 +10,7 @@ from canvit_paper_exporter.ablations.registry import BASELINE, VARIANTS, Ablatio
 from canvit_paper_exporter.core import Dataset
 from canvit_paper_exporter.flops.canvit import segmentation_glimpse_flops
 
-# 4 decimal digits = 0.01% precision; matches the display precision of the ablation table.
+# 4 decimal digits of a fraction = 0.01% precision.
 REL_DIGITS = 4
 BASELINE_HISTORY = history.runs(BASELINE.slug)
 

@@ -10,8 +10,7 @@ the Hub's as README.hub.md beside it. --push uploads each card that differs from
 parent is the revision the card was generated from. The browser exports' cards also need the parity report that
 `python -m canvit_pytorch.viz.live parity` wrote for the published graphs.
 
-Left alone, and listed: the learned policies, whose cards were written when they were republished in
-canvit_pytorch.rl's format (canvit_pytorch.hub.cards.policy_card), and repos without a record this tool reads.
+Left alone, and listed: repos without a record this tool reads.
 """
 
 import json
@@ -24,9 +23,10 @@ import tyro
 from canvit_core.backbone import BACKBONES
 from canvit_core.checkpoint import FORMAT
 from canvit_pytorch.hub import cards
-from canvit_pytorch.hub.publish import probe_card
+from canvit_pytorch.hub.publish import policy_training_facts, probe_card
 from canvit_pytorch.hub.repos import (
     OLD_FORMAT_REVISION,
+    ORIGINAL_POLICY_FORMAT_REVISION,
     PRETRAINED,
     RELEASED_GLIMPSE_SIZE_PX,
     RELEASED_SCENE_SIZE_PX,
@@ -36,6 +36,7 @@ from canvit_pytorch.hub.repos import (
 from canvit_pytorch.policies import POLICIES, PolicyName
 from canvit_pytorch.pretrain.ablations import ABLATIONS
 from canvit_pytorch.project import HUB_ORGANIZATION
+from canvit_pytorch.rl import ViewpointScorer
 from canvit_pytorch.teacher import (
     DINOV3_NAMES,
     DINOV3_PATCH_SIZE,
@@ -49,6 +50,8 @@ from tools import model_cards
 
 log = logging.getLogger(__name__)
 POLICY_PREFIXES = ("qpolicy-", "pgpolicy-")
+# The objectives as the archived training code named them in training_run/manifest.json.
+ARCHIVED_OBJECTIVES = {"q": "QLearning", "pg": "Reinforce"}
 RECORD_FILES = ("config.json", "provenance.json", "manifest.json")
 
 
@@ -317,10 +320,41 @@ def _live_card(repo: Repo, parity: dict[str, Any]) -> str:
     return cards.live_probe_card(repo=repo.id, canvit_repo=partner, manifest=manifest, parity=parity)
 
 
+def _archived_policy_training(repo: Repo) -> cards.PolicyTrainingFacts:
+    """A policy published by the archived code that trained it, whose record stays in training_run/ as that code wrote
+    it: the published scorer is that of lowest mean validation cross-entropy after the glimpses the policy chose."""
+    manifest = _json(repo.id, "training_run/manifest.json", repo.revision)
+    metrics = Path(hf_hub_download(repo.id, "training_run/metrics.jsonl", revision=repo.revision)).read_text()
+    num_glimpses = manifest["config"]["train_horizon"] + 1
+    validations = {
+        row["step"]: [row[f"val_ce_t{t}"] for t in range(num_glimpses)]
+        for row in map(json.loads, metrics.splitlines()) if "val_ce_t1" in row
+    }
+    selected_step = min(validations, key=lambda step: sum(validations[step][1:]))
+    return cards.PolicyTrainingFacts(
+        objective=ARCHIVED_OBJECTIVES[manifest["kind"]], seed=manifest["config"]["seed"], num_glimpses=num_glimpses,
+        selected_step=selected_step, validation_cross_entropy=validations[selected_step],
+        record="under `training_run/`, as the original training code wrote it",
+    )
+
+
+def _policy_card(repo: Repo) -> str:
+    original_format = ORIGINAL_POLICY_FORMAT_REVISION in repo.tags
+    if "training" in repo.config:
+        training = policy_training_facts(repo.config["training"])
+    elif original_format:
+        training = _archived_policy_training(repo)
+    else:
+        raise NoCard("a learned policy without a training record")
+    scorer = ViewpointScorer.from_pretrained(repo.id, revision=repo.revision)
+    return cards.policy_card(repo=repo.id, observer=scorer.observer, candidates=scorer.candidates, training=training,
+                             original_format=original_format)
+
+
 def card(repo: Repo, results: PaperResults, parity: dict[str, Any] | None) -> str:
     name = repo.id.split("/")[1]
     if name.startswith(POLICY_PREFIXES):
-        raise NoCard("a learned policy: its card was written at its republication (hub.cards.policy_card)")
+        return _policy_card(repo)
     if "manifest.json" in repo.files:
         if parity is None:
             raise NoCard("a browser export: pass --live-parity")

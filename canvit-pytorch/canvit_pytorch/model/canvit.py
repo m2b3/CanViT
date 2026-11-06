@@ -111,6 +111,8 @@ class CanViT(nn.Module):
 
         canvas = state.canvas
         canvas_grid = math.isqrt(canvas.shape[1] - self.config.num_canvas_registers)
+        assert canvas_grid**2 == canvas.shape[1] - self.config.num_canvas_registers, \
+            f"{canvas.shape[1] - self.config.num_canvas_registers} canvas patches do not form a square grid"
         canvas_positions = grid_coords(size=canvas_grid, device=canvas.device).flatten(0, 1).unsqueeze(0).expand(B, -1, -1)
         canvas_rope = compute_2d_rope(positions=canvas_positions, periods=canvas_periods)
 

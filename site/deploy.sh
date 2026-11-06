@@ -15,7 +15,13 @@ cd "$site/.."
 
 uv run --no-project python site/check_paper_numbers.py
 uv run site/slides/paper_figures.py check
-[ -z "$(git status --porcelain -- site)" ] || { echo "site/ has uncommitted changes: commit them first" >&2; exit 1; }
+# site/assets/paper/ links into paper/, so its uncommitted changes would be published too.
+[ -z "$(git status --porcelain --untracked-files=no -- site paper)" ] || { echo "site/ or paper/ has uncommitted changes: commit them first" >&2; exit 1; }
+# Publishing only what public main holds keeps private branches (the camera-ready paper and its data) off the page.
+if [ "${1:-}" = "--push" ]; then
+  git fetch -q origin main
+  git merge-base --is-ancestor HEAD origin/main || { echo "HEAD is not on public origin/main: push it there first, then deploy" >&2; exit 1; }
+fi
 talks=$(git ls-files site/slides | grep -E '^site/slides/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/' | grep -v -E '\.md$|/_[^/]*$|/experiments/')
 [ -f site/slides/node_modules/reveal.js/dist/reveal.mjs ] || { echo "reveal.js is missing: npm ci --prefix site/slides" >&2; exit 1; }
 [ -f site/assets/paper/arch_overview.svg ] || { echo "site/assets/paper/arch_overview.svg is missing: run site/copy_paper_figures.sh" >&2; exit 1; }

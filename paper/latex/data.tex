@@ -11,14 +11,6 @@
 \newcommand{\adeMaxT}{21}
 \newcommand{\adeLastT}{20}
 \newcommand{\bootstrapCiPct}{95}
-\newcommand{\teacherFlopMatchedMiou}{33.2}
-\newcommand{\adeCTFTZero}{38.5}
-\newcommand{\adeCTFCSixFourTZero}{39.6}
-\newcommand{\adeCTFCSixFourTTwenty}{45.9}
-\newcommand{\adeECTFCSixFourTTwenty}{45.7}
-\newcommand{\adeFIIDCSixFourTTwenty}{44.9}
-\newcommand{\adeRIIDCSixFourTTwenty}{43.1}
-\newcommand{\adeFTCCSixFourTTwenty}{42.9}
 \newcommand{\adePolicyEvalStochN}{10}
 \newcommand{\adeSweepN}{10}
 \newcommand{\adeSweepHeader}{\textbf{Policy} & \textbf{$c=8$} & \textbf{$c=16$} & \textbf{$c=32$} & \textbf{$c=64$}}
@@ -34,7 +26,7 @@
 \newcommand{\inkSweepHeader}{\textbf{Policy} & \textbf{$c=8$} & \textbf{$c=16$} & \textbf{$c=32$} & \textbf{$c=64$}}
 \newcommand{\inkFtOptimizer}{AdamW}
 \newcommand{\inkFtLr}{2.5 \times 10^{-5}}
-\newcommand{\inkFtWeightDecay}{1.0 \times 10^{-4}}
+\newcommand{\inkFtWeightDecay}{1 \times 10^{-4}}
 \newcommand{\inkFtGradClip}{1.0}
 \newcommand{\inkFtBatchSize}{256}
 \newcommand{\inkFtLabelSmoothing}{0.1}
@@ -44,32 +36,37 @@
 \newcommand{\inkFtNGlimpses}{4}
 \newcommand{\inkFtBpttMode}{full}
 \newcommand{\ablStepsK}{215k}
+\newcommand{\ablGlimpsesM}{110}
 \newcommand{\ablT}{10}
 \newcommand{\ablTLast}{9}
 \newcommand{\ablPolicyName}{R-IID}
 \newcommand{\ablNRuns}{5}
 \newcommand{\ablDcanTwoFiveSixSceneNorm}{$-12.0\%$}
-\newcommand{\ablDcanTwoFiveSixClsNorm}{$-2.2\%$}
+\newcommand{\ablDcanTwoFiveSixClsNorm}{$-2.1\%$}
 \newcommand{\ablQkvoDcanTwoFiveSixSceneNorm}{$-11.7\%$}
-\newcommand{\ablQkvoDcanTwoFiveSixClsNorm}{$-1.5\%$}
+\newcommand{\ablQkvoDcanTwoFiveSixClsNorm}{$-1.6\%$}
 \newcommand{\ablQkvoDcanThreeEightFourSceneNorm}{$-5.8\%$}
-\newcommand{\ablQkvoDcanThreeEightFourClsNorm}{$-1.1\%$}
-\newcommand{\ablNoReadsSceneNorm}{$-6.6\%$}
-\newcommand{\ablNoReadsClsNorm}{$-8.0\%$}
-\newcommand{\ablRwStrideSixSceneNorm}{$-4.0\%$}
+\newcommand{\ablQkvoDcanThreeEightFourClsNorm}{$-1.0\%$}
+\newcommand{\ablNoReadsSceneNorm}{$-6.5\%$}
+\newcommand{\ablNoReadsClsNorm}{$-7.9\%$}
+\newcommand{\ablRwStrideSixSceneNorm}{$-3.9\%$}
 \newcommand{\ablRwStrideSixClsNorm}{$-6.0\%$}
-\newcommand{\ablNoDenseSceneNorm}{$-98.8\%$}
-\newcommand{\ablNoDenseClsNorm}{$-9.0\%$}
+\newcommand{\ablNoDenseSceneNorm}{$-98.7\%$}
+\newcommand{\ablNoDenseClsNorm}{$-8.9\%$}
 \newcommand{\ablNoFiidOneRiidSceneNorm}{$-9.4\%$}
 \newcommand{\ablNoFiidOneRiidClsNorm}{$-16.2\%$}
-\newcommand{\ablNoFiidTwoRiidSceneNorm}{$-5.2\%$}
-\newcommand{\ablNoFiidTwoRiidClsNorm}{$-9.2\%$}
-\newcommand{\ablNoBpttSceneNorm}{$-3.9\%$}
+\newcommand{\ablNoFiidTwoRiidSceneNorm}{$-5.3\%$}
+\newcommand{\ablNoFiidTwoRiidClsNorm}{$-9.4\%$}
+\newcommand{\ablNoBpttSceneNorm}{$-3.8\%$}
 \newcommand{\ablNoBpttClsNorm}{$-7.5\%$}
 \newcommand{\ablVitSSceneNorm}{$-8.4\%$}
 \newcommand{\ablVitSClsNorm}{$-21.1\%$}
 \newcommand{\ablNoVpeSceneNorm}{$-0.1\%$}
-\newcommand{\ablNoVpeClsNorm}{$-0.2\%$}
+\newcommand{\ablNoVpeClsNorm}{$-0.3\%$}
+\newcommand{\ablDownstreamSegPolicy}{EG-C2F}
+\newcommand{\ablDownstreamClfPolicy}{C2F}
+\newcommand{\ablDownstreamGrid}{32}
+\newcommand{\ablDownstreamN}{10}
 \newcommand{\benchTimeBudgetS}{20}
 \newcommand{\benchMaxIters}{500}
 \newcommand{\benchNPasses}{3}
@@ -90,3 +87,86 @@
 \newcommand{\lowessCiPct}{95}
 \newcommand{\lowessTDeltaEarly}{0}
 \newcommand{\lowessTDeltaLate}{20}
+\newcommand{\dsT}{20}
+\newcommand{\dsAdeGrid}{64}
+\newcommand{\dsInkGrid}{32}
+\newcommand{\dsMinN}{10}
+\newcommand{\dsInOneStep}{1{,}837{,}056}
+\newcommand{\dsSchedule}{2{,}000{,}000}
+\newcommand{\dsInOneStepPct}{92}
+\newcommand{\dsInOneLpft}{84.2}
+\newcommand{\dsInOneAde}{43.4}
+\newcommand{\dsAdeFrozenHeader}{\textbf{$t{=}0$} & \textbf{$t{=}1$} & \textbf{$t{=}2$} & \textbf{$t{=}3$} & \textbf{$t{=}4$} & \textbf{$t{=}9$} & \textbf{$t{=}16$} & \textbf{$t{=}20$}}
+\newcommand{\dsAdeFrozenN}{10}
+\newcommand{\dsInkFrozenHeader}{\textbf{$t{=}0$} & \textbf{$t{=}1$} & \textbf{$t{=}2$} & \textbf{$t{=}3$} & \textbf{$t{=}4$} & \textbf{$t{=}5$} & \textbf{$t{=}9$} & \textbf{$t{=}15$} & \textbf{$t{=}20$}}
+\newcommand{\dsInkFrozenN}{10}
+\newcommand{\dsInkLpftHeader}{\textbf{$t{=}0$} & \textbf{$t{=}1$} & \textbf{$t{=}2$} & \textbf{$t{=}3$} & \textbf{$t{=}4$} & \textbf{$t{=}5$} & \textbf{$t{=}9$} & \textbf{$t{=}15$} & \textbf{$t{=}20$}}
+\newcommand{\dsInkLpftN}{11}
+\newcommand{\vpeHeader}{\textbf{$t{=}0$} & \textbf{$t{=}3$} & \textbf{$t{=}10$} & \textbf{$t{=}15$} & \textbf{$t{=}20$}}
+\newcommand{\vpeGeometries}{C32: $32 \times 32$ canvas, $512^2$\,px scenes. C64: $64 \times 64$ canvas, $1024^2$\,px scenes.}
+\newcommand{\vpeScenes}{$512^2$ and $1024^2$\,px}
+\newcommand{\ctrlLastT}{3}
+\newcommand{\ctrlLead}{18.1}
+\newcommand{\ctrlParamsCanvit}{96.5}
+\newcommand{\ctrlParamsBaseline}{112.3}
+\newcommand{\ctrlChipHoursCanvit}{22}
+\newcommand{\ctrlChipHoursBaseline}{212}
+\newcommand{\ctrlTokensPerSide}{2}
+\newcommand{\ctrlBaselineTokens}{4}
+\newcommand{\ctrlCanvitPatchesPerSide}{8}
+\newcommand{\ctrlPatchPx}{16}
+\newcommand{\ctrlCanvitTokens}{64}
+\newcommand{\ctrlPretrainSteps}{26{,}875}
+\newcommand{\ctrlT}{4}
+\newcommand{\ctrlGrid}{32}
+\newcommand{\cocoHeader}{\textbf{$t{=}0$} & \textbf{$t{=}1$} & \textbf{$t{=}2$} & \textbf{$t{=}3$} & \textbf{$t{=}4$} & \textbf{$t{=}9$} & \textbf{$t{=}20$}}
+\newcommand{\cocoRepeats}{5}
+\newcommand{\cocoScene}{512}
+\newcommand{\cocoGrid}{32}
+\newcommand{\cocoMatchedT}{5}
+\newcommand{\cocoFlagshipT}{10}
+\newcommand{\cocoFlagshipEpochs}{140}
+\newcommand{\cocoFlagshipLastT}{20}
+\newcommand{\inkEffRuns}{$n = 10$ runs, or 11 for LP-FT at canvas $8^2$}
+\newcommand{\inkEffLpftSmallGrid}{8}
+\newcommand{\rlHeader}{\textbf{$t{=}1$} & \textbf{$t{=}2$} & \textbf{$t{=}3$} & \textbf{$t{=}4$}}
+\newcommand{\rlLastT}{4}
+\newcommand{\rlTrainingRuns}{8}
+\newcommand{\rlCtwofN}{10}
+\newcommand{\rlScales}{0.5, 0.25}
+\newcommand{\rlCenters}{16}
+\newcommand{\rlCandidates}{512}
+\newcommand{\rlGrid}{64}
+\newcommand{\rlFeatureGrid}{32}
+\newcommand{\adaglimpseFlopGrid}{3}
+\newcommand{\rlGlimpses}{5}
+\newcommand{\rlBatch}{16}
+\newcommand{\rlSteps}{8{,}000}
+\newcommand{\rlPolicyGlimpses}{640{,}000}
+\newcommand{\rlPretrainingSharePct}{0.06}
+\newcommand{\rlLr}{2 \times 10^{-4}}
+\newcommand{\rlWeightDecay}{1 \times 10^{-2}}
+\newcommand{\rlWarmupSteps}{1{,}000}
+\newcommand{\rlBetaOne}{0.9}
+\newcommand{\rlBetaTwo}{0.95}
+\newcommand{\rlGradClip}{1}
+\newcommand{\rlValInterval}{1{,}000}
+\newcommand{\rlEpsilon}{0.5}
+\newcommand{\rlEntropyFloor}{1}
+\newcommand{\rlMinutesBound}{95}
+\newcommand{\rlDevice}{RTX~4090}
+\newcommand{\rlDeviceMemoryGB}{24}
+\newcommand{\computeSlurmHours}{285}
+\newcommand{\computeTpuVsixeChipHours}{3{,}431}
+\newcommand{\computeTpuVfivepChipHours}{200}
+\newcommand{\computeTpuUsd}{4{,}796}
+\newcommand{\computeAprilChipHours}{1{,}318}
+\newcommand{\computeRtxHours}{369}
+\newcommand{\pretrainEpochs}{10}
+\newcommand{\onlineTeacherIncreasePct}{41}
+\newcommand{\pretrainHours}{166}
+\newcommand{\teacherExportHours}{8}
+\newcommand{\pretrainTotalHours}{174}
+\newcommand{\onlineTeacherExportHours}{80}
+\newcommand{\onlineTeacherTotalHours}{246}
+\newcommand{\teacherFeaturesTiB}{19}

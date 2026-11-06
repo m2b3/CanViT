@@ -1,4 +1,4 @@
-"""ImageNet-1k fine-tuning of CanViT-B in JAX/Flax NNX (paper, `supp:task-in1k`).
+"""ImageNet-1k fine-tuning of CanViT-B in JAX/Flax NNX (paper, appendix "Task: ImageNet-1k classification").
 
 LP-FT: a pretrained CanViT-B, its CLS readout fused with DINOv3 ViT-B/16's
 linear ImageNet-1k probe (CanViTForImageClassification.from_pretrained_with_probe),

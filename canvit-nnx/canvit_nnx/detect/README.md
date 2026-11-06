@@ -3,7 +3,7 @@
 `canvit_nnx.detect` trains CanViT-B with a CenterNet head ("Objects as
 Points", arXiv:1904.07850) on the canvas for COCO 2017 object detection, end
 to end, and scores COCO average precision after each glimpse. It is the
-detector of the paper's COCO experiments (`supp:coco-detection`); the defaults of
+detector of the paper's COCO experiments (appendix "COCO object detection"); the defaults of
 `canvit_nnx.detect.train.Recipe` are its run on the released ImageNet-21k
 CanViT-B.
 

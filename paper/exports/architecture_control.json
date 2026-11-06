@@ -1,0 +1,74 @@
+{
+  "shared": {
+    "step": 26875,
+    "scene_px": 512,
+    "canvas_grid": 32,
+    "glimpse_px": 128,
+    "mask_px": 512,
+    "train_horizon_t": 4,
+    "max_steps": 40000,
+    "feature": "canvas_hidden",
+    "layer_norm": true,
+    "eval_policy": "eg_c2f",
+    "train_policy": "r_iid",
+    "n_timesteps": 4
+  },
+  "arms": {
+    "canvit": {
+      "pretraining_chip_hours": 21.6893,
+      "params": 96538624,
+      "baseline_tokens_per_side": null,
+      "patch_px": 16,
+      "per_timestep": [
+        {
+          "t": 0,
+          "miou": 0.268555662603614,
+          "cum_gflops": 15.791394816
+        },
+        {
+          "t": 1,
+          "miou": 0.30523984289512174,
+          "cum_gflops": 31.582789632
+        },
+        {
+          "t": 2,
+          "miou": 0.32772923454855507,
+          "cum_gflops": 47.374184448
+        },
+        {
+          "t": 3,
+          "miou": 0.33691292112778126,
+          "cum_gflops": 63.165579264
+        }
+      ]
+    },
+    "adaglimpse": {
+      "pretraining_chip_hours": 212.0733,
+      "params": 112272896,
+      "baseline_tokens_per_side": 2,
+      "patch_px": null,
+      "per_timestep": [
+        {
+          "t": 0,
+          "miou": 0.11997228229669697,
+          "cum_gflops": 70.155522048
+        },
+        {
+          "t": 1,
+          "miou": 0.13729367535919307,
+          "cum_gflops": 141.336911872
+        },
+        {
+          "t": 2,
+          "miou": 0.14881563054357927,
+          "cum_gflops": 213.545873408
+        },
+        {
+          "t": 3,
+          "miou": 0.15611749777899828,
+          "cum_gflops": 286.784110592
+        }
+      ]
+    }
+  }
+}

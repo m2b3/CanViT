@@ -2,7 +2,7 @@
 
 Two-stage pipeline for each diagram:
     canvit_paper_exporter.diagrams.<name>.main()   # emits PNGs to diagrams/outputs/<name>/
-    typst compile diagrams/<name>.typ     # composes PNGs -> exports/<name>.svg
+    typst compile diagrams/<name>.typ     # composes PNGs -> exports/<name>.svg and .pdf
 
 Register as Diagram(name, prep, typst_source) so `run.py` can dispatch them
 alongside Dataset and Figure; every producer lands its output at
@@ -35,7 +35,7 @@ def _mk(name: str, module, typst_name: str) -> Diagram:
 
 
 def _canvas_attention_combined_prep() -> None:
-    """Prep for the combined Fig 3: refresh the LHS PCA PNGs and the RHS SVG.
+    """Prep for the combined figure (fig:canvas-attention): refresh the LHS PCA PNGs and the RHS SVG.
 
     The combined wrapper imports `canvas_attention_content.typ` directly and
     reads the PCA PNGs from `diagrams/outputs/canvas_attn/` — no separate

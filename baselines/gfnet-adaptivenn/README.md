@@ -1,7 +1,7 @@
 # gfnet-adaptivenn
 
 The measurements of GFNet (Wang et al., NeurIPS 2020) and AdaptiveNN (Wang et al., Nature Machine Intelligence 2025)
-behind the paper's ImageNet-1k comparison at a fixed number of glimpses (`supp:in1k-efficiency`), made with each
+behind the paper's ImageNet-1k comparison at a fixed number of glimpses (appendix "ImageNet-1k accuracy against inference cost"), made with each
 model's released code and checkpoints. It is not published to PyPI: `pyproject.toml` carries the
 `Private :: Do Not Upload` classifier.
 

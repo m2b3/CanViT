@@ -1,0 +1,38 @@
+{
+  "policies": {
+    "entropy_coarse_to_fine": {
+      "color": "#2ca02c",
+      "label": "EG-C2F"
+    },
+    "coarse_to_fine": {
+      "color": "#1f77b4",
+      "label": "C2F"
+    },
+    "full_then_random": {
+      "color": "#1a1a1a",
+      "label": "F-IID"
+    },
+    "random": {
+      "color": "#ff7f0e",
+      "label": "R-IID"
+    },
+    "repeated_full_scene": {
+      "color": "#8c564b",
+      "label": "RFS"
+    },
+    "fine_to_coarse": {
+      "color": "#d62728",
+      "label": "F2C"
+    }
+  },
+  "learned": {
+    "q_learning": {
+      "color": "#9467bd",
+      "label": "Q-learning"
+    },
+    "reinforce": {
+      "color": "#17becf",
+      "label": "REINFORCE"
+    }
+  }
+}

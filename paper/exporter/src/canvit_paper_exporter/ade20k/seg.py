@@ -2,7 +2,6 @@
 the passive DINOv3 baselines by input size (canvit_pytorch.evaluate group ade20k_seg); FLOPs are analytic."""
 
 import numpy as np
-from canvit_pytorch.flops import dinov3_flops
 from canvit_pytorch.hub.repos import (
     DINOV3_PROBE_MODEL_NAMES, PRETRAINED, RELEASED_GLIMPSE_SIZE_PX, released_ade20k_probe, released_dinov3_ade20k_probe,
 )
@@ -12,7 +11,7 @@ from canvit_paper_exporter.core import Dataset
 from canvit_paper_exporter.flops.adaglimpse import adaglimpse_gflops
 from canvit_paper_exporter.flops.ame import ame_gflops
 from canvit_paper_exporter.flops.canvit import CANVIT_B, CANVIT_B_NAME, segmentation_glimpse_flops
-from canvit_paper_exporter.flops.dinov3 import DINOV3_CONFIGS
+from canvit_paper_exporter.flops.dinov3 import dinov3_segmentation_flops
 from canvit_paper_exporter.results import (
     Result, Viewing, config, group_by, load_results, miou_curve, results_in, viewing,
 )
@@ -20,7 +19,7 @@ from canvit_paper_exporter.stats import CONFIDENCE, per_timestep_ci
 
 RESULTS = results_in("ade20k_seg")
 SINGLE_GLIMPSE_MODEL = f"{CANVIT_B_NAME} (t=0, full scene)"
-# Canvas grids without a single-glimpse evaluation, whose single-glimpse row is the best first glimpse of their policy
+# Canvas grids without a single-glimpse evaluation, whose single-glimpse row is the first glimpse of their policy
 # curves: the full scene, which the policies that start from it all score alike.
 SINGLE_GLIMPSE_FROM_CURVES = {64}
 
@@ -35,6 +34,10 @@ BASELINES = [
     {"name": "AdaGlimpse", "num_glimpses": 8, "miou_pct": 25.7, "gflops": adaglimpse_gflops(8)},
 ]
 
+
+
+FULL_VIEW_FIRST = ("coarse_to_fine", "entropy_coarse_to_fine", "full_then_random", "repeated_full_scene")
+"""The policies whose first glimpse is the full scene."""
 
 def flagship_viewing(result: Result) -> Viewing:
     """The run's viewing; the run must evaluate the paper's CanViT-B with the released probe for its scene and canvas."""
@@ -91,7 +94,7 @@ def _dinov3_row(result: Result) -> dict:
         "model": model,
         "input_px": size,
         "output_grid": size // DINOV3_PATCH_SIZE,
-        "gflops": dinov3_flops(DINOV3_CONFIGS[model], input_size_px=size) / 1e9,
+        "gflops": dinov3_segmentation_flops(model, input_size_px=size) / 1e9,
         "miou_pct": round(100 * miou, 2),
     }
 
@@ -133,13 +136,13 @@ def _compute_claims(curves: list[dict], best_prior: dict) -> dict:
 
     grids = sorted({c["canvas_grid"] for c in curves})
 
-    # Per-grid single-glimpse (t=0). At t=0 every policy that starts from the
-    # full scene shares the same mIoU, so max-over-policies within a grid picks
-    # that common value.
+    # Per-grid single-glimpse (t=0): every policy that starts from the full scene views the same glimpse first, so they
+    # share one value.
     single_glimpse_by_grid: dict[int, dict] = {}
     for g in grids:
-        t0s = [(c, c["per_timestep"][0]) for c in curves if c["canvas_grid"] == g]
-        best_c, best_t0 = max(t0s, key=lambda ct: ct[1]["mean"])
+        full_view = [c for c in curves if c["canvas_grid"] == g and c["policy"] in FULL_VIEW_FIRST]
+        assert full_view and len({c["per_timestep"][0]["mean"] for c in full_view}) == 1, (g, full_view)
+        best_c, best_t0 = full_view[0], full_view[0]["per_timestep"][0]
         single_glimpse_by_grid[g] = {
             "miou_pct": round(best_t0["mean"] * 100, 2),
             "gflops": best_t0["cum_gflops"],

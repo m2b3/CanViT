@@ -32,7 +32,7 @@
     },
     "dcan256": {
       "slug": "dcan256",
-      "label": "$D_{\\mathrm{can}}=256$ (asym.)",
+      "label": "$D_{\\mathrm{can}}=256$, asymmetric",
       "delta": "D_can 1024>256",
       "color": "#2ca02c",
       "params": 88050176,
@@ -44,7 +44,7 @@
     },
     "qkvo-dcan256": {
       "slug": "qkvo-dcan256",
-      "label": "+ QKVO, $D_{\\mathrm{can}}=256$",
+      "label": "$D_{\\mathrm{can}}=256$, + QKVO",
       "delta": "canvas_proj_mode asymmetric>full, D_can 1024>256",
       "color": "#1f77b4",
       "params": 88839680,
@@ -56,7 +56,7 @@
     },
     "qkvo-dcan384": {
       "slug": "qkvo-dcan384",
-      "label": "+ QKVO, $D_{\\mathrm{can}}=384$",
+      "label": "$D_{\\mathrm{can}}=384$, + QKVO",
       "delta": "canvas_proj_mode asymmetric>full, D_can 1024>384",
       "color": "#17becf",
       "params": 91008768,
@@ -80,7 +80,7 @@
     },
     "rw-stride6": {
       "slug": "rw-stride6",
-      "label": "RW stride 6",
+      "label": "RW stride = 6",
       "delta": "rw_stride 2>6 (3R+3W to 1R+1W at depth 12)",
       "color": "#ff7f0e",
       "params": 88843776,
@@ -92,7 +92,7 @@
     },
     "no-dense": {
       "slug": "no-dense",
-      "label": "No dense loss",
+      "label": "No dense supervision",
       "delta": "enable_scene_patches_loss true>false",
       "color": "#8c564b",
       "params": 95157248,
@@ -104,7 +104,7 @@
     },
     "no-fiid-1riid": {
       "slug": "no-fiid-1riid",
-      "label": "No F-IID (1\u00d7R)",
+      "label": "No F-IID, 1$\\times$ R-IID",
       "delta": "n_full_start_branches 1>0",
       "color": "#e377c2",
       "params": 95157248,
@@ -116,9 +116,9 @@
     },
     "no-fiid-2riid": {
       "slug": "no-fiid-2riid",
-      "label": "No F-IID (2\u00d7R)",
+      "label": "No F-IID, 2$\\times$ R-IID",
       "delta": "n_full_start_branches 1>0, n_random_start_branches 1>2",
-      "color": "#c2185b",
+      "color": "#000080",
       "params": 95157248,
       "params_str": "95.2M",
       "params_pct": 0.0,
@@ -128,7 +128,7 @@
     },
     "no-bptt": {
       "slug": "no-bptt",
-      "label": "No BPTT ($K{=}1$)",
+      "label": "No BPTT ($K = 1$)",
       "delta": "chunk_size 2>1, continue_prob 0.5>0.75",
       "color": "#bcbd22",
       "params": 95157248,
@@ -140,7 +140,7 @@
     },
     "vit-s": {
       "slug": "vit-s",
-      "label": "ViT-S backbone",
+      "label": "$D_{\\mathrm{bb}}=384$ (ViT-S)",
       "delta": "backbone_dim 768>384",
       "color": "#7f7f7f",
       "params": 26364416,
@@ -152,7 +152,7 @@
     },
     "no-vpe": {
       "slug": "no-vpe",
-      "label": "No VPE",
+      "label": "No VPE token",
       "delta": "enable_vpe true>false",
       "color": "#9467bd",
       "params": 95155712,

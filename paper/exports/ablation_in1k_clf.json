@@ -1,0 +1,1863 @@
+{
+  "_provenance": {
+    "n_variants": 12,
+    "scene_size": 512,
+    "canvas_grid": 32,
+    "policies": [
+      "coarse_to_fine"
+    ],
+    "n_runs_stochastic": 10,
+    "metric": "in1k_top1_accuracy",
+    "ci": 0.95
+  },
+  "variants": {
+    "baseline": {
+      "slug": "baseline",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-baseline-2026-03-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T041331Z_r0.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r1.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r2.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r3.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r4.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r5.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r6.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r7.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r8.pt",
+            "abl-baseline_coarse_to_fine_s512_c32_20260613T044302Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.6131,
+              "ci_lo": 0.6131,
+              "ci_hi": 0.6131
+            },
+            {
+              "t": 1,
+              "mean": 0.652776,
+              "ci_lo": 0.652352,
+              "ci_hi": 0.653292
+            },
+            {
+              "t": 2,
+              "mean": 0.670128,
+              "ci_lo": 0.66968,
+              "ci_hi": 0.67057
+            },
+            {
+              "t": 3,
+              "mean": 0.681154,
+              "ci_lo": 0.680628,
+              "ci_hi": 0.681684
+            },
+            {
+              "t": 4,
+              "mean": 0.688788,
+              "ci_lo": 0.688526,
+              "ci_hi": 0.689068
+            },
+            {
+              "t": 5,
+              "mean": 0.689836,
+              "ci_lo": 0.689586,
+              "ci_hi": 0.690102
+            },
+            {
+              "t": 6,
+              "mean": 0.690444,
+              "ci_lo": 0.690126,
+              "ci_hi": 0.6908
+            },
+            {
+              "t": 7,
+              "mean": 0.690812,
+              "ci_lo": 0.690444,
+              "ci_hi": 0.691238
+            },
+            {
+              "t": 8,
+              "mean": 0.690758,
+              "ci_lo": 0.690428,
+              "ci_hi": 0.691164
+            },
+            {
+              "t": 9,
+              "mean": 0.690744,
+              "ci_lo": 0.690456,
+              "ci_hi": 0.690992
+            },
+            {
+              "t": 10,
+              "mean": 0.690564,
+              "ci_lo": 0.69029,
+              "ci_hi": 0.690858
+            },
+            {
+              "t": 11,
+              "mean": 0.690714,
+              "ci_lo": 0.690426,
+              "ci_hi": 0.691024
+            },
+            {
+              "t": 12,
+              "mean": 0.69078,
+              "ci_lo": 0.690466,
+              "ci_hi": 0.691082
+            },
+            {
+              "t": 13,
+              "mean": 0.690662,
+              "ci_lo": 0.690486,
+              "ci_hi": 0.690848
+            },
+            {
+              "t": 14,
+              "mean": 0.690814,
+              "ci_lo": 0.69066,
+              "ci_hi": 0.69097
+            },
+            {
+              "t": 15,
+              "mean": 0.690964,
+              "ci_lo": 0.690748,
+              "ci_hi": 0.691168
+            },
+            {
+              "t": 16,
+              "mean": 0.69119,
+              "ci_lo": 0.690976,
+              "ci_hi": 0.691458
+            },
+            {
+              "t": 17,
+              "mean": 0.691386,
+              "ci_lo": 0.691066,
+              "ci_hi": 0.691684
+            },
+            {
+              "t": 18,
+              "mean": 0.6913,
+              "ci_lo": 0.691002,
+              "ci_hi": 0.691612
+            },
+            {
+              "t": 19,
+              "mean": 0.691396,
+              "ci_lo": 0.690978,
+              "ci_hi": 0.691806
+            },
+            {
+              "t": 20,
+              "mean": 0.69155,
+              "ci_lo": 0.691172,
+              "ci_hi": 0.691914
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": 0.0
+      }
+    },
+    "dcan256": {
+      "slug": "dcan256",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-dcan256-2026-03-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T042343Z_r0.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r1.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r2.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r3.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r4.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r5.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r6.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r7.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r8.pt",
+            "abl-dcan256_coarse_to_fine_s512_c32_20260613T044308Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.60026,
+              "ci_lo": 0.60026,
+              "ci_hi": 0.60026
+            },
+            {
+              "t": 1,
+              "mean": 0.63627,
+              "ci_lo": 0.63577,
+              "ci_hi": 0.636748
+            },
+            {
+              "t": 2,
+              "mean": 0.652962,
+              "ci_lo": 0.65241,
+              "ci_hi": 0.653538
+            },
+            {
+              "t": 3,
+              "mean": 0.663308,
+              "ci_lo": 0.662842,
+              "ci_hi": 0.663842
+            },
+            {
+              "t": 4,
+              "mean": 0.671544,
+              "ci_lo": 0.671286,
+              "ci_hi": 0.67177
+            },
+            {
+              "t": 5,
+              "mean": 0.671898,
+              "ci_lo": 0.671656,
+              "ci_hi": 0.67213
+            },
+            {
+              "t": 6,
+              "mean": 0.672248,
+              "ci_lo": 0.671972,
+              "ci_hi": 0.672542
+            },
+            {
+              "t": 7,
+              "mean": 0.671856,
+              "ci_lo": 0.671518,
+              "ci_hi": 0.672192
+            },
+            {
+              "t": 8,
+              "mean": 0.671494,
+              "ci_lo": 0.671114,
+              "ci_hi": 0.671858
+            },
+            {
+              "t": 9,
+              "mean": 0.671324,
+              "ci_lo": 0.67099,
+              "ci_hi": 0.67163
+            },
+            {
+              "t": 10,
+              "mean": 0.670948,
+              "ci_lo": 0.670734,
+              "ci_hi": 0.671148
+            },
+            {
+              "t": 11,
+              "mean": 0.670676,
+              "ci_lo": 0.670462,
+              "ci_hi": 0.670894
+            },
+            {
+              "t": 12,
+              "mean": 0.670674,
+              "ci_lo": 0.670354,
+              "ci_hi": 0.67102
+            },
+            {
+              "t": 13,
+              "mean": 0.6705,
+              "ci_lo": 0.670196,
+              "ci_hi": 0.670808
+            },
+            {
+              "t": 14,
+              "mean": 0.670416,
+              "ci_lo": 0.670092,
+              "ci_hi": 0.670734
+            },
+            {
+              "t": 15,
+              "mean": 0.670152,
+              "ci_lo": 0.669898,
+              "ci_hi": 0.670418
+            },
+            {
+              "t": 16,
+              "mean": 0.67001,
+              "ci_lo": 0.669766,
+              "ci_hi": 0.670278
+            },
+            {
+              "t": 17,
+              "mean": 0.670128,
+              "ci_lo": 0.669848,
+              "ci_hi": 0.67039
+            },
+            {
+              "t": 18,
+              "mean": 0.669894,
+              "ci_lo": 0.669574,
+              "ci_hi": 0.670174
+            },
+            {
+              "t": 19,
+              "mean": 0.669792,
+              "ci_lo": 0.669462,
+              "ci_hi": 0.670038
+            },
+            {
+              "t": 20,
+              "mean": 0.66967,
+              "ci_lo": 0.669412,
+              "ci_hi": 0.669914
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.03163907165063988
+      }
+    },
+    "qkvo-dcan256": {
+      "slug": "qkvo-dcan256",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-qkvo-dcan256-2026-03-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T043318Z_r0.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r1.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r2.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r3.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r4.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r5.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r6.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r7.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r8.pt",
+            "abl-qkvo-dcan256_coarse_to_fine_s512_c32_20260613T050551Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.60136,
+              "ci_lo": 0.60136,
+              "ci_hi": 0.60136
+            },
+            {
+              "t": 1,
+              "mean": 0.637996,
+              "ci_lo": 0.637404,
+              "ci_hi": 0.63859
+            },
+            {
+              "t": 2,
+              "mean": 0.65536,
+              "ci_lo": 0.65488,
+              "ci_hi": 0.655844
+            },
+            {
+              "t": 3,
+              "mean": 0.666732,
+              "ci_lo": 0.666282,
+              "ci_hi": 0.667178
+            },
+            {
+              "t": 4,
+              "mean": 0.67484,
+              "ci_lo": 0.674552,
+              "ci_hi": 0.675136
+            },
+            {
+              "t": 5,
+              "mean": 0.675264,
+              "ci_lo": 0.675008,
+              "ci_hi": 0.675482
+            },
+            {
+              "t": 6,
+              "mean": 0.675132,
+              "ci_lo": 0.674814,
+              "ci_hi": 0.675424
+            },
+            {
+              "t": 7,
+              "mean": 0.675264,
+              "ci_lo": 0.67495,
+              "ci_hi": 0.675598
+            },
+            {
+              "t": 8,
+              "mean": 0.674946,
+              "ci_lo": 0.674774,
+              "ci_hi": 0.675118
+            },
+            {
+              "t": 9,
+              "mean": 0.674646,
+              "ci_lo": 0.674412,
+              "ci_hi": 0.67486
+            },
+            {
+              "t": 10,
+              "mean": 0.674446,
+              "ci_lo": 0.674204,
+              "ci_hi": 0.674724
+            },
+            {
+              "t": 11,
+              "mean": 0.674204,
+              "ci_lo": 0.673934,
+              "ci_hi": 0.674496
+            },
+            {
+              "t": 12,
+              "mean": 0.674194,
+              "ci_lo": 0.673854,
+              "ci_hi": 0.674586
+            },
+            {
+              "t": 13,
+              "mean": 0.674046,
+              "ci_lo": 0.673684,
+              "ci_hi": 0.674468
+            },
+            {
+              "t": 14,
+              "mean": 0.673946,
+              "ci_lo": 0.673542,
+              "ci_hi": 0.674356
+            },
+            {
+              "t": 15,
+              "mean": 0.673882,
+              "ci_lo": 0.673508,
+              "ci_hi": 0.674226
+            },
+            {
+              "t": 16,
+              "mean": 0.6737,
+              "ci_lo": 0.673444,
+              "ci_hi": 0.67393
+            },
+            {
+              "t": 17,
+              "mean": 0.67391,
+              "ci_lo": 0.673662,
+              "ci_hi": 0.674128
+            },
+            {
+              "t": 18,
+              "mean": 0.673872,
+              "ci_lo": 0.673594,
+              "ci_hi": 0.674114
+            },
+            {
+              "t": 19,
+              "mean": 0.67384,
+              "ci_lo": 0.673508,
+              "ci_hi": 0.674164
+            },
+            {
+              "t": 20,
+              "mean": 0.673818,
+              "ci_lo": 0.673548,
+              "ci_hi": 0.674074
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.02564095148579274
+      }
+    },
+    "qkvo-dcan384": {
+      "slug": "qkvo-dcan384",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-qkvo-dcan384-2026-03-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T043317Z_r0.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r1.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r2.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r3.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r4.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r5.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r6.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r7.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r8.pt",
+            "abl-qkvo-dcan384_coarse_to_fine_s512_c32_20260613T050550Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.61082,
+              "ci_lo": 0.61082,
+              "ci_hi": 0.61082
+            },
+            {
+              "t": 1,
+              "mean": 0.645012,
+              "ci_lo": 0.644416,
+              "ci_hi": 0.645538
+            },
+            {
+              "t": 2,
+              "mean": 0.661748,
+              "ci_lo": 0.661352,
+              "ci_hi": 0.6621
+            },
+            {
+              "t": 3,
+              "mean": 0.673646,
+              "ci_lo": 0.673204,
+              "ci_hi": 0.67409
+            },
+            {
+              "t": 4,
+              "mean": 0.682478,
+              "ci_lo": 0.682184,
+              "ci_hi": 0.682766
+            },
+            {
+              "t": 5,
+              "mean": 0.682614,
+              "ci_lo": 0.682364,
+              "ci_hi": 0.682868
+            },
+            {
+              "t": 6,
+              "mean": 0.682554,
+              "ci_lo": 0.682184,
+              "ci_hi": 0.6829
+            },
+            {
+              "t": 7,
+              "mean": 0.682568,
+              "ci_lo": 0.682244,
+              "ci_hi": 0.682902
+            },
+            {
+              "t": 8,
+              "mean": 0.682216,
+              "ci_lo": 0.681974,
+              "ci_hi": 0.682464
+            },
+            {
+              "t": 9,
+              "mean": 0.681956,
+              "ci_lo": 0.681678,
+              "ci_hi": 0.682204
+            },
+            {
+              "t": 10,
+              "mean": 0.681838,
+              "ci_lo": 0.681602,
+              "ci_hi": 0.68207
+            },
+            {
+              "t": 11,
+              "mean": 0.681476,
+              "ci_lo": 0.681234,
+              "ci_hi": 0.681698
+            },
+            {
+              "t": 12,
+              "mean": 0.681154,
+              "ci_lo": 0.680868,
+              "ci_hi": 0.681404
+            },
+            {
+              "t": 13,
+              "mean": 0.680862,
+              "ci_lo": 0.680658,
+              "ci_hi": 0.681082
+            },
+            {
+              "t": 14,
+              "mean": 0.680514,
+              "ci_lo": 0.68024,
+              "ci_hi": 0.680758
+            },
+            {
+              "t": 15,
+              "mean": 0.680146,
+              "ci_lo": 0.67997,
+              "ci_hi": 0.680302
+            },
+            {
+              "t": 16,
+              "mean": 0.680118,
+              "ci_lo": 0.679894,
+              "ci_hi": 0.680348
+            },
+            {
+              "t": 17,
+              "mean": 0.679924,
+              "ci_lo": 0.67968,
+              "ci_hi": 0.68017
+            },
+            {
+              "t": 18,
+              "mean": 0.679616,
+              "ci_lo": 0.6793,
+              "ci_hi": 0.679932
+            },
+            {
+              "t": 19,
+              "mean": 0.67939,
+              "ci_lo": 0.679034,
+              "ci_hi": 0.67971
+            },
+            {
+              "t": 20,
+              "mean": 0.679362,
+              "ci_lo": 0.678986,
+              "ci_hi": 0.679702
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.017624177572120564
+      }
+    },
+    "no-reads": {
+      "slug": "no-reads",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-no-reads-2026-03-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T042639Z_r0.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r1.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r2.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r3.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r4.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r5.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r6.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r7.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r8.pt",
+            "abl-no-reads_coarse_to_fine_s512_c32_20260613T045244Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.55936,
+              "ci_lo": 0.55936,
+              "ci_hi": 0.55936
+            },
+            {
+              "t": 1,
+              "mean": 0.585364,
+              "ci_lo": 0.584854,
+              "ci_hi": 0.58581
+            },
+            {
+              "t": 2,
+              "mean": 0.597396,
+              "ci_lo": 0.59684,
+              "ci_hi": 0.597884
+            },
+            {
+              "t": 3,
+              "mean": 0.605534,
+              "ci_lo": 0.605178,
+              "ci_hi": 0.605908
+            },
+            {
+              "t": 4,
+              "mean": 0.611422,
+              "ci_lo": 0.61105,
+              "ci_hi": 0.611828
+            },
+            {
+              "t": 5,
+              "mean": 0.612516,
+              "ci_lo": 0.612174,
+              "ci_hi": 0.612832
+            },
+            {
+              "t": 6,
+              "mean": 0.61179,
+              "ci_lo": 0.611364,
+              "ci_hi": 0.612214
+            },
+            {
+              "t": 7,
+              "mean": 0.611854,
+              "ci_lo": 0.611454,
+              "ci_hi": 0.612278
+            },
+            {
+              "t": 8,
+              "mean": 0.610764,
+              "ci_lo": 0.610376,
+              "ci_hi": 0.611174
+            },
+            {
+              "t": 9,
+              "mean": 0.609954,
+              "ci_lo": 0.609576,
+              "ci_hi": 0.610352
+            },
+            {
+              "t": 10,
+              "mean": 0.609064,
+              "ci_lo": 0.608744,
+              "ci_hi": 0.609384
+            },
+            {
+              "t": 11,
+              "mean": 0.608204,
+              "ci_lo": 0.60787,
+              "ci_hi": 0.608516
+            },
+            {
+              "t": 12,
+              "mean": 0.607194,
+              "ci_lo": 0.60678,
+              "ci_hi": 0.607578
+            },
+            {
+              "t": 13,
+              "mean": 0.606496,
+              "ci_lo": 0.606028,
+              "ci_hi": 0.60698
+            },
+            {
+              "t": 14,
+              "mean": 0.605366,
+              "ci_lo": 0.604902,
+              "ci_hi": 0.605886
+            },
+            {
+              "t": 15,
+              "mean": 0.604462,
+              "ci_lo": 0.603914,
+              "ci_hi": 0.604994
+            },
+            {
+              "t": 16,
+              "mean": 0.603484,
+              "ci_lo": 0.60303,
+              "ci_hi": 0.603914
+            },
+            {
+              "t": 17,
+              "mean": 0.602524,
+              "ci_lo": 0.602172,
+              "ci_hi": 0.602924
+            },
+            {
+              "t": 18,
+              "mean": 0.601738,
+              "ci_lo": 0.601438,
+              "ci_hi": 0.602044
+            },
+            {
+              "t": 19,
+              "mean": 0.600836,
+              "ci_lo": 0.600618,
+              "ci_hi": 0.601068
+            },
+            {
+              "t": 20,
+              "mean": 0.600032,
+              "ci_lo": 0.599756,
+              "ci_hi": 0.600294
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.13233750271130068
+      }
+    },
+    "rw-stride6": {
+      "slug": "rw-stride6",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-rw-stride6-2026-03-03",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T043321Z_r0.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r1.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r2.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r3.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r4.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r5.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r6.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r7.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r8.pt",
+            "abl-rw-stride6_coarse_to_fine_s512_c32_20260613T050907Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.57096,
+              "ci_lo": 0.57096,
+              "ci_hi": 0.57096
+            },
+            {
+              "t": 1,
+              "mean": 0.610344,
+              "ci_lo": 0.609956,
+              "ci_hi": 0.610714
+            },
+            {
+              "t": 2,
+              "mean": 0.625778,
+              "ci_lo": 0.625262,
+              "ci_hi": 0.626314
+            },
+            {
+              "t": 3,
+              "mean": 0.635298,
+              "ci_lo": 0.634932,
+              "ci_hi": 0.63564
+            },
+            {
+              "t": 4,
+              "mean": 0.642074,
+              "ci_lo": 0.641714,
+              "ci_hi": 0.642464
+            },
+            {
+              "t": 5,
+              "mean": 0.641362,
+              "ci_lo": 0.640934,
+              "ci_hi": 0.641792
+            },
+            {
+              "t": 6,
+              "mean": 0.640314,
+              "ci_lo": 0.639992,
+              "ci_hi": 0.640638
+            },
+            {
+              "t": 7,
+              "mean": 0.638942,
+              "ci_lo": 0.638592,
+              "ci_hi": 0.63923
+            },
+            {
+              "t": 8,
+              "mean": 0.637298,
+              "ci_lo": 0.636966,
+              "ci_hi": 0.637654
+            },
+            {
+              "t": 9,
+              "mean": 0.6358,
+              "ci_lo": 0.635506,
+              "ci_hi": 0.636082
+            },
+            {
+              "t": 10,
+              "mean": 0.63447,
+              "ci_lo": 0.634158,
+              "ci_hi": 0.634774
+            },
+            {
+              "t": 11,
+              "mean": 0.633086,
+              "ci_lo": 0.63272,
+              "ci_hi": 0.633454
+            },
+            {
+              "t": 12,
+              "mean": 0.632052,
+              "ci_lo": 0.631606,
+              "ci_hi": 0.632504
+            },
+            {
+              "t": 13,
+              "mean": 0.630942,
+              "ci_lo": 0.630522,
+              "ci_hi": 0.631342
+            },
+            {
+              "t": 14,
+              "mean": 0.629898,
+              "ci_lo": 0.629542,
+              "ci_hi": 0.63025
+            },
+            {
+              "t": 15,
+              "mean": 0.629064,
+              "ci_lo": 0.62866,
+              "ci_hi": 0.62943
+            },
+            {
+              "t": 16,
+              "mean": 0.628206,
+              "ci_lo": 0.627826,
+              "ci_hi": 0.628556
+            },
+            {
+              "t": 17,
+              "mean": 0.627634,
+              "ci_lo": 0.627296,
+              "ci_hi": 0.627964
+            },
+            {
+              "t": 18,
+              "mean": 0.62712,
+              "ci_lo": 0.626784,
+              "ci_hi": 0.627466
+            },
+            {
+              "t": 19,
+              "mean": 0.62659,
+              "ci_lo": 0.626246,
+              "ci_hi": 0.626926
+            },
+            {
+              "t": 20,
+              "mean": 0.625982,
+              "ci_lo": 0.625612,
+              "ci_hi": 0.626314
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.09481310100498873
+      }
+    },
+    "no-dense": {
+      "slug": "no-dense",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-no-dense-2026-03-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T042335Z_r0.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r1.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r2.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r3.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r4.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r5.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r6.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r7.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r8.pt",
+            "abl-no-dense_coarse_to_fine_s512_c32_20260613T044307Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.54294,
+              "ci_lo": 0.54294,
+              "ci_hi": 0.54294
+            },
+            {
+              "t": 1,
+              "mean": 0.57645,
+              "ci_lo": 0.575988,
+              "ci_hi": 0.576922
+            },
+            {
+              "t": 2,
+              "mean": 0.590812,
+              "ci_lo": 0.590532,
+              "ci_hi": 0.591084
+            },
+            {
+              "t": 3,
+              "mean": 0.599204,
+              "ci_lo": 0.598724,
+              "ci_hi": 0.599684
+            },
+            {
+              "t": 4,
+              "mean": 0.604028,
+              "ci_lo": 0.60362,
+              "ci_hi": 0.604466
+            },
+            {
+              "t": 5,
+              "mean": 0.60414,
+              "ci_lo": 0.603636,
+              "ci_hi": 0.60469
+            },
+            {
+              "t": 6,
+              "mean": 0.60393,
+              "ci_lo": 0.603386,
+              "ci_hi": 0.604576
+            },
+            {
+              "t": 7,
+              "mean": 0.603608,
+              "ci_lo": 0.60308,
+              "ci_hi": 0.604122
+            },
+            {
+              "t": 8,
+              "mean": 0.603378,
+              "ci_lo": 0.602854,
+              "ci_hi": 0.60394
+            },
+            {
+              "t": 9,
+              "mean": 0.602904,
+              "ci_lo": 0.602354,
+              "ci_hi": 0.603486
+            },
+            {
+              "t": 10,
+              "mean": 0.602484,
+              "ci_lo": 0.601988,
+              "ci_hi": 0.602992
+            },
+            {
+              "t": 11,
+              "mean": 0.602168,
+              "ci_lo": 0.601622,
+              "ci_hi": 0.60276
+            },
+            {
+              "t": 12,
+              "mean": 0.601706,
+              "ci_lo": 0.601152,
+              "ci_hi": 0.602226
+            },
+            {
+              "t": 13,
+              "mean": 0.601244,
+              "ci_lo": 0.600716,
+              "ci_hi": 0.601752
+            },
+            {
+              "t": 14,
+              "mean": 0.600832,
+              "ci_lo": 0.600308,
+              "ci_hi": 0.601338
+            },
+            {
+              "t": 15,
+              "mean": 0.600414,
+              "ci_lo": 0.599842,
+              "ci_hi": 0.600948
+            },
+            {
+              "t": 16,
+              "mean": 0.59982,
+              "ci_lo": 0.59921,
+              "ci_hi": 0.60037
+            },
+            {
+              "t": 17,
+              "mean": 0.599498,
+              "ci_lo": 0.598902,
+              "ci_hi": 0.600036
+            },
+            {
+              "t": 18,
+              "mean": 0.599008,
+              "ci_lo": 0.59842,
+              "ci_hi": 0.59953
+            },
+            {
+              "t": 19,
+              "mean": 0.598814,
+              "ci_lo": 0.598268,
+              "ci_hi": 0.599288
+            },
+            {
+              "t": 20,
+              "mean": 0.598454,
+              "ci_lo": 0.597968,
+              "ci_hi": 0.598882
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.13461933338153417
+      }
+    },
+    "no-fiid-1riid": {
+      "slug": "no-fiid-1riid",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-no-fiid-1riid-2026-03-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T042343Z_r0.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r1.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r2.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r3.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r4.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r5.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r6.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r7.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r8.pt",
+            "abl-no-fiid-1riid_coarse_to_fine_s512_c32_20260613T044308Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.39182,
+              "ci_lo": 0.39182,
+              "ci_hi": 0.39182
+            },
+            {
+              "t": 1,
+              "mean": 0.44413,
+              "ci_lo": 0.443668,
+              "ci_hi": 0.444674
+            },
+            {
+              "t": 2,
+              "mean": 0.469134,
+              "ci_lo": 0.468508,
+              "ci_hi": 0.469864
+            },
+            {
+              "t": 3,
+              "mean": 0.484464,
+              "ci_lo": 0.483948,
+              "ci_hi": 0.484978
+            },
+            {
+              "t": 4,
+              "mean": 0.494736,
+              "ci_lo": 0.49444,
+              "ci_hi": 0.495076
+            },
+            {
+              "t": 5,
+              "mean": 0.496154,
+              "ci_lo": 0.495698,
+              "ci_hi": 0.496672
+            },
+            {
+              "t": 6,
+              "mean": 0.49738,
+              "ci_lo": 0.497,
+              "ci_hi": 0.497768
+            },
+            {
+              "t": 7,
+              "mean": 0.497954,
+              "ci_lo": 0.497708,
+              "ci_hi": 0.49817
+            },
+            {
+              "t": 8,
+              "mean": 0.498602,
+              "ci_lo": 0.498314,
+              "ci_hi": 0.498916
+            },
+            {
+              "t": 9,
+              "mean": 0.498998,
+              "ci_lo": 0.498848,
+              "ci_hi": 0.499154
+            },
+            {
+              "t": 10,
+              "mean": 0.499292,
+              "ci_lo": 0.499014,
+              "ci_hi": 0.499606
+            },
+            {
+              "t": 11,
+              "mean": 0.499598,
+              "ci_lo": 0.49925,
+              "ci_hi": 0.499978
+            },
+            {
+              "t": 12,
+              "mean": 0.499924,
+              "ci_lo": 0.49957,
+              "ci_hi": 0.500362
+            },
+            {
+              "t": 13,
+              "mean": 0.500128,
+              "ci_lo": 0.499618,
+              "ci_hi": 0.500682
+            },
+            {
+              "t": 14,
+              "mean": 0.50013,
+              "ci_lo": 0.499706,
+              "ci_hi": 0.50053
+            },
+            {
+              "t": 15,
+              "mean": 0.50041,
+              "ci_lo": 0.499884,
+              "ci_hi": 0.500954
+            },
+            {
+              "t": 16,
+              "mean": 0.500556,
+              "ci_lo": 0.500102,
+              "ci_hi": 0.501032
+            },
+            {
+              "t": 17,
+              "mean": 0.500496,
+              "ci_lo": 0.500092,
+              "ci_hi": 0.500918
+            },
+            {
+              "t": 18,
+              "mean": 0.500642,
+              "ci_lo": 0.50024,
+              "ci_hi": 0.501058
+            },
+            {
+              "t": 19,
+              "mean": 0.500612,
+              "ci_lo": 0.5001,
+              "ci_hi": 0.501166
+            },
+            {
+              "t": 20,
+              "mean": 0.500462,
+              "ci_lo": 0.500022,
+              "ci_hi": 0.50092
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.27631841515436345
+      }
+    },
+    "no-fiid-2riid": {
+      "slug": "no-fiid-2riid",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-no-fiid-2riid-2026-03-06",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T042339Z_r0.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r1.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r2.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r3.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r4.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r5.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r6.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r7.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r8.pt",
+            "abl-no-fiid-2riid_coarse_to_fine_s512_c32_20260613T044305Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.47804,
+              "ci_lo": 0.47804,
+              "ci_hi": 0.47804
+            },
+            {
+              "t": 1,
+              "mean": 0.53412,
+              "ci_lo": 0.533732,
+              "ci_hi": 0.53451
+            },
+            {
+              "t": 2,
+              "mean": 0.561014,
+              "ci_lo": 0.560338,
+              "ci_hi": 0.56161
+            },
+            {
+              "t": 3,
+              "mean": 0.576894,
+              "ci_lo": 0.576446,
+              "ci_hi": 0.577242
+            },
+            {
+              "t": 4,
+              "mean": 0.588456,
+              "ci_lo": 0.588166,
+              "ci_hi": 0.58872
+            },
+            {
+              "t": 5,
+              "mean": 0.58919,
+              "ci_lo": 0.588912,
+              "ci_hi": 0.589452
+            },
+            {
+              "t": 6,
+              "mean": 0.589728,
+              "ci_lo": 0.58942,
+              "ci_hi": 0.590064
+            },
+            {
+              "t": 7,
+              "mean": 0.59004,
+              "ci_lo": 0.589786,
+              "ci_hi": 0.590302
+            },
+            {
+              "t": 8,
+              "mean": 0.59046,
+              "ci_lo": 0.590052,
+              "ci_hi": 0.590874
+            },
+            {
+              "t": 9,
+              "mean": 0.590406,
+              "ci_lo": 0.589934,
+              "ci_hi": 0.59086
+            },
+            {
+              "t": 10,
+              "mean": 0.59025,
+              "ci_lo": 0.589842,
+              "ci_hi": 0.590654
+            },
+            {
+              "t": 11,
+              "mean": 0.590248,
+              "ci_lo": 0.589928,
+              "ci_hi": 0.590556
+            },
+            {
+              "t": 12,
+              "mean": 0.590114,
+              "ci_lo": 0.589808,
+              "ci_hi": 0.590396
+            },
+            {
+              "t": 13,
+              "mean": 0.59017,
+              "ci_lo": 0.589874,
+              "ci_hi": 0.590444
+            },
+            {
+              "t": 14,
+              "mean": 0.58991,
+              "ci_lo": 0.589572,
+              "ci_hi": 0.590272
+            },
+            {
+              "t": 15,
+              "mean": 0.58984,
+              "ci_lo": 0.589452,
+              "ci_hi": 0.590206
+            },
+            {
+              "t": 16,
+              "mean": 0.590012,
+              "ci_lo": 0.589768,
+              "ci_hi": 0.59025
+            },
+            {
+              "t": 17,
+              "mean": 0.590012,
+              "ci_lo": 0.589732,
+              "ci_hi": 0.59025
+            },
+            {
+              "t": 18,
+              "mean": 0.589894,
+              "ci_lo": 0.589634,
+              "ci_hi": 0.590158
+            },
+            {
+              "t": 19,
+              "mean": 0.589786,
+              "ci_lo": 0.589462,
+              "ci_hi": 0.590108
+            },
+            {
+              "t": 20,
+              "mean": 0.589666,
+              "ci_lo": 0.58935,
+              "ci_hi": 0.58999
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.14732701901525555
+      }
+    },
+    "no-bptt": {
+      "slug": "no-bptt",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-no-bptt-2026-03-06",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T042337Z_r0.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r1.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r2.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r3.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r4.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r5.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r6.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r7.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r8.pt",
+            "abl-no-bptt_coarse_to_fine_s512_c32_20260613T044304Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.57042,
+              "ci_lo": 0.57042,
+              "ci_hi": 0.57042
+            },
+            {
+              "t": 1,
+              "mean": 0.596506,
+              "ci_lo": 0.59585,
+              "ci_hi": 0.597158
+            },
+            {
+              "t": 2,
+              "mean": 0.610506,
+              "ci_lo": 0.610148,
+              "ci_hi": 0.610858
+            },
+            {
+              "t": 3,
+              "mean": 0.6206,
+              "ci_lo": 0.620224,
+              "ci_hi": 0.620978
+            },
+            {
+              "t": 4,
+              "mean": 0.627978,
+              "ci_lo": 0.62773,
+              "ci_hi": 0.6282
+            },
+            {
+              "t": 5,
+              "mean": 0.628794,
+              "ci_lo": 0.628492,
+              "ci_hi": 0.629112
+            },
+            {
+              "t": 6,
+              "mean": 0.628724,
+              "ci_lo": 0.628436,
+              "ci_hi": 0.629014
+            },
+            {
+              "t": 7,
+              "mean": 0.627546,
+              "ci_lo": 0.627162,
+              "ci_hi": 0.628
+            },
+            {
+              "t": 8,
+              "mean": 0.62627,
+              "ci_lo": 0.625868,
+              "ci_hi": 0.62671
+            },
+            {
+              "t": 9,
+              "mean": 0.625144,
+              "ci_lo": 0.624792,
+              "ci_hi": 0.625576
+            },
+            {
+              "t": 10,
+              "mean": 0.623812,
+              "ci_lo": 0.623398,
+              "ci_hi": 0.624172
+            },
+            {
+              "t": 11,
+              "mean": 0.622784,
+              "ci_lo": 0.622334,
+              "ci_hi": 0.6231
+            },
+            {
+              "t": 12,
+              "mean": 0.621494,
+              "ci_lo": 0.620938,
+              "ci_hi": 0.621976
+            },
+            {
+              "t": 13,
+              "mean": 0.620482,
+              "ci_lo": 0.620138,
+              "ci_hi": 0.620842
+            },
+            {
+              "t": 14,
+              "mean": 0.619474,
+              "ci_lo": 0.619092,
+              "ci_hi": 0.619794
+            },
+            {
+              "t": 15,
+              "mean": 0.618644,
+              "ci_lo": 0.618292,
+              "ci_hi": 0.61897
+            },
+            {
+              "t": 16,
+              "mean": 0.618042,
+              "ci_lo": 0.617642,
+              "ci_hi": 0.618386
+            },
+            {
+              "t": 17,
+              "mean": 0.617408,
+              "ci_lo": 0.617148,
+              "ci_hi": 0.617676
+            },
+            {
+              "t": 18,
+              "mean": 0.616746,
+              "ci_lo": 0.616396,
+              "ci_hi": 0.617148
+            },
+            {
+              "t": 19,
+              "mean": 0.616208,
+              "ci_lo": 0.615816,
+              "ci_hi": 0.616604
+            },
+            {
+              "t": 20,
+              "mean": 0.615888,
+              "ci_lo": 0.615608,
+              "ci_hi": 0.616186
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.10940929795387175
+      }
+    },
+    "vit-s": {
+      "slug": "vit-s",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-vit-s-2026-03-03",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T043319Z_r0.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r1.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r2.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r3.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r4.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r5.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r6.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r7.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r8.pt",
+            "abl-vit-s_coarse_to_fine_s512_c32_20260613T050906Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.44314,
+              "ci_lo": 0.44314,
+              "ci_hi": 0.44314
+            },
+            {
+              "t": 1,
+              "mean": 0.488292,
+              "ci_lo": 0.48781,
+              "ci_hi": 0.488772
+            },
+            {
+              "t": 2,
+              "mean": 0.506978,
+              "ci_lo": 0.506462,
+              "ci_hi": 0.507576
+            },
+            {
+              "t": 3,
+              "mean": 0.519188,
+              "ci_lo": 0.5188,
+              "ci_hi": 0.519586
+            },
+            {
+              "t": 4,
+              "mean": 0.527788,
+              "ci_lo": 0.527498,
+              "ci_hi": 0.528064
+            },
+            {
+              "t": 5,
+              "mean": 0.52724,
+              "ci_lo": 0.527034,
+              "ci_hi": 0.527474
+            },
+            {
+              "t": 6,
+              "mean": 0.526764,
+              "ci_lo": 0.526542,
+              "ci_hi": 0.526992
+            },
+            {
+              "t": 7,
+              "mean": 0.526226,
+              "ci_lo": 0.525888,
+              "ci_hi": 0.526526
+            },
+            {
+              "t": 8,
+              "mean": 0.525596,
+              "ci_lo": 0.525136,
+              "ci_hi": 0.525996
+            },
+            {
+              "t": 9,
+              "mean": 0.525178,
+              "ci_lo": 0.52481,
+              "ci_hi": 0.525562
+            },
+            {
+              "t": 10,
+              "mean": 0.524776,
+              "ci_lo": 0.524588,
+              "ci_hi": 0.52494
+            },
+            {
+              "t": 11,
+              "mean": 0.524516,
+              "ci_lo": 0.524236,
+              "ci_hi": 0.524734
+            },
+            {
+              "t": 12,
+              "mean": 0.523756,
+              "ci_lo": 0.52351,
+              "ci_hi": 0.523996
+            },
+            {
+              "t": 13,
+              "mean": 0.523582,
+              "ci_lo": 0.523244,
+              "ci_hi": 0.523932
+            },
+            {
+              "t": 14,
+              "mean": 0.523258,
+              "ci_lo": 0.522828,
+              "ci_hi": 0.52365
+            },
+            {
+              "t": 15,
+              "mean": 0.522892,
+              "ci_lo": 0.522654,
+              "ci_hi": 0.523126
+            },
+            {
+              "t": 16,
+              "mean": 0.522426,
+              "ci_lo": 0.522096,
+              "ci_hi": 0.52277
+            },
+            {
+              "t": 17,
+              "mean": 0.522124,
+              "ci_lo": 0.521884,
+              "ci_hi": 0.522406
+            },
+            {
+              "t": 18,
+              "mean": 0.521894,
+              "ci_lo": 0.521756,
+              "ci_hi": 0.522022
+            },
+            {
+              "t": 19,
+              "mean": 0.52168,
+              "ci_lo": 0.521354,
+              "ci_hi": 0.522058
+            },
+            {
+              "t": 20,
+              "mean": 0.521452,
+              "ci_lo": 0.521214,
+              "ci_hi": 0.521702
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.24596630756995153
+      }
+    },
+    "no-vpe": {
+      "slug": "no-vpe",
+      "policies": {
+        "coarse_to_fine": {
+          "n_runs": 10,
+          "n_timesteps": 21,
+          "model_repo": "canvit/canvitb16-abl-no-vpe-2026-03-03",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe",
+          "source_pt": [
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T042951Z_r0.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r1.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r2.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r3.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r4.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r5.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r6.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r7.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r8.pt",
+            "abl-no-vpe_coarse_to_fine_s512_c32_20260613T045914Z_r9.pt"
+          ],
+          "per_timestep": [
+            {
+              "t": 0,
+              "mean": 0.61388,
+              "ci_lo": 0.61388,
+              "ci_hi": 0.61388
+            },
+            {
+              "t": 1,
+              "mean": 0.650364,
+              "ci_lo": 0.649792,
+              "ci_hi": 0.650968
+            },
+            {
+              "t": 2,
+              "mean": 0.667588,
+              "ci_lo": 0.667288,
+              "ci_hi": 0.667896
+            },
+            {
+              "t": 3,
+              "mean": 0.678648,
+              "ci_lo": 0.678178,
+              "ci_hi": 0.67912
+            },
+            {
+              "t": 4,
+              "mean": 0.686662,
+              "ci_lo": 0.686452,
+              "ci_hi": 0.686868
+            },
+            {
+              "t": 5,
+              "mean": 0.687106,
+              "ci_lo": 0.686702,
+              "ci_hi": 0.687528
+            },
+            {
+              "t": 6,
+              "mean": 0.687432,
+              "ci_lo": 0.68704,
+              "ci_hi": 0.687776
+            },
+            {
+              "t": 7,
+              "mean": 0.687654,
+              "ci_lo": 0.68732,
+              "ci_hi": 0.68792
+            },
+            {
+              "t": 8,
+              "mean": 0.687578,
+              "ci_lo": 0.687284,
+              "ci_hi": 0.687898
+            },
+            {
+              "t": 9,
+              "mean": 0.687526,
+              "ci_lo": 0.687176,
+              "ci_hi": 0.687902
+            },
+            {
+              "t": 10,
+              "mean": 0.68724,
+              "ci_lo": 0.686818,
+              "ci_hi": 0.687654
+            },
+            {
+              "t": 11,
+              "mean": 0.687226,
+              "ci_lo": 0.686898,
+              "ci_hi": 0.68757
+            },
+            {
+              "t": 12,
+              "mean": 0.687018,
+              "ci_lo": 0.686724,
+              "ci_hi": 0.687326
+            },
+            {
+              "t": 13,
+              "mean": 0.686996,
+              "ci_lo": 0.686652,
+              "ci_hi": 0.68736
+            },
+            {
+              "t": 14,
+              "mean": 0.686918,
+              "ci_lo": 0.6866,
+              "ci_hi": 0.68724
+            },
+            {
+              "t": 15,
+              "mean": 0.686742,
+              "ci_lo": 0.686402,
+              "ci_hi": 0.68711
+            },
+            {
+              "t": 16,
+              "mean": 0.686976,
+              "ci_lo": 0.686634,
+              "ci_hi": 0.68727
+            },
+            {
+              "t": 17,
+              "mean": 0.686952,
+              "ci_lo": 0.68668,
+              "ci_hi": 0.68719
+            },
+            {
+              "t": 18,
+              "mean": 0.687024,
+              "ci_lo": 0.686786,
+              "ci_hi": 0.687226
+            },
+            {
+              "t": 19,
+              "mean": 0.686836,
+              "ci_lo": 0.686694,
+              "ci_hi": 0.686986
+            },
+            {
+              "t": 20,
+              "mean": 0.68708,
+              "ci_lo": 0.686888,
+              "ci_hi": 0.68729
+            }
+          ]
+        }
+      },
+      "deltas": {
+        "coarse_to_fine": -0.006463740871954268
+      }
+    }
+  }
+}

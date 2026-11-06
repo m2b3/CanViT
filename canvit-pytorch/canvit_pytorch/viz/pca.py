@@ -1,6 +1,6 @@
 """The paper's PCA visualization of token grids.
 
-Protocol (paper appendix, "PCA Visualizations"): LayerNorm each token, project
+Protocol (paper appendix, "PCA visualizations"): LayerNorm each token, project
 onto three principal components, and map them to RGB with min-max scaling.
 The components come from a deterministic full SVD with scikit-learn's sign
 convention (the largest-magnitude loading of each component is positive), so

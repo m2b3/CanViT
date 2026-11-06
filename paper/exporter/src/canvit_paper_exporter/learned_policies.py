@@ -1,25 +1,18 @@
 """ADE20K mIoU after each glimpse of the published learned viewing policies (canvit_pytorch.rl): both objectives, each
 seed's scorer as its run kept it by validation and as its last training step left it, evaluated by
-canvit_pytorch.evaluate with the observer and probe of the paper's canvas-64 policy curves, beside that table's C2F
+canvit_pytorch.evaluate with the observer and probe of the paper's canvas-64 policy curves, beside those curves' C2F
 and EG-C2F. Each result names the scorer it evaluated; the evaluation record (checkpoints.json) ties that scorer to its
 training run, step and manifest, the source of the recipe."""
 
 from collections import Counter
 
 import numpy as np
-import ultraplot as uplt
-from matplotlib.figure import Figure as MplFigure
-from matplotlib.ticker import NullLocator
 
 from canvit_paper_exporter.ade20k import seg
-from canvit_paper_exporter.core import Dataset, Figure, load_json
+from canvit_paper_exporter.core import Dataset, load_json
 from canvit_paper_exporter.paths import Inputs
 from canvit_paper_exporter.results import Result, Viewing, group_by, load_results, miou_curve, results_in
 from canvit_paper_exporter.stats import CONFIDENCE, per_timestep_ci
-from canvit_paper_exporter.style import (
-    LABEL_SIZE, LEARNED_POLICY_STYLES, POLICY_STYLES, SINGLE_PANEL_FIGHEIGHT, SINGLE_PANEL_FIGWIDTH, TICK_SIZE,
-    bottom_legend_with_headers, mean_and_ci,
-)
 
 ENTRY = "ade20k_seg_learned_policies"
 RESULTS = results_in(ENTRY)
@@ -58,7 +51,8 @@ def _recipe(manifests: list[dict]) -> dict:
         "steps": steps, "lr": shared["lr"], "weight_decay": shared["weight_decay"],
         "warmup_steps": int(shared["warmup_frac"] * steps), "validation_interval": shared["eval_every"],
         "adam_betas": [shared["adam_beta1"], shared["adam_beta2"]], "grad_clip": shared["grad_clip"],
-        # The July code took the scorer's choice with probability prime_on_policy, a random candidate otherwise.
+        # The code that trained these runs took the scorer's choice with probability prime_on_policy, a random candidate
+        # otherwise; canvit_pytorch.rl names the complement epsilon.
         "q_learning_epsilon": 1 - prime_on_policy, "reinforce_entropy_floor": pg_objective["entropy_target"],
     }
 
@@ -126,47 +120,5 @@ def compute() -> dict:
 
 dataset = Dataset(name="learned_policies", compute=compute, inputs=(RESULTS, RECORD, seg.RESULTS))
 
-PLOTTED_SELECTION = "validation"  # each run's best scorer
-# Heuristic and learned policies apart, by line style, under their own legend headers.
-KIND_LINESTYLE = {"heuristic": "--", "learned": "-"}
-KIND_HEADER = {"heuristic": "Heuristic:", "learned": "Learned:"}
-
-
-def plot(data: dict) -> MplFigure:
-    """ADE20K mIoU by timestep over the learned policies' episodes, drawn as the canvas-grid figure is, with heuristic
-    and learned policies apart by line style."""
-    num_glimpses = data["recipe"]["num_glimpses"]
-    baselines = {c["policy"]: c for c in data["baselines"]}
-    learned = {c["objective"]: c for c in data["learned"] if c["selection"] == PLOTTED_SELECTION}
-    groups = {  # (style, points, runs) in the table's order
-        "heuristic": [
-            (style, baselines[policy]["per_timestep"][:num_glimpses], baselines[policy]["n_runs"])
-            for policy, style in POLICY_STYLES.items() if policy in baselines
-        ],
-        "learned": [
-            (style, learned[objective]["per_timestep"], len(learned[objective]["seeds"]))
-            for objective, style in LEARNED_POLICY_STYLES.items()
-        ],
-    }
-
-    fig, axs = uplt.subplots(ncols=1, figwidth=SINGLE_PANEL_FIGWIDTH, figheight=SINGLE_PANEL_FIGHEIGHT, abc=False)
-    ax = axs[0]
-    ax.tick_params(labelsize=TICK_SIZE)
-    ax.grid(True, alpha=0.2)
-    timesteps = np.arange(num_glimpses)
-    for kind, curves in groups.items():
-        for style, points, n_runs in curves:
-            mean_and_ci(ax, timesteps, points, n_runs=n_runs, color=style["color"], linestyle=KIND_LINESTYLE[kind],
-                        marker="o", markersize=3)
-    ax.set_xticks(timesteps)
-    ax.xaxis.set_minor_locator(NullLocator())
-    ax.set_xlabel("Timestep $t$", fontsize=LABEL_SIZE)
-    ax.set_ylabel("ADE20K mIoU (%)", fontsize=LABEL_SIZE)
-    bottom_legend_with_headers(fig, [
-        (KIND_HEADER[kind], [(style["color"], style["label"], KIND_LINESTYLE[kind]) for style, _, _ in curves])
-        for kind, curves in groups.items()
-    ])
-    return fig
-
-
-figure = Figure(name="learned_policies_miou", plot=plot, datasets=(dataset,))
+# The checkpoint of each training run that the results figure (main_results, panel D) draws: its best by validation.
+PLOTTED_SELECTION = "validation"

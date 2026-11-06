@@ -237,7 +237,7 @@ def plot(data: dict) -> MplFigure:
     cpu_threads = sorted({c["num_threads_actual"] for c in configs if c["device"] == "cpu"})
 
     fig, axs = uplt.subplots(
-        ncols=len(devices), figwidth=FIGWIDTH, refaspect=1.4,
+        ncols=len(devices), figwidth=FIGWIDTH, refaspect=1.6,
         sharex=False, sharey=False, abc=False,
     )
     for ax, device in zip(axs, devices, strict=True):

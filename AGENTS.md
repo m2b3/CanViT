@@ -124,7 +124,7 @@ rather than teaching readers to remember the exception.
 - Code uses the paper's names for what the paper describes ("Canvas
   Attention Read", "glimpse", "viewpoint", "canvas patches", "recurrent CLS
   token", `q_map`/`ln_q` as in its pseudocode). Have the full paper
-  (arXiv:2603.22570, pseudocode in Appendix A) in context before editing
+  (arXiv:2603.22570, pseudocode in its appendix "Canvas Attention pseudocode") in context before editing
   anything it describes.
 - Make ownership and dependencies clear from the file tree and public APIs.
   Group by concept and nest subpackages as the concepts require; short files
@@ -235,6 +235,8 @@ spelling.
   small it looks: a vague name, a comment that narrates or misleads, a
   docstring that restates the signature, dead code. If that means rewriting
   the file, rewrite it.
+- Every install instruction a user reads (cards, READMEs, docs, slides)
+  uses `uv` (`uv add`, `uv run`), never `pip`.
 - People use the released packages. Each version on PyPI loads the Hub repos
   it names at their `main` revision, so at every moment every live release
   must load what the Hub serves, and no release may ship that cannot. Plan the

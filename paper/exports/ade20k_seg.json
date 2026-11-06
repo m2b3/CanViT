@@ -6949,98 +6949,98 @@
       "model": "DINOv3 ViT-B/16",
       "input_px": 128,
       "output_grid": 8,
-      "gflops": 11.971989504,
+      "gflops": 11.986735104,
       "miou_pct": 28.82
     },
     {
       "model": "DINOv3 ViT-B/16",
       "input_px": 144,
       "output_grid": 9,
-      "gflops": 14.976958464,
+      "gflops": 14.995620864,
       "miou_pct": 30.95
     },
     {
       "model": "DINOv3 ViT-B/16",
       "input_px": 160,
       "output_grid": 10,
-      "gflops": 18.36066816,
+      "gflops": 18.38370816,
       "miou_pct": 33.16
     },
     {
       "model": "DINOv3 ViT-B/16",
       "input_px": 192,
       "output_grid": 12,
-      "gflops": 26.298814464,
+      "gflops": 26.331992064,
       "miou_pct": 35.91
     },
     {
       "model": "DINOv3 ViT-B/16",
       "input_px": 256,
       "output_grid": 16,
-      "gflops": 47.149092864,
+      "gflops": 47.208075264,
       "miou_pct": 40.61
     },
     {
       "model": "DINOv3 ViT-B/16",
       "input_px": 384,
       "output_grid": 24,
-      "gflops": 111.817396224,
+      "gflops": 111.950106624,
       "miou_pct": 44.77
     },
     {
       "model": "DINOv3 ViT-B/16",
       "input_px": 512,
       "output_grid": 32,
-      "gflops": 215.036596224,
+      "gflops": 215.272525824,
       "miou_pct": 47.19
     },
     {
       "model": "DINOv3 ViT-S/16",
       "input_px": 128,
       "output_grid": 8,
-      "gflops": 3.05574912,
+      "gflops": 3.06312192,
       "miou_pct": 25.15
     },
     {
       "model": "DINOv3 ViT-S/16",
       "input_px": 144,
       "output_grid": 9,
-      "gflops": 3.836289024,
+      "gflops": 3.845620224,
       "miou_pct": 27.09
     },
     {
       "model": "DINOv3 ViT-S/16",
       "input_px": 160,
       "output_grid": 10,
-      "gflops": 4.72126464,
+      "gflops": 4.73278464,
       "miou_pct": 29.41
     },
     {
       "model": "DINOv3 ViT-S/16",
       "input_px": 192,
       "output_grid": 12,
-      "gflops": 6.82177536,
+      "gflops": 6.83836416,
       "miou_pct": 32.3
     },
     {
       "model": "DINOv3 ViT-S/16",
       "input_px": 256,
       "output_grid": 16,
-      "gflops": 12.490573824,
+      "gflops": 12.520065024,
       "miou_pct": 36.93
     },
     {
       "model": "DINOv3 ViT-S/16",
       "input_px": 384,
       "output_grid": 24,
-      "gflops": 31.235180544,
+      "gflops": 31.301535744,
       "miou_pct": 40.87
     },
     {
       "model": "DINOv3 ViT-S/16",
       "input_px": 512,
       "output_grid": 32,
-      "gflops": 63.8194176,
+      "gflops": 63.9373824,
       "miou_pct": 43.33
     }
   ],
@@ -7061,13 +7061,13 @@
       "name": "AdaGlimpse",
       "num_glimpses": 4,
       "miou_pct": 22.7,
-      "gflops": 400.785399808
+      "gflops": 400.859324416
     },
     {
       "name": "AdaGlimpse",
       "num_glimpses": 8,
       "miou_pct": 25.7,
-      "gflops": 835.010871296
+      "gflops": 835.27196672
     }
   ],
   "best_prior": {

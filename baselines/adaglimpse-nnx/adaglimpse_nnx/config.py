@@ -45,5 +45,5 @@ class AdaGlimpseConfig:
 
 
 ARCHITECTURE_CONTROL = AdaGlimpseConfig(scene_size_px=512, glimpse_tokens_per_side=2, teacher_dim=768)
-"""The baseline of the paper's architecture control (`supp:architecture-control`): AdaGlimpse's published
+"""The baseline of the paper's architecture control (appendix "Architecture control"): AdaGlimpse's published
 tokenization of a glimpse, on the scenes CanViT-B sees, with readouts into DINOv3 ViT-B/16's feature space."""

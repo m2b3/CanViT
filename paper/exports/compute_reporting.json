@@ -1,0 +1,59 @@
+{
+  "_about": "Compute used after the paper's submission, by hardware, derived from cluster accounting, cloud billing and the runs' own records (not released: they name hosts, accounts and runs).",
+  "review_period": {
+    "from": "2026-05-07T11:59:00+00:00",
+    "to": "2026-08-04T11:59:00+00:00"
+  },
+  "earlier_totals": {
+    "slurm_total_last_job": "2026-04-22",
+    "workstation_estimate_written": "2026-05-04"
+  },
+  "slurm_h100": {
+    "definition": "H100 80GB GPU-hours of every job (failed and abandoned included), MIG slices at their share of an H100 (1g.10gb = 1/7)",
+    "h100_equivalent_hours": 285.4015476190475,
+    "abandoned_h100_equivalent_hours": 18.29888888888889,
+    "first_job_start": "2026-06-11T14:40:43",
+    "last_job_start": "2026-07-26T18:02:23"
+  },
+  "cloud_tpu": {
+    "definition": "billed accelerator chip-hours and list price (before credits) of every node, by day",
+    "april_finetuning": {
+      "first_day": "2026-03-30",
+      "last_day": "2026-04-16",
+      "chip_hours": 1318.4712999999988,
+      "chip_hours_by_type": {
+        "v6e": 1318.4712999999988
+      },
+      "list_price_usd": 785.2799999999993
+    },
+    "review_period": {
+      "first_day": "2026-07-18",
+      "last_day": "2026-08-01",
+      "chip_hours": 3633.385500000006,
+      "chip_hours_by_type": {
+        "tpu7x": 0.3117,
+        "v5e": 2.3055,
+        "v5p": 199.57359999999989,
+        "v6e": 3431.194700000006
+      },
+      "list_price_usd": 4796.119999999993
+    }
+  },
+  "rtx4090": {
+    "definition": "the union of the busy intervals the runs recorded themselves (learned-policy runs and trials, evaluation results); work without such a record is not counted",
+    "recorded_gpu_hours": 368.7775456511111,
+    "learned_policy_gpu_hours": 341.5480514461111,
+    "evaluation_gpu_hours": 27.229494204999998,
+    "learned_policy_first_start": "2026-06-11T20:51:37.622000+00:00",
+    "device_sampler": {
+      "definition": "an nvidia-smi log of the GPU every 5 s: allocated = a process held over 100 MiB, active = a kernel ran; every use of the machine, recorded or not",
+      "from": "2026-05-08T16:22:51.054000+00:00",
+      "to": "2026-07-11T09:46:19.556000+00:00",
+      "allocated_hours": 862.981943888889,
+      "active_hours": 675.0445141666667,
+      "active_hours_before_first_learned_policy_run": 326.6286983333333,
+      "recorded_hours_while_allocated": 341.4715531752778,
+      "recorded_hours_in_window": 341.57076079222225
+    }
+  }
+}

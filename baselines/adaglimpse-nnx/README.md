@@ -1,7 +1,7 @@
 # adaglimpse-nnx
 
 AdaGlimpse's architecture (Pardyl et al., ECCV 2024, doi:10.1007/978-3-031-72664-4_7) in JAX/Flax NNX, as the paper's
-architecture control (`supp:architecture-control`) pretrains it by distillation from DINOv3. It is not published to
+architecture control (appendix "Architecture control") pretrains it by distillation from DINOv3. It is not published to
 PyPI: `pyproject.toml` carries the `Private :: Do Not Upload` classifier.
 
 ## Terms

@@ -49,6 +49,9 @@ RELEASED_CANVAS_GRID_SIZE = 32
 # The Hub tag on each checkpoint released before canvit-pytorch 0.2: its files in the format 0.1 code reads.
 OLD_FORMAT_REVISION = "canvit-pytorch-0.1"
 
+# The Hub tag on each learned policy published before canvit_pytorch.rl: its files as the code that trained it wrote them.
+ORIGINAL_POLICY_FORMAT_REVISION = "original-format"
+
 # The flagship fine-tuned on ImageNet-1k classification (LP-FT, TPU).
 FINETUNED_IN1K = hub_repo("canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06")
 

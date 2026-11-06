@@ -279,7 +279,7 @@ class Batch:
 
     out_dir: Path = Path("results")
     groups: tuple[Group, ...] = DEFAULT_GROUPS
-    num_runs: int = 5
+    num_runs: int = 10
     """Runs of each stochastic policy; deterministic policies run once."""
     num_glimpses: int = NUM_GLIMPSES
     """Glimpses per scene for the ADE20K and ImageNet-1k jobs; reconstruction uses the ablation study's."""

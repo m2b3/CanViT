@@ -20,8 +20,7 @@ DV3_PROBE_DISPLAY = {
     "vitl16": "ViT-L/16",
     "vith16plus": "ViT-H+/16",
 }
-# Published IN-ReAL top-1 from DINOv3 paper Table 14; mirrored in the
-# dinov3-in1k-probes README "## Performance" table (official / ours column).
+# ImageNet-ReaL top-1 as the DINOv3 paper publishes it.
 DV3_OFFICIAL_REAL_TOP1 = {
     "vits16": 0.870, "vits16plus": 0.880, "vitb16": 0.893,
     "vitl16": 0.902, "vith16plus": 0.903,

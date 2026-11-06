@@ -58,9 +58,7 @@ uv run python -m canvit_pytorch.evaluate COMMAND --help
 
 CanViT episode tasks accept `--episode.policy`,
 `--episode.num-glimpses`, `--episode.canvas-grid-size` and
-`--episode.glimpse-size-px`. The default episode is 21 coarse-to-fine glimpses
-of 128 px onto a 32×32 canvas. Reconstruction defaults to 10 random-IID
-glimpses. Dataset tasks use bfloat16 autocast by default; pass `--no-amp` to
+`--episode.glimpse-size-px`; each command's `--help` shows its defaults. Dataset tasks use bfloat16 autocast by default; pass `--no-amp` to
 disable it. `--device` defaults to `cuda`; pass `--device mps` on Apple silicon.
 
 The ADE20K CanViT command requires a probe trained for the selected checkpoint,
@@ -129,10 +127,10 @@ Preview the ordered jobs before allocating devices:
 uv run python -m canvit_pytorch.evaluate batch --dry-run
 ```
 
-Run the default matrix with five runs for each stochastic policy:
+Run the matrix; each stochastic policy runs ten times by default, as in the paper:
 
 ```bash
-uv run python -m canvit_pytorch.evaluate batch --num-runs 5
+uv run python -m canvit_pytorch.evaluate batch
 ```
 
 The default groups are `ade20k_seg`, `in1k_clf_frozen`,
@@ -176,9 +174,8 @@ uv run python -m canvit_pytorch.evaluate latency \
 
 The result is a JSONL file under `results/latency/`. Each file starts with a
 configuration row, records warmup and timed iterations as they run, and adds a
-CUDA peak-memory row for CUDA measurements. The default protocol uses three
-untimed warmups, at least five timed iterations, a 20-second budget and a
-500-iteration cap. Each timed iteration is between device synchronizations.
+CUDA peak-memory row for CUDA measurements. The defaults are the paper's protocol;
+each timed iteration is between device synchronizations.
 
 Run the paper's matrix with a fresh process for each configuration:
 
@@ -187,8 +184,8 @@ uv run python -m canvit_pytorch.evaluate latency-matrix --dry-run
 uv run python -m canvit_pytorch.evaluate latency-matrix
 ```
 
-The matrix uses three passes, shuffles configuration order per pass, and
-checks that the machine is idle before measuring. `--no-check-idle` disables
+The matrix shuffles the configuration order in each pass and checks that the
+machine is idle before measuring. `--no-check-idle` disables
 that precondition explicitly.
 
 Summarize any records produced by either command:

@@ -92,7 +92,6 @@ from canvit_pytorch.preprocess import preprocess
 from PIL import Image
 import torch
 
-# CanViT is integrated with the HuggingFace Hub.
 model = CanViTForPretraining.from_pretrained(
     "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02"
 ).eval()
@@ -239,7 +238,7 @@ The demos run on the accelerator torch finds (CUDA, or MPS on Apple silicon), el
 
 - **CPU**
 - **CUDA** (tested on RTX 4090, H100 SXM 80GB)
-- **Apple Silicon** via MPS (inference, tested with torch 2.15)
+- **Apple Silicon** via MPS (inference)
 - **TPU**: [`canvit-nnx`](canvit-nnx/) for training and inference. `canvit-pytorch` runs inference under
   [TorchTPU](https://github.com/google-pytorch/torch_tpu) 0.2.0 (tested on TPU v5p); training under it is not supported yet.
 
@@ -302,7 +301,7 @@ If you use this work, please cite our paper:
 }
 ```
 
-## Contact 
+## Contact
 
 Open an issue in this repository or email me@yberreby.com.
 

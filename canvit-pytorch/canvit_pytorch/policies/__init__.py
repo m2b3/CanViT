@@ -1,4 +1,4 @@
-"""Viewing policies: where CanViT looks next (paper, "Experiments" and appendix "Viewing policies").
+"""Viewing policies: where CanViT looks next (paper, "Experiments" and appendix "Non-learned viewing policies").
 
 POLICIES holds every policy the paper evaluates with the facts other code
 needs: its name in the paper, a description, whether it is deterministic, and

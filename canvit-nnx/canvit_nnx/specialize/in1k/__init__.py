@@ -1,1 +1,1 @@
-"""ImageNet-1k fine-tuning of CanViT-B (paper, `supp:task-in1k`); see README.md."""
+"""ImageNet-1k fine-tuning of CanViT-B (paper, appendix "Task: ImageNet-1k classification"); see README.md."""

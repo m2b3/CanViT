@@ -1,6 +1,6 @@
 """Two-panel Canvas-Attention scaling figure.
 
-Two stacked panels, each at textwidth / 3 column width:
+Two stacked panels, 3/8 of the text width wide:
 
   Panel B — Total FLOPs vs output grid for DINOv3 ViT-B/S (passive baseline,
             quadratic in the patch grid) overlaid against CanViT-B at T=1
@@ -14,7 +14,7 @@ Two stacked panels, each at textwidth / 3 column width:
 
 The diagram-side wrapper (`diagrams/canvas_attention_combined_standalone.typ`)
 composes a separate LHS canvas_attention diagram alongside this two-panel SVG
-into a single output SVG. Letters B / C (this file) anchor the panel structure;
+into a single output SVG and PDF. Letters B / C (this file) anchor the panel structure;
 the LHS contributes A.
 """
 
@@ -25,12 +25,11 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure as MplFigure
 from matplotlib.ticker import FuncFormatter
 
-from canvit_pytorch.flops import dinov3_flops
 from canvit_pytorch.teacher import DINOV3_PATCH_SIZE
 
 from canvit_paper_exporter.core import Figure
 from canvit_paper_exporter.flops.canvit import CANVIT_B, read_write_pair_flops, segmentation_glimpse_flops
-from canvit_paper_exporter.flops.dinov3 import DINOV3_CONFIGS
+from canvit_paper_exporter.flops.dinov3 import dinov3_segmentation_flops
 from canvit_paper_exporter.style import (
     FIGWIDTH, LABEL_SIZE, LEGEND_SIZE, LINE_WIDTH, TICK_SIZE, si_flops_label,
 )
@@ -69,7 +68,7 @@ def _canvit_forward(grid: int) -> int:
 
 
 def _dinov3(name: str, grid: int) -> int:
-    return dinov3_flops(DINOV3_CONFIGS[name], input_size_px=grid * DINOV3_PATCH_SIZE)
+    return dinov3_segmentation_flops(name, input_size_px=grid * DINOV3_PATCH_SIZE)
 
 
 def _panel_B(ax) -> None:
@@ -91,7 +90,7 @@ def _panel_B(ax) -> None:
     ax.tick_params(axis="y", labelsize=TICK_SIZE)
     ax.set_yscale("log")
     ax.yaxis.set_major_formatter(FuncFormatter(si_flops_label))
-    ax.set_xlabel("Scene patches", fontsize=LABEL_SIZE)
+    # No x label: panel C sits directly below and covers it; C's "Scene/canvas patches" names both axes.
     ax.set_ylabel("Total FLOPs", fontsize=LABEL_SIZE)
     dv3 = "DINOv3 " if DINOV3_PREFIX else ""
     handles = [
@@ -100,8 +99,9 @@ def _panel_B(ax) -> None:
         mlines.Line2D([], [], color=NEUTRAL, lw=LW_THICK, ls=LS_CV,  label=rf"CanViT-B ($T={T_LATE + 1}$)"),
         mlines.Line2D([], [], color=NEUTRAL, lw=LW_THIN,  ls=LS_CV,  label=rf"CanViT-B ($T={T_EARLY + 1}$)"),
     ]
+    # One point below LEGEND_SIZE: at the full size the two-column legend is wider than the figure.
     ax.legend(handles=handles,
-              fontsize=LEGEND_SIZE - 0.5, ncol=2,
+              fontsize=LEGEND_SIZE - 1, ncol=2,
               frameon=True, framealpha=0.9, edgecolor="lightgray",
               loc="lower center", bbox_to_anchor=(0.5, 1.02),
               handlelength=2.6, handletextpad=0.4, columnspacing=0.6, borderpad=0.25)

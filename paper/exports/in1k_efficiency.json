@@ -1,0 +1,196 @@
+{
+  "_provenance": {
+    "n_images": 50000,
+    "ci": 0.95
+  },
+  "canvit": {
+    "policy": "coarse_to_fine",
+    "scene_size": 512,
+    "arms": {
+      "lpft-c32": {
+        "readout": "lpft",
+        "classifier": {
+          "repo": "canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06"
+        },
+        "canvas_grid": 32,
+        "input_px": 128,
+        "n_runs": 10,
+        "budgets": [
+          {
+            "glimpses": 1,
+            "top1": 0.80588,
+            "ci_lo": 0.80588,
+            "ci_hi": 0.80588,
+            "cum_gflops": 15.47836032,
+            "params_m": 95.927784
+          },
+          {
+            "glimpses": 3,
+            "top1": 0.83212,
+            "ci_lo": 0.831782,
+            "ci_hi": 0.832444,
+            "cum_gflops": 46.43508096,
+            "params_m": 95.927784
+          }
+        ]
+      },
+      "lpft-c8": {
+        "readout": "lpft",
+        "classifier": {
+          "repo": "canvit/canvitb16-add-vpe-finetune-g128px-s512px-c8-in1k-2026-08-01-nnx"
+        },
+        "canvas_grid": 8,
+        "input_px": 128,
+        "n_runs": 11,
+        "budgets": [
+          {
+            "glimpses": 1,
+            "top1": 0.8054,
+            "ci_lo": 0.8054,
+            "ci_hi": 0.8054,
+            "cum_gflops": 13.80326016,
+            "params_m": 95.927784
+          },
+          {
+            "glimpses": 3,
+            "top1": 0.830851,
+            "ci_lo": 0.830418,
+            "ci_hi": 0.831267,
+            "cum_gflops": 41.40978048,
+            "params_m": 95.927784
+          }
+        ]
+      },
+      "frozen-c32": {
+        "readout": "frozen",
+        "classifier": {
+          "pretrained_repo": "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe"
+        },
+        "canvas_grid": 32,
+        "input_px": 128,
+        "n_runs": 10,
+        "budgets": [
+          {
+            "glimpses": 1,
+            "top1": 0.76792,
+            "ci_lo": 0.76792,
+            "ci_hi": 0.76792,
+            "cum_gflops": 15.47836032,
+            "params_m": 95.927784
+          },
+          {
+            "glimpses": 3,
+            "top1": 0.795786,
+            "ci_lo": 0.79557,
+            "ci_hi": 0.79604,
+            "cum_gflops": 46.43508096,
+            "params_m": 95.927784
+          }
+        ]
+      },
+      "frozen-c8": {
+        "readout": "frozen",
+        "classifier": {
+          "pretrained_repo": "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02",
+          "probe_repo": "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe"
+        },
+        "canvas_grid": 8,
+        "input_px": 128,
+        "n_runs": 10,
+        "budgets": [
+          {
+            "glimpses": 1,
+            "top1": 0.7673,
+            "ci_lo": 0.7673,
+            "ci_hi": 0.7673,
+            "cum_gflops": 13.80326016,
+            "params_m": 95.927784
+          },
+          {
+            "glimpses": 3,
+            "top1": 0.792946,
+            "ci_lo": 0.792562,
+            "ci_hi": 0.793266,
+            "cum_gflops": 41.40978048,
+            "params_m": 95.927784
+          }
+        ]
+      }
+    }
+  },
+  "baselines": {
+    "adaptivenn-deit-s": {
+      "checkpoint": "https://drive.google.com/file/d/1OIPZyTozJatdd40VZKaJHsw0ShaujQ0Y (official AdaptiveNN README)",
+      "code_commit": "020bf8d33271d7b02e2e63829e4b13d987868b89",
+      "input_px": 112,
+      "n_runs": 1,
+      "budgets": [
+        {
+          "glimpses": 1,
+          "top1": 0.73964,
+          "ci_lo": 0.73964,
+          "ci_hi": 0.73964,
+          "cum_gflops": 2.1548,
+          "params_m": 21.993
+        },
+        {
+          "glimpses": 5,
+          "top1": 0.8229,
+          "ci_lo": 0.8229,
+          "ci_hi": 0.8229,
+          "cum_gflops": 14.4835,
+          "params_m": 82.391
+        }
+      ]
+    },
+    "gfnet-efficientnet-b3": {
+      "checkpoint": "gf_effb3_144_T4.pth.tar",
+      "backbone": "efficientnet_b3",
+      "input_px": 144,
+      "n_runs": 1,
+      "budgets": [
+        {
+          "glimpses": 1,
+          "top1": 0.78038,
+          "ci_lo": 0.78038,
+          "ci_hi": 0.78038,
+          "cum_gflops": 0.8649,
+          "params_m": 12.233
+        },
+        {
+          "glimpses": 4,
+          "top1": 0.7992,
+          "ci_lo": 0.7992,
+          "ci_hi": 0.7992,
+          "cum_gflops": 3.4866,
+          "params_m": 37.406
+        }
+      ]
+    },
+    "gfnet-mobilenet-v3-large": {
+      "checkpoint": "gf_mbv3l100_128_T3.pth.tar",
+      "backbone": "mobilenetv3_large_100",
+      "input_px": 128,
+      "n_runs": 1,
+      "budgets": [
+        {
+          "glimpses": 1,
+          "top1": 0.70722,
+          "ci_lo": 0.70722,
+          "ci_hi": 0.70722,
+          "cum_gflops": 0.1469,
+          "params_m": 5.483
+        },
+        {
+          "glimpses": 3,
+          "top1": 0.7367,
+          "ci_lo": 0.7367,
+          "ci_hi": 0.7367,
+          "cum_gflops": 0.4507,
+          "params_m": 16.644
+        }
+      ]
+    }
+  }
+}

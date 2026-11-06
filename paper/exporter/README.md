@@ -16,11 +16,12 @@ uv sync
 uv run python -m canvit_paper_exporter.run list    # datasets, figures, diagrams
 uv run python -m canvit_paper_exporter.run inputs  # the data/ files each dataset and figure reads, its exports (JSON)
 uv run python -m canvit_paper_exporter.run         # registered datasets, then figures
+uv run python -m canvit_paper_exporter.run diagrams  # every diagram
 uv run python -m canvit_paper_exporter.run NAME... # chosen datasets, figures or diagrams, in order
 ```
 
-The no-argument run executes every dataset, then the figures; diagrams run by name only (`run list` prints the
-names). Run a dataset before any figure that depends on its JSON. Diagrams load the released CanViT-B from the
+The no-argument run executes every dataset, then the figures; `run diagrams` runs every diagram, and `just exports`
+runs both. Run a dataset before any figure that depends on its JSON. Diagrams load the released CanViT-B from the
 Hugging Face Hub and require `typst` on `PATH`.
 
 Figures render with matplotlib's Agg backend and the TeX Gyre Heros font that ultraplot bundles;

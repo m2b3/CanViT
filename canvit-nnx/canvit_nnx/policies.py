@@ -1,4 +1,4 @@
-"""Viewing policies: where CanViT looks next (paper, `sec:experiments` and `supp:policy-definitions`)."""
+"""Viewing policies: where CanViT looks next (paper, "Experiments" and appendix "Non-learned viewing policies")."""
 
 import jax
 import jax.numpy as jnp
@@ -11,7 +11,7 @@ MIN_SCALE = 0.05
 
 
 def random_viewpoint(key: jax.Array, *, batch_size: int, min_scale: float = MIN_SCALE) -> Viewpoint:
-    """A random viewpoint per scene, as sampled in pretraining (paper, `subsec:policy-agnosticism`).
+    """A random viewpoint per scene, as sampled in pretraining (paper, "Policy agnosticism").
 
     Scales have density p(s) ∝ 1 - s on [min_scale, 1]: the half side h of the
     box of centers whose crops fit in the scene is drawn with p(h) ∝ h, then

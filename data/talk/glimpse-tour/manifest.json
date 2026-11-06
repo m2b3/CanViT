@@ -1,0 +1,85 @@
+{
+ "scene": "ADE20K validation (data/street-riid/scene.png)",
+ "glimpse_px": 128,
+ "patch_grid": 8,
+ "stops": [
+  {
+   "glimpse": "00.png",
+   "viewpoint": {
+    "row": 0.0,
+    "col": 0.0,
+    "scale": 1.0
+   },
+   "box": {
+    "top": 0.0,
+    "left": 0.0,
+    "size": 1.0
+   }
+  },
+  {
+   "glimpse": "01.png",
+   "viewpoint": {
+    "row": 0.3,
+    "col": -0.36,
+    "scale": 0.6
+   },
+   "box": {
+    "top": 0.35,
+    "left": 0.020000000000000018,
+    "size": 0.6
+   }
+  },
+  {
+   "glimpse": "02.png",
+   "viewpoint": {
+    "row": -0.18,
+    "col": -0.76,
+    "scale": 0.2
+   },
+   "box": {
+    "top": 0.31,
+    "left": 0.020000000000000018,
+    "size": 0.2
+   }
+  },
+  {
+   "glimpse": "03.png",
+   "viewpoint": {
+    "row": -0.62,
+    "col": -0.22,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.065,
+    "left": 0.265,
+    "size": 0.25
+   }
+  },
+  {
+   "glimpse": "04.png",
+   "viewpoint": {
+    "row": 0.24,
+    "col": 0.6,
+    "scale": 0.35
+   },
+   "box": {
+    "top": 0.445,
+    "left": 0.625,
+    "size": 0.35
+   }
+  },
+  {
+   "glimpse": "05.png",
+   "viewpoint": {
+    "row": 0.0,
+    "col": -0.1,
+    "scale": 0.5
+   },
+   "box": {
+    "top": 0.25,
+    "left": 0.2,
+    "size": 0.5
+   }
+  }
+ ]
+}

@@ -1,0 +1,100 @@
+{
+ "scene": "ADE_val_00001509",
+ "size": [
+  767,
+  512
+ ],
+ "names": [
+  {
+   "name": "windowpane",
+   "x": 0.1115,
+   "y": 0.2764,
+   "radius_px": 86.0,
+   "fraction": 0.21299
+  },
+  {
+   "name": "wall",
+   "x": 0.4009,
+   "y": 0.167,
+   "radius_px": 86.0,
+   "fraction": 0.209051
+  },
+  {
+   "name": "fireplace",
+   "x": 0.41,
+   "y": 0.5596,
+   "radius_px": 89.0,
+   "fraction": 0.092576
+  },
+  {
+   "name": "door",
+   "x": 0.9198,
+   "y": 0.3271,
+   "radius_px": 60.0,
+   "fraction": 0.078807
+  },
+  {
+   "name": "coffee table",
+   "x": 0.3631,
+   "y": 0.8447,
+   "radius_px": 39.7,
+   "fraction": 0.073333
+  },
+  {
+   "name": "cabinet",
+   "x": 0.0802,
+   "y": 0.8584,
+   "radius_px": 60.8,
+   "fraction": 0.070819
+  },
+  {
+   "name": "television",
+   "x": 0.0958,
+   "y": 0.585,
+   "radius_px": 71.0,
+   "fraction": 0.066834
+  },
+  {
+   "name": "sofa",
+   "x": 0.8416,
+   "y": 0.917,
+   "radius_px": 42.4,
+   "fraction": 0.053325
+  },
+  {
+   "name": "floor",
+   "x": 0.2771,
+   "y": 0.9307,
+   "radius_px": 35.1,
+   "fraction": 0.043633
+  },
+  {
+   "name": "armchair",
+   "x": 0.6591,
+   "y": 0.6436,
+   "radius_px": 50.2,
+   "fraction": 0.033437
+  },
+  {
+   "name": "ceiling",
+   "x": 0.6473,
+   "y": 0.0674,
+   "radius_px": 35.0,
+   "fraction": 0.019595
+  },
+  {
+   "name": "cushion",
+   "x": 0.9511,
+   "y": 0.8564,
+   "radius_px": 36.1,
+   "fraction": 0.01959
+  },
+  {
+   "name": "book",
+   "x": 0.4465,
+   "y": 0.9287,
+   "radius_px": 20.0,
+   "fraction": 0.005689
+  }
+ ]
+}

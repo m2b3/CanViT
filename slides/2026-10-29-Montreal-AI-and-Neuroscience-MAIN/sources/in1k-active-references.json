@@ -1,0 +1,8 @@
+{
+ "_about": "The prior active models' ImageNet-1k top-1 accuracy (%) as the paper's Table 1 (tab:active-vision-comparison) prints it, each model's best published result, for #state-of-the-art (gap.js, drawIn1kGap). cite: the paper's citation key, which site/check_paper_numbers.py uses to find the model's row and check its value.",
+ "references": [
+  { "name": "Saccader", "cite": "elsayedSaccaderImprovingAccuracy2019", "top1": 75.0 },
+  { "name": "AdaGlimpse", "cite": "pardylAdaGlimpseActiveVisual2025", "top1": 77.5 },
+  { "name": "AdaptiveNN", "cite": "wangEmulatingHumanlikeAdaptive2025", "top1": 82.2 }
+ ]
+}

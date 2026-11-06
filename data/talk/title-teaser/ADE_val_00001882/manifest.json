@@ -1,0 +1,323 @@
+{
+ "schema": "canvit-web-bundle-cdc839e2-d28e-4422-b635-d16b24797584",
+ "title": "ADE20K ADE_val_00001882",
+ "scene": {
+  "image": "scene.png",
+  "px": 512,
+  "source": "ADE20K validation set, ADE_val_00001882",
+  "attribution": "ADE20K (MIT CSAIL)",
+  "license": "ADE20K terms of use",
+  "annotation_source": "ADE_val_00001882.png",
+  "truth": "truth.png"
+ },
+ "model": {
+  "repo": "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in21k-dv3b16-2026-02-02",
+  "revision": "13da0ca2725f569bf486e1efdcaaac32f0549bf9",
+  "backbone": "vitb16",
+  "num_blocks": 12,
+  "patch_px": 16,
+  "canvas_dim": 1024,
+  "read_after_blocks": [
+   1,
+   5,
+   9
+  ],
+  "write_after_blocks": [
+   3,
+   7,
+   11
+  ]
+ },
+ "readout": {
+  "kind": "ade20k-segmentation",
+  "repo": "canvit/probe-ade20k-40k-s512-c64-in21k",
+  "revision": "b28ba9b866d3763cbea60035ef8b7b02eba5b01d",
+  "num_classes": 150,
+  "class_names": [
+   "wall",
+   "building",
+   "sky",
+   "floor",
+   "tree",
+   "ceiling",
+   "road",
+   "bed",
+   "windowpane",
+   "grass",
+   "cabinet",
+   "sidewalk",
+   "person",
+   "earth",
+   "door",
+   "table",
+   "mountain",
+   "plant",
+   "curtain",
+   "chair",
+   "car",
+   "water",
+   "painting",
+   "sofa",
+   "shelf",
+   "house",
+   "sea",
+   "mirror",
+   "rug",
+   "field",
+   "armchair",
+   "seat",
+   "fence",
+   "desk",
+   "rock",
+   "wardrobe",
+   "lamp",
+   "bathtub",
+   "railing",
+   "cushion",
+   "base",
+   "box",
+   "column",
+   "signboard",
+   "chest of drawers",
+   "counter",
+   "sand",
+   "sink",
+   "skyscraper",
+   "fireplace",
+   "refrigerator",
+   "grandstand",
+   "path",
+   "stairs",
+   "runway",
+   "case",
+   "pool table",
+   "pillow",
+   "screen door",
+   "stairway",
+   "river",
+   "bridge",
+   "bookcase",
+   "blind",
+   "coffee table",
+   "toilet",
+   "flower",
+   "book",
+   "hill",
+   "bench",
+   "countertop",
+   "stove",
+   "palm",
+   "kitchen island",
+   "computer",
+   "swivel chair",
+   "boat",
+   "bar",
+   "arcade machine",
+   "hovel",
+   "bus",
+   "towel",
+   "light",
+   "truck",
+   "tower",
+   "chandelier",
+   "awning",
+   "streetlight",
+   "booth",
+   "television",
+   "airplane",
+   "dirt track",
+   "apparel",
+   "pole",
+   "land",
+   "bannister",
+   "escalator",
+   "ottoman",
+   "bottle",
+   "buffet",
+   "poster",
+   "stage",
+   "van",
+   "ship",
+   "fountain",
+   "conveyer belt",
+   "canopy",
+   "washer",
+   "plaything",
+   "swimming pool",
+   "stool",
+   "barrel",
+   "basket",
+   "waterfall",
+   "tent",
+   "bag",
+   "minibike",
+   "cradle",
+   "oven",
+   "ball",
+   "food",
+   "step",
+   "tank",
+   "trade name",
+   "microwave",
+   "pot",
+   "animal",
+   "bicycle",
+   "lake",
+   "dishwasher",
+   "screen",
+   "blanket",
+   "sculpture",
+   "hood",
+   "sconce",
+   "vase",
+   "traffic light",
+   "tray",
+   "ashcan",
+   "fan",
+   "pier",
+   "crt screen",
+   "plate",
+   "monitor",
+   "bulletin board",
+   "shower",
+   "radiator",
+   "glass",
+   "clock",
+   "flag"
+  ]
+ },
+ "policy": {
+  "name": "largest_canvas_change",
+  "paper_name": null,
+  "description": "each viewpoint the one, on a grid, whose glimpse changes the canvas most (experiments/title_teaser/sweep.py)",
+  "deterministic": true,
+  "seed": null
+ },
+ "canvas_grid": 64,
+ "glimpse_px": 128,
+ "pca": {
+  "protocol": "fixed-limits",
+  "basis": "last-glimpse"
+ },
+ "initial_canvas": "initial_canvas.png",
+ "glimpses": [
+  {
+   "t": 0,
+   "viewpoint": {
+    "row": 0.75,
+    "col": -0.75,
+    "scale": 0.25
+   },
+   "box": {
+    "top": 0.75,
+    "left": 0.0,
+    "size": 0.25
+   },
+   "layers": {
+    "crop": "t00/crop.png",
+    "canvas": "t00/canvas.png",
+    "labels": "t00/labels.png",
+    "entropy": "t00/entropy.png",
+    "change": "t00/change.png"
+   },
+   "miou": 0.08817232851192956
+  },
+  {
+   "t": 1,
+   "viewpoint": {
+    "row": -0.15000000596046448,
+    "col": 0.10000000149011612,
+    "scale": 0.3499999940395355
+   },
+   "box": {
+    "top": 0.25,
+    "left": 0.375,
+    "size": 0.3500000238418579
+   },
+   "layers": {
+    "crop": "t01/crop.png",
+    "canvas": "t01/canvas.png",
+    "labels": "t01/labels.png",
+    "entropy": "t01/entropy.png",
+    "change": "t01/change.png"
+   },
+   "miou": 0.3182968473273211
+  },
+  {
+   "t": 2,
+   "viewpoint": {
+    "row": 0.6000000238418579,
+    "col": 0.6000000238418579,
+    "scale": 0.3499999940395355
+   },
+   "box": {
+    "top": 0.625,
+    "left": 0.625,
+    "size": 0.3500000238418579
+   },
+   "layers": {
+    "crop": "t02/crop.png",
+    "canvas": "t02/canvas.png",
+    "labels": "t02/labels.png",
+    "entropy": "t02/entropy.png",
+    "change": "t02/change.png"
+   },
+   "miou": 0.3558510291886222
+  },
+  {
+   "t": 3,
+   "viewpoint": {
+    "row": -0.4000000059604645,
+    "col": -0.6499999761581421,
+    "scale": 0.3499999940395355
+   },
+   "box": {
+    "top": 0.125,
+    "left": 0.0,
+    "size": 0.3499999940395355
+   },
+   "layers": {
+    "crop": "t03/crop.png",
+    "canvas": "t03/canvas.png",
+    "labels": "t03/labels.png",
+    "entropy": "t03/entropy.png",
+    "change": "t03/change.png"
+   },
+   "miou": 0.39629063693137806
+  },
+  {
+   "t": 4,
+   "viewpoint": {
+    "row": 0.3499999940395355,
+    "col": -0.4000000059604645,
+    "scale": 0.3499999940395355
+   },
+   "box": {
+    "top": 0.5,
+    "left": 0.125,
+    "size": 0.3500000238418579
+   },
+   "layers": {
+    "crop": "t04/crop.png",
+    "canvas": "t04/canvas.png",
+    "labels": "t04/labels.png",
+    "entropy": "t04/entropy.png",
+    "change": "t04/change.png"
+   },
+   "miou": 0.4536248410208951
+  }
+ ],
+ "provenance": {
+  "created": "2026-10-25T04:44:50+00:00",
+  "git_commit": "766c005c236cc0380ed091e7430c9d637a524f9b",
+  "git_dirty": false,
+  "python": "3.12.11",
+  "torch": "2.14.0",
+  "device": "cpu",
+  "cuda_device": null,
+  "command": "/Users/yberreby/code/CanViT/site/slides/2026-10-30-Montreal-AI-and-Neuroscience-MAIN/experiments/title_teaser/export.py --scenes ADE_val_00001860 ADE_val_00001980 ADE_val_00001882 ADE_val_00000203 --sweep ../../.experiments/title_teaser/screen-partial-67.jsonl",
+  "slurm_job": null,
+  "slurm_array_task": null,
+  "precision": "float32"
+ }
+}

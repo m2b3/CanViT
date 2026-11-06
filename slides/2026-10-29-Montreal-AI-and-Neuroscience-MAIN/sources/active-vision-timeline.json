@@ -1,0 +1,76 @@
+{
+ "_about": "The deep active vision models of the timeline slide, each read in its paper. date: first public release (arXiv v1). name: the model's name. cite: authors, venue and venue year. row: where the label sits, -3, -2 and -1 above the axis, 1, 2 and 3 below, chosen so that labels do not overlap. seq-JEPA (arXiv:2505.03176 v1 2025-05-06, NeurIPS 2025, OpenReview GKt3VRaCU1, read 2026-10-29): learns without labels from sequences of views, each paired with the action leading to the next, predicting the next view's representation; its saccade experiments sample fixations from DeepGaze IIE saliency with inhibition of return, on STL-10; inspired by primate vision but compared with no brain or behavioral data, so among the models, not neuro_ai. Selection: each entry precise and distinctive; STAM (CVPR 2022) was dropped: the CanViT paper does not cite it and never seeing the whole image is not what sets it apart (RAM's glimpses do not cover it either). neuro_ai: active-vision models built to compare with brain or behavioral data, drawn on their own click; read on their abstract pages (2026-10-23): GVSM, bioRxiv 10.1101/2025.06.06.658387, posted 2025-06-10: visual search from pixels in natural scenes, compared with human scanpaths and primate fronto-parietal activity; GPN, arXiv:2511.12715 v1 2025-11-16: predicts the next glimpse's embedding along human-like scanpaths, compared with human fMRI. How each obtains its viewpoints is not stated in the abstracts and is not claimed here. neuro_ai entries are drawn like the models, name and citation on a leader, at their row. pioneer: true for the model the field traces back to (the paper's Related work: \"This line of research traces back to the Recurrent Attention Model\"), highlighted on the slide.",
+ "models": [
+  {
+   "date": "2014-06-24",
+   "name": "RAM",
+   "cite": "Mnih et al., NeurIPS 2014",
+   "method": "REINFORCE",
+   "row": -2,
+   "pioneer": true
+  },
+  {
+   "date": "2014-12-24",
+   "name": "DRAM",
+   "cite": "Ba et al., ICLR 2015",
+   "method": "REINFORCE (variational bound)",
+   "row": 2
+  },
+  {
+   "date": "2019-08-20",
+   "name": "Saccader",
+   "cite": "Elsayed et al., NeurIPS 2019",
+   "method": "REINFORCE, after a pretraining step",
+   "row": -1
+  },
+  {
+   "date": "2020-10-11",
+   "name": "GFNet",
+   "cite": "Wang et al., NeurIPS 2020",
+   "method": "PPO",
+   "row": 2
+  },
+  {
+   "date": "2023-03-11",
+   "name": "AME",
+   "cite": "Pardyl et al., IJCAI 2023",
+   "method": "the unobserved patch whose row of the decoder's attention map has the highest entropy",
+   "row": 1
+  },
+  {
+   "date": "2024-04-04",
+   "name": "AdaGlimpse",
+   "cite": "Pardyl et al., ECCV 2024",
+   "method": "Soft Actor-Critic",
+   "row": -1
+  },
+  {
+   "date": "2025-05-06",
+   "name": "seq-JEPA",
+   "cite": "Ghaemi et al., NeurIPS 2025",
+   "method": "fixations sampled from DeepGaze IIE saliency, with inhibition of return",
+   "row": 2
+  },
+  {
+   "date": "2025-09-18",
+   "name": "AdaptiveNN",
+   "cite": "Wang et al., Nat. Mach. Intell. 2025",
+   "method": "PPO, self-rewarding",
+   "row": 3
+  }
+ ],
+ "neuro_ai": [
+  {
+   "date": "2025-06-10",
+   "name": "GVSM",
+   "cite": "Pourrahimi & Bashivan, bioRxiv 2025",
+   "row": -2
+  },
+  {
+   "date": "2025-11-16",
+   "name": "GPN",
+   "cite": "Thorat et al., arXiv 2025",
+   "row": -3
+  }
+ ]
+}

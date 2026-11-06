@@ -28,7 +28,7 @@ Each build regenerates the data from `exports/` first.
 ## Regenerating the data and figures
 
 `just exports` runs the exporter first and then regenerates the LaTeX data bindings. The exporter reads evaluation
-artifacts under `exporter/data/`; those artifacts are not included in this checkout, and [the exporter README](exporter/README.md)
+artifacts under `exporter/data/`, which are published on [Figshare](https://doi.org/10.6084/m9.figshare.32148076) rather than in this checkout; [the exporter README](exporter/README.md)
 lists each required directory and producer. `just check-data` compares generated LaTeX files with `exports/*.json`.
 The committed figures are the renders used for the paper; regeneration preserves their data while allowing small
 rendering differences.

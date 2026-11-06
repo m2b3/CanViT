@@ -284,6 +284,11 @@ uv lock --upgrade-package canvit-pytorch && uv sync
 Code written for canvit-pytorch 0.1 needs `canvit-pytorch<0.2` and the checkpoints' earlier files:
 `from_pretrained(..., revision="canvit-pytorch-0.1")`.
 
+## Data
+
+The evaluation results from which [`paper/`](paper) regenerates the paper's tables and figures are on Figshare,
+[doi:10.6084/m9.figshare.32148076](https://doi.org/10.6084/m9.figshare.32148076); the archive's README gives the steps.
+
 ## Citation
 
 If you use this work, please cite our paper:

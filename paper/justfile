@@ -60,8 +60,13 @@ check-fonts FILE="camera_ready_wrapper.pdf":
 
 # Writes latex/arxiv_bundle/ and latex/arxiv_bundle.tar.gz, replacing earlier ones, and
 # recompiles inside the bundle so a missing file fails here instead of at arXiv.
-# Build the preprint and package its source for arXiv.
-build-arxiv: build-preprint
+# WRAPPER is the bundle's main file: preprint_wrapper, or camera_ready_wrapper for the
+# paper as published, with its checklist.
+# arXiv typesets the source itself. Its default, pdfLaTeX, breaks this paper's lines and
+# pages differently from tectonic (XeTeX), whose output check_layout.py describes; XeLaTeX
+# from TeX Live 2025 reproduces them, so 00README.json asks for it.
+# Package the paper's source for arXiv.
+build-arxiv WRAPPER="preprint_wrapper": data
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{justfile_directory()}}/latex"
@@ -69,7 +74,9 @@ build-arxiv: build-preprint
     mkdir -p arxiv_bundle/figures/exported
 
     # Sources arXiv compiles (wrapper is the main; sty is byte-identical to official template).
-    cp preprint_wrapper.tex CanViT_Toward_AVFMs.tex neurips_2026.sty data.tex arxiv_bundle/
+    cp {{WRAPPER}}.tex CanViT_Toward_AVFMs.tex neurips_2026.sty data.tex arxiv_bundle/
+    # The checklist is typeset in the camera-ready mode only.
+    if [ "{{WRAPPER}}" = camera_ready_wrapper ]; then cp checklist.tex arxiv_bundle/; fi
 
     # Every generated row file, by glob, so a new one needs no list update.
     cp ./*_rows.tex ./dinov3_probe_*.tex arxiv_bundle/
@@ -85,10 +92,15 @@ build-arxiv: build-preprint
 
     # Compile the bundle on its own: a missing input fails here.
     cd arxiv_bundle
-    tectonic --reruns 3 preprint_wrapper.tex
+    tectonic --reruns 3 {{WRAPPER}}.tex
+    just --justfile "{{justfile()}}" check-fonts "arxiv_bundle/{{WRAPPER}}.pdf"
 
     # arXiv rejects build outputs in a source bundle, and runs bibtex itself.
     rm -f ./*.pdf ./*.aux ./*.log ./*.toc ./*.lof ./*.lot ./*.bbl ./*.blg ./*.out ./*.maf ./*.ptc* ./*.synctex.gz ./*.snm ./*.nav
+
+    # The processor and main file, in the format arXiv writes at submission.
+    printf '%s\n' '{' '  "spec_version": 1,' '  "texlive_version": "2025",' '  "process": {"compiler": "xelatex"},' \
+      '  "sources": [{"filename": "{{WRAPPER}}.tex", "usage": "toplevel"}]' '}' > 00README.json
 
     cd ..
 

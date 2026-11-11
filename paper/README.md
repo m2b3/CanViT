@@ -19,7 +19,7 @@ From `paper/`, these recipes need [tectonic](https://tectonic-typesetting.github
 just --list                 # every recipe
 just build-camera-ready     # latex/camera_ready_wrapper.pdf, the accepted-paper build
 just build-preprint         # latex/preprint_wrapper.pdf, the identified-author arXiv build
-just build-arxiv            # latex/arxiv_bundle.tar.gz and its checked source directory, preprint form
+just build-arxiv            # latex/arxiv_bundle.tar.gz and its checked source directory (no comments), preprint form
 just build-arxiv camera_ready_wrapper   # the same for the paper as published
 just check-data             # fail if generated LaTeX files do not match exports/
 ```

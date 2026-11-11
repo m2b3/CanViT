@@ -70,25 +70,29 @@ build-arxiv WRAPPER="preprint_wrapper": data
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{justfile_directory()}}/latex"
-    rm -rf arxiv_bundle arxiv_bundle.tar.gz
-    mkdir -p arxiv_bundle/figures/exported
+    rm -rf arxiv_bundle arxiv_bundle_src arxiv_bundle.tar.gz
+    mkdir -p arxiv_bundle_src/figures/exported
 
     # Sources arXiv compiles (wrapper is the main; sty is byte-identical to official template).
-    cp {{WRAPPER}}.tex CanViT_Toward_AVFMs.tex neurips_2026.sty data.tex arxiv_bundle/
+    cp {{WRAPPER}}.tex CanViT_Toward_AVFMs.tex neurips_2026.sty data.tex arxiv_bundle_src/
     # The checklist is typeset in the camera-ready mode only.
-    if [ "{{WRAPPER}}" = camera_ready_wrapper ]; then cp checklist.tex arxiv_bundle/; fi
+    if [ "{{WRAPPER}}" = camera_ready_wrapper ]; then cp checklist.tex arxiv_bundle_src/; fi
 
     # Every generated row file, by glob, so a new one needs no list update.
-    cp ./*_rows.tex ./dinov3_probe_*.tex arxiv_bundle/
+    cp ./*_rows.tex ./dinov3_probe_*.tex arxiv_bundle_src/
 
-    cp references.bib arxiv_bundle/
+    cp references.bib arxiv_bundle_src/
 
     # Copy the referenced figures as files: arXiv does not follow symlinks, and it
     # rejects unreferenced ("extraneous") files, which exports/ also holds.
     grep -oE '\\includegraphics(\[[^]]*\])?\{figures/exported/[^}]+\}' CanViT_Toward_AVFMs.tex \
       | grep -oE 'figures/exported/[^}]+' | sort -u | while read -r fig; do
-        cp "$fig" "arxiv_bundle/$fig"
+        cp "$fig" "arxiv_bundle_src/$fig"
       done
+
+    # arXiv publishes the source it is given: ship it without comments or unprinted bibliography fields.
+    uv run --no-project python -I clean_arxiv_source.py arxiv_bundle_src arxiv_bundle
+    rm -rf arxiv_bundle_src
 
     # Compile the bundle on its own: a missing input fails here.
     cd arxiv_bundle

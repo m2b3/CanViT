@@ -6,7 +6,7 @@
 - Build through the justfile; a bare `tectonic` skips the data step and renders stale rows.
 - Never modify `latex/neurips_2026.sty`; it is the official template, byte for byte.
 - The source carries no working notes: no dated remark, no provenance, no account of a layout tweak. A layout
-  that must hold is a rule in `latex/check_layout.py`.
+  that must hold is a rule in `latex/check_layout.py`. `just build-arxiv` ships the source without comments.
 - Numbers about CanViT come from `latex/data.tex`, generated from `exports/`; numbers cited from other
   papers may be written in the source.
 - Generated files are never edited by hand: `exports/`, `latex/data.tex`, `latex/data_macros.json` and the

@@ -83,4 +83,5 @@ paper/latex/*.maf
 paper/latex/*.mtc*
 paper/latex/*.ptc*
 paper/latex/arxiv_bundle/
+paper/latex/arxiv_bundle_src/
 paper/latex/arxiv_bundle.tar.gz

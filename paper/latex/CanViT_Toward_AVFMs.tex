@@ -7,7 +7,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{hyperref}
-% Bookmarks drop \hspace, which article.cls puts between a part's (here empty) number and its title.
 \pdfstringdefDisableCommands{\renewcommand{\hspace}[1]{}}
 \usepackage{url}
 \usepackage{booktabs}
@@ -51,8 +50,6 @@
 \definecolor{archVpe}{HTML}{f0a030}        %
 \definecolor{archBackbone}{HTML}{d0a8e0}   %
 
-% A policy's line colour from the figures, as a swatch before its name in tables (generate_data.py takes the colours
-% from the exporter's policy_styles export). \policyswatchesfalse removes every swatch.
 \newif\ifpolicyswatches
 \policyswatchestrue
 \newcommand{\policyswatch}[1]{\ifpolicyswatches\textcolor[HTML]{#1}{\rule[0.35ex]{0.9em}{1.2pt}}\hspace{0.4em}\fi}
@@ -117,7 +114,6 @@
 
 \newcommand{\papertitle}{CanViT: Toward Active-Vision Foundation Models}
 \title{\papertitle}
-% Links as coloured text, not boxes: boxes frame every citation and cross-reference on screen.
 \definecolor{linkBlue}{RGB}{0,51,153}
 \hypersetup{
   pdftitle={\papertitle},
@@ -132,14 +128,12 @@
   B.~Suresh Krishna$^{1}$ \\[3pt]
   {\normalfont $^{1}$McGill University\quad $^{2}$Mila -- Quebec AI Institute\quad $^{3}$Universit\'e Laval\quad $^{4}$Lamarck Labs} \\[3pt]
   {\normalfont \texttt{me@yberreby.com}\quad \texttt{sabrina.du@mail.mcgill.ca}} \\
-  {\normalfont \texttt{audrey.durand@ift.ulaval.ca}\quad \texttt{suresh.krishna@mcgill.ca}} \\ \noalign{\vskip 8.6pt}% LAYOUT_OVERRIDE: centers the project page between the emails and the Abstract heading (\\[...] adds nothing in this title block).
+  {\normalfont \texttt{audrey.durand@ift.ulaval.ca}\quad \texttt{suresh.krishna@mcgill.ca}} \\ \noalign{\vskip 8.6pt}%
   {\normalfont Homepage: {\hypersetup{pdfborder={0 0 0}, urlcolor=magenta}\url{https://m2b3.github.io/CanViT/}}}%
 }
 
-% Breaks the current paragraph into one line fewer if TeX can; one command, so that latexdiff leaves it whole.
 \newcommand{\tightenparagraph}{\looseness=-1\relax}
 
-% Words that TeX would otherwise break across lines: two proper names, and "dimensions" in the Loss paragraph.
 \hyphenation{PyTorch CanViT dimensions}
 
 \begin{document}
@@ -148,7 +142,7 @@
 \faketableofcontents
 
 \maketitle
-\vspace{-18.6pt}% LAYOUT_OVERRIDE: gives back the project page's line and its centering space, so the Introduction's second paragraph ends on page 1 (check_layout.py).
+\vspace{-18.6pt}%
 
 % ===========================================================================
 % ABSTRACT
@@ -186,7 +180,7 @@ CanViT-B also sets a new active-vision state of the art,
 with \inkFinetunedBest\% top-1 accuracy after fine-tuning.
 CanViT generalizes to longer rollouts, larger scenes, and new policies.
 Our work narrows the wide gap between passive and active computer vision,
-demonstrating the potential of task- and policy-agnostic AVFM pretraining.\tightenparagraph% LAYOUT_OVERRIDE: breaks the abstract so that its last line is not two words.
+demonstrating the potential of task- and policy-agnostic AVFM pretraining.\tightenparagraph%
 \end{abstract}
 
 
@@ -562,7 +556,7 @@ from \cSixFourAsymRwPairGf{} to \cSixFourFullRwPairGf{} GFLOPs.
   \textbf{B.}~Total inference FLOPs vs.\ output patch grid.
   \textbf{C.}~Relative cost of canvas-side QKVO projections, per Canvas Attention Read/Write pair.}
   \label{fig:canvas-attention}
-  \vspace{-4pt}% LAYOUT_OVERRIDE: 4 pt less below Figure 3 keeps the Teacher paragraph on page 6 and the Results on page 9 (check_layout.py).
+  \vspace{-4pt}%
 \end{figure}
 
 
@@ -685,8 +679,6 @@ with a modest train-time compute overhead due to the low average sequence length
 \section{Experiments}
 \label{sec:experiments}
 
-% Defined at the section's start so that it floats to the top of page 8, above the policy definitions it depends on
-% and facing the Results on page 9 (check_layout.py holds the Results to page 9).
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/exported/main_results.pdf}
@@ -758,8 +750,6 @@ We use up to $T = 21$ glimpses.
 To test whether a task-specific viewing policy can be learned quickly on top of a frozen CanViT-B and its ADE20K probe, we train policy networks with Q-learning~\cite{watkinsQlearning1992} and \mbox{REINFORCE}~\cite{williamsSimpleStatisticalGradientfollowing1992} to maximize segmentation quality (Appendix~\ref{supp:learned-policies}).
 We train each network on \rlPolicyGlimpses{} glimpses, \rlPretrainingSharePct\% of CanViT-B's pretraining glimpses, in under \rlMinutesBound{} minutes on a single \rlDevice{} GPU (\rlDeviceMemoryGB{}~GB).
 
-% LAYOUT_OVERRIDE: the Results begin a page, under the figure fig:resolution-and-mask-size-analysis:
-% the preceding page ends with the policy paragraphs. check_layout.py's OPENS_PAGE enforces it.
 \pagebreak
 \subsection{Results}
 \label{subsec:results}
@@ -941,7 +931,6 @@ Funded by a Natural Sciences and Engineering Research Council of Canada (NSERC) 
 \appendix
 
 \clearpage
-% Empty on the page (minitoc needs the part for \parttoc); "Appendix" in the PDF bookmarks.
 \part[Appendix]{}
 \section*{\centering \LARGE Appendix}
 \mtcsettitle{parttoc}{Contents}
@@ -1012,7 +1001,6 @@ x_bb  = blk5(blk4(x_bb))
 x_bb  = x_bb  + read(x_bb, x_can, rope_bb, rope_can)
 # ...
 \end{lstlisting}
-% LAYOUT_OVERRIDE: the VPE appendix starts its own page; it otherwise began with two lines at the foot of the pseudocode's page.
 \clearpage
 
 \section{Viewpoint Encoding (VPE)}
@@ -1690,14 +1678,13 @@ To visualize grids of high-dimensional glimpse or canvas patch tokens as RGB ima
 
 \begin{figure}[h]
   \centering
-  % LAYOUT_OVERRIDE: 85% of the text width.
   \includegraphics[width=0.85\linewidth]{figures/exported/canvas_evolution.pdf}
   \caption{\textbf{Canvas updates within and across glimpses.} CanViT performs multiple Canvas Attention Write operations per glimpse, each producing a residual that is summed with the canvas (Figure~\ref{fig:canvit-high-level-arch}). To isolate the contribution of individual Write operations, we capture intermediate residuals and canvases after each Write operation within a $128^2$\,px glimpse, and visualize these snapshots with \acf{PCA} across tokens. We compute PCA bases independently for all snapshots rather than using a shared basis, in order to visualize the spatial structure of each individual snapshot. We observe an emergent progression in the spatial structure of residuals as within-glimpse processing unfolds from Write~0 to Write~2, from localized and feature-level content to scene-wide and semantically grounded content. Write-0 residuals reflect the structure of the glimpse's $8 \times 8$ patch grid. Write-1 residuals begin to reflect the structure of the objects within the glimpse. Write-2 residuals extrapolate beyond the confines of the glimpse, and delineate sharper object boundaries.}
   \label{fig:canvas-evolution}
 \end{figure}
 
 % ===========================================================================
-% ADDITIONAL EXPERIMENTS: run during the review and rebuttal period.
+% ADDITIONAL EXPERIMENTS
 % ===========================================================================
 \FloatBarrier
 \section{Additional experiments}
@@ -1892,8 +1879,6 @@ We fine-tuned the architecture-control CanViT-B and AdaGlimpse checkpoints with 
 We also fine-tuned the flagship checkpoint for \cocoFlagshipEpochs{} epochs, with a longer training, BPTT and evaluation horizon ($T = \cocoFlagshipT$ glimpses in training, evaluation up to $t = \cocoFlagshipLastT$). Table~\ref{tab:coco-settings} lists the training settings.
 
 
-% Settings of the architecture-control pair (from its launcher's flags and the defaults of the training code it ran) and of
-% the flagship detector (from its run record). Typed by hand: the pair's training record is not among the exported results.
 \begin{table}[!h]
   \caption{\textbf{COCO detection training settings} of the two architecture-control models and of the flagship detector.}
   \label{tab:coco-settings}
@@ -1926,7 +1911,7 @@ We also fine-tuned the flagship checkpoint for \cocoFlagshipEpochs{} epochs, wit
   \label{tab:coco-detection}
   \centering
   \small
-  \setlength{\tabcolsep}{4pt}% LAYOUT_OVERRIDE: at the default 6pt, seven stacked interval columns overflow the text width.
+  \setlength{\tabcolsep}{4pt}%
   \begin{tabular}{lccccccc}
     \toprule
     \textbf{Model (initialized from)} & \cocoHeader \\
@@ -1943,7 +1928,7 @@ We see this limited, simple experiment as encouraging evidence that CanViT can b
 
 
 % ===========================================================================
-% DECLARATIONS (supp:declarations)
+% DECLARATIONS
 % ===========================================================================
 \FloatBarrier
 \section{Declarations}
@@ -1965,14 +1950,12 @@ Before submission, we used approximately 2{,}500 H100-equivalent hours on our SL
 
 The ImageNet-1k fine-tuning experiments of Appendix~\ref{supp:task-in1k} were run on Google Cloud TPU v6e-4 spot instances using \texttt{torch\_xla}. The total TPU cost of these experiments was under 800 USD (\computeAprilChipHours{} v6e chip-hours). The total runtime of our reported IN1k fine-tuning run was under 15 wall-clock hours on TPU v6e-4 using SPMD data parallelism. We did not perform extensive optimization of our \texttt{torch\_xla} code.
 
-% Figures: exports/compute_reporting.json, whose producer checks that the earlier totals end before these begin.
 During the review and rebuttal period, we used a further \computeSlurmHours{} H100-equivalent hours on our SLURM-based compute platform and
 at least \computeRtxHours{} GPU-hours on the RTX 4090 workstation.
 On Google Cloud, we used \computeTpuVsixeChipHours{} TPU v6e and \computeTpuVfivepChipHours{} TPU v5p chip-hours, at a list price of \computeTpuUsd{} USD.
 
 The numbers above include failed runs, preliminary experiments, and hyperparameter sweeps.
 
-% LAYOUT_OVERRIDE: the heading moves to the next page rather than end one with two lines below it (check_layout.py).
 \Needspace{5\baselineskip}
 \subsection{Statistical analysis}
 \label{supp:declarations:statistical-analysis}

@@ -5,7 +5,8 @@
 - Read `latex/CanViT_Toward_AVFMs.tex` in full before editing it or stating what the paper says.
 - Build through the justfile; a bare `tectonic` skips the data step and renders stale rows.
 - Never modify `latex/neurips_2026.sty`; it is the official template, byte for byte.
-- Tag every manual spacing or layout tweak with `% LAYOUT_OVERRIDE:` and its reason.
+- The source carries no working notes: no dated remark, no provenance, no account of a layout tweak. A layout
+  that must hold is a rule in `latex/check_layout.py`.
 - Numbers about CanViT come from `latex/data.tex`, generated from `exports/`; numbers cited from other
   papers may be written in the source.
 - Generated files are never edited by hand: `exports/`, `latex/data.tex`, `latex/data_macros.json` and the

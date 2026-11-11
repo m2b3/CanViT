@@ -7,6 +7,9 @@ detector of the paper's COCO experiments (appendix "COCO object detection"); the
 `canvit_nnx.detect.train.Recipe` are its run on the released ImageNet-21k
 CanViT-B.
 
+The paper's two detectors are on the Hub, named in `canvit_nnx.releases.COCO_DETECTORS`; each card shows how to
+load and run its detector.
+
 | Module | Holds |
 |---|---|
 | `targets` | CenterNet's heatmap, size and offset targets, rendered from boxes on the host |

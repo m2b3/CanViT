@@ -5,6 +5,13 @@ entries under its version. Entries marked **Breaking** change what existing code
 **Hub** entries are steps on the Hugging Face Hub that must follow the release, in order, because
 released versions load each repo's `main` revision.
 
+## Unreleased
+
+### Added
+
+- `canvit_nnx.releases`: the Hub ids of the architecture control's CanViT-B, its ADE20K probe and the two COCO
+  detectors (`ARCHITECTURE_CONTROL`, `ARCHITECTURE_CONTROL_ADE20K_PROBE`, `COCO_DETECTORS`).
+
 ## 0.3.2 (2026-11-02)
 
 ### Fixed

@@ -1,7 +1,7 @@
 """Released CanViT checkpoints in the canvit-nnx format on the Hugging Face Hub, and their viewing geometry.
 
-canvit_pytorch.hub.repos names the same releases for PyTorch; each NNX
-repository is the PyTorch one with an "-nnx" suffix.
+canvit_pytorch.hub.repos names the pretrained checkpoints for PyTorch; each of their NNX repositories is the PyTorch
+one with an "-nnx" suffix. The architecture control and the COCO detectors exist in this format only.
 """
 
 from typing import Literal
@@ -17,15 +17,33 @@ PRETRAINED: dict[PretrainingDataset, str] = {
 DINOV3_VITB16_IN1K_PROBE = "canvit/dinov3-vitb16-lvd1689m-in1k-512x512-linear-clf-probe"
 """Linear ImageNet-1k probe on DINOv3 ViT-B/16's CLS token at 512 px; framework-independent safetensors."""
 
+ARCHITECTURE_CONTROL = "canvit/canvitb16-add-vpe-pretrain-g128px-s512px-in1k-dv3b16-archctrl-2026-07-26-nnx"
+"""CanViT-B of the paper's architecture control, pretrained on ImageNet-1k; not PRETRAINED["in1k"]."""
+
+ARCHITECTURE_CONTROL_ADE20K_PROBE = "canvit/probe-ade20k-40k-s512-c32-archctrl-nnx"
+"""The ADE20K probe on ARCHITECTURE_CONTROL's canvas."""
+
+Detector = Literal["flagship", "architecture_control"]
+
+COCO_DETECTORS: dict[Detector, str] = {
+    "flagship": "canvit/canvitb16-add-vpe-detect-g128px-s512px-coco-2026-08-01-nnx",
+    "architecture_control": "canvit/canvitb16-add-vpe-detect-g128px-s512px-coco-from-archctrl-2026-07-27-nnx",
+}
+"""COCO detectors (canvit_nnx.detect), trained from PRETRAINED["in21k"] and from ARCHITECTURE_CONTROL."""
+
 RELEASED_GLIMPSE_SIZE_PX = 128
 RELEASED_SCENE_SIZE_PX = 512
 RELEASED_CANVAS_GRID_SIZE = 32
 
 __all__ = [
+    "ARCHITECTURE_CONTROL",
+    "ARCHITECTURE_CONTROL_ADE20K_PROBE",
+    "COCO_DETECTORS",
     "DINOV3_VITB16_IN1K_PROBE",
     "PRETRAINED",
     "RELEASED_CANVAS_GRID_SIZE",
     "RELEASED_GLIMPSE_SIZE_PX",
     "RELEASED_SCENE_SIZE_PX",
+    "Detector",
     "PretrainingDataset",
 ]

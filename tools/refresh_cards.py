@@ -272,6 +272,9 @@ def _dinov3_classification_probe_card(repo: Repo) -> str:
 
 def _native_card(repo: Repo, results: PaperResults) -> str:
     config, provenance = repo.config, repo.files["provenance.json"]
+    if "source" not in provenance:
+        raise NoCard("a native checkpoint that is not a conversion of a published one: its card states its own "
+                     "training records")
     backend = config["backend"]
     source = model_cards.Source(provenance["source"]["repo"], provenance["source"]["revision"])
     if config["model"] == "SegmentationProbe":

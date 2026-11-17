@@ -20,7 +20,10 @@ class ViewpointEncoding(nnx.Module):
         self.norm.scale[...] = jnp.full((dim,), 1.0 / math.sqrt(dim), dtype=jnp.float32)
 
     def __call__(self, viewpoint: Viewpoint) -> Array:
+        """[B, dim] in float32, as canvit-pytorch computes it outside autocast."""
         scale = viewpoint.scales[:, None]
         coordinates = jnp.concatenate((viewpoint.centers / scale, jnp.log(scale)), axis=-1)
-        phases = coordinates @ self.frequencies[...].T
+        # Phases reach tens of radians, so the product must be float32: by default a TPU rounds float32 matmul
+        # operands to bfloat16, and a GPU may use TF32.
+        phases = jnp.matmul(coordinates, self.frequencies[...].T, precision=jax.lax.Precision.HIGHEST)
         return self.norm(jnp.concatenate((jnp.cos(phases), jnp.sin(phases)), axis=-1))

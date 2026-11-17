@@ -12,6 +12,14 @@ released versions load each repo's `main` revision.
 - `canvit_nnx.releases`: the Hub ids of the architecture control's CanViT-B, its ADE20K probe and the two COCO
   detectors (`ARCHITECTURE_CONTROL`, `ARCHITECTURE_CONTROL_ADE20K_PROBE`, `COCO_DETECTORS`).
 
+### Fixed
+
+- The Viewpoint Encoding computes its Fourier phases as a float32 product whatever JAX's default matmul precision,
+  as canvit-pytorch does. By default a TPU rounds float32 matmul operands to bfloat16, and a GPU may use TF32; with
+  the phases reaching about 77 radians at scale 0.05, bfloat16 operands change CanViT-B's encoding by 1.5% (relative
+  L2 over viewpoints of scale 0.05 to 1, against a float64 reference), against 7e-7 at most for float32. Outputs on
+  a CPU are unchanged.
+
 ## 0.3.2 (2026-11-02)
 
 ### Fixed

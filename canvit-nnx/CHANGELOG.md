@@ -7,6 +7,8 @@ released versions load each repo's `main` revision.
 
 ## Unreleased
 
+## 0.3.3 (2026-11-17)
+
 ### Added
 
 - `canvit_nnx.releases`: the Hub ids of the architecture control's CanViT-B, its ADE20K probe and the two COCO

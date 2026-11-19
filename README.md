@@ -14,14 +14,17 @@
 </p>
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="site/assets/logos/neurips-dark.svg">
-    <img src="site/assets/logos/neurips.svg" alt="NeurIPS" height="48">
-  </picture>
+  <a href="https://openreview.net/forum?id=cnV9GA4pKU">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="site/assets/logos/neurips-dark.svg">
+      <img src="site/assets/logos/neurips.svg" alt="NeurIPS 2026 paper on OpenReview" height="48">
+    </picture>
+  </a>
 </p>
 
 <p align="center">
   <a href="https://m2b3.github.io/CanViT/"><img alt="Project page" src="https://img.shields.io/badge/Project-page-2d6cdf"></a>
+  <a href="https://openreview.net/forum?id=cnV9GA4pKU"><img alt="NeurIPS 2026 paper on OpenReview" src="https://img.shields.io/badge/NeurIPS%202026-OpenReview-8c1b13"></a>
   <a href="https://arxiv.org/abs/2603.22570"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2603.22570-b31b1b?logo=arxiv&logoColor=white"></a>
   <a href="https://huggingface.co/canvit"><img alt="Models on Hugging Face" src="https://img.shields.io/badge/Hugging%20Face-models-ffcc4d?logo=huggingface&logoColor=black"></a>
   <a href="https://pypi.org/project/canvit-pytorch/"><img alt="PyPI" src="https://img.shields.io/pypi/v/canvit-pytorch"></a>
@@ -42,7 +45,7 @@ share [`canvit-core/`](canvit-core/).
 
 - **2026-09-26**: canvit-pytorch 0.2, a refactoring release; updated checkpoints pushed to the Hub. Code written
   for 0.1: see [Troubleshooting](#troubleshooting).
-- **2026-09-24**: 🎉 Accepted at NeurIPS 2026!
+- **2026-09-24**: 🎉 Accepted at NeurIPS 2026! The paper is on [OpenReview](https://openreview.net/forum?id=cnV9GA4pKU).
 - **2026-05-16**: Preprint v2 ([arXiv:2603.22570v2](https://arxiv.org/abs/2603.22570v2)), adding the 84.5% ImageNet-1k fine-tuning result and the effect of canvas resolution.
 - **2026-04-06**: First finetuned IN1k checkpoint: [`canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06`](https://huggingface.co/canvit/canvitb16-add-vpe-finetune-g128px-s512px-in1k-2026-04-06), with new `CanViTForImageClassification` API.
   - 🎉 CanViT sets a new SOTA on **active-vision IN1k classification**, with **84.5% top-1 accuracy**, up from [AdaptiveNN](https://github.com/LeapLabTHU/AdaptiveNN)'s previous best of 82.2%.

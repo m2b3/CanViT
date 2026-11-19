@@ -203,4 +203,5 @@ them by their coordinates.
 
 The downloaded files are unmodified. `index.html` shows the arXiv and GitHub
 marks as masks in the button's color (arXiv's mark in its red) and the Hugging
-Face and NeurIPS logos in their own colors.
+Face and NeurIPS logos in their own colors. The NeurIPS logo and the "Paper"
+buttons link the paper on OpenReview; the arXiv button links the preprint.

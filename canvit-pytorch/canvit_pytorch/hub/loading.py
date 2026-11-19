@@ -30,7 +30,7 @@ LOCAL_CARD_TEMPLATE = f"""---
 
 A checkpoint written by canvit-pytorch. {project.DESCRIPTION}
 
-[Paper]({project.PAPER_URL}) · [Code]({project.CODE_URL})
+{project.LINKS}
 """
 
 

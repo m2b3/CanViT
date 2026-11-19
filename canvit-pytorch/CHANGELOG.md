@@ -6,6 +6,13 @@ saved files do; **Hub** entries are steps on the Hugging Face Hub that go with t
 order, each before or after it as the entry says, because released versions load each repo's
 `main` revision.
 
+## Unreleased
+
+### Changed
+
+- `project.PAPER_URL` is the NeurIPS 2026 paper on OpenReview (was the arXiv preprint, now `project.ARXIV_URL`).
+  Hub cards, the card `save_pretrained` writes and the package's metadata link both.
+
 ## 0.3.1 (2026-11-06)
 
 ### Changed

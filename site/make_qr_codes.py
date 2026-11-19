@@ -11,7 +11,7 @@ from canvit_pytorch import project
 
 OUT = Path(__file__).parent / "assets" / "qr"
 INK = "#0f172a"  # css/canvit.css: --ink
-LINKS = {"paper": project.PAPER_URL, "code": project.CODE_URL, "models": project.HUB_ORG_URL, "page": project.PAGE_URL}
+LINKS = {"paper": project.ARXIV_URL, "code": project.CODE_URL, "models": project.HUB_ORG_URL, "page": project.PAGE_URL}
 
 OUT.mkdir(exist_ok=True)
 for name, url in LINKS.items():

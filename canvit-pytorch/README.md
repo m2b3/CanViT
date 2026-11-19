@@ -3,7 +3,8 @@
 The PyTorch implementation of CanViT (Canvas Vision Transformer). It
 contains the model, checkpoint loading, preprocessing, policies, pretraining,
 task specialization, and evaluation code. The paper is
-[CanViT: Toward Active-Vision Foundation Models](https://arxiv.org/abs/2603.22570) (NeurIPS 2026).
+[CanViT: Toward Active-Vision Foundation Models](https://openreview.net/forum?id=cnV9GA4pKU) (NeurIPS 2026;
+[arXiv:2603.22570](https://arxiv.org/abs/2603.22570)).
 
 ## Install
 

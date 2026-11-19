@@ -1,5 +1,5 @@
 """Hub model cards (README.md) of CanViT checkpoints, probes, classifiers and learned policies, and of the DINOv3
-ImageNet-1k probes that CanViT's frozen classification reads.
+ImageNet-1k probes that CanViT's frozen classification reads; and the card of the organization's page.
 
 Every card shares the project's description, links, license and citation (project.py) and shows working code for
 its checkpoint; the facts that differ between checkpoints come in as typed arguments, read from the checkpoint's
@@ -32,6 +32,8 @@ ADE20K_HUB_ID = "zhoubolei/scene_parse_150"
 # The Hub datasets a pretrained checkpoint's card links; ImageNet-21k has no official Hub dataset.
 PRETRAINING_DATASET_HUB_IDS: dict[PretrainingDataset, list[str]] = {"in21k": [], "in1k": [IMAGENET_1K_HUB_ID]}
 TAGS = ["canvit", "active-vision", "vision-transformer"]
+PROJECT_LINKS = f"{project.LINKS} · [All checkpoints]({project.HUB_ORG_URL})"
+"""The line of links under every card's description."""
 
 
 @dataclass(frozen=True)
@@ -201,6 +203,15 @@ The files in the format of the code that trained this policy remain at revision 
 canvit-pytorch reads those of `main`."""
 
 
+ORGANIZATION_CARD_SPACE = f"{project.HUB_ORGANIZATION}/README"
+"""The Space whose README.md the Hub shows as the organization's page."""
+
+
+def organization_card() -> str:
+    frontmatter = "title: README\nemoji: 🐢\ncolorFrom: indigo\ncolorTo: yellow\nsdk: static\npinned: false"
+    return f"---\n{frontmatter}\n---\n\n{project.DESCRIPTION}\n\n{project.LINKS}\n"
+
+
 def details_table(rows: list[tuple[str, str]]) -> str:
     return "\n".join(["| | |", "|---|---|", *(f"| {name} | {value} |" for name, value in rows)])
 
@@ -217,8 +228,7 @@ def _card(
         f"# {title}",
         summary,
         project.DESCRIPTION,
-        (f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · "
-         f"[Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})"),
+        PROJECT_LINKS,
         f"## Usage\n\n```{install_language}\n{install.strip()}\n```\n\n```{usage_language}\n{usage.strip()}\n```",
         *([f"## Results\n\n{results}"] if results is not None else []),
         f"## Details\n\n{details_table(details)}",

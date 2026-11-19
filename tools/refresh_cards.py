@@ -1,14 +1,15 @@
 """Regenerate the cards (README.md) of the canvit organization's public repos from each repo's own records and the
-results the paper reports, and upload the cards that changed.
+results the paper reports, and the card of the organization's page, and upload the cards that changed.
 
     uv run --project canvit-pytorch python -m tools.refresh_cards --out-dir STAGING --live-parity PARITY_REPORT
     uv run --project canvit-pytorch python -m tools.refresh_cards --out-dir STAGING --live-parity PARITY_REPORT --push
 
 Each repo is read at its current main revision: config.json (and provenance.json or manifest.json), its tags, and,
 for a classifier, the paper's results in paper/exports/. The new card is staged as OUT_DIR/<repo name>/README.md,
-the Hub's as README.hub.md beside it. --push uploads each card that differs from the Hub's, as one commit whose
-parent is the revision the card was generated from. The browser exports' cards also need the parity report that
-`python -m canvit_pytorch.viz.live parity` wrote for the published graphs.
+the Hub's as README.hub.md beside it; the organization's card is staged under OUT_DIR/organization. --push uploads
+each card that differs from the Hub's, as one commit whose parent is the revision the card was generated from. The
+browser exports' cards also need the parity report that `python -m canvit_pytorch.viz.live parity` wrote for the
+published graphs.
 
 Left alone, and listed: repos without a record this tool reads.
 """
@@ -17,7 +18,7 @@ import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast, get_args
+from typing import Any, Literal, cast, get_args
 
 import tyro
 from canvit_core.backbone import BACKBONES
@@ -53,6 +54,8 @@ POLICY_PREFIXES = ("qpolicy-", "pgpolicy-")
 # The objectives as the archived training code named them in training_run/manifest.json.
 ARCHIVED_OBJECTIVES = {"q": "QLearning", "pg": "Reinforce"}
 RECORD_FILES = ("config.json", "provenance.json", "manifest.json")
+ORGANIZATION_CARD_NAME = "organization"
+RepoType = Literal["model", "space"]
 
 
 @dataclass(frozen=True)
@@ -386,14 +389,23 @@ class RefreshCards:
     live_parity: Path | None = None
     """parity/report.json of the published browser export."""
     only: tuple[str, ...] = ()
-    """Repo names to refresh; every public repo when empty."""
+    """Names to refresh: repo names, and "organization" for the organization's card; everything public when empty."""
     push: bool = False
+
+    def _stage(self, name: str, *, new: str, hub: str, revision: str) -> Path:
+        staged = self.out_dir / name
+        staged.mkdir(parents=True, exist_ok=True)
+        (staged / "README.md").write_text(new)
+        (staged / "README.hub.md").write_text(hub)
+        (staged / "revision").write_text(revision + "\n")
+        return staged
 
     def run(self) -> None:
         api = HfApi()
         results = PaperResults(self.exports)
         parity = json.loads(self.live_parity.read_text()) if self.live_parity else None
-        changed, skipped = [], []
+        changed: list[tuple[str, RepoType, str, Path]] = []
+        skipped = []
         for model in api.list_models(author=HUB_ORGANIZATION):
             info = api.model_info(model.id)
             name = model.id.split("/")[1]
@@ -409,23 +421,28 @@ class RefreshCards:
             except NoCard as reason:
                 skipped.append((model.id, str(reason)))
                 continue
-            staged = self.out_dir / name
-            staged.mkdir(parents=True, exist_ok=True)
-            (staged / "README.md").write_text(new)
-            old = Path(hf_hub_download(model.id, "README.md", revision=info.sha)).read_text() if "README.md" in present else ""
-            (staged / "README.hub.md").write_text(old)
-            (staged / "revision").write_text(info.sha + "\n")
-            if new != old:
-                changed.append((model.id, info.sha, staged))
+            hub = Path(hf_hub_download(model.id, "README.md", revision=info.sha)).read_text() if "README.md" in present else ""
+            staged = self._stage(name, new=new, hub=hub, revision=info.sha)
+            if new != hub:
+                changed.append((model.id, "model", info.sha, staged))
+        space = cards.ORGANIZATION_CARD_SPACE
+        if not self.only or ORGANIZATION_CARD_NAME in self.only:
+            revision = api.space_info(space).sha
+            assert revision is not None, space
+            new = cards.organization_card()
+            hub = Path(hf_hub_download(space, "README.md", repo_type="space", revision=revision)).read_text()
+            staged = self._stage(ORGANIZATION_CARD_NAME, new=new, hub=hub, revision=revision)
+            if new != hub:
+                changed.append((space, "space", revision, staged))
         for repo_id, reason in skipped:
             log.info(f"left alone: {repo_id}: {reason}")
         log.info(f"{len(changed)} cards differ from the Hub's, staged in {self.out_dir}")
         if not self.push:
             return
-        for repo_id, revision, staged in changed:
+        for repo_id, repo_type, revision, staged in changed:
             commit = api.upload_file(
-                path_or_fileobj=staged / "README.md", path_in_repo="README.md", repo_id=repo_id,
-                commit_message="Regenerate the model card", parent_commit=revision,
+                path_or_fileobj=staged / "README.md", path_in_repo="README.md", repo_id=repo_id, repo_type=repo_type,
+                commit_message="Regenerate the card", parent_commit=revision,
             )
             log.info(f"{repo_id}: {commit.commit_url}")
 

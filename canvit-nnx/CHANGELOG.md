@@ -7,6 +7,10 @@ released versions load each repo's `main` revision.
 
 ## Unreleased
 
+### Changed
+
+- The package's "Paper" link is the NeurIPS 2026 paper on OpenReview; the arXiv preprint is linked beside it.
+
 ## 0.3.3 (2026-11-17)
 
 ### Added

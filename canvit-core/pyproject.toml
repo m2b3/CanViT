@@ -19,7 +19,8 @@ dependencies = [
 [project.urls]
 Repository = "https://github.com/m2b3/CanViT"
 Homepage = "https://m2b3.github.io/CanViT/"
-Paper = "https://arxiv.org/abs/2603.22570"
+Paper = "https://openreview.net/forum?id=cnV9GA4pKU"
+arXiv = "https://arxiv.org/abs/2603.22570"
 Checkpoints = "https://huggingface.co/canvit"
 
 [build-system]

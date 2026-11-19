@@ -14,7 +14,7 @@ from typing import Any, Literal
 
 from canvit_core.checkpoint import FORMAT
 from canvit_pytorch import project
-from canvit_pytorch.hub.cards import details_table
+from canvit_pytorch.hub.cards import PROJECT_LINKS, details_table
 
 Backend = Literal["mlx", "nnx"]
 ARCHIVE_TAG = f"before-format-{FORMAT[:8]}"
@@ -174,7 +174,7 @@ def _card(*, frontmatter: dict[str, str | list[str]], title: str, summary: str, 
         f"# {title}",
         summary,
         project.DESCRIPTION,
-        f"[Paper ({project.VENUE})]({project.PAPER_URL}) · [Code]({project.CODE_URL}) · [Project page]({project.PAGE_URL}) · [All checkpoints]({project.HUB_ORG_URL})",
+        PROJECT_LINKS,
         "## Install\n\n```bash\n" + _install(backend) + "\n```",
         "## Usage\n\n```python\n" + usage + "\n```",
         *([f"## Results\n\n{results}"] if results is not None else []),

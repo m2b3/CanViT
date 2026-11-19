@@ -37,8 +37,10 @@ sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); f
 .authors a:hover { text-decoration: underline; }
 .affiliations { margin: 8px 0 0; color: var(--muted); font-size: 1rem; }
 .affiliations span { display: inline-block; margin: 0 .6em; white-space: nowrap; }
-.venue { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 18px 0 0;
-         color: var(--ink); font-size: 1.05rem; font-weight: 650; letter-spacing: .01em; }
+.venue { display: flex; justify-content: center; margin: 18px 0 0;
+         font-size: 1.05rem; font-weight: 650; letter-spacing: .01em; }
+.venue a { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+.venue a:hover { text-decoration: underline; }
 .venue img { height: 42px; width: auto; }
 
 .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
@@ -60,6 +62,8 @@ sup { font-size: .6em; line-height: 0; margin-left: .1em; color: var(--muted); f
 /* Icon URLs resolve against this stylesheet, so they are set here, not in the page. */
 .icon.arxiv { --icon: url("../assets/logos/arxiv.svg"); }
 .icon.github { --icon: url("../assets/logos/github.svg"); }
+/* A sheet with a folded corner and lines of text. */
+.icon.paper { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M5 2h9l5 5v15H5z M13.6 3.9v3.5h3.5z M8 11h8v1.6H8z M8 14.4h8v1.6H8z M8 17.8h5v1.6H8z' /%3E%3C/svg%3E"); }
 /* A screen on a stand. */
 .icon.slides { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 4h18v12H3z M11 16h2v4h-2z M7 20h10v1.6H7z' /%3E%3C/svg%3E"); }
 
@@ -209,7 +213,6 @@ h2 .term-glimpse, h2 .term-canvas { font-weight: inherit; }
 .button.secondary { background: var(--bg); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
 .button.secondary:hover { background: var(--soft); }
 .button.big.secondary .icon { background: var(--ink); }
-.cta .button:not(.secondary) .icon { background: #ef3b3b; }
 
 .bibtex { position: relative; border-radius: 12px; background: var(--soft); }
 .bibtex pre { margin: 0; padding: 20px 22px; overflow-x: auto; color: var(--ink); font: 14px/1.65 var(--mono); }

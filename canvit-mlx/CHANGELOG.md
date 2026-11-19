@@ -5,6 +5,12 @@ entries under its version. Entries marked **Breaking** change what existing code
 **Hub** entries are steps on the Hugging Face Hub that must follow the release, in order, because
 released versions load each repo's `main` revision.
 
+## Unreleased
+
+### Changed
+
+- The package's "Paper" link is the NeurIPS 2026 paper on OpenReview; the arXiv preprint is linked beside it.
+
 ## 0.2.1 (2026-11-06)
 
 ### Removed

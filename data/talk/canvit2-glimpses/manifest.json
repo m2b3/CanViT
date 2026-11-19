@@ -1,0 +1,31 @@
+{
+ "canvit": {
+  "scene": "ADE20K validation (data/street-riid/scene.png)",
+  "glimpse": "canvit-glimpse.png",
+  "glimpse_px": 128,
+  "patch_grid": 8,
+  "box": {
+   "top": 0.35,
+   "left": 0.020000000000000018,
+   "size": 0.6
+  }
+ },
+ "canvit2": {
+  "frames": "canvit2/{i}.webp",
+  "count": 86,
+  "fps": 29.97,
+  "frame_hw": [
+   360,
+   640
+  ],
+  "geometry": "canvit2-geometry.json"
+ },
+ "source": {
+  "title": "Hippy Flip on arms",
+  "author": "BoarderleinTV",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0/",
+  "url": "https://commons.wikimedia.org/wiki/File:Hippy_Flip_on_arms.webm",
+  "changes": "excerpt from 0.33 s to 3.2 s, cropped to remove a watermark and border, resized, rendered as sampled squares"
+ }
+}

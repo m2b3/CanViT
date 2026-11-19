@@ -1,0 +1,46 @@
+/* CanViT's look, shared by the project page and the slides: fonts, colors and what each color means.
+   The <canvit-*> components read the --canvit-* properties. Pages link this file before their own stylesheet. */
+
+/* Self-hosted (assets/fonts, SIL Open Font License), so pages and talks render the same offline. */
+@font-face { font-family: "Inter"; src: url("../assets/fonts/InterVariable.woff2") format("woff2");
+             font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../assets/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+             font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../assets/fonts/JetBrainsMono-Medium.woff2") format("woff2");
+             font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../assets/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+             font-weight: 700; font-style: normal; font-display: swap; }
+
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --ink: #0f172a;
+  --text: #334155;
+  --muted: #475569;
+  --rule: #e2e8f0;
+  --soft: #f1f5f9;
+  --underline: #94a3b8;
+  --highlight: #fde68a;
+  /* Blue, red and teal mean glimpse, canvas and policy, and nothing else; teal marks policy phrases too. The CanViT
+     wordmark joins red and blue: Can(vas) in red, ViT in blue. Links and highlights use neutral colors. */
+  --glimpse: #2d6cdf;
+  --canvas: #e0483e;
+  --policy: #0d9488;
+  --mark: color-mix(in srgb, var(--policy) 45%, white);
+  --brand: linear-gradient(90deg, var(--canvas), var(--glimpse));
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  --canvit-ink: var(--ink);
+  --canvit-muted: var(--muted);
+  --canvit-glimpse: var(--glimpse);
+  --canvit-canvas: var(--canvas);
+  --canvit-placeholder: var(--soft);
+  --canvit-sans: var(--sans);
+  --canvit-mono: var(--mono);
+}
+
+.brand { background: var(--brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.term-glimpse { color: var(--glimpse); font-weight: 650; }
+.term-canvas { color: var(--canvas); font-weight: 650; }
+.term-policy { color: var(--policy); font-weight: 650; }

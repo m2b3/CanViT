@@ -1,0 +1,8 @@
+{
+ "image_id": "ADE_val_00001715",
+ "class": "television",
+ "input_px": 128,
+ "teacher": "facebook/dinov3-vitb16-pretrain-lvd1689m",
+ "probe": "canvit/probe-ade20k-40k-dv3b-128px",
+ "prob": 0.0037995846942067146
+}

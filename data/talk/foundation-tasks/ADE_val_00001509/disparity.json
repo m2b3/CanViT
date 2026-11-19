@@ -1,0 +1,21 @@
+{
+ "image_id": "ADE_val_00001509",
+ "input_px": [
+  1152,
+  768
+ ],
+ "file": "disparity.npy",
+ "meaning": "the head's raw output: disparity up to an unknown scale and shift (affine-invariant), the scale's sign included",
+ "nearer_is": "smaller",
+ "sign_check": {
+  "data": "NYUv2 test frames (depth_probe.frames)",
+  "frames": 40,
+  "negative_scales": 40
+ },
+ "model": "DINOv3 ViT-L/16 (facebook/dinov3-vitl16-pretrain-lvd1689m, frozen) with the SDT depth head blanchon/dinodepth-model/sdt-vitl16.safetensors",
+ "head_revision": "3887962620c1c868c6507a781f30e5c1a3643888",
+ "code": "github.com/julien-blanchon/dinodepth@4f1cd4f2c9c06a5aef1738dce075be9da544cea4",
+ "device": "mps",
+ "forward_seconds": 1.1385366669856012,
+ "backbone_check_max_abs_difference": 0.0
+}

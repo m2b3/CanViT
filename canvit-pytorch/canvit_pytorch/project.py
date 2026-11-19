@@ -21,7 +21,7 @@ CHECKPOINT_LICENSE = (
 """The license section of the card of every CanViT checkpoint and of every model built on one."""
 
 BIBTEX = r"""@inproceedings{berreby2026canvit,
-  title={CanViT: Toward Active-Vision Foundation Models},
+  title={{CanViT}: Toward Active-Vision Foundation Models},
   author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
   booktitle={The Fortieth Annual Conference on Neural Information Processing Systems},
   year={2026},

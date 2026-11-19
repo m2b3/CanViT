@@ -23,10 +23,10 @@ CHECKPOINT_LICENSE = (
 BIBTEX = r"""@inproceedings{berreby2026canvit,
   title={CanViT: Toward Active-Vision Foundation Models},
   author={Berreby, Yoha{\"i}-Eliel and Du, Sabrina and Durand, Audrey and Krishna, B. Suresh},
-  booktitle={Advances in Neural Information Processing Systems},
+  booktitle={The Fortieth Annual Conference on Neural Information Processing Systems},
   year={2026},
+  url={https://openreview.net/forum?id=cnV9GA4pKU},
   eprint={2603.22570},
   archivePrefix={arXiv},
-  primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2603.22570}
+  primaryClass={cs.CV}
 }"""
